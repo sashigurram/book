@@ -15,4 +15,3 @@ del *.idx
 del *.ilg
 del *.ind
 del *.ist
-del *.pdf
