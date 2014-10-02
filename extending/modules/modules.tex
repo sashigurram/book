@@ -65,7 +65,7 @@ The strategy modules are the basic choice modules available in MATSim. All strat
 
 Strategy modules are numbered, where each module is given a weight which determines the probability by which the course of action represented by the module is taken. In this example, each agent changes his leg mode with probability 0.1, its plan timing with probability 0.2. A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. In the example, the agent choses a plan from his set of plans according to a logit model with probability 0.7. The weights of the strategy modules are renormalized in case they do not sum to one. 
 
-Combining different modules is not straight-forward in MATSim. This important topic urgently awaits future analysis. To begin with, here, the combination of the strategy modules with public transport is presented in Table \ref{tab:combination}
+Combining different modules is not straight-forward in MATSim. This important topic urgently awaits future analysis. To begin with, here, the combination of the strategy modules with public transport is presented in Table \ref{tab:combination}.
 
 % ----------------------------------
 \createtable%
@@ -97,6 +97,7 @@ destination choice & LocationChoice & LocationChoice \\
 {}
 
 % ----------------------------------
+In this section, time choice, route choice, mode choice, and plan selectors are described. The destination choice module is described in Chapter~\ref{ch:destinationchoice}.
 
 % ===================================================================================
 \subsection{Time Choice}
@@ -182,33 +183,6 @@ and configured in the confuguration file modules with
 \lstinline|ChangeLegMode| randomly picks one of the plans of a person and changes its mode of transport. By default, the supported modes are driving a car and using public transport. Only one mode of transport per plan is supported. For using different modes for sub-tours on a single day the \lstinline|SubtourModeChoice| module is required. Optionally, car-availability is respected. \lstinline| ChangeSingleLegMode| randomly picks one of the plans of a person and changes the mode of transport of one single leg. The leg is picked randomly. In contrast to \lstinline|ChangeLegMode|, it allows for multiple modes in one plan. By default, the supported modes are driving a car and using public transport. Also, this module is able to (optionally) respect car-availability. 
  
 Mode choice is described by \citet[][]{RieserEtAl_TRR_2009, MeisterEtAl_WCTRS_2010, CiariEtAl_STRC_2008, CiariEtAl_STRC_2007}
-
-% ===================================================================================
-\subsection{Destination Choice}
-The contribution destination choice is applied by adapting the configuration file strategy module,
-%
-\begin{lstlisting}
-<module name="strategy" > 
-    <param name="ModuleProbability_1" value="0.x" /> 
-    <param name="Module_1" value="locationchoice" /> 
-    [...]
-</module>
-\end{lstlisting}
-%
-by defining its parameters in the configuration file destination choice section, 
-%
-\begin{lstlisting}
-<module name="locationchoice" > 
-    <param name="param0" value="value0" /> 
-    [...]
-</module>
-\end{lstlisting}
-%
-and by running the special controler \lstinline|DCControler| residing in the package \lstinline|org.matsim.contrib.locationchoice|
-
-The destination choice module is described in length in \citet[][]{Horni_PhDThesis_2013}. The MATSim destination choice problem represents an optimization problem, where every agent searches for his optimal destination according to an objective function, which is based on discrete choice theory \citep[][]{Horni_PhDThesis_2013, HorniEtAl_unpub_TRB_2012}. The framework provides a problem-tailored heuristic search algorithm and an adaptable objective function containing a systematic and a random part representing unobserved heterogeneity. Due to the iterative mechanism of MATSim choices are performed based on quenched and not annealed randomness as detailed in the next section. 
-
-The destination choice module can be configured to consider not only competition for the road infrastructure but also the activities infrastructure (for example at shopping malls' parking lots) \citep[][]{HorniEtAl_TRR_2009}.
 
 % ===================================================================================
 \subsection{Selectors}
