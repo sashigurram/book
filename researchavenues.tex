@@ -6,6 +6,13 @@
 
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
 
+
+
+
+\ah{temporarily commented out in main.bib due to compilation problems.}
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Within-Day Replanning and the UE}
@@ -13,9 +20,45 @@
 \vfill\eject
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Frozen randomness}
+
+a horni
+
+\vfill\eject
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Choice set generation}
 
 \kai{in particular plans removal!!}
+
+likelihood that the final choice set is correlated, i.e.\ containing only plans that are very similar to the best plan \citep[see][for a review on correlation of 
+ routes]{Prato2009ChoiceModellingSurvey}.%
+ %
+ \footnote{
+ %
+ A possible solution to this problem is most likely composed of two steps:
+ %
+ First, more heterogeneity needs to be introduced into the choice set generation, e.g.\ by producing very different plans.
+ %
+ Second, the method for plans removal needs to be based on an \gls{mnl} model where the difference in utility enters, similar to the approach of selecting plans for execution. This could be done by an implementation of a method called `pathsize logit' which uses similarity measures for plans \citep[see][for a possible solution in route choice]{FrejingerBierlaire2007PathSizeLogit, BenAkivaBierlaiere1999DiscreteChoice}.
+ %
+ }
+
+---
+
+To give recommendations to other researchers: the bias in choice set generation of \gls{matsim} needs to be fixed in the near future in order to obtain valid choice sets.
+%
+This requires (i) the generation of more heterogeneous plans \citep[see, e.g.,][for such attempts in the \acrshort{pt} and in the car mode, respectively]{Moyo2013PhD, NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}; and (ii) the implementation of a pathsize logit model in the plans removal process \citep[see, e.g.,][]{Grether2014PhD}.
+%
+Having obtained these valid choice sets \citep{NagelFloetteroed2009IatbrResourceInBook}, the calculation of user benefits based on the logsum formulation is preferable.
+%
+\benjamin{Well, here it now depends on how we write the previous section...}
+%
+Using the logsum formulation with correlated choice sets requires a careful interpretation of the results. However, when looking at differences between the two states before and after a policy, this issue is unlikely to change results structurally: if the correlation remains roughly the same between the two states, the error of utility differences is small. If the correlation structure of plans changes, the error will\textemdash among other model specifications\textemdash depend on the number of iterations.
+%
+\benjamin{If we iterate the base case to the same iteration number as the policy case, the former will be more correlated. This would result in a underestimation of the utility changes.}
+%
+In that sense, one could include some approximation of the error into the analysis of results, possibly similar to Eq.~\ref{eq:ch:economicEval:logsumMaxError}. If the differences in utility levels between the two states are in the same magnitude as $\ln(P)$, it is possible that the signal of the policy effect is smaller than the noise of randomness.
 
 
 

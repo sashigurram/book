@@ -1,38 +1,38 @@
 \chapter{Introducing MATSim}
 \label{ch:introducing}
 % ##################################################################################################################
-\hfill \textbf{Author:} Andreas Horni 
+\hfill \textbf{Author:} Andreas Horni, ...
 
 \begin{center} \includegraphics[width=0.7\textwidth, angle=0]{figures/matsimcycle.pdf} \end{center}
 
 % ##################################################################################################################
-A Glimpse at MATSim's History \who{Nagel, Axhausen}
+\ah{A Glimpse at MATSim's History and a few adverts. It's zu trocken now. \who{Nagel, Axhausen}.}
 
+The development of the multi-agent transport simulation MATSim \citep[][]{MATSIM-T_Webpage_2014, BalmerEtAl_TRR_2006} has started approximately a decade ago as a collaborative effort of Prof. Nagel (now: TU Berlin) and Prof. Axhausen (ETH Zurich). It has its roots in \citet[][]{Axhausen_PhDThesis_1988} and in the transport simulation TRANSIMS \citep[][]{RaneyEtAl_LNCS_2002}, which was developed by Prof. Nagel as research team leader at the Los Alamos National Laboratory. As shown on the web page \citep[][]{MATSIM-T-Scenarios_Webpage_2015} and detailed in Chapter \ref{ch:scenarios}, MATSim has been applied by local research groups world-wide for several different regions.
 
-MATSim Quickstart and Basics
+MATSim is an activity-based, extendable, multi-agent simulation toolkit implemented with the programming language \gls{java}. It is open-source and can be downloaded freely at \citep[][]{MATSIM-T_Webpage_2015, SourceForge_Webpage_2015}. The framework is especially designed for large-scale scenarios, meaning that, the features of all models are generally stripped down to efficiently handle the targeted functionality, where emphasis has been also been laid on parallelization \citep[e.g.,][]{Dobler_TechRep_IVT_2011, Charypar_PhDThesis_2008}. For the network loading simulation, for example, a queue-based model is implemented, leaving out the very complex car-following behavior (see Section~\ref{sec:trafficflowmodel}).
 
+For now, MATSim is conceptually designed to model a \emph{single day}, a common unit of analysis for activity-based models (see, for example, the review in \citet[][]{Bowman_TEC_2009_1}). In other words, basically, MATSim is a cross-sectional model. Nevertheless, in principle a longitudinal model could be implemented (Section \ref{sec:longitudinalscenario}).
 
+As shown in Section~\ref{sec:co-ev}, MATSim is based on a co-evolutionary principle. While being in a competition for space-time slots on the transportation infrastructure with all the other agents, every agent iteratively optimizes its daily activity chain. This is done by running through the \index{MATSim loop} as depicted in Figure \ref{fig:matsimcycle}. 
 
+MATSim starts with an initial demand, which is composed of the study area population's daily activity chains. The modeled persons are called agents in MATSim. The activity chains are usually derived from empirical data. A variety of data is suitable as can be seen in the scenarios chapter. During the iterations this initial demand is optimized, where every agent possesses a memory of a fixed number of day plans, where each plan is composed of a daily activity chain and an associated utility value (in MATSim called \emph{plan score}).
 
-The development of the multi-agent transport simulation MATSim \citep[][]{MATSIM-T_Webpage_2014, BalmerEtAl_TRR_2006} has started approximately a decade ago as a collaborative effort of Prof. Nagel (now: TU Berlin) and Prof. Axhausen (ETH Zurich). It has its roots in in \citet[][]{Axhausen_PhDThesis_1988} and in the transport simulation TRANSIMS \citep[][]{RaneyEtAl_LNCS_2002}, which was developed by Prof. Nagel as research team leader at the Los Alamos National Laboratory. As shown on the web page \citep[][]{MATSIM-T-Scenarios_Webpage_2013} and detailed in Chapter \ref{ch:scenarios}, MATSim has been applied by local research groups world-wide for a dozen different regions.
+In every iteration, prior to the simulation of the network loading in the MATSim \gls{mobsim} \citep[e.g.,][]{Cetin_PhDThesis_2005} (\emph{execution}), every agent selects a plan from its memory. This selection is dependent on the plan utility. A certain share of the agents (usually around 10$\%$) is allowed to clone the selected plan and modify this clone (\emph{replanning}). For the method of successive averages (MSA) usually a decreasing share of travelers is reallocated to a new route to avoid oscillations. For MATSim, it has been shown that a variable replanning share can be productive as well and \emph{``increase overall performance of the system by a factor of three or more''} \citep[][p.7f]{CharyparEtAl_IATBR_2006}. For the network load microsimulation step multiple simulations are available and configurable \citep[][p.10f]{HorniEtAl_TechRep_IVT_2011_a}. 
 
-MATSim is an activity-based, extendable, multi-agent simulation toolkit implemented in JAVA. It is open-source and can be downloaded freely at \citep[][]{MATSIM-T_Webpage_2014, SourceForge_Webpage_2014}. The framework is especially designed for large-scale scenarios, meaning that, the features of all models are generally stripped down to efficiently handle the base functionality, where emphasis has been also been laid on parallelization. For the network loading simulation, for example, a queue-based model is implemented, leaving out the very complex car-following behavior.
+Plan modification is implemented in the \emph{replanning} modules. Four choice dimensions are considered for now: time choice \citep[][]{BalmerEtAl_Timmermans_2005}, route choice \citep[]{LefebvreBalmer_STRC_2007}, mode choice, and destination choice. Further choices such as activity adding or dropping or parking and group choices are currently researched. % Siehe Tabelle MATSim-Präsentationen Prof. Axhausen.
 
-MATSim is based on a co-evolutionary principle (Section \ref{sec:co-ev}. While being in a competition for space-time slots on the transportation infrastructure with all the other agents, every agent iteratively optimizes its daily activity chain. This is done by running through the MATSim loop as depicted on the left in Figure \ref{fig:matsimcycle}. 
+The initial day chains do not need to be designed overly careful for the choice dimensions that are included in the optimization process. Plausible values just speed-up the optimization process. 
 
-Every agent possesses a memory of a fixed number of day plans, where each plan is composed of a daily activity chain and an associated utility value (in MATSim called \emph{plan score}). For now, MATSim is conceptually designed to model a \emph{single day}, a common unit of analysis for activity-based models (see, for example, the review in \citet[][]{Bowman_TEC_2009_1}). In other words, basically, MATSim is a cross-sectional model. Nevertheless, in principle a longitudinal model could be implemented (Section \ref{sec:longitudinalscenario}).
+If an agent ends up with too many plans (configurable), the plan with the lowest score (configurable) is removed from the memory of this agent. The agents, which have not undergone replanning select between existing plans. The selection model is configurable; in many MATSim investigations, a model that generates a logit distribution for plan selection is used.
 
-In every iteration, prior to the simulation of the network loading \citep[e.g.,][]{Cetin_PhDThesis_2005} (\emph{execution}), every agent selects a plan from its memory. This selection is dependent on the plan utility. A certain share of the agents (often 10$\%$) is allowed to clone the selected plan and modify this clone (\emph{replanning}). For the method of successive averages (MSA) usually a decreasing share of travelers is reallocated to a new route to avoid oscillations. For MATSim, it has been shown that a variable replanning share can be productive as well and \emph{``increase overall performance of the system by a factor of three or more''} \citep[][p.7f]{CharyparEtAl_IATBR_2006}. For the network load microsimulation step multiple simulations are available and configurable \citep[][p.10f]{HorniEtAl_TechRep_IVT_2011_a}. 
+An iteration is completed by evaluating the agent's day described by the selected day plans (\emph{scoring}). The applied utility function is described in detail in Chapter \ref{ch:scoring}.
 
-Plan modification is implemented in the \emph{replanning} modules. Four choice dimensions are considered for now: time choice \citep[][]{BalmerEtAl_Timmermans_2005}, route choice \citep[]{LefebvreBalmer_STRC_2007}, mode choice, and destination choice. If an agent ends up with too many plans (configurable), the plan with the lowest score (configurable) is removed from the memory of this agent. The agents, which have not undergone replanning select between existing plans. The selection model is configurable; in many MATSim investigations, a model that generates a logit distribution for plan selection is used.
+The iterative process is repeated until the average population score stabilizes, where the definition of the stopping criterion is subject of ongoing research initialized by \citet[][]{Meister_PhDThesis_2011, NagelFloetteroed_IATBR_2009}. The typical score development curve (Figure~\ref{fig:scoreprogress}, taken from \citet[][]{HorniEtAl_TRR_2009}) has the form of the common evolutionary optimization progress \citep[][p.]{EibenSmithJE_2003}.
 
-\ah{A:Tabelle mit Dimensions of Schedule angeben. Siehe MATSim-Präsentationen Prof. Axhausen.}
+MATSim offers considerable customizability through its modular design approach. Although, replacing core modules, such as the network loading simulation is associated with a substantial effort \citep[][Section 2.4]{MATSim_Userguide_2014} in principle every module of the framework can be replaced. MATSim modules are described in Chapter \ref{ch:modules} and following.
 
-An iteration is completed by evaluating the agent's day described by the selected day plans (\emph{scoring}). The applied utility function is described below in Chapter \ref{ch:scoring}.
-
-Starting from an initial demand, the iterative process is repeated until the average population score stabilizes, where the definition of the stopping criterion is subject of ongoing research initialized by \citet[][]{Meister_PhDThesis_2011, NagelFloetteroed_IATBR_2009}.
-
-MATSim offers considerable customizability through its modular design approach. Although, replacing core modules, such as the network loading simulation is associated with a substantial effort \citep[][Section 2.4]{MATSim_Userguide_2014} in principle every module of the framework can be replaced. MATSim modules are detailed in Chapter \ref{ch:modules}.
+MATSim is heavily-based on events. Every action in the simulation generates an event. These events can be aggregated to evaluate any measure with the desired resolution. The event architecture is detailed in Section~\ref{sec:events}.
 
 % ------------
 \createfigure%
@@ -41,15 +41,46 @@ MATSim offers considerable customizability through its modular design approach. 
 {\label{fig:matsimcycle}}%
 {\includegraphics[width=0.99\textwidth, angle=0]{figures/matsimcycle.pdf}}%
 {}
-
 % ------------
-
-\ah{link the text structurally more to the cycle, like in the user guide!} 
+% ------------
+\createfigure%
+{Typical Score Progress}%
+{Typical Score Progress}%
+{\label{fig:scoreprogress}}%
+{\includegraphics[width=0.99\textwidth, angle=0]{using/figures/scores.pdf}}%
+{}
+% ------------
 
 % ##################################################################################################################
 \section{MATSim's Traffic Flow Model}
 \label{sec:trafficflowmodel}
-...
+MATSim provides 3 internal mobility simulations (called \emph{mobsims}): \emph{Qsim}, \emph{QueueSim} and \emph{JDEQSim}. Furthermore, external mobility simulations can be plugged in. Some years ago the DEQSim written in C++ and described by \citet[][]{Charypar_PhDThesis_2008, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009, CharyparEtAl_WCTRS_2007} was plugged into MATSim and frequently used. The multi-threaded qsim is the default mobsim \citep[][]{MATSim_Userguide_2014}. % commit 29999 michaz
+
+\citet[][]{CharyparEtAl_TRB_2009} distinguishes between 
+\begin{itemize}
+\item physical microsimulation models, featuring detailed car following models,
+\item cellular automata, in which roads are discretized in cells,
+\item queue-based simulations, where traffic dynamics are modeled with waiting queues,
+\item mesoscopic models, using aggregates to determine travel speeds, and
+\item macroscopic models, based on flows rather than single traveler units (e.g., cars).
+\end{itemize}
+
+As MATSim is designed for large-scale scenarios it adopts an efficient queue-based approach (see Figure \ref{fig:queue}). A car entering a network link (i.e., a road segment) is added to the tail of the waiting queue. It remains there until the time for traveling the link with free flow has passed and until he or she is the head of the waiting queue and until the next destination link allows entering. The approach is very efficient, but clearly it comes at the price of reduced resolution, i.e., car following effects are not captured.   
+
+For computational reasons the waiting-queue approach is combined with an event-based update step \citep[][]{CharyparEtAl_TRB_2009}. In other words, there is no time-step-based updating process of any agent in the scenario. Instead agents are only touched if they actually require an action. For example. during the time an agent needs to pass a link (i.e., he is waiting in the queue), he does not need to be processed. Triggering of update events is managed by a global scheduler.
+
+The MATSim traffic flow model, and as we will see also gridlock modeling, is heavily based on the two measures: storage capacity and flow capacity. Storage capacity defines the number of cars fitting onto a network link. It is a physical property and thus essentially fixed in the simulation. For sample scenarios, however, it needs to be scaled.
+
+Flow capacity gives the outflow capacity of a link, i.e., how many travelers can leave the respective link. It is an individual measure per link. In the earlier DEQSim and in the current JDEQSim the inflow capacity can be specified in addition to capture breakdowns at link inlets \citep[][p.99]{Charypar_PhDThesis_2008}. The many simulation experiments with qsim and queueSim have shown, that neglecting inflow capacity has not a substantial effect but further reduces model complexity. 
+
+This basic traffic flow model has been extended with various modules: signals and multiple lane modeling have been added (Chapter~\ref{ch:signalslanes}), backward-moving gaps as realized by \citep[][]{Charypar_PhDThesis_2008} are included in qsim. Interactions between different modes are described in Chapter~\ref{ch:multimodalsim}. Limitations of the traffic flow model concern link dynamics (in particular overtaking and slow drivers) and intersection dynamics (in particular turn restrictions not explicitly modeled in the network). 
+
+\createfigure%
+{Traffic Flow Model}%
+{Traffic Flow Model}%
+{\label{fig:queue}}%
+{\includegraphics[width=0.99\textwidth, angle=0]{using/figures/queue.pdf}}%
+{}
 
 
 % ##################################################################################################################
@@ -59,17 +90,12 @@ As illustrated in Figure \ref{fig:ea}, the MATSim equilibrium is searched by a a
 
 % ------------
 \createfigure%
-{Adopting a co-evolutionary algorithm in MATSim}%
-{Adopting a co-evolutionary algorithm in MATSim}%
+{Adopting a Co-Evolutionary Algorithm in MATSim}%
+{Adopting a Co-Evolutionary Algorithm in MATSim}%
 {\label{fig:ea}}%
-{\includegraphics[width=0.99\textwidth, angle=0]{figures/MATSimVSea.pdf}}%
+{\includegraphics[width=0.99\textwidth, angle=0]{using/figures/MATSimVSea.pdf}}%
 {}
 
 % ------------
-
-\ah{A little more co-ev theory. \\
-Also practical knowledge \\
-development of average score -> characteristic for co-ea \\
-}
 
 % ##################################################################################################################
