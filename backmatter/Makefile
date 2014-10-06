@@ -1,2 +1,10 @@
 default:
-	cd .. ; ${MAKE} $*
+	cd .. ; ${MAKE}
+
+clean:
+	cd .. ; ${MAKE} clean
+
+quick:
+	cd .. ; ${MAKE} quick
+
+

@@ -1,4 +1,4 @@
-.PHONY: pdf clean
+.PHONY: pdf clean quick
 
 NAME=main
 
@@ -9,6 +9,9 @@ pdf:
 	-bibtex ${NAME}
 	pdflatex -interaction=nonstopmode ${NAME}
 	pdflatex -interaction=nonstopmode ${NAME}
+
+quick:
+	pdflatex ${NAME}
 
 clean:
 	-rm *.aux *.log *.bbl *.blg *.lof *.lot *.out *.toc *.glg *.glo *.gls *.idx *.ilg *.ind *.ist 
