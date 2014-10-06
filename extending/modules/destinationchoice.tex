@@ -3,7 +3,7 @@
 % ##################################################################################################################
 \hfill \textbf{Author:} Andreas Horni
 
-\begin{center} \includegraphics[width=0.5\textwidth, angle=0]{figures/zhLeisure.pdf} \end{center}
+\begin{center} \includegraphics[width=0.5\textwidth, angle=0]{extending/figures/dc/zhLeisure.pdf} \end{center}
 
 % ##################################################################################################################
 \section{Basic Concept}
@@ -36,7 +36,7 @@ and by running the special controler \lstinline|DCControler| residing in the pac
 
 % ##################################################################################################################
 \section{Application of the Module}
-The destination choice module has been successfully applied for the Zürich scenario (Section \ref{sec:zhScenario})) as reported in \citet[][p.99]{Horni_PhDThesis_2013}, for the Tel Aviv model (see Section \ref{sec:telavivScenario}) and for the MATSim 2030 project (Section \ref{sec:matsim2030}). Figures \ref{fig:zhLEGO} and \ref{fig:countsLEGO} show that by means of scaling of the error terms distance distributions can be nicely fitted and that thereby the error in count data is decreased.
+The destination choice module has been successfully applied for the Zürich scenario (Section \ref{sec:scenario.zh})) as reported in \citet[][p.99]{Horni_PhDThesis_2013}, for the Tel Aviv model (see Section \ref{sec:scenario.telaviv}) and for the MATSim 2030 project. Figures \ref{fig:zhLEGO} and \ref{fig:countsLEGO} show that by means of scaling of the error terms distance distributions can be nicely fitted and that thereby the error in count data is decreased.
 
 \createfigure%
 {Error Term Runs for the Zurich scenario}%
@@ -45,12 +45,12 @@ The destination choice module has been successfully applied for the Zürich scena
 {%
   \createsubfigure%
   {Shopping trips}%
-	{\includegraphics[width=0.99\textwidth,angle=0]{figures/zhShopping.pdf}}%
+	{\includegraphics[width=0.99\textwidth,angle=0]{extending/figures/dc/zhShopping.pdf}}%
   {\label{fig:zhShopping}}%
   {}%
    \createsubfigure%
   {Leisure trips}%
-  {\includegraphics[width=0.99\textwidth,angle=0]{figures/zhLeisure.pdf}}%
+  {\includegraphics[width=0.99\textwidth,angle=0]{extending/figures/dc//zhLeisure.pdf}}%
   {\label{fig:zhLeisure}}%
   {}%
 }%
@@ -60,7 +60,7 @@ The destination choice module has been successfully applied for the Zürich scena
 {Daily traffic volumes for 123 links compared to traffic counts}%
 {Daily traffic volumes for 123 links compared to traffic counts. Per link $k$ the relative error is used, i.e, $(vol_{simulated,k}-vol_{counted,k}) / vol_{counted,k}$.}%
 {\label{fig:countsLEGO}}%
-{\includegraphics[width=0.8\textwidth, angle=0]{figures/zhCounts.pdf}}%
+{\includegraphics[width=0.8\textwidth, angle=0]{extending/figures/dc/zhCounts.pdf}}%
 {}
 
 % ##################################################################################################################
@@ -69,18 +69,18 @@ Key problems of integrating destination choice into MATSim span behavioral and a
 
 % --------------------------------------------------------------------
 \subsection{Quenched Randomness:}
-In random utility theory, decision makers are assumed to be rational utility maximizers, where the utility is dependent on the characteristics of the alternatives, the choice maker itself and the choice situation. Besides these deterministic components, unobserved heterogeneity must be added by random error terms, often denoted $\epsilon$. Due to these random error terms choices are quantified by probabilities dependent, for the logit model for example as $p_{pi} = \exp(V_{piq}) / \sum_j exp(V_{pjq})$, where $V_{piq}$ is person $p$'s systematic utility of alternative $i$ for activity $q$, which is divided by all remaining choice set's alternatives $j$. When drawing from the distribution specified by $p_{piq}$ for a population, the aggregate choices are reproduced. This is basically also true, when applied in iterative frameworks. However, iterative frameworks are usually associated with some kind of learning or relaxation mechanism. This mechanism is heavily distorted by repeatedly and randomly drawing from $p_{piq}$ in every iteration. In this case the $epsilon_{piq}$ fluctuate from iteration to iteration, which is disastrous for the algorithm's convergence and behaviorally implausible.
+In random utility theory, decision makers are assumed to be rational utility maximizers, where the utility is dependent on the characteristics of the alternatives, the choice maker itself and the choice situation. Besides these deterministic components, unobserved heterogeneity must be added by random error terms, often denoted $\epsilon$. Due to these random error terms choices are quantified by probabilities dependent, for the logit model for example as $p_{jli} = \exp(V_{jli}) / \sum_q exp(V_{jqi})$, where $V_{jli}$ is person $j$'s systematic utility of alternative $l$ for activity $i$, which is divided by all remaining choice set's alternatives $q$. When drawing from the distribution specified by $p_{jli}$ for a population, the aggregate choices are reproduced. This is basically also true, when applied in iterative frameworks. However, iterative frameworks are usually associated with some kind of learning or relaxation mechanism. This mechanism is heavily distorted by repeatedly and randomly drawing from $p_{jli}$ in every iteration. In this case the $epsilon_{jli}$ fluctuate from iteration to iteration, which is disastrous for the algorithm's convergence and behaviorally implausible.
 
-Instead, the random error terms $\epsilon_{pi}$ need to remain fixed from iteration to iteration. The optimization is then performed as a deterministic search based on the resulting utilities $U_{piq}$, i.e., an alternative $i$ for person $p$ and activity $q$ is selected as 
+Instead, the random error terms $\epsilon_{jl}$ need to remain fixed from iteration to iteration. The optimization is then performed as a deterministic search based on the resulting utilities $U_{jli}$, i.e., an alternative $l$ for person $j$ and activity $i$ is selected as 
 \[ 
-\underset{i \in choice\: set}{\operatorname{argmax}} U_{piq} \,.
+\underset{l \in choice\: set}{\operatorname{argmax}} U_{jli} \,.
 \] 
-This includes, via the systematic part $V_{piq}$, the disutility of traveling to destination $i$ for purpose~$q$.
+This includes, via the systematic part $V_{jli}$, the disutility of traveling to destination $l$ for activity~$i$.
 
 As stated above, the random error terms need to remain the same over the iterations. In physics, this approach would be called ``quenched'' randomness; all randomness is computed initially and then attached to particles or destinations, rather than instantaneously generating it, which would be called ``annealed'' randomness. Two natural approaches for implementing quenched randomness are as follows:
 \begin{itemize}
 \item[(a)] Freezing the applied \emph{global} sequence of random numbers, meaning that a Monte Carlo method with the same random seed is used before and after the introduction of a policy measure and over the course of iterations. Thus, the error terms should come out the same way \emph{before} and \emph{after} the introduction of the policy measure. Differences in the outcome can thus be directly attributed to the policy measure. 
-\item[(b)] Computing and storing a separate $\epsilon_{piq}$ for every combination of person $p$, alternative~$i$ and activity $q$.
+\item[(b)] Computing and storing a separate $\epsilon_{jli}$ for every combination of person $j$, alternative~$l$ and activity $i$.
 \end{itemize}
  
 Both strategies have flaws. Approach (a) is only an option if one is certain about every single aspect of the computational code. Importantly, one additional random number, drawn in one run but not in the other, completely destroys the ``quench'' for all decisions computed later in the program. Consistency is thus hard to achieve, especially in parallel or even distributed computing environments; according to personal communication a substantial machinery is necessary ensuring consistent choices. In a modular environment, as in MATSim, designed for external plugging-in of users' own modules---possibly drawing their own random numbers---the danger of destroying the quench is prohibitively high and thus approach (a) is impractical.
@@ -89,12 +89,12 @@ Approach (b) is certainly more robust. However, for large numbers of decision ma
 
 One may argue that this should not be a problem, since a normal person will rarely consider more than the order of a hundred alternatives in their choice set, reducing the computational problem. Aside from the necessity of storing every decision maker's choice set, this converts the computational problem into a conceptual one, since a good method to generate choice sets then needs to be found. With more conceptual progress, this may eventually be an option, but at this point, a conceptually simpler approach is preferred.
 
-The developed solution below is generally applicable in econometric microsimulators. The same \emph{stable} error term can be \emph{re-}calculated on the fly by using stable random seeds $s_{piq} = g(k_p, k_i, k_q)$, where are uniformly distributed random numbers associated with $p$, $i$, and $q$. That is, for each person $p$ a random number $k_p$ is generated and stored, and the same is done with each destination $i$. The value for the activity $q$ can be derived from its index in the plan possibly combined with the person's value $k_p$. This reduces the storage space dramatically from $\bar{nq} \times np \times ni$ to $\bar{nq}(np + ni)$, where $np$ is the number of persons or agents and $n_i$ is the number of destinations and $\bar{nq}$ is the average number of discretionary activities in an agent's plan. This means that storage space is reduced to approx. $2 \times 4 \times 10^{6} \hbox{Byte} = 8 \hbox{MByte}$, which can be easily stored even on any modern machine.
+The developed solution below is generally applicable in econometric microsimulators. The same \emph{stable} error term can be \emph{re-}calculated on the fly by using stable random seeds $s_{jli} = g(k_j, k_l, k_i)$, where are uniformly distributed random numbers associated with $j$, $l$, and $i$. That is, for each person $j$ a random number $k_j$ is generated and stored, and the same is done with each destination $l$. The value for the activity $i$ can be derived from its index in the plan possibly combined with the person's value $k_j$. This reduces the storage space dramatically from $\bar{ni} \times nj \times nl$ to $\bar{ni}(nj + nl)$, where $nj$ is the number of persons or agents and $n_l$ is the number of destinations and $\bar{ni}$ is the average number of discretionary activities in an agent's plan. This means that storage space is reduced to approx. $2 \times 4 \times 10^{6} \hbox{Byte} = 8 \hbox{MByte}$, which can be easily stored even on any modern machine.
 
 The distribution of these seeds is essentially irrelevant; any error term distribution can be generated from any basic seed distribution. 
-In the current version $g(k_p, k_i, k_q) = (k_p + k_i + k_q) \times v_{max}$ is used. $v_{max}$ is the maximum (long) number that can be handled by the specific machine.
+In the current version $g(k_j, k_l, k_i) = (k_j + k_l + k_i) \times v_{max}$ is used. $v_{max}$ is the maximum (long) number that can be handled by the specific machine.
 
-To evaluate utility for a person $p$ visiting the destination $i$ for activity $q$ a sequence of Gumbel-distributed random numbers $seq_{piq}$ is generated on the fly for every person-alternative-activity combination using the seed $s_{piq}$. Some random number generators have problems in the initial phase of drawing, e.g., the first couple of random numbers are correlated or do never cover the complete probability space. As in our procedure the random number generator is constantly re-initialized, for these technical reasons, the error term $\epsilon_{piq}$ is derived not from the first element but from the $m^{th}$ element of the sequence $seq_{piq}[m]$. Here, $m$ is set to 10. This procedure is valid as the set of all  $m^{th}$ elements of all different sequences is also a pseudo-random sequence following the same distribution as the sequences $seq_{piq}$; clearly, \emph{true} random number generators relying on physical phenomena, such as hardware temperature, are not applicable. 
+To evaluate utility for a person $j$ visiting the destination $l$ for activity $i$ a sequence of Gumbel-distributed random numbers $seq_{jli}$ is generated on the fly for every person-alternative-activity combination using the seed $s_{jli}$. Some random number generators have problems in the initial phase of drawing, e.g., the first couple of random numbers are correlated or do never cover the complete probability space. As in our procedure the random number generator is constantly re-initialized, for these technical reasons, the error term $\epsilon_{jli}$ is derived not from the first element but from the $m^{th}$ element of the sequence $seq_{jli}[m]$. Here, $m$ is set to 10. This procedure is valid as the set of all  $m^{th}$ elements of all different sequences is also a pseudo-random sequence following the same distribution as the sequences $seq_{jli}$; clearly, \emph{true} random number generators relying on physical phenomena, such as hardware temperature, are not applicable. 
 
 % ------------------------------------------
 \subsection{Search Space Construction and Evaluation:}
@@ -108,12 +108,12 @@ MATSim destination choice is based on best-response rather than random mutation,
 {%
   \createsubfigure%
   {Uncorrelated error terms}%
-  {\includegraphics[width=0.8\textwidth,angle=0]{figures/landscape1.pdf}}%
+  {\includegraphics[width=0.8\textwidth,angle=0]{extending/figures/dc/landscape1.pdf}}%
   {\label{fig:landscape0}}%
   {}%
   \createsubfigure%
   {Spatially correlated error terms}%
-	{\includegraphics[width=0.8\textwidth,angle=0]{figures/landscape0.pdf}}%
+	{\includegraphics[width=0.8\textwidth,angle=0]{extending/figures/dc/landscape0.pdf}}%
   {\label{fig:landscape1}}%
   {}%
 }%
