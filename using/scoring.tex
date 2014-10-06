@@ -9,52 +9,52 @@
 % ##################################################################################################################
 MATSim scoring is a central element of MATSim, nevertheless; the user can plug in any custom scoring function. 
 
-MATSim is based on utility-maximization. Thus, estimated discrete choice models can be applied in MATSim. However, due to MATSim's iterative structure and because it is based on complete day plans, the application of models for parts of day plans only (for example mode choice) is not straight forward as detailed in Section \ref{sec:estimation}.
+MATSim is based on utility-maximization. Thus, estimated discrete choice models can be applied in MATSim. However, due to MATSim's iterative structure and because it is based on complete day plans, the application of models for parts of day plans only (for example mode choice) is not straight forward as detailed in Section~\ref{sec:estimation}.
 
-Due to the absence of a complete-day-utility function, MATSim has been started with the so-called Charypar-Nagel utility function (Section \ref{sec:charyparnagel}) and extended for some purposes (Section \ref{sec:utfextensions}). An readily applicable estimation for a full-day utility function is not yet available. 
+Due to the absence of a complete-day-utility function, MATSim has been started with the so-called Charypar-Nagel utility function (Section~\ref{sec:charyparnagel}) and extended for some purposes (Section~\ref{sec:utfextensions}). An readily applicable estimation for a full-day utility function is not yet available. 
 
 % ##################################################################################################################
 \section{Basic Charypar-Nagel Utility Function}
 \label{sec:charyparnagel}
 The first and still basic MATSim utility function was formulated by \citet[][]{CharyparNagel_Transportation_2005} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far, indicated that the MATSim function is also appropriate for modeling the further choice dimensions. 
 
-For the basic function, the utility of a plan $U_{plan}$ is computed as the sum of all activity utilities $U_{act,q}$ plus the sum of all travel (dis)utilities $U_{trav,q}$:
+For the basic function, the utility of a plan $U_{plan}$ is computed as the sum of all activity utilities $U_{act,i}$ plus the sum of all travel (dis)utilities $U_{trav,i}$:
 %
 \begin{equation}
 \label{eq:matsimUTF}
-U_{plan}=\sum^n_{q=1} U_{act,q} + \sum^n_{q=2} U_{trav,q}
+U_{plan}=\sum^n_{i=1} U_{act,i} + \sum^n_{i=2} U_{trav,i}
 \end{equation}
-The utility of an activity $q$ is defined as follows (see also \citet[][p.377ff]{CharyparNagel_Transportation_2005}):
+The utility of an activity $i$ is defined as follows (see also \citet[][p.377ff]{CharyparNagel_Transportation_2005}):
 \begin{equation*}
-U_{act,q} = U_{dur,q} + U_{wait,q} + U_{late.ar,q} + U_{early.dp, q} + U_{short.dur, q},
+U_{act,i} = U_{dur,i} + U_{wait,i} + U_{late.ar,i} + U_{early.dp, i} + U_{short.dur, i},
 \end{equation*}
 where:
 \begin{itemize}
-\item $U_{dur,q}= \beta_{dur,q} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q})$ is the utility of performing activity $q$, where opening times of activity locations are taken into account. $t_{dur,q}$ is performed activity duration, $\beta_{dur,q}$ is marginal utility of activity duration for its typical duration $t_{typ,q}$ and $t_{0,q}$ is minimal duration, or in other words, the duration for which utility starts to be positive. 
+\item $U_{dur,i}= \beta_{dur,i} \cdot t_{typ,i} \cdot \ln(t_{dur,i}/t_{0,i})$ is the utility of performing activity $i$, where opening times of activity locations are taken into account. $t_{dur,i}$ is performed activity duration, $\beta_{dur,i}$ is marginal utility of activity duration for its typical duration $t_{typ,i}$ and $t_{0,i}$ is minimal duration, or in other words, the duration for which utility starts to be positive. 
 
-\item $ U_{wait,q} = \beta_{wait, q} \cdot t_{wait,q}$ 
+\item $ U_{wait,i} = \beta_{wait, i} \cdot t_{wait,i}$ 
 
-denotes the waiting time spent for example in front of a yet closet store, where $\beta_{wait,q}$ is marginal utility of waiting and $t_{wait,q}$ is the waiting time.
+denotes the waiting time spent for example in front of a yet closet store, where $\beta_{wait,i}$ is marginal utility of waiting and $t_{wait,i}$ is the waiting time.
 		
-\item $U_{late.ar,q}= \left\{
+\item $U_{late.ar,i}= \left\{
   \begin{array}{l l}
-    \beta_{late.ar,q} \cdot (t_{start,q} - t_{latest.ar,q}) & \quad \text{if $t_{start,q} > t_{latest.ar,q}$}\\
+    \beta_{late.ar,i} \cdot (t_{start,i} - t_{latest.ar,i}) & \quad \text{if $t_{start,i} > t_{latest.ar,i}$}\\
     0 & \quad \text{else}
   \end{array} \right.$
   
-  specifies the late arrival penalty, where $t_{start,q}$ is the starting time of activity $q$ and $t_{latest.ar}$ is the latest possible starting time of that activity for example given by opening times.
+  specifies the late arrival penalty, where $t_{start,i}$ is the starting time of activity $i$ and $t_{latest.ar}$ is the latest possible starting time of that activity for example given by opening times.
 
 \item $U_{early.dp} = \left\{
   \begin{array}{l l}
-    \beta_{early.dp,q} \cdot (t_{earliest.dp, q} - t_{end,q}) & \quad \text{if $t_{end,q} > t_{earliest.dp,q}$}\\
+    \beta_{early.dp,i} \cdot (t_{earliest.dp, i} - t_{end,i}) & \quad \text{if $t_{end,i} > t_{earliest.dp,i}$}\\
     0 & \quad \text{else}
   \end{array} \right.$
 
-defines the penalty for staying not long enough, where $t_{end,q}$ is the ending time of the activity and $t_{earliest.dp,q}$ is the earliest possible end time for activity $q$.
+defines the penalty for staying not long enough, where $t_{end,i}$ is the ending time of the activity and $t_{earliest.dp,i}$ is the earliest possible end time for activity $i$.
 
-\item $ U_{short.dur, q} = \left\{
+\item $ U_{short.dur, i} = \left\{
   \begin{array}{l l}
-    \beta_{short.dur,q} \cdot (t_{short.dur, q} - t_{dur,q}) & \quad \text{if $t_{dur,q} < t_{short.dur,q}$}\\
+    \beta_{short.dur,i} \cdot (t_{short.dur, i} - t_{dur,i}) & \quad \text{if $t_{dur,i} < t_{short.dur,i}$}\\
     0 & \quad \text{else}
   \end{array} \right.$
   
@@ -65,15 +65,15 @@ defines the penalty for staying not long enough, where $t_{end,q}$ is the ending
 Travel disutility is given as 
 \begin{equation}
 \label{eq:tdisutility}
-U_{trav, q} = \beta_{trav, q} \cdot t_{trav, q} \,
+U_{trav, i} = \beta_{trav, i} \cdot t_{trav, i} \,
 \end{equation} 
 where:
 \begin{itemize} 
-\item $\beta_{trav, q}$ is the marginal utility of travel by mode (normally negative or zero), and
-\item $t_{trav, q}$ gives the travel time between location of activity $q-1$ and $q$
+\item $\beta_{trav, i}$ is the marginal utility of travel by mode (normally negative or zero), and
+\item $t_{trav, i}$ gives the travel time between location of activity $i-1$ and $i$
 \end{itemize}
 
-Note that the distance contributes to disutility in two ways. First, it is included in a direct manner via $\beta_{d, mode,q}$, which is natural for modes with physical efforts such as walking or cycling. Second, distance is also included moneteraily via $\beta_m \cdot \gamma_{d, mode}$ which is natural for mode car or pt, where monetary costs increase dependent on distance.
+Note that the distance contributes to disutility in two ways. First, it is included in a direct manner via $\beta_{d, mode,i}$, which is natural for modes with physical efforts such as walking or cycling. Second, distance is also included monetarily via $\beta_c \cdot \gamma_{d, mode}$ which is natural for mode car or pt, where monetary costs increase dependent on distance.
 
 Further note that travel receives an additional implicit penalty from the opportunity cost of time: If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer. The marginal utility of travel time savings is thus:
 %
@@ -82,15 +82,15 @@ mUTTS = - \frac{\partial}{\partial t_{trav}} U_{trav} + \frac{\partial}{\partial
 \]
 which is 
 \[
-mUTTS = - \frac{\partial}{\partial t_{trav}} U_{trav} +  \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} 
+mUTTS = - \frac{\partial}{\partial t_{trav}} U_{trav} +  \beta_{dur} \cdot \frac{t_{typ,i}}{t_{dur,i}} 
 \]
 and at the typical duration of an activity
 \[
 mUTTS = \beta_{trav} + \beta_{dur}.
 \]
-The marginal utility of travel time savings at the typical duration can be transformed to the more common value of travel time savings by division with $\beta_{m}$:
+The marginal utility of travel time savings at the typical duration can be transformed to the more common value of travel time savings by division with $\beta_{c}$:
 \[
-VTTS = \frac{mUTTS}{\beta_{m}} = \frac{\beta_{trav} - \beta_{dur}}{\beta{m}}
+VTTS = \frac{mUTTS}{\beta_{c}} = \frac{\beta_{trav} - \beta_{dur}}{\beta{c}}
 \]
 This is important for calibration of the utility function.
 
@@ -112,14 +112,14 @@ Bernhard and Axhausen: Metaanalysis. Normwerk. Verlässlichkeit ...
 
 }
 \begin{itemize}
-\item $\beta_{dur,q}= 6\ EUR/h$,
-\item $\beta_{trav, mode, q}= -6\ EUR/h$,
-\item $U_{wait,q}=0\ EUR/h$,
-\item $\beta_{late.ar,q}=-18\ EUR/h$,
-\item $\beta_{early.dp,q}=-18\ EUR/h$.
+\item $\beta_{dur,i}= 6\ EUR/h$,
+\item $\beta_{trav, mode, i}= -6\ EUR/h$,
+\item $U_{wait,i}=0\ EUR/h$,
+\item $\beta_{late.ar,i}=-18\ EUR/h$,
+\item $\beta_{early.dp,i}=-18\ EUR/h$.
 \end{itemize}
 
-\ah{$\beta_{short.dur,q}$ is not defined on page 393.}
+\ah{$\beta_{short.dur,i}$ is not defined on page 393.}
 
 Extensions to this basic and default utility function are described in the next section. 
 
@@ -137,7 +137,7 @@ Generelle Struktur einbringen (template): \\
 
 % ======================================================================================================================
 \paragraph{Calibration Project Westumfahrung Zürich:}
-Project Westumfahrung \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009} used the Zürich scenario version 1 \citep[][]{HorniEtAl_TechRep_IVT_2011_a}. Only car traffic was simulated with $\beta_{perf,q}=6.0\ utils/h$ and $\beta_{trav,q}=-6.0\  utils/h$. No further penalties were applied. Typical activity durations were provided with the config with half-hour resolution and empirically founded on the Swiss microcensus.
+Project Westumfahrung \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009} used the Zürich scenario version 1 \citep[][]{HorniEtAl_TechRep_IVT_2011_a}. Only car traffic was simulated with $\beta_{perf,i}=6.0\ utils/h$ and $\beta_{trav,i}=-6.0\  utils/h$. No further penalties were applied. Typical activity durations were provided with the config with half-hour resolution and empirically founded on the Swiss microcensus.
 
 % ======================================================================================================================
 \paragraph{Estimation Kickhöfer:}
@@ -145,7 +145,7 @@ Project Westumfahrung \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009} used the Zürich
 
 % ======================================================================================================================
 \paragraph{Calibration Project Location-Based Services:}
-\citet[][]{BalmerEtAl_ResRep_datapuls_2010} was simulated on the Swiss scenario version 2 \citep[][]{HorniEtAl_TechRep_IVT_2011_a}. Innovations related to the utility function are agent-specific typical activity durations and facility-specific opening hours. Summation of activity duration for activities of the same duration (denoted as $U_{cum}$) was invented \citet[][p.9 and p.28]{BalmerEtAl_ResRep_datapuls_2010}. To prevent agents to invest all the time in a single activity a very high penalty for too short activities ($U_{short,q} = -180\ utils/h$) was applied. Facility-load as detailed below was included. The parameters \citep[][Table 2 on p.31]{BalmerEtAl_ResRep_datapuls_2010} of the multi-modal utility function including monetary costs was heavily based on the estimation of Kickhöfer \citep[][]{Kickhoefer_MastersThesis_2009}. Egress and access times to and from public transport stops was included, where public transport travel times were not simulated but estimated. Due to problems with spreading of many plans into the next day a penalty for too long day plans was applied.
+\citet[][]{BalmerEtAl_ResRep_datapuls_2010} was simulated on the Swiss scenario version 2 \citep[][]{HorniEtAl_TechRep_IVT_2011_a}. Innovations related to the utility function are agent-specific typical activity durations and facility-specific opening hours. Summation of activity duration for activities of the same duration (denoted as $U_{cum}$) was invented \citet[][p.9 and p.28]{BalmerEtAl_ResRep_datapuls_2010}. To prevent agents to invest all the time in a single activity a very high penalty for too short activities ($U_{short,i} = -180\ utils/h$) was applied. Facility-load as detailed below was included. The parameters \citep[][Table 2 on p.31]{BalmerEtAl_ResRep_datapuls_2010} of the multi-modal utility function including monetary costs was heavily based on the estimation of Kickhöfer \citep[][]{Kickhoefer_MastersThesis_2009}. Egress and access times to and from public transport stops was included, where public transport travel times were not simulated but estimated. Due to problems with spreading of many plans into the next day a penalty for too long day plans was applied.
 
 % ======================================================================================================================
 \paragraph{S-Shaped Function and Its Estimation:}
@@ -189,16 +189,16 @@ The influence of interaction in \emph{transport} infrastructure for people's rou
 
 In \citet[][]{HorniEtAl_TRR_2009}, based on the Zürich scenario, a singly-constrained model is presented that introduces competition for space-time slots on the activity infrastructure. The actual load is coupled with time-dependent capacity restraints for every activity location and incorporated explicitly into the agent's destination choice process as detailed below. 
 
-Activity location load, computed for time bins of 15 minutes, is derived from events that are delivered by the Mobsim. The load of one particular iteration combined with time-dependent activity location capacity restraints is considered in the agents' choice process of the succeeding iteration. In detail, this means that the utility function term $U_{dur,q}$, described above, is multiplied by $max(0; 1 - f_{load\ penalty})$ penalizing the agents dependent on the load of the location they frequented. $f_{load\ penalty}$ is a power function, as this has shown to be a good choice for modeling capacity restraints (remember that the well-known cost-flow function by \citet[][]{TA_manual_1964} is a power function). To introduce additional heterogeneity regarding the activity locations, an attractiveness factor $f_{attractiveness}$ is introduced that is defined to be logarithmically dependent on the store size given by the official census of workplaces.
+Activity location load, computed for time bins of 15 minutes, is derived from events that are delivered by the Mobsim. The load of one particular iteration combined with time-dependent activity location capacity restraints is considered in the agents' choice process of the succeeding iteration. In detail, this means that the utility function term $U_{dur,i}$, described above, is multiplied by $max(0; 1 - f_{load\ penalty})$ penalizing the agents dependent on the load of the location they frequented. $f_{load\ penalty}$ is a power function, as this has shown to be a good choice for modeling capacity restraints (remember that the well-known cost-flow function by \citet[][]{TA_manual_1964} is a power function). To introduce additional heterogeneity regarding the activity locations, an attractiveness factor $f_{attractiveness}$ is introduced that is defined to be logarithmically dependent on the store size given by the official census of workplaces.
 
 Likewise for demonstration purposes, capacity restraints are exclusively applied to shopping locations, where in principle leisure activity locations could be handled similarly. However, deriving capacity restraints for leisure activity locations is expected to be much more difficult than for shopping locations because data availability is much smaller for leisure locations and capacity restraints vary much more between different leisure locations than between different shopping activities (hiking versus going to the movies might be an illustrative example).
 
-The model allows the assignment of individual time-dependent capacities to the activity locations. For the sake of demonstration, the capacities of all shopping facilities are set equal, where the values are derived from the shopping trip information given in the National Travel Survey of 2005. The total daily capacity is set so that the activity locations located in the region of Zurich satisfy the total daily demand with a reserve of 50\%. In detail, the capacity restraint function for a location $i$ is as follows:
+The model allows the assignment of individual time-dependent capacities to the activity locations. For the sake of demonstration, the capacities of all shopping facilities are set equal, where the values are derived from the shopping trip information given in the National Travel Survey of 2005. The total daily capacity is set so that the activity locations located in the region of Zurich satisfy the total daily demand with a reserve of 50\%. In detail, the capacity restraint function for a location $l$ is as follows:
 
 \[
-f_{load\ penalty, i}=\alpha_i \cdot \Bigg(\frac{load_{i}}{capacity_{i}}\Bigg)^{\beta_i}
+f_{load\ penalty, l}=\alpha_l \cdot \Bigg(\frac{load_{l}}{capacity_{l}}\Bigg)^{\beta_l}
 \]
-with $\alpha_i=1/1.5^{\beta_i}$, $\beta_i=5$. $f_{load\ penalty, i}$ is the penalty factor for location $i$ as described above.
+with $\alpha_l=1/1.5^{\beta_i}$, $\beta_l=5$. $f_{load\ penalty, l}$ is the penalty factor for location $l$ as described above.
 
 The simultaneous computation of the score reduction for all agents avoids the last-record problem discussed in \citet[][]{VovshaEtAl_TRR_2002}. Therein, a sequential choice process is proposed where alternatives are removed from the choice set of the later travelers if the locations are already occupied by the earlier travelers. Thereby, the order of the travelers is specified arbitrarily and thus the last-record problem (the last travelers have to travel far to find an available location) is not negligible when modeling heterogeneous travelers. 
 
@@ -208,7 +208,7 @@ As expected, the constrained model improves results' quality by reducing the num
 \paragraph{Error Terms:}
 MATSim as a utility-maximizing model is strongly related to the discrete choice framework, meaning that this framework might guide the MATSim utility function specification. Utility in discrete choice models is composed of a deterministic part and a random error term. The random error term represents the unobserved heterogeneity, i.e., it subsumes, both, truly, i.e., inherently random decisions and the modeler's missing knowledge about the choice and its context. 
 
-In MATSim, the utility function for route, mode and time choice does not contain a random error term (yet). This can be regarded as a shortcoming of the model. However, this is at least partially compensated through the stochasticity of the replanning. First, route and time choices are usually subject to significant competition. The co-evolutionary algorithm of MATSim, detailed below, essentially assigns the resources in a random manner to the persons. For example, two identical persons may end up with different routes according to the order in which they undergo the replanning. Essentially, this means that a random term is present in the choice modeling. However, this randomness is introduced implicitly and not in a systematic manner. In other words, choice outcomes do not only depend on implemented choice model, but are also implicitly influenced by the implementation of the algorithm to find the solutions of the utility-maximization. This is difficult to interpret, and, furthermore, replanning did up to now not add enough unobserved heterogeneity to destination choice. Thus, an explicit random error term $\epsilon_{piq}$ for every person $p$, alternative $i$ and activity $q$, held stable over the iterations, is added to the destination choice utility function \citep[][]{Horni_PhDThesis_2013}. Research about the necessity of error terms for the remaining choice dimensions is required.
+In MATSim, the utility function for route, mode and time choice does not contain a random error term (yet). This can be regarded as a shortcoming of the model. However, this is at least partially compensated through the stochasticity of the replanning. First, route and time choices are usually subject to significant competition. The co-evolutionary algorithm of MATSim, detailed below, essentially assigns the resources in a random manner to the persons. For example, two identical persons may end up with different routes according to the order in which they undergo the replanning. Essentially, this means that a random term is present in the choice modeling. However, this randomness is introduced implicitly and not in a systematic manner. In other words, choice outcomes do not only depend on implemented choice model, but are also implicitly influenced by the implementation of the algorithm to find the solutions of the utility-maximization. This is difficult to interpret, and, furthermore, replanning did up to now not add enough unobserved heterogeneity to destination choice. Thus, an explicit random error term $\epsilon_{jli}$ for every person $j$, alternative $l$ and activity $i$, held stable over the iterations, is added to the destination choice utility function \citep[][]{Horni_PhDThesis_2013}. Research about the necessity of error terms for the remaining choice dimensions is required.
 
 % ======================================================================================================================
 \paragraph{Agent-Specific Preferences:}
@@ -231,19 +231,19 @@ The current MATSim utility function is still the one given by Equation \ref{eq:m
 %
 \begin{equation*}
 \label{eq:utfextended}
-U_{trav, mode, q} = C_{mode} + \beta_{trav, mode, q} \cdot t_{trav, q} + \beta_{m} \cdot m  + (\beta_{d, mode, q} + \beta_{m} \gamma_{d, mode}) \cdot d_{trav,q} + V_{transfer,q} \,
+U_{trav, mode, i} = C_{mode} + \beta_{trav, mode, i} \cdot t_{trav, i} + \beta_{c} \cdot c  + (\beta_{d, mode, i} + \beta_{c} \gamma_{d, mode}) \cdot d_{trav,i} + V_{transfer,i} \,
 \end{equation*} 
 where:
 \begin{itemize} 
 \item $C_{mode}$ is a mode-specific constant,
-\item $\beta_{trav, mode, q}$ is the marginal utility of travel by mode (normally negative or zero),
-\item $t_{trav, q}$ gives the travel time between location of activity $q-1$ and $q$
-\item $\beta_{m}$ is the marginal utility of money (normally positive),
-\item $m$ are the monetary costs of the complete leg such as tolls or fares (normally negative),
+\item $\beta_{trav, mode, i}$ is the marginal utility of travel by mode (normally negative or zero),
+\item $t_{trav, i}$ gives the travel time between location of activity $q-1$ and $q$
+\item $\beta_{c}$ is the marginal utility of money (normally positive),
+\item $c$ are the monetary costs of the complete leg such as tolls or fares (normally negative),
 \item $\beta_{d, mode}$ is the  marginal utility of distance (normally negative),
 \item $\gamma_{d, mode}$ is the mode-specific distance cost rate (normally negative),
-\item $d_{trav, q}$ is the distance traveled, and,
-\item $V_{transfer, mode, q}$ are transfer penalties in public transport (normally negative). 
+\item $d_{trav, i}$ is the distance traveled, and,
+\item $V_{transfer, mode, i}$ are transfer penalties in public transport (normally negative). 
 \end{itemize}
 
 \ah{Gesamtanalyse und Vergleiche aller Beiträge hier angeben.}
