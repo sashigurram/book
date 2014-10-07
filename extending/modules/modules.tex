@@ -240,6 +240,8 @@ A special replanning module using a different logic than undirected trial-and-er
 % ##################################################################################################################
 \section{Supply-Side Modules}
 
+Signals and Lanes in Chapter~\ref{ch:signalslanes}.
+
 % ===================================================================================
 \subsection{Network}
 Parameters to the network module (\lstinline|package org.matsim.core.network|) are specified in the \lstinline|network| configuration file section. It is possible to make network attributes time-dependent, as observed in reality in case of accidents or adaptive traffic control, with varying speed limits or driving directions of lanes on multi-lane roads with heavily unbalanced load over the course of a day. Attributes that can be adapted are free speed, number of lanes and flow capacity. 
@@ -288,34 +290,6 @@ As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario 
 % ===================================================================================
 \subsection{Facilities}
 Facilities (\lstinline|package org.matsim.core.facilities|) are a non-mandatory element of MATSim scenarios. They identify activity locations and can hold opening hour and capacity information. facilities are mostly used in the MATSim Zürich group, in particular in the Zürich scenario, where facilities are derived from the Federal Enterprise Census 2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information and using NOGA-classification. Detailed technical description of facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008, Meister_unpub_IVT_2007}. Facilities are configured in the \lstinline|facilities| configuration file section. 
-
-% ===================================================================================
-\subsection{Signals \who{Theresa?}}
-Module in the config: 
-\begin{itemize}
-	\item \lstinline|signalsystems|
-\end{itemize}
-
-Package:
-\begin{itemize}
-	\item \lstinline|org.matsim.signalsystems|
-\end{itemize}
-
-http://matsim.org/node/732
-
-Literature: \citet[][]{GretherEtAl_ABMTRANS_2012, Grether_PhDThesis_2014, Neumann_MastersThesis_2008}
-Auch Miss Ou-Paper ansehen: Optimierung von Lichtsignalen
-
-\citet[][p.?]{BalmerEtAl_ResRep_bdktzrh_2009}
-
-
-Information about signal light timing are available for the city of Zurich  \citep{STAPOZH-DAV_unpub_gtZH_2008} (\ref{ptl:zhCity}). Modeling of traffic lights was implemented for the project \emph{Westumfahrung} trough reducing the available link capacity. However, the used \emph{mobsim} (DEQSim) is deprecated (see Section \ref{sec:deqsim}).
-
-Research and implementation efforts are undertaken to include individual traffic lights in other \emph{mobsims} (see e.g., (\ref{tl:docu}) and \citet[][]{Neumann_MastersThesis_2008}).
-
-% ===================================================================================
-\subsection{Lanes \who{Theresa?}}
-The lanes package has been implemented in conjunction with signal systems. Lanes are enabled in the \lstinline|scenario| configuration file section. The lanes package (\lstinline| org.matsim.lanes|) provides readers, where the class \lstinline|ModelLane| serves as the interface between the lane functionality and the mobility simulation. The lane definitions file needs to be specified in the \lstinline|network| configuration file section.
 
 % ===================================================================================
 
@@ -445,12 +419,8 @@ The parameters related to scoring described in Chapter \ref{ch:scoring}, can be 
 % ===================================================================================
 
 % ##################################################################################################################
-\section{Special Purpose Modules and Tools}
-Parking is presented in Chapter \ref{ch:parking}. The network editors developed in Berlin and Singapore are detailed in Chapter \ref{ch:networkeditor}. The adoption of business analytics tools in MATSim is described in Chapter \ref{ch:businessanalytics}. Emisssions chapter \ref{ch:emissions}.
-
-% ===================================================================================
-\subsection{Parallel Computing}
-As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in MATSim simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. Clearly, number of threads should correspond with available processor cores.
+\section{Special Purpose Modules and Tools and Functionalities}
+Parking is presented in Chapter \ref{ch:parking}. The network editors developed in Berlin and Singapore are detailed in Chapter \ref{ch:networkeditor}. The adoption of business analytics tools in MATSim is described in Chapter \ref{ch:businessanalytics}. Emisssions chapter \ref{ch:emissions}. Accessibility in Chapter \ref{ch:accessibility}. WagonSim in Chapter~\ref{ch:wagonSim}.
 
 % ===================================================================================
 \subsection{Travel Time Calculator}
@@ -459,27 +429,6 @@ The routing module, as an example, needs travel time estimations for all links o
 % ===================================================================================
 \subsection{Link Stats}
 The configuration file section \lstinline|linkStats| allows to specify the output interval of simulation statistics of individual links. They are amongst other, used for the comparison with count values. It is configurable, if the simulated volumes should be written per iteration or averaged over multiple iterations.
-
-% ===================================================================================
-\subsection{Wagon Simulation}
-The wagonSim contribution (\lstinline|package org.matsim.contrib.wagonSim|) ...
-
-Balmi: ``The wagonSim contribution is based on specialized input data. First it converts the input data into MATSim formats (scenario data). Second it allows one to manually adapt the scenario for different parameterization of train stops, shunting stations, minimum shunting times and dwell times of trains at stops. And third it sets up the configuration of the route optimization and runs the MATSim optimization cycle.''
-
-train freight traffic (auch public transport??)
-
-wagon -> agent
-
-
-conversions: \lstinline|org.matsim.contrib.wagonSim.run.OttToMATSimScheduleConverterMain|
-\lstinline|org.matsim.contrib.wagonSim.run.MATSimScheduleEnricherMain|
-\lstinline|org.matsim.contrib.wagonSim.run.WagonToDemandConverterMain|
-
-http://matsim.org/docs/extensions/wagonSim
-
-run as jar: \lstinline|org.matsim.contrib.wagonSim.run.WagonSimController|
-
-projects/papers?
 
 % ===================================================================================
 \subsection{Roadpricing}
@@ -496,25 +445,22 @@ Literature: \citet[][]{RieserEtAl_TechRep_VSP_2007, Rieser_unpub_IVT_2008, Greth
 \subsection{Optimal Pricing \who{Kaddoura}}
 
 % ===================================================================================
-\subsection{Accessibility \who{Ziemke}}
--> Vortrag Wiepersdorf
-Modules in the config: 
-\begin{itemize}
-	\item \lstinline|accessibility|
-\end{itemize}
+\subsection{Parallel Computing}
+As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in MATSim simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. Clearly, number of threads should correspond with available processor cores.
 
-Package: 
-\begin{itemize}
-	\item \lstinline|org.matsim.contrib.emissions|
-\end{itemize}
 
-Usage: Contrib via config
+Wie geschieht das Coupling C++/Java. D.h., wie wendet man das Ding an.
 
-http://www.matsim.org/accessibility
+-> auch Doblers Arbeiten!
+Rashid?
 
-% http://ci.matsim.org:8080/job/MATSim_contrib_M2/org.matsim.contrib$accessibility/javadoc/?
 
-hängt auch noch mit MATSim4Urbansim zusammen: %http://www.google.ch/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0CB4QFjAA&url=http%3A%2F%2Fmatsim.org%2Fuploads%2FMATSim4UrbanSim.pdf&ei=XAjJU7-VE6Gr0QWx14DADA&usg=AFQjCNGdMwxY-q9VuXOC6oFwIyW7LVKTBg&sig2=74HJB3wmajqkYWEDYHg2Ng&bvm=bv.71198958,d.d2k&cad=rja
+wird immer wichtiger falls Var substantiell. 
+
+% ---
+Marcel: Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.)
+Sweetspot
+Achtung: Roundrobin-Threating
 
 % ===================================================================================
 \subsection{Landuse}
@@ -554,6 +500,24 @@ Usage: Contrib via config
 
 Literature: \citet[][]{FloetteroedEtAl_TechRep_TRANSPOR_2008}
 
+% ===================================================================================
+\subsection{Extension of Simulation Horizon}
+\label{sec:longitudinalscenario}
+\who{Horni Surprice, Max/Fabian, Ordonez}
+Longitudinal Scenario \who{Märki}
+
+\citep[e.g.,][]{HorniEtAl_TechRep_IVT_2012_a}.
 
 % ===================================================================================
+\subsection{Termination Criterion}
+\who{Horni, ..., Dobler, Meister}
+
+% ===================================================================================
+\subsection{Warmstart}
+\label{sec:warmstart}
+\who{Horni Surpice, Dobler}
+
+% ===================================================================================
+
+
 % ##################################################################################################################
