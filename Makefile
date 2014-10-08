@@ -3,12 +3,12 @@
 NAME=main
 
 pdf:
-	pdflatex -interaction=nonstopmode ${NAME}
+	-pdflatex -interaction=nonstopmode ${NAME}
 	makeglossaries ${NAME}
 	makeindex ${NAME}
 	-bibtex ${NAME}
-	pdflatex -interaction=nonstopmode ${NAME}
-	pdflatex -interaction=nonstopmode ${NAME}
+	-pdflatex -interaction=nonstopmode ${NAME}
+	-pdflatex -interaction=nonstopmode ${NAME}
 
 quick:
 	pdflatex ${NAME}
