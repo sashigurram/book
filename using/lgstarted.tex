@@ -3,49 +3,97 @@
 % ##################################################################################################################
 \hfill \textbf{Author:} Andreas Horni, ... 
 
-\begin{center} \includegraphics[width=0.7\textwidth, angle=0]{figures/matsimcycle.pdf} \end{center}
+\begin{center} \includegraphics[width=0.7\textwidth, angle=0]{using/figures/config.png} \end{center}
 
 % ##################################################################################################################
-This chapter explains how to set up and run MATSim and it describes the requirements of building a basic scenario. Getting the source code into different computing environments and extending MATSim through the API is described in the second part of the book in Chapter~\ref{ch:extensionpoints}.
+This chapter explains how to set up and run MATSim and it describes the requirements of building a basic scenario. As this book tries to be as stable and timeless as possible, the MATSim user guide \citep[][]{MATSim_Userguide_2014} needs to be consulted in addition to this chapter for doing an actual installation; frequently changing and detailed information such as download paths or version-dependent configurations are omitted here and left to the user guide. 
+
+Getting the source code into different computing environments and extending MATSim through the API is described in the second part of the book in Chapter~\ref{ch:extensionpoints}.
 
 % ##################################################################################################################
-\section{Setting Up MATSim}
-Java SE 7 must be installed. The latest version of the Java Runtime Environment (JRE) can be downloaded from http://java.oracle.com. 
+\section{Running MATSim}
+\label{sec:runningmatsim}
+% ================================================================================================
+\subsection{Setting Up MATSim}
+To run MATSim you have to install the Java Platform Standard Edition (SE) that complies with the MATSim version to be run. At the time of writing this book, this is JAVA SE 7.
 
+Furthermore you need the official MATSim release, which comes as a zip file (usually named with the version number \lstinline|matsim-yy.yy.yy.zip|) including everything that is required to run it. It can be downloaded following the links on the MATSim web page. Unzip it and continue with Section~\ref{sec:runexample}.
 
-% ##################################################################################################################
-\section{Running a MATSim Example Scenario}
-MATSim does not provide a graphical user interface
+If you prefer to use the more up to date nightly builds, you need to manually download the matsim jar file (usually named with the revision number \lstinline|MATSim_ryyyy.jar|) and the required external libraries (\lstinline|MATSim_libs.zip|). Unzipping this collection of 3rd-party libraries, you should then get a directory \lstinline|libs| with several jar-files inside. If the directory \lstinline|libs| is in the same directory as the MATSim jar-file, the libraries are found automatically and must not be added to the \lstinline|classpath| manually.
 
-command line
+% ================================================================================================
+\subsection{Running MATSim}
+\label{sec:runexample}
+MATSim does not provide a graphical user interface, thus, you need to be able to handle and access a command line tool. In Linux or Mac OS X, this is typically a Terminal application, and in Windows, the Power Shell or Command Prompt.
 
-config file and jar.
+On the command prompt type the following command as one line, but substitute the correct paths: 
 
-\ah{A: link to config file etc.}
+\lstinline|java -Xmx512m -cp /path/to/matsim.jar org.matsim.run.Controler /path/to/config.xml|
 
+As an example, on Linux this could look like: \\
+\lstinline|java -Xmx512m -cp /home/username/matsim/matsim.jar org.matsim.run.Controler /home/user/matsim/input/config.xml|
 
-Run controler -> ref also tutorial
-% http://ci.matsim.org:8080/job/MATSim_M2/javadoc/org/matsim/core/controler/package-summary.html#controler_parameters
+On Mac OS X, it could look like this: \\
+\lstinline|java -Xmx512m -cp /Users/username/matsim/matsim.jar org.matsim.run.Controler /Users/user/matsim/input/config.xml|
 
+On Windows, an example command could be: \\
+\lstinline|java -Xmx512m -cp C:\MATSim\matsim.jar org.matsim.run.Controler C:\MATSim\input\config.xml|
 
-Standard Use Cases
+Such a command exists of multiple parts:
+\begin{itemize}
+\item \lstinline|java| tells the system that you want to run Java.
+\item \lstinline|-Xmx512m| tells Java that it should use up to 512 MB of memory. This is typically enough to run the small examples. For larger scenarios, you might need more memory, e.g., \lstinline|-Xmx3g| would allow Java to use up to 3 GB of memory.
+\item \lstinline|-cp /path/to/matsim.jar| tells Java where to find the MATSim code.
+\item \lstinline|org.matsim.run.Controler| specifies which class (think of an ``entry point'') should be run. In most cases, the default MATSim Controler is the class you'll need to run simulations.
+\item \lstinline|/path/to/config.xml| tells MATSim which config file is to be used.
+\end{itemize}
 
-% ##################################################################################################################
-\section{Configuring MATSim}
+% ================================================================================================
+\subsection{Configuring MATSim}
+Configuring MATSim is (at this stage) only done via the configuration file, often just referred to as \lstinline|config file| or as \lstinline|config.xml|. It builds the connection between the user and MATSim. It contains a list of settings which influence how the simulation behaves. In the second part of the book we will learn how MATSim can be configured and extended by programming against its API.
 
-% ##################################################################################################################
-\section{Modules and External Tools}
-externals tools (Via)
+All configuration parameters are simple pairs of a parameter \lstinline|name| and a parameter \lstinline|value|. The parameters are grouped into logical groups. For example, there is a group with settings related to the Controler like the number of iterations, or there is another group with settings related to the simulation, e.g. the end time of the simulation. As shown in Chapter~\ref{ch:modules}, a whole bunch of MATSim modules can be added to MATSim and configured by specifying the respective section of the configuration file.
 
-link modules chapter and say that:
-Some modules are core modules and are set by default (such as the plans module), other modules can be plugged via the config file, and still others need to be additionally added via a listener in the MATSim controler. \ah{dahin referenzieren, wo dies erklärt wird.}
+A minimal configuration file is shown below, specifying the minimal information, MATSim needs about demand and supply and about the run configuration. In the example, supply is given by the network, demand is given in the plans file (typical input data produced is described in Section \ref{sec:inputdata}), and the controler is run for 10 iterations with the given output directory (typical output data produced is described in Section \ref{sec:outputdata}).
 
-\ah{A:Standards versus Extensions/contributions nochmals klar herausarbeiten.}
+\begin{lstlisting}
+<?xml version="1.0" ?> 
+<!DOCTYPE config SYSTEM "http://www.matsim.org/files/dtd/config_v1.dtd"> 
+<config> 
+ 
+   <module name="network"> 
+      <param name="inputNetworkFile" value="example/network.xml" /> 
+   </module> 
+ 
+   <module name="plans"> 
+      <param name="inputPlansFile" value="example/population.xml.gz" /> 
+   </module> 
+ 
+   <module name="controler"> 
+      <param name="outputDirectory" value="./output/" /> 
+      <param name="firstIteration" value="0" /> 
+      <param name="lastIteration" value="10" /> 
+   </module> 
+ 
+</config>
+\end{lstlisting}
 
+The list of available parameters and valid parameter values may vary from release to release. Although we try to keep this stable, due to changes in the software, most notably by new features, settings may change. To get a list of all available settings currently available, run the following command: \lstinline|java -cp matsim.jar org.matsim.run.CreateFullConfig fullConfig.xml|.
+
+This command will create a new config file \lstinline|fullConfig.xml|, which contains the full list of available parameters along with their default values. This makes it easy to see what settings are available. To use and modify certain settings, the lines with the corresponding parameters can be copied to the config file specific for the scenario to be simulated and the parameter values be modified in that file. 
 
 % ##################################################################################################################
 \section{Building a Basic Scenario}
 \label{sec:buildingbasicscenario}
+% ===============================================================================================
+\subsection{An Example Scenario}
+equil in release!
+
+% ===============================================================================================
+\subsection{Typical Input Data}
+\label{sec:inputdata}
+
+
 % ===============================================================================================
 \subsection{Setting-Up a Scenario \& Data Requirements}
 The syntactic details are described by \citet[][Section 5]{MATSim_Userguide_2014}. Here, possible sources and ways to generate the required elements are mentioned. Clearly, modeling the transport system of a certain region or area requires specification of demand and supply side. 
@@ -121,3 +169,9 @@ Having said that, validation of a large-scale transport simulation is very diffi
 % ----------
 
 \ah{Noch mehr auf MATSim calibration, verification and validation eingehen.}
+
+% ===============================================================================================
+\subsection{Typical Output Data}
+\label{sec:outputdata}
+
+% ##################################################################################################################
