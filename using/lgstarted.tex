@@ -1,7 +1,7 @@
 \chapter{Let's Get Started}
 \label{ch:lgstarted}
 % ##################################################################################################################
-\hfill \textbf{Author:} Andreas Horni, ... 
+\hfill \textbf{Author:} Andreas Horni, Marcel Rieser?, ...
 
 \begin{center} \includegraphics[width=0.7\textwidth, angle=0]{using/figures/config.png} \end{center}
 
@@ -40,13 +40,13 @@ On Windows, an example command could be: \\
 \lstinline|java -Xmx512m -cp C:\MATSim\matsim.jar org.matsim.run.Controler C:\MATSim\input\config.xml|
 
 Such a command exists of multiple parts:
-\begin{itemize}
+\begin{compactitem}
 \item \lstinline|java| tells the system that you want to run Java.
 \item \lstinline|-Xmx512m| tells Java that it should use up to 512 MB of memory. This is typically enough to run the small examples. For larger scenarios, you might need more memory, e.g., \lstinline|-Xmx3g| would allow Java to use up to 3 GB of memory.
 \item \lstinline|-cp /path/to/matsim.jar| tells Java where to find the MATSim code.
 \item \lstinline|org.matsim.run.Controler| specifies which class (think of an ``entry point'') should be run. In most cases, the default MATSim Controler is the class you'll need to run simulations.
 \item \lstinline|/path/to/config.xml| tells MATSim which config file is to be used.
-\end{itemize}
+\end{compactitem}
 
 % ================================================================================================
 \subsection{Configuring MATSim}
@@ -54,7 +54,11 @@ Configuring MATSim is (at this stage) only done via the configuration file, ofte
 
 All configuration parameters are simple pairs of a parameter \lstinline|name| and a parameter \lstinline|value|. The parameters are grouped into logical groups. For example, there is a group with settings related to the Controler like the number of iterations, or there is another group with settings related to the simulation, e.g. the end time of the simulation. As shown in Chapter~\ref{ch:modules}, a whole bunch of MATSim modules can be added to MATSim and configured by specifying the respective section of the configuration file.
 
-A minimal configuration file is shown below, specifying the minimal information, MATSim needs about demand and supply and about the run configuration. In the example, supply is given by the network, demand is given in the plans file (typical input data produced is described in Section \ref{sec:inputdata}), and the controler is run for 10 iterations with the given output directory (typical output data produced is described in Section \ref{sec:outputdata}).
+The list of available parameters and valid parameter values may vary from release to release. Although we try to keep this stable, due to changes in the software, most notably by new features, settings may change. To get a list of all available settings currently available, run the following command: \lstinline|java -cp matsim.jar org.matsim.run.CreateFullConfig fullConfig.xml|.
+
+This command will create a new config file \lstinline|fullConfig.xml|, which contains the full list of available parameters along with their default values. This makes it easy to see what settings are available. To use and modify certain settings, the lines with the corresponding parameters can be copied to the config file specific for the scenario to be simulated and the parameter values be modified in that file. 
+
+A minimal configuration file is shown below, specifying the minimal information, MATSim needs about demand and supply. In the example, supply is given by the network and demand is given in the plans file (typical input data produced is described in Section \ref{sec:inputdata}). Please note, that MATSim does nothing else for this case than running the mobility simualtion, i.e., no replanning of the demand is performed.
 
 \begin{lstlisting}
 <?xml version="1.0" ?> 
@@ -68,41 +72,96 @@ A minimal configuration file is shown below, specifying the minimal information,
    <module name="plans"> 
       <param name="inputPlansFile" value="example/population.xml.gz" /> 
    </module> 
- 
-   <module name="controler"> 
-      <param name="outputDirectory" value="./output/" /> 
-      <param name="firstIteration" value="0" /> 
-      <param name="lastIteration" value="10" /> 
-   </module> 
- 
 </config>
 \end{lstlisting}
 
-The list of available parameters and valid parameter values may vary from release to release. Although we try to keep this stable, due to changes in the software, most notably by new features, settings may change. To get a list of all available settings currently available, run the following command: \lstinline|java -cp matsim.jar org.matsim.run.CreateFullConfig fullConfig.xml|.
-
-This command will create a new config file \lstinline|fullConfig.xml|, which contains the full list of available parameters along with their default values. This makes it easy to see what settings are available. To use and modify certain settings, the lines with the corresponding parameters can be copied to the config file specific for the scenario to be simulated and the parameter values be modified in that file. 
-
 % ##################################################################################################################
-\section{Building a Basic Scenario}
+\section{Building and Running a Basic Scenario}
 \label{sec:buildingbasicscenario}
 % ===============================================================================================
-\subsection{An Example Scenario}
-equil in release!
+This section provides information on the typical input data files used for a MATSim experiment, and the standard output files generated. It presents a parsimonious example scenario and shortly explains units and conventions used in MATSim. Finally some hints on practical data requirements and how to perform calibration, verification and validation are given.
 
 % ===============================================================================================
 \subsection{Typical Input Data}
 \label{sec:inputdata}
+Minimally MATSim needs the files
+\begin{compactitem}
+	\item \lstinline|config.xml|, containing the configuration options for MATSim and presented above,
+	\item \lstinline|network.xml|, with the description of the (road) network, and
+	\item \lstinline|population.xml|, providing information about	the travel demand, i.e., the list of agents and their day plans.
+\end{compactitem}
+%
+With this setting, MATSim agents perform their activities on a specific link. If further information about activity locations needs to be specified, this can be done in 
+\begin{compactitem}
+\item \lstinline|facilities.xml|. 
+\end{compactitem}
+%
+If MATSim facilities are used, the agents perform their activities in a specific facility attached to a network link.
+
+In the beginning of MATSim only car mode could be simulated. With the addition of the public transport module (Chapter~\ref{ch:pt}), with the help of two further input files public transport can just as well be simulated. 
+
+\begin{compactitem}
+\item \lstinline|transitSchedule.xml| containing information about transit stop locations and transit services,
+\item \lstinline|transitVehicles.xml| providing the description of the vehicles used for public transport services. 
+\end{compactitem}
+%
+For the handling of other modes please refer to Chapter~\ref{ch:multimodalsim}.
+
+Count data are the common evaluation measure in transport planning. In MATSim count data can be integrated with the file
+\begin{compactitem}
+\item \lstinline|counts.xml| containing hourly volumes from real-world counting stations.
+\end{compactitem}
+
+In more detail the input files look as follows. Note that the configuration file is presented above.
+
+% -----------------------------------------------------------------------
+\subsubsection{network.xml}
+% -----------------------------------------------------------------------
+\subsubsection{population.xml}
+% -----------------------------------------------------------------------
+\subsubsection{facilities.xml}
+% -----------------------------------------------------------------------
+\subsubsection{transitSchedule.xml}
+% -----------------------------------------------------------------------
+\subsubsection{transitVehicles.xml}
+% -----------------------------------------------------------------------
+\subsubsection{counts.xml}
+
+% ===============================================================================================
+\subsection{Typical Output Data}
+\label{sec:outputdata}
+
+% ----------
+\createfigure%
+{Example for a Link Volumes Comparison Between Simulation and Road Count Values}%
+{Example for a Link Volumes Comparison Between Simulation and Road Count Values}%
+{\label{fig:countcomparison}}%
+{\includegraphics[width=0.8\textwidth, angle=0]{figures/link101227.png}}%
+{}
+% ----------
 
 
 % ===============================================================================================
-\subsection{Setting-Up a Scenario \& Data Requirements}
-The syntactic details are described by \citet[][Section 5]{MATSim_Userguide_2014}. Here, possible sources and ways to generate the required elements are mentioned. Clearly, modeling the transport system of a certain region or area requires specification of demand and supply side. 
+\subsection{An Example Scenario}
+The MATSim release is shipped with an example scenario named \lstinline|equil| in the folder \lstinline|examples/equil|. The scenario contains the 
 
+Picture of network with via.
+
+minimal configuration ...
+
++ replannign settings
+
+% ===============================================================================================
+\subsection{Units and Conventions Used}
+
+
+% ===============================================================================================
+\subsection{Data Requirements}
 % ----------------------------------------------------------------------------
 \subsubsection{Demand}
 Demand estimation is the main purpose of MATSim. That means---that in theory---only these demand components have to be provided to MATSim, which in reality do \emph{not} change during the simulated average working day. Examples are the population and its residential and working locations. In practice, however, MATSim is not quite there yet to endogenously model the complete travel demand. The sequence and preferred durations of activities for example have to be provided as input. In consequence all travel demand choices, which are not covered by the MATSim cycle, have to be endogenously estimated. 
 
-For population generation, basically two possibilities exist. The comfortable way is to translate full population census and the slightly more demanding way is synthetic population generation \citep[][]{} based on sample or structure surveys. For MATSim both ways have been implemented based on \citet[][]{BfS_VZ_2000} and \citet[][]{Mueller_unpub_STRC_2011} respectively.
+For population generation, basically two possibilities exist. The comfortable way is to translate full population census and the slightly more demanding way is synthetic population generation \citep[e.g.,][]{} based on sample or structure surveys. For MATSim both ways have been implemented based on \citet[][]{BfS_VZ_2000} and \citet[][]{Mueller_unpub_STRC_2011} respectively.
 
 The travel demand is usually derived from surveys; for Switzerland from the Swiss Travel Survey \citep[][]{BfS-MZ2005_manual_2006}. Newer data sources, such as GPS or smartphone travel diaries might be an interesting future possibility.
 
@@ -110,13 +169,11 @@ A critical topic in demand and population generation is work place assignment, a
 
 Having generated the residential population of the study area, additional demand components might need to be added, for example cross-border and freight traffic. As these components often cannot be endogenously modeled, MATSim offers the feature to handle different subpopulations differently. It can be specified, that border-crossing agents, for example, are not allowed to do destination choice within the study area, or that freight agents are not allowed to change their delivery activity to a leisure activity.
 
-Technically, demand is specified in MATSim with the population element (file \lstinline!population.xml!), containing the persons and their attributes as well as a set of alternative day plans. 
-
 % ----------------------------------------------------------------------------
 \subsubsection{Supply}
-With the exception of the retailers module supply side is not changed by MATSim. The basic supply side element is the network (file \lstinline!network.xml!). In simulation practice two different network types are in use, namely planning networks and navigation networks (compare Figure \ref{fig:planningnetwork} and Figure \ref{fig:navigationnetwork} for the Zurich region). The former are thinned out and serve for initial explorative simulation runs, while the later are used for policy runs usually offering much more details such as bike and even pedestrian links.
+With the exception of some experimental work \citep[][]{HorniEtAl_TechRep_IVT_2012}, supply side is not changed by MATSim. In simulation practice, two different network types are in use, namely planning networks and navigation networks (compare the Swiss examples in Figure \ref{fig:planningnetwork} and Figure \ref{fig:navigationnetwork} for the Zurich region). The former are thinned out and serve for initial explorative simulation runs, while the later are used for policy runs usually offering much more details such as bike and even pedestrian links.
 
-Further important elements, are the MATSim facilities (file \lstinline!facilities.xml!), specifying the activities infrastructure, and the public transport schedules and stop locations. Additional supply-side attached elements are parking lots, signals and lanes, which cannot easily be plugged into MATSim so far.
+Clearly, many modules require further information about the infrastructure, in particular about the activity locations, for example about open times. For the Swiss scenario the facilities are derived from a business census \citep[][]{}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and openstreetmap \citep[][]{OpenStreetMap_Webpage_2015}.
 
 \createfigure%
 {Zurich Network}%
@@ -159,19 +216,7 @@ As mentioned above, models are in general flexible enough to be calibrated to ta
 
 Having said that, validation of a large-scale transport simulation is very difficult. Many central and comfortable characteristics of systems known from natural sciences are only seldom available for the social science, such as path-independence, decomposability, isolation, and on top of that repeatability of experiments. As a result, there is still a debate if social science actually can provide something similar as laws. \citet[][p.107ff]{Abel_1976} lists and discusses the 12 claims of the ``\emph{Verstehen Position}''; although, he finds contrary arguments to every claim, nevertheless, something definitely remains true, making social science model validation exceptionally difficult. For microsimulation results interpretation and model validation, it helped me to visualize the following example. A microsimulation forecast (or backcast) regarding the construction of the ``Westumfahrung Zürich'' provides a probability distribution of scenarios, and it is essentially an exercise in Monte Carlo sampling. 4 years later we have exactly one actual state, and there is no way to assess the forecasted (or backcasted) probability distribution beyond checking that this actual state is contained in the probability distribution, and hopefully with high probability. There is nothing like Monte Carlo sampling when it comes to aggregate real system states. In other words the existing state is \emph{unique}. In essence, we thus compare an observed Dirac impulse with a computed probability distribution, which is a difficult undertaking.
 
-% ----------
-\createfigure%
-{Example for a Link Volumes Comparison Between Simulation and Road Count Values}%
-{Example for a Link Volumes Comparison Between Simulation and Road Count Values}%
-{\label{fig:countcomparison}}%
-{\includegraphics[width=0.8\textwidth, angle=0]{figures/link101227.png}}%
-{}
-% ----------
 
 \ah{Noch mehr auf MATSim calibration, verification and validation eingehen.}
-
-% ===============================================================================================
-\subsection{Typical Output Data}
-\label{sec:outputdata}
 
 % ##################################################################################################################
