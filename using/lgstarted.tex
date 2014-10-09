@@ -79,7 +79,7 @@ A minimal configuration file is shown below, specifying the minimal information,
 \section{Building and Running a Basic Scenario}
 \label{sec:buildingbasicscenario}
 % ===============================================================================================
-This section provides information on the typical input data files used for a MATSim experiment, and the standard output files generated. It presents a parsimonious example scenario and shortly explains units and conventions used in MATSim. Finally some hints on practical data requirements and how to perform calibration, verification and validation are given.
+This section provides information on the typical input data files used for a MATSim experiment, and the standard output files generated. It presents a parsimonious example scenario and shortly explains units, conventions and coordinate systems used in MATSim. Finally some hints on practical data requirements and how to perform calibration, verification and validation are given.
 
 % ===============================================================================================
 \subsection{Typical Input Data}
@@ -256,7 +256,7 @@ The description of public transport vehicles can be split into two parts: In a f
 
 % -----------------------------------------------------------------------
 \subsubsection{transitSchedule.xml}
-The public transport schedule, often referred to as \lstinline|transitSchedule.xml| only, is a rather complex file. It contains information about stop facilities (these can be bus stops, train stations or other stop locations) and transit services.
+The second file that is required to simulate public transport is \lstinline|transitSchedule.xml|, a rather complex file. It contains information about stop facilities (these can be bus stops, train stations or other stop locations) and transit services.
 
 In the first part, the stop facilities need to be defined, giving each one a coordinate, an identifier and a reference to a link in the network. The stop can only be served by vehicles driving on that specified link. Optionally, it is possible to specify a name for the stop and if other vehicles are blocked when a transit vehicle is waiting at a stop. This last attribute is useful to model e.g. the difference of bus stops, where one bus stop has a bay, while at another stop, the bus has to stop on the actual road.
 
@@ -380,9 +380,40 @@ minimal configuration ...
 + replannign settings
 
 % ===============================================================================================
-\subsection{Units and Conventions Used}
+\subsection{Units, Conventions and Coordinate Systems}
 \label{sec:unitsconventions}
+% ----------------------------------------------------------------------------
+\subsubsection{Units}
+MATSim tries to make as few assumptions about actual units as is possible, but at some locations it cannot be done without any. In general, MATSim expects similar values (e.g. all distances) to be in the same unit wherever they are used. In the following, the most important (expected) units are listed in a short overview. Distance  Distance units are most prominently used in links' length. They should be specified in the same unit that the coordinate system uses. This allows MATSim to use simple triangulation, e.g. with the nodes' coordinates, to calculate beeline distances. As most of the typically used, projected coordinate systems (see Section~\ref{sec:coordinatesystems}) use meters as unit of distance, this is the most common used unit of distance in MATSim. Time  While MATSim supports an hour:minute:second notation in several places, internally it uses seconds as the default time unit. This implies that for example link speeds must be specified in distance per second, typically m/s. One notable exception from this rule are scoring parameters, where MATSim expects values per hour. This is due to the fact that most behavioral parameters like value of time are typically estimated per minute or hour, and that the corresponding values for seconds are very small and thus error prone to be configured. 
 
+% ----------------------------------------------------------------------------
+\subsubsection{Conventions}
+MATSim makes heavy uses of identifiers, short \lstinline|Id|s. This Ids can be arbitrary strings, with the following exceptions: Ids should not contain any spaces (incl. tabs, new lines, etc) or commas, as those characters are typically used for separating different Ids from each other in Id lists. 
+
+% ----------------------------------------------------------------------------
+\subsubsection{Coordinate Systems}
+\label{sec:coordinatesystems}
+\paragraph{Preparing Your Data in the Right Coordinate System:}
+In several input files, you need to specify coordinates, e.g. for the nodes of the network. It is strongly suggested not to use WGS84 coordinates (i.e. GPS coordinates, or any other kind of spherical coordinates; coordinates ranging from -180 to +180 in west-east direction, and from -90 to +90 in south-north direction). MATSim needs to calculate distances between two points in several places of the code. The calculation of distances between spheric coordinates is very complex and potentially slow. Instead, MATSim uses the simple Pythagoras' theorem, but this requires the coordinates to be in a Cartesian coordinate system. Thus is is stronlgy advised to use a Cartesian coordinate system along with MATSim, preferably one where the distance unit corresponds to one meter.
+
+Many countries and regions have custom coordinate system defined, optimized for usages in their apropriet areas. It might be best to ask some GIS specialists in your region of interest what the most commonly used local coordinate system is and use that as well for your data.
+
+If you don not have any clue about what coordinate system is used in your region, it might be best to use the Universal Transverse Mercator coordinate system. This coordinate system divides the world into multiple bands, each six degrees width and separated into a northern and southern part, which it calls UTM zones. For each zone, an optimized coordinate system is defined. Choose the UTM zone which covers your region (Wikipedia has a nice map showing the zones) and use its coordinate system. 
+
+\paragraph{Telling MATSim about Your Coordinate System:}
+In some places, MATSim requires to know which coordinate system your data is in. You have multiple ways to specify the coordinate system you use. The easiest one is to use the so-called ``EPSG codes''. Most of the commonly used coordinate systems got standardized and numbered. The EPSG code uniquely identifies a coordinate system and can be directly used by MATSim. As an alternative, MATSim can also parse the description of a coordinate system in the so-called WKT format. As the WKT format is much more error prone it is suggested to use EPSG codes whenever possible.
+
+To find the correct EPSG code for your coordinate system (e.g. for one of the UTM zones), the website \url{http://www.spatialreference.org} is of great use. Search on this website for your coordinate system, e.g. for ``WGS84 / UTM Zone 8N'' (for the northern-hemisphere UTM Zone 8) to find a list of matching coordinate systems along with their EPSG codes.
+
+For some operations, MATSim must know the coordinate system your data is in. Some analyses may create output to be visualized in Google Earth for example, where the coordinates need to be converted back to WGS84. The coordinate system used by your data can be specified in the config file:
+
+\begin{lstlisting}
+<module name="global"> 
+  <param name="coordinateSystem" value="EPSG:32608" /> 
+</module>
+\end{lstlisting}
+
+This allows MATSim to work with your coordinates and convert them whenever needed. 
 
 % ===============================================================================================
 \subsection{Data Requirements}
