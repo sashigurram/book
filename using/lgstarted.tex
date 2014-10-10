@@ -229,6 +229,24 @@ When a simulation is started, MATSim's \lstinline|Controler| will load such a fi
 
 % -----------------------------------------------------------------------
 \subsubsection{facilities.xml}
+In the facilities file location attributes can be specified. Importantly, open times and capacities can be added here. Facilities are not a mandatory element of core MATSim. Some modules, such as the destination choice module (Section~\ref{ch:destinationchoice}, use it however.
+
+An example listing is as follows.
+\begin{lstlisting}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE facilities SYSTEM "http://www.matsim.org/files/dtd/facilities_v1.dtd">
+<facilities name="test facilities for triangle network">
+	<facility id="1" x="60.0" y="110.0">
+		<activity type="home">
+		</activity>
+	</facility>
+	<facility id="10" x="110.0" y="270.0">
+		<activity type="education">
+		</activity>
+	</facility>
+</facilities>
+\end{lstlisting}
+
 % -----------------------------------------------------------------------
 \subsubsection{transitVehicles.xml}
 To simulate public transport in MATSim, two additional input files are necessary. One is \lstinline|transitSchedule.xml|, which describes the vehicles which serve the lines: are they big buses, small buses, trains or light rail vehicles, and describes how many passengers each vehicle can transport.
@@ -358,6 +376,34 @@ It starts with a header containing general descriptive information about the cou
 % ===============================================================================================
 \subsection{Typical Output Data}
 \label{sec:outputdata}
+MATSim creates a bunch of output data, which can be used to analyze the results but also to monitor the correct working of the current simulation setup. Some of the files are created once for a run, others are created for every iteration and for some (typically for the large ones, such as the population) the output frequency can be specified in the config file. The text files, which are created once per run, are created on the fly such that a continous monitoring of the run is possible. There are data, that are created by default (such as the score files) and there are ones, which need to be triggered by a respective configuration file section (such as count data). All output data goes to the output folder, which can be specified in the \lstinline|controler| section of the config file.
+
+Following output data is generated.
+
+\paragraph{Events:} Every action in the simulation is recorded as a so-called MATSim event, be it the starting of an activity or the change of a network link. Each \lstinline|Event| hosts one or multiple attributes. By default, the time when the \lstinline|Event| occurred is contained. Additionally, information like the id of the agent who caused the event or the id of the link where the \lstinline|Event| occurred could be included.  By default, the MATSim simulation module creates a so called Events-file in every 10th iteration. This file contains every single \lstinline|Event| that has been created by the simulation. The events file is thus a formidable base for post-analyses for example with the visualizers. Events are discussed in detail in Section~\ref{sec:events}.
+
+\paragraph{Log File:}
+During each MATSim run, a log file is created. This file contains several information, that you might need later for your analyses. Additionally, it might be very helpful, if a run has crashed for some unknown reason. 
+
+Sometimes, MATSim recognizes problems in the simulation or the configuration of it. It will then write warnings and errors to the log file. As the log file contains a lot of information, such warnings might get overlooked. For this reason, a separate log file is generated in the output directory of a run containing only warnings and error messages. It is advised to have a look during/after a run into this file to see if there have been any major problems.
+
+\paragraph{Score Statistics:}
+Once per run the score statistics are printed out. They are available as picture (\lstinline|scorestats.png|) as well as a text file (\lstinline|scorestats.txt|). They show the average best, worst, executed and average of all plans of an agent for every iteration. An example score plot is shown in Figure~\ref{fig:scoreprogress}.
+
+\paragraph{Leg Travel Distance Statistics:}
+Also once per run, leg travel distance statistics are generated. They are comparable to the score statistics, but instead of the score, the travel distance is plotted. The files are named \lstinline|traveldistancestats.png| and \lstinline|traveldistancestats.txt|.
+
+\paragraph{Stopwatch:}
+Once per run, timing information is printed. The stopwatch file (\lstinline|stopwatch.txt|) contains the durations of actions like the replanning or the execution of the mobility simulation for every iteration. This data might be helpful for performance analyses (e.g. how long does the replanning take compared to the mobility simulation?).
+
+\paragraph{Leg Histogram:}
+In every iteration, a leg histogram is plotted. A leg histogram depicts the number of agents that arrive, depart or are en route per time unit. Histograms are created for each transport mode and, additionally, for the sum of all transport modes. Each file starts with the iteration number and ends with the transport mode (e.g. \lstinline|1.legHistogram_car.png| or \lstinline|1.legHistogram_all.png|). Moreover, a text file is created (e.g. \lstinline|1.legHistogram.txt|) that contains the data for all transport modes.
+
+\paragraph{Trip Durations:}
+Per iteration, a trip durations text file (e.g. \lstinline|1.tripdurations.txt|) listing the number of trips and their durations on a time bin level for each activity pair (e.g. from work to home or from home to shopping) is put out.
+
+\paragraph{Link Volumes:}
+The printing of the link volume comparison (between simulated and counted volumes) needs to be triggered by a config file entry. The comparison generates overview summaries for the whole netwoek but also analyses for individual links. An link analysis might like like Figure~\ref{fig:countcomparison}.
 
 % ----------
 \createfigure%
