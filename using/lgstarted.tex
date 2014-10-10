@@ -410,7 +410,7 @@ The printing of the link volume comparison (between simulated and counted volume
 {Example for a Link Volumes Comparison Between Simulation and Road Count Values}%
 {Example for a Link Volumes Comparison Between Simulation and Road Count Values}%
 {\label{fig:countcomparison}}%
-{\includegraphics[width=0.8\textwidth, angle=0]{figures/link101227.png}}%
+{\includegraphics[width=0.8\textwidth, angle=0]{using/figures/link101227.png}}%
 {}
 % ----------
 
@@ -519,29 +519,30 @@ Clearly, many modules require further information about the infrastructure, in p
 {%
   \createsubfigure%
   {Planning Network}%
-  {\includegraphics[width=0.8\textwidth,angle=0]{figures/planning.png}}%
+  {\includegraphics[width=0.8\textwidth,angle=0]{using/figures/planning.png}}%
   {\label{fig:planningnetwork}}%
   {}%
   \createsubfigure%
   {Navigation Network}%
-	{\includegraphics[width=0.8\textwidth,angle=0]{figures/navigation.png}}%
+	{\includegraphics[width=0.8\textwidth,angle=0]{using/figures/navigation.png}}%
   {\label{fig:navigationnetwork}}%
   {}%
 }%
 {}
 
 % ===============================================================================================
-\subsection{Calibration, Verification, Validation and Policy Evaluation}
+\subsection{Calibration, Verification, and Validation}
 Calibration is a necessary task of any simulation study. Main calibration component is the utility function; it needs to reflect the preferences of the study area's population. A second prominent calibration screw is used for sample scenarios. To reduce the computational effort, initial explorative simulation runs are often performed as sample runs. In this case either the flow and storage capacity values of the mobility simulation or the network capacities need to be adapted accordingly.
 
-Verification and validation, however, are of more concern for the microsimulation developer as detailed in Chapter \ref{ch:cvv}. Given a valuable estimate for demand and supply including a properly estimated utility function, from customer's perspective the simulation can be expected to generate valuable single run results out of the box.
+Verification and validation, however, are of more concern for the microsimulation developers. Given a valuable estimate for demand and supply including a properly estimated utility function, from customer's perspective the simulation can be expected to generate valuable single run results out of the box.
 
-The customer's responsibility is asked, at another place, though. Microsimulations are basically a sampling tool, just as a survey (see Section \ref{sec:variability}). A single run represents the sampling unit, the individual in surveys. This obviously means that microsimulation results must not to be presented as single runs but with the help of the usual statistical tools, e.g., by parameters with the common measures of spread or confidence intervals. That basically means that the customer is responsible to specify the sample size, the number of simulation runs feed with different random seeds. 
+The user's or customer's responsibility is asked, at another place, though. Microsimulations are basically a sampling tool, just as a survey (see Section \ref{sec:variability}). A single run represents the sampling unit, the individual in surveys. This obviously means that microsimulation results must not to be presented as single runs but with the help of the usual statistical tools, e.g., by parameters with the common measures of spread or confidence intervals. That basically means that the user/customer is responsible to specify the sample size, the number of simulation runs feed with different random seeds. 
 
 Policy evaluations are often based on count data, usually widely available and also showing substantial temporal variability. For MATSim, the count data need to be converted to represent the simulated average working day period.
- 
-% ===============================================================================================
-In the modeling process as depicted in Section \ref{sec:alittletheory_modeling}, calibration, verification and validation are crucial steps. 
+
+As simulation practice often mixes the terms, a few more theoretical words are said hereabout calibration, verification and validation. 
+
+These crucial steps are located in the modeling process as sketched in Figure \ref{fig:modeling}, which is loosely based on \citet[][Figure 10.2]{Petty_SokolowskiBanks_2010}. 
 
 \emph{Calibration} is the process of adjusting model parameters to increase consistency of model outputs and observed target values \citep[][p.348]{HollanderLiu_Transportation_2007} \citep[see also][]{TrucanoEtAl_RESS_2006}. \citet[][Table 1]{HollanderLiu_Transportation_2007} list numerous studies that each calibrate a specific transport microsimulation. Further examples are \citet[][]{SmithEtAl_JTE_2008, KimEtAl_TRR_2005, RutterEtAl_JASA_2009}, microsimulation calibration guidelines are provided by \citet[][]{MilamChao_TRBATPM_2001, WegmannEverett_TechRep_CTRUT_2008, DowlingEtAl_manual_2002}. \citet[][Table 2]{HollanderLiu_Transportation_2007} describe measures of goodness-of-fit, that are productive for calibration. Due to the usually large number of model parameters, an automated process is favorable as far as possible. Essentially this is an optimization process \citep[][p.353]{HollanderLiu_Transportation_2007}, for which various established procedures exist \citep[e.g.,][p.41ff]{ZhangMa_ResRep_PATH_2008}. For MATSim, an automatic procedure adapting the plans to road counts was developed by \citet[][]{FloetteroedEtAl_TechRep_TRANSPOR_2008}. It is unclear however, if a certain loss of behavioral soundness is caused by adapting plans according to statistical matching. On the other hand, it is unclear anyway, to date, if the MATSim relaxation transitions should be given a behavioral meaning.
 
@@ -549,11 +550,17 @@ Verification is the procedure to test if a ``\emph{product is consistent with it
 
 Often neglected, but important, is performing sensitivity analysis (sometimes dubbed ``what-if analysis'' \citep[][p.155]{Kleijnen_EJOR_1995}) \citep[][]{KurthEtAl_TRBTDF_2006, CambridgeSystematics_manual_2008, CFD_TRB_2007}. Sensitivity analysis is similar to assessing elasticity of a variable \citep[][p.3f]{WegmannEverett_TechRep_CTRUT_2008} and it tests reaction of the model to changed parameters including model input. This includes both testing the range of parameters for a given point in time, and analysis of the system's fore- and backcasting abilities \citep[e.g.,][p.56]{CFD_TRB_2007}, \citep[][]{CambridgeSystematics_manual_2008}. As forecasting is a vital objective of most transport models, this test is crucial. \citet[][p.158]{PendyalaBhat_TRBTDF_2006} puts it succinctly: ``\emph{There is no doubt that any model can be adjusted, refined, tweaked, and---if all else fails---hammered to replicate base-year conditions.}'' and concludes that ``\emph{the quality of a travel demand model system is better judged on its ability to respond to a range of scenarios and policies of interest.}'' In MATSim, a natural and interesting sensitivity test would be to compare the MATSim forecasts with the current actual state of Zurich network after addition of the bypass ``Westumfahrung'' in 2009 \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009, Westumfahrung_Webpage_2008}.
 
-As mentioned above, models are in general flexible enough to be calibrated to target data. Thus, validation \emph{must} be performed using a different data set than for preceding modeling steps \citep[][p.1]{CambridgeSystematics_manual_2008}, \citep[][p.56]{CFD_TRB_2007}, \citep[][p.18]{OrtuzarWillumsen_2001}. In statistics, this is called cross-validation. It is particularly important for forecasting models, which need to be general enough to capture temporal changes. Calibration and validation should thus be strictly separated, however, in microsimulation practice, according to the author's opinion, they are (too) often mixed, sometimes due to the vast amount of data required for model implementation and calibration. In MATSim, for example, after model calibration only road count data is left for validation \citep[][]{HorniEtAl_STRC_2009}; an example for a MATSim link volumes comparison between simulated and counted values is shown in Figure \ref{fig:countcomparison}. New data sources, such as road speed analyses based on GPS \citep[][]{HackneyEtAl_JGS_2007}, should be included.
+As mentioned above, models are in general flexible enough to be calibrated to target data. Thus, validation \emph{must} be performed using a different data set than for preceding modeling steps \citep[][p.1]{CambridgeSystematics_manual_2008}, \citep[][p.56]{CFD_TRB_2007}, \citep[][p.18]{OrtuzarWillumsen_2001}. In statistics, this is called cross-validation. It is particularly important for forecasting models, which need to be general enough to capture temporal changes. Calibration and validation should thus be strictly separated, however, in microsimulation practice, according to the author's opinion, they are (too) often mixed, sometimes due to the vast amount of data required for model implementation and calibration. In MATSim, for example, after model calibration only road count data is left for validation \citep[][]{HorniEtAl_STRC_2009}. New data sources, such as road speed analyses based on GPS \citep[][]{HackneyEtAl_JGS_2007}, should be included.
 
 Having said that, validation of a large-scale transport simulation is very difficult. Many central and comfortable characteristics of systems known from natural sciences are only seldom available for the social science, such as path-independence, decomposability, isolation, and on top of that repeatability of experiments. As a result, there is still a debate if social science actually can provide something similar as laws. \citet[][p.107ff]{Abel_1976} lists and discusses the 12 claims of the ``\emph{Verstehen Position}''; although, he finds contrary arguments to every claim, nevertheless, something definitely remains true, making social science model validation exceptionally difficult. For microsimulation results interpretation and model validation, it helped me to visualize the following example. A microsimulation forecast (or backcast) regarding the construction of the ``Westumfahrung Zürich'' provides a probability distribution of scenarios, and it is essentially an exercise in Monte Carlo sampling. 4 years later we have exactly one actual state, and there is no way to assess the forecasted (or backcasted) probability distribution beyond checking that this actual state is contained in the probability distribution, and hopefully with high probability. There is nothing like Monte Carlo sampling when it comes to aggregate real system states. In other words the existing state is \emph{unique}. In essence, we thus compare an observed Dirac impulse with a computed probability distribution, which is a difficult undertaking.
 
-
-\ah{Noch mehr auf MATSim calibration, verification and validation eingehen.}
+% ----------
+\createfigure%
+{Modeling Process}%
+{Modeling Process: Modeling starts with observation and measurement of reality (in \citet[][]{Petty_SokolowskiBanks_2010} called ``\emph{simuland}'') for acquisition of knowledge (in \citet[][]{Petty_SokolowskiBanks_2010} called ``\emph{referent}''). Model creation---in a strict sense usually referred to as \emph{modeling}--- is based on the modeler's knowledge about the world. Based on a conceptual model, an executable model is implemented and calibrated. The executable model is evaluated in a verification step in terms of ``\emph{was the model made right?}'' \citet[][p.332]{Petty_SokolowskiBanks_2010}. Validation compares results with the referent in the sense of ``\emph{was the right model made?}'' \citet[][p.332]{Petty_SokolowskiBanks_2010}.}%
+{\label{fig:modeling}}%
+{\includegraphics[width=0.8\textwidth, angle=0]{using/figures/modeling.pdf}}%
+{}
+% ----------
 
 % ##################################################################################################################
