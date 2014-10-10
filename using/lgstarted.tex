@@ -1,7 +1,7 @@
 \chapter{Let's Get Started}
 \label{ch:lgstarted}
 % ##################################################################################################################
-\hfill \textbf{Author:} Andreas Horni, Marcel Rieser?, ...
+\hfill \textbf{Author:} Andreas Horni, Marcel Rieser, ...
 
 \begin{center} \includegraphics[width=0.7\textwidth, angle=0]{using/figures/config.png} \end{center}
 
@@ -417,13 +417,44 @@ The printing of the link volume comparison (between simulated and counted volume
 
 % ===============================================================================================
 \subsection{An Example Scenario}
-The MATSim release is shipped with an example scenario named \lstinline|equil| in the folder \lstinline|examples/equil|. The scenario contains the 
+The MATSim release is shipped with an example scenario named \lstinline|equil| in the folder \lstinline|examples/equil|. The scenario contains the following files \lstinline|config.xml|, \lstinline|network.xml| and \lstinline|plans100.xml| containing 100 persons with their day plans, one using public transport, the other person using car mode. Additional populations containing only 2 persons (\lstinline|plans2.xml|) or 2000 persons are provided (\lstinline|plans200.xml.gz|). Demand of exactly 100 trips (\lstinline|plans100trips.xml|) or trips with taxi mode is also provided (\lstinline|plans-w-taxi.xml|). Furthermore, hand-made count data can be found in the folder (\lstinline|counts100.xml|). A tolls file can be used for road pricing scenarios not discussed here (\lstinline|toll.xml|).
 
-Picture of network with via.
+The network of the scenario is shown in Figure~\ref{fig:equil}.
 
-minimal configuration ...
+% ----------
+\createfigure%
+{Equil Scenario Network}%
+{Equil Scenario Network}%
+{\label{fig:equil}}%
+{\includegraphics[width=0.8\textwidth, angle=0]{using/figures/equil.png}}%
+{}
+% ----------
 
-+ replannign settings
+The following lines explain the scenario by picking the most important sections from the config file \lstinline|config.xml|.
+
+As shown in the listing below, this scenario uses replanning. 10\% of the agents reroute their current route (module \lstinline|ReRoute|). The remaining 90\% select their highest score plan for reexecution in the current iteration (module \lstinline|BestScore|). Plans get deleted from the agent's memeory if it is full defined by \lstinline|maxAgentPlanMemorySize|. By default, the plan with the lowest score is removed, while this is configurable and currently subject of intense reserach (see Section~\ref{sec:choicesets}).
+%
+\begin{lstlisting}
+<module name="strategy">
+	<param name="maxAgentPlanMemorySize" value="5" /> <!-- 0 means unlimited -->
+
+	<param name="ModuleProbability_1" value="0.9" />
+	<param name="Module_1" value="BestScore" />
+
+	<param name="ModuleProbability_2" value="0.1" />
+	<param name="Module_2" value="ReRoute" />
+</module>
+\end{lstlisting}
+
+The section \lstinline|planCalcScore| defines the parameters used for scoring. The parameters are explained in Chapter~\ref{ch:scoring}. As can be seen in the example the two activity types \lstinline|h| (home) and \lstinline|w| (work) are specified. The scenario is run for 10 iterations, writes the output files to \lstinline|./output/equil| (Section~\ref{sec:outputdata}), and uses \lstinline|qsim| as the mobility simulation (more on \gls{mobsim}s in Section~\ref{sec:trafficflowmodel} and \ref{sec:mobsims}).
+
+\begin{lstlisting}
+<module name="controler">
+	<param name="outputDirectory" value="./output/equil" />
+	<param name="lastIteration" value="10" />
+	<param name="mobsim" value="qsim" />	
+</module>
+\end{lstlisting}
 
 % ===============================================================================================
 \subsection{Units, Conventions and Coordinate Systems}
