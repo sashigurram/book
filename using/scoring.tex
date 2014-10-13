@@ -2,44 +2,7 @@
 \label{ch:scoring}
 % ##################################################################################################################
 
-\hfill \textbf{Author:} Andreas Horni, ...
-
-\benjamin{noch was (relativ wichtiges):
-
-Wir notieren die Nutzenfunktionen in MATSim immer als $V_{i,car} = ...$ etc. Ich würde sehr empfehlen, das im Buch auch so zu machen.
-
-Habe gerade (im noch nicht committeten economic eval Kapitel folgenden Kommentar von mir gesehen, und dachte ich teile das mal:
-
-"I would strongly recommend to use $V_p$ instead of $U_p$ for an agent's plan even though this is not entirely the same as in Discrete Choice Theory, since some of the $\epsilon$ is already captured by the simulation noise that Gunnar called $\eta$...In consequence, the score is NOT equal to $V_p$. 
-We should explain that in more detail."
-
-Bei deinen frozen epsilon und BestSelect ist $U$ dann zwar wahrscheinlich richtig, aber so wie es jetzt in dem Kapitel über Charypar-Nagel steht ist es m.E. falsch.
-
-Was meinst du/ihr?
-}
-
-\gunnar{ja, zugestimmt. Vielleicht
-
-     \[U = V + eps\]
-
-wie üblich beibehalten und dann
-
-     \[V = \sum_i b_i E\{x_i\}\]
-
-schreiben, wobei $x_i$ weiterhin stochastische Attribute aus der mobsim sein können (und der Erwartungswert-Operator bei deterministischen Attributen ja nicht schadet). Das ist dann vermutlich auch konsistent mit der Weise, auf die die Modelle geschätzt wurden. Das eps würde dann alles mögliche absorbieren können (gumble, frozen, mobsim).
-}
-
-
-\ah{Dinge, welche man m.E. dabei irgenwie noch einbeziehen müsste:
-
--$\epsilon$ gibt es explizit momentan nur für Destination Choice (Mail Gunnar).
-
--ohne $E\{.\}$ ist man mit $U$ wohl mindestens so nahe an der Wahrheit dran wie mit $V$ (wegen $\eta$) (Mail Benjamin).
-
-- Konsistenz: in sehr vielen Publ. kommt seit Jahren $U_{plan}=U_{act}+U_{travel}$ vor. Könnte mir vorstellen, dass gerade neue User verwirrt sind, wenn wir davon abrücken (ohne grosse Not?-> $\eta$!).
-}
-
-\ah{Gunnars Mail doch noch kapiert. So müsste es gehen.}
+\hfill \textbf{Author:} ..., Andreas Horni, ...
 
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{using/figures/utf.png} \end{center}
 
@@ -55,7 +18,7 @@ Due to the absence of a complete-day-utility function, MATSim has been started w
 \label{sec:charyparnagel}
 The first and still basic MATSim utility function was formulated by \citet[][]{CharyparNagel_Transportation_2005} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far, indicated that the MATSim function is also appropriate for modeling the further choice dimensions.
 
-As in the discrete choice modeling framework (see Chapter~\ref{ch:discretechoice}), the utility $U$ is composed of a deterministic part $V$ and a random error term $\epsilon$, i.e., $U = V + \epsilon$ Except for destination choice the error term is not explicitly generated but stems from the random noise produced by the co-evolutionary process. Randomness is added in various ways in the process, an example is the order in which agents undergo the replanning (e.g., in which iteration choices are modified). \ah{Hier Diskussion von oben noch weiter vertiefen}.
+As in the discrete choice modeling framework (see Chapter~\ref{ch:discretechoice}), the utility $U$ is composed of a deterministic part $V$ and a random error term $\epsilon$, i.e., $U = V + \epsilon$ Except for destination choice the error term is not explicitly generated but stems from the random noise produced by the co-evolutionary process. Randomness is added in various ways in the process, an example is the order in which agents undergo the replanning (e.g., in which iteration choices are modified). \ah{Hier Diskussion Section~\ref{sec:discussion_scoring} noch weiter vertiefen}.
 
 For the basic function, the utility of a plan $U_{plan}$ is computed as the sum of all activity utilities $U_{act,i}$ plus the sum of all travel (dis)utilities $U_{trav,mode, i}$:
 %
@@ -275,5 +238,47 @@ Furthermore, travel time and activity duration estimations including income need
 A numerical problem, particularly relevant for activity choice, concerns the functional form of the utility function. As argued in \citet[][p.33]{MATSim_Userguide_2014}, a function offering an additional degree of freedom (the curvature at the typical duration) would be favored.
 
 Estimating a utility function for MATSim is associated with another problem. The function is applied iteratively for a travel demand which is in the beginning of the relaxation process usually not very similar to the situation where the function was estimated. In other words, the function is used for a whole range of working points, where it has been estimated for only one  possibly completely different working point. The MATSim function thus must be also correct in the elasticities, to be able to efficiently drive the relaxation process toward the final relaxation point, where the estimated function is valid by construction. 
+
+% ##################################################################################################################
+\section{Discussion and TODOs}
+\label{sec:discussion_scoring}
+Will be commented, when chapter is finished. Make final results traceable.
+
+\benjamin{noch was (relativ wichtiges):
+
+Wir notieren die Nutzenfunktionen in MATSim immer als $V_{i,car} = ...$ etc. Ich würde sehr empfehlen, das im Buch auch so zu machen.
+
+Habe gerade (im noch nicht committeten economic eval Kapitel folgenden Kommentar von mir gesehen, und dachte ich teile das mal:
+
+"I would strongly recommend to use $V_p$ instead of $U_p$ for an agent's plan even though this is not entirely the same as in Discrete Choice Theory, since some of the $\epsilon$ is already captured by the simulation noise that Gunnar called $\eta$...In consequence, the score is NOT equal to $V_p$. 
+We should explain that in more detail."
+
+Bei deinen frozen epsilon und BestSelect ist $U$ dann zwar wahrscheinlich richtig, aber so wie es jetzt in dem Kapitel über Charypar-Nagel steht ist es m.E. falsch.
+
+Was meinst du/ihr?
+}
+
+\gunnar{ja, zugestimmt. Vielleicht
+
+     \[U = V + eps\]
+
+wie üblich beibehalten und dann
+
+     \[V = \sum_i b_i E\{x_i\}\]
+
+schreiben, wobei $x_i$ weiterhin stochastische Attribute aus der mobsim sein können (und der Erwartungswert-Operator bei deterministischen Attributen ja nicht schadet). Das ist dann vermutlich auch konsistent mit der Weise, auf die die Modelle geschätzt wurden. Das eps würde dann alles mögliche absorbieren können (gumble, frozen, mobsim).
+}
+
+
+\ah{Dinge, welche man m.E. dabei irgenwie noch einbeziehen müsste:
+
+-$\epsilon$ gibt es explizit momentan nur für Destination Choice (Mail Gunnar).
+
+-ohne $E\{.\}$ ist man mit $U$ wohl mindestens so nahe an der Wahrheit dran wie mit $V$ (wegen $\eta$) (Mail Benjamin).
+
+- Konsistenz: in sehr vielen Publ. kommt seit Jahren $U_{plan}=U_{act}+U_{travel}$ vor. Könnte mir vorstellen, dass gerade neue User verwirrt sind, wenn wir davon abrücken (ohne grosse Not?-> $\eta$!).
+}
+
+\ah{Gunnars Mail doch noch kapiert. So müsste es gehen.}
 
 % ##################################################################################################################
