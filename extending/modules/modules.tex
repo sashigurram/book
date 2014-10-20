@@ -136,8 +136,8 @@ The description of the modules in this and the following chapters is based on fo
 	Link Stats & Section~\ref{sec:linkStats} \\
 	Parallel Computing & Section~\ref{sec:parallelcomputing} \\
 	Landuse & Section~\ref{sec:landuse} \\
-	Visualizer OTFVis & Section~\ref{sec:OTFVis} \\
-	Visualizer senozon via & Section~\ref{sec:via} \\
+	OTFVis Visualizer & Section~\ref{sec:OTFVis} \\
+	Senozon via Visualizer & Section~\ref{sec:via} \\
 	Cadyts & Section~\ref{sec:cadyts} \\
 	Extension of Simulation Horizon & Section~\ref{sec:longitudinalscenario} \\
 	Warmstart & Section~\ref{sec:warmstart} \\
@@ -319,33 +319,25 @@ The implementation of selectors reside in the \lstinline|package org.matsim.core
 Note, that the \lstinline|BestScore| should be used with care as it is prone to getting stuck with sub-optimal plans. Plans that are rated bad due to a random fluctuation in one single iteration, due to e.g., a rare traffic jam, will never be tested again. It is therefore recommended to use this in conjunction with \lstinline|SelectRandom| only.
 
 Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. Per default, the plan with the lowest score is removed if the agent's memory is full. In line with the requirements of e.g., simulated annealing approaches, the removal of candidates will be configurable to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This will reduce the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
-\ah{siehe Mail by M. Zilske, August 14 ``[Matsim-devel] custom plan selector for removal'')
+\ah{siehe Mail by M. Zilske, August 14 ``[Matsim-devel] custom plan selector for removal'')}
 
 % ##################################################################################################################
 \section{Further Choice Modules}
 \label{sec:furtherchoicemodules}
-
 % ===================================================================================
 \subsection{Planomat}
 \label{sec:planomat}
-A special replanning module using a different logic than undirected trial-and-error was Planomat. Planomat did not evaluate just one random alternative per iteration but multiple alternatives within one single iteration to obtain a (at least locally) optimal solution. It used a genetic algorithm \citep[][]{MeisterEtAl_IATBR_2006, MeisterEtAl_STRC_2006, Meister_PhDThesis_2011} for this purpose. Planomat was successfully applied in the project \emph{KTI Frequencies} (Section \ref{sec:ktizh}) for time choice and mode choice for sub-tours \citep[][p.10]{BalmerEtAl_ResRep_datapuls_2010}. The Planomat module is not available in current releases anymore but can be downloaded from SVN history. \ah{öhm, stimmt das wirklich?}
+A special replanning module using a different logic than undirected trial-and-error was Planomat. Planomat did not evaluate just one random alternative per iteration but multiple alternatives within one single iteration to obtain a (at least locally) optimal solution. It used a genetic algorithm \citep[][]{MeisterEtAl_IATBR_2006, MeisterEtAl_STRC_2006, Meister_PhDThesis_2011} for this purpose. Planomat was successfully applied in the project \emph{KTI Frequencies} (Section \ref{sec:ktizh}) for time choice and mode choice for sub-tours \citep[][p.10]{BalmerEtAl_ResRep_datapuls_2010}. The Planomat module is not available in current releases anymore but can be downloaded from SVN history. \ah{öhm, stimmt das?}
 
 % ===================================================================================
 \subsection{Activity Choice a.k.a. PlanomatX}
 \label{sec:activitychoice}
-PlanomatX performing activity choice and adopting a Tabu Search approach is described by \citet[][]{Feil_PhDThesis_2010}. To cope with curse of dimensionality due to the added choice dimension, PlanomatX introduced schedule recycling, which is basically a warmstart concept (see Section \ref{sec:warmstart}). Due to the problems with a logarithmic utility function for activity choice as reported in Section \ref{sec:utfextensions}, PlanomatX furthermore replaced to standard MATSim scoring function by an S-shaped one. Rough estimates for its parameters based on an multinomial logit model (MNL) exist. The activity Choice module is not available in current releases anymore but can be downloaded from SVN history. \ah{öhm, stimmt das wirklich?}
+PlanomatX performing activity choice and adopting a Tabu Search approach is described by \citet[][]{Feil_PhDThesis_2010}. To cope with curse of dimensionality due to the added choice dimension, PlanomatX introduced schedule recycling, which is basically a warmstart concept (see Section \ref{sec:warmstart}). Due to the problems with a logarithmic utility function for activity choice as reported in Section \ref{sec:utfextensions}, PlanomatX furthermore replaced to standard MATSim scoring function by an S-shaped one. Rough estimates for its parameters based on an multinomial logit model (MNL) exist. PlanomatX is not available in current releases anymore but can be downloaded from SVN history. \ah{öhm, stimmt das wirklich?}
 
 % ===================================================================================
 \subsection{Within-day Replanning}
 \label{sec:withinday}
-Package:
-\begin{itemize}
-	\item \lstinline|org.matsim.withinday|
-\end{itemize}
-
-Load: \lstinline|WithinDayControlerListener| no config section
-
-Literature: \citet[][]{DoblerEtAl_TRR_2012, IllenbergerEtAl_ITS_2007, Dobler_unpub-pres_MATSimUserMeeting_2010}
+Within-day replanning functionality as described by \citet[][]{DoblerEtAl_TRR_2012, IllenbergerEtAl_ITS_2007, Dobler_unpub-pres_MATSimUserMeeting_2010} resides in the \lstinline|org.matsim.withinday| package and can be run with the class \lstinline|WithinDayControlerListener|. 
 
 % ===================================================================================
 % ##################################################################################################################
@@ -395,7 +387,7 @@ network.addNetworkChangeEvent(networkChangeEvent);
 % ===================================================================================
 \subsection{Counts}
 \label{sec:counts}
-MATSim offers the possibility to perform link volume comparisons between simulated and counted value for both motorized individual traffic \citep{Horni_unpub_IVT_2007}  and public transport. The later are described in Chapter \ref{ch:ptmodule}. The count package (\lstinline|package org.matsim.counts|) offers analyses for the average working day with hourly resolution. A google maps based visualization is available, showing each station with a its load curve in a pop-up window at the geographic location. The module is configured in the configuration file section \lstinline|counts|.
+MATSim offers the possibility to perform link volume comparisons between simulated and counted value for both motorized individual traffic \citep{Horni_unpub_IVT_2007}  and public transport. The later are described in Chapter \ref{ch:pt}. The count package (\lstinline|package org.matsim.counts|) offers analyses for the average working day with hourly resolution. A google maps based visualization is available, showing each station with a its load curve in a pop-up window at the geographic location. The module is configured in the configuration file section \lstinline|counts|.
 
 As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario link volume comparisons have been successfully performed with data based on city level, cantonal level and national level \citep[][]{ASTRA_Webpage_2006}, where an average working day (Monday to Thursday, excluding public holidays) was built. Usually it is helpful to exclude a substantial part of the outer range of the modeled study region to prevent boundary effects.
 
@@ -423,90 +415,41 @@ Similar to the vehicles module, the household module (\lstinline|org.matsim.hous
 % ===================================================================================
 \subsection{Vehicles}
 \label{sec:vehicles}
-The vehicles package (\lstinline|org.matsim.vehicles|) provides a file reader and a factory to create vehicles. Vehicles are enabled in the \lstinline|scenario| configuration file section. However, at the moment vehicles are only used for public transport (Chapter \ref{ch:ptmodule}), i.e., motorized individual traffic vehicles are not used in MATSim nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section.
-
-\ah{Klären, ob man diese kleine Inkonsistenz beheben möchte.}
+The vehicles package (\lstinline|org.matsim.vehicles|) provides a file reader and a factory to create vehicles. Vehicles are enabled in the \lstinline|scenario| configuration file section. However, at the moment vehicles are only used for public transport (Chapter \ref{ch:ptmodule}), i.e., motorized individual traffic vehicles are not used in MATSim nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section. \ah{Klären, ob man diese kleine Inkonsistenz beheben möchte.}
 
 This might change one day when the parking module will start to use vehicles. \citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households.
 
 % ===================================================================================
 \subsection{Flight Traffic}
 \label{sec:flighttraffic}
-Literature: \citet[][]{Grether_PhDThesis_2014}
+Flight traffic is described by \citet[][]{Grether_PhDThesis_2014}.
 
 % ===================================================================================
 
 % ##################################################################################################################
 \section{Mobsims}
 \label{sec:mobsims}
-Module in the config: 
-\begin{itemize}
-	\item \lstinline|simulation|
-\end{itemize}
-
-An overview of MATSim mobility simulations is given in \citet[][]{Dobler_TechRep_IVT_2011}. See also the presentation of \citet[][]{Rieser_unpub_IVT_2011}.
+Mobility simulations are configured in the config section \lstinline|simulation|. An overview of MATSim mobility simulations is given in \citet[][]{Dobler_TechRep_IVT_2011}. See also the presentation of \citet[][]{Rieser_unpub_IVT_2011}.
 
 % ===================================================================================
 \subsection{QSim}
 \label{sec:qsim}
-Module in the config: 
-\begin{itemize}
-	\item \lstinline|qsim|
-\end{itemize}
-
-Package in the code:
-\begin{itemize}
-	\item \lstinline|org.matsim.core.mobsim.qsim|
-\end{itemize}
-
-Literature: \citet[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} ist das qsim oder queuesim?
-
-At the moment in most applications \emph{QSim} is used despite being under constant further development. It has started as a software branch of \emph{queueSimulation} before supplanting this later simulation. Through multiple engines it can be run in parallel and simulate multi-modal traffic. However, for now, there is no interaction between different modes. The simulation is furthermore able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, public transport \citep[][]{Rieser_PhDThesis_2010} and in an experimental manner also traffic lights \citep[][]{Neumann_MastersThesis_2008}). Inclusion of public transport is described in Section \ref{sec:handlePT}.  
+\emph{QSim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is configured within the \lstinline|qsim| config section, where code residues in the package \lstinline|org.matsim.core.mobsim.qsim|. At the moment, in most applications \emph{QSim} is used despite being under constant further development. It has started as a software branch of \emph{queueSimulation} before supplanting this later simulation. Through multiple engines it can be run in parallel and simulate multi-modal traffic (Chapter~\ref{ch:multimodalsim}). The simulation is furthermore able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, public transport \citep[][]{Rieser_PhDThesis_2010} and in an experimental manner also traffic lights \citep[][]{Neumann_MastersThesis_2008}). Inclusion of public transport is described in Section~\ref{sec:handlePT}.  
 
 % ===================================================================================
 \subsection{queueSimulation}
 \label{sec:queueSimulation}
-Module in the config: 
-\begin{itemize}
-	\item \lstinline|queuesim|
-\end{itemize}
-
-Package in the code:
-\begin{itemize}
-	\item \lstinline|org.matsim.core.mobsim.queuesim|
-\end{itemize}
-
-\emph{queueSimulation} is the basic MATSim network loading simulation. However, it is not the most frequently used one as it has been stripped down to the very basic functionality. It is queue-based and time-step based.
+\emph{queueSimulation} is the basic MATSim network loading simulation. However, it is not the most frequently used one as it has been stripped down to the very basic functionality. It is queue-based and time-step based. It can be configured in the \lstinline|queuesim| config section. Code residues in package \lstinline|org.matsim.core.mobsim.queuesim|.
 
 % ===================================================================================
 \subsection{JDEQSim}
 \label{sec:jdeqsim}
-Module in the config: 
-\begin{itemize}
-	\item \lstinline|jdeqsim|
-\end{itemize}
-
-Package in the code:
-\begin{itemize}
-\item \lstinline|org.matsim.core.mobsim.jdeqsim|
-\end{itemize}
-
-Literature: \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009}
-
-Nachfolger von deqsim in C++ \citet[][]{CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009}
-
-\emph{JDEQSim} was used for project \emph{KTI Frequencies}. It is is a java reimplementation of \emph{DEQSim} \citep[][]{WaraichEtAl_STRC_2009} and provides parallel event handling but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps, traffic lights, public transport and within-day replanning are not supported. Advice for \emph{JDEQSim} configuration can be found at (\ref{m:jdeqsim}).
-
-% ===================================================================================
-\subsection{The Coming Mobsim (working title \emph{senozim})}
-\emph{senozim}, an improved version of \emph{QSim}, is in its final development stage \citep[][]{Rieser_unpub_IVT_2011}.
-
-\ah{Voll den Anschluss verpasst!!! Gibt es die nun? Wo wurde die integriert?}
+\emph{JDEQSim} \citep[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} was used for project \emph{KTI Frequencies} \citep[][]{BalmerEtAl_ResRep_datapuls_2010}. It is is a java reimplementation of \emph{DEQSim} shown below \citep[][]{WaraichEtAl_STRC_2009, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009} and provides parallel event handling but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps, traffic lights, public transport and within-day replanning are not supported. Advice for \emph{JDEQSim} configuration can be found at (\ref{m:jdeqsim}). It can be configured in the \lstinline|jdeqsim| config section. Code residues in package \lstinline|org.matsim.core.mobsim.jdeqsim|.
 
 % ===================================================================================
 \subsection{DEQSim (deprecated)}
 \label{sec:deqsim}
-\emph{DEQSim} was used for project \emph{Westumfahrung}. It is a is a queue-based, event-based parallel simulation written in C++ \citep[][]{CharyparEtAl_TRR_2007, Charypar_PhDThesis_2008}. This simulation includes handling of reduced capacities due to traffic lights in an aggregate manner \citep[][p.139 ff]{Charypar_PhDThesis_2008}. It further supports modeling of gap back propagation at junctions \citep[][p.98 ff]{Charypar_PhDThesis_2008}. Events handling is done via file input and output. This represents a major bottleneck in terms of framework performance. Development of this simulation has been stopped and been replaced by the JDEQSim.
+\emph{DEQSim} was used for project \emph{Westumfahrung} \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009}. It is a is a queue-based, event-based parallel simulation written in C++ \citep[][]{CharyparEtAl_TRR_2007, Charypar_PhDThesis_2008}. This simulation includes handling of reduced capacities due to traffic lights in an aggregate manner \citep[][p.139 ff]{Charypar_PhDThesis_2008}. It further supports modeling of gap back propagation at junctions \citep[][p.98 ff]{Charypar_PhDThesis_2008}. Events handling is done via file input and output. This represents a major bottleneck in terms of framework performance. Development of this simulation has been stopped and been replaced by the JDEQSim.
 
 % ===================================================================================
 % ##################################################################################################################
@@ -516,13 +459,9 @@ Nachfolger von deqsim in C++ \citet[][]{CharyparEtAl_TRR_2007, CharyparEtAl_TRB_
 % ===================================================================================
 \subsection{Controler}
 \label{sec:controler}
-The controler is an indispensable module for running MATSim. It can be configured in the \lstinline|controler| configuration file section. The module, can be furthermore extended by \lstinline|Events| and \lstinline|Listeners|. Classes implementing one or more \lstinline|Listener Interfaces| and can be registered with the Controler with \lstinline|addControlerListener()|. The controler fires \lstinline|Controler Events| at specific points during the run to the registered \lstinline|Listeners|, which can then execute their own code.
+The controler is an indispensable module for running MATSim. It can be configured in the \lstinline|controler| configuration file section. The module, can be furthermore extended by \lstinline|Events| and \lstinline|Listeners| as detailed in Chapter~\ref{ch:extensionpoints}. Classes implementing one or more \lstinline|Listener Interfaces| and can be registered with the Controler with \lstinline|addControlerListener()|. The controler fires \lstinline|Controler Events| at specific points during the run to the registered \lstinline|Listeners|, which can then execute their own code.
 
 Another possibility to customize the controler is by inheritence from the class \lstinline|org.matsim.core.controler|.
-
-\ah{describe events and listeners -> Picture
-% http://ci.matsim.org:8080/job/MATSim_M2/javadoc/org/matsim/core/controler/package-summary.html#controler_parameters
-}
 
 % ===================================================================================
 \subsection{Global}
@@ -556,47 +495,16 @@ The routing module, as an example, needs travel time estimations for all links o
 The configuration file section \lstinline|linkStats| allows to specify the output interval of simulation statistics of individual links. They are amongst other, used for the comparison with count values. It is configurable, if the simulated volumes should be written per iteration or averaged over multiple iterations.
 
 % ===================================================================================
-\subsection{Parallel Computing}
-\label{sec:parallelcomputing}
-As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in MATSim simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. Clearly, number of threads should correspond with available processor cores.
-
-
-Wie geschieht das Coupling C++/Java. D.h., wie wendet man das Ding an.
-
--> auch Doblers Arbeiten!
-Rashid?
-
-
-wird immer wichtiger falls Var substantiell. 
-
-% ---
-Marcel: Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.)
-Sweetspot
-Achtung: Roundrobin-Threating
-
-% ===================================================================================
-\subsection{Landuse}
-\label{sec:landuse}
-Modules in the config: 
-\begin{itemize}
-	\item \lstinline|org.matsim.contrib.accessibility|
-\end{itemize}
-
-Load: Contrib. run \lstinline|MATSim4UrbanSimZone| or \lstinline|MATSim4UrbanSimParcel|
-
-Literature: Nicolai
-
-% ===================================================================================
-\subsection{Visualizer OTFVis}
+\subsection{OTFVis Visualizer}
 \label{sec:OTFVis}
 Before senozon via the OTFVis (on-the-fly visualizer) \citep[][]{Strippgen_PhDThesis_2009} was the main visualization tool of MATSim. OTFVis is able to visualize results during runtime of a MATSim run. It is available as a contribution in the \lstinline|package org.matsim.contrib.otfvis| and can be configured in the \lstinline|otfvis| configuration file section.
 
 It is implemented in java, however, to make use of sophisticated visualization of the OpenGL framework, it is also heavily based on jogl. This requires a couple of user actions to get jogl running on his specific platform. This platform dependency has lead to some issue with the programs stability. It is thus recommended to use the senozon via. visualizer.
 
 % ---------------------------
-\subsection{Visualizer senozon via}
+\subsection{Senozon via Visualizer}
 \label{sec:via}
-seonozon via is the new and powerful MATSim visualizer. It is proprietary and can be bought from senozon AG \citep[][]{senozonVIA_Webpage_2014}. Research licenses and a trial version are available. via is written in java and distributed as a jar file. It offers various features such as dynamic visualization of vehicles and agents' activities, extensive analysis and query functionality and powerful plugins such as a movie maker or a car count data analyzer.
+Senozon via is the new and powerful MATSim visualizer. It is proprietary and can be bought from \citep[][]{senozonVIA_Webpage_2014}. Research licenses and a trial version are available. via is written in java and distributed as a jar file. It offers various features such as dynamic visualization of vehicles and agents' activities, extensive analysis and query functionality and powerful plugins such as a movie maker or a car count data analyzer.
 
 % ===================================================================================
 \subsection{Cadyts}
@@ -616,6 +524,31 @@ Usage: Contrib via config
 Literature: \citet[][]{FloetteroedEtAl_TechRep_TRANSPOR_2008}
 
 % ===================================================================================
+\subsection{Landuse}
+\label{sec:landuse}
+Modules in the config: 
+\begin{itemize}
+	\item \lstinline|org.matsim.contrib.accessibility|
+\end{itemize}
+
+Load: Contrib. run \lstinline|MATSim4UrbanSimZone| or \lstinline|MATSim4UrbanSimParcel|
+
+Literature: Nicolai
+
+% ===================================================================================
+\subsection{Parallel Computing}
+\label{sec:parallelcomputing}
+As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in MATSim simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. Clearly, the number of threads should correspond with available processor cores.
+
+As mentioned above, the mobsim \emph{QSim} is running parallel by default.
+
+Being able to speed-up scenarios migth become even more important than today, when additional choice dimensions are added with large variability in the parameters rendering ensemble runs necessary (see Section~\ref{sec:variability}).
+
+\ah{auch Doblers Arbeiten einfügen!?}
+
+\ah{Marcel hatte mal Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.) geplant. Nachfragen, ob schon was vorhanden}
+
+% ===================================================================================
 \subsection{Extension of Simulation Horizon}
 \label{sec:longitudinalscenario}
 \who{Horni Surprice, Max/Fabian, Ordonez}
@@ -624,7 +557,7 @@ Longitudinal Scenario \who{Märki}
 \citep[e.g.,][]{HorniEtAl_TechRep_IVT_2012_a}.
 
 % ===================================================================================
-\subsection{Warmstart}
+\subsection{Warmstarting}
 \label{sec:warmstart}
 \who{Horni Surpice, Dobler}
 
