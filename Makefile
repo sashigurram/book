@@ -13,6 +13,12 @@ pdf:
 quick:
 	pdflatex ${NAME}
 
+kaimain:
+	pdflatex "\def\user{kai}\input{main}"
+
+kai:
+	pdflatex kai
+
 clean:
 	-rm *.aux *.log *.bbl *.blg *.lof *.lot *.out *.toc *.glg *.glo *.gls *.idx *.ilg *.ind *.ist 
 
