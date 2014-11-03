@@ -98,9 +98,78 @@ Other agents might want to share their cars, so an actual meeting must be confir
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \textbf{TODO: describe why there are two different implementations!}
 
+\subsection{General thoughts}
+
+Within-day or en-route replanning means that travelers replan during the day or while they are on their route.  This means that the simulation needs to find some way to influence the agent while the mobility simulation (network loading) is running.  For the \acrshort{matsim} main network loading module, the so-called \verb$QSim$, this could be achieved by inserting an agent-loop, as follows:
+\begin{lstlisting}
+   void doSimStep() {
+      for ( each agent ) {   // <-- agent loop
+         agent.doSimStep() ;
+      }
+      for ( each link ) {
+         link.doSimStep() ;
+      }
+      for ( each node ) {
+         node.doSimStep() ;
+      }
+   }  
+\end{lstlisting}
+In this loop, each agent has the chance to deliberate in every time step.  Clearly, the agent can decide that he/she has nothing to deliberate and return immediately.
+
+Such an approach does, however, lead to computational challenges.  Going through all links and nodes in every time step is already an expensive operation, and a number of efficiency improvements (such as ``switching off non-active links'') are contained in the code.  Also, the number of links or nodes is typically an order of magnitude smaller than the number of synthetic persons in a scenario.  Thus, some massive optimization would have to be undertaken in order to make the above approach computationally efficient.
+
+An alternative approach to the above is to ask each agent only when a decision needs to be taken.  The most important decision for a driver is to chose the next link, i.e.
+\begin{lstlisting}
+class MyDriverAgent implements DriverAgent {
+   ...
+   @Override
+   public Id<Link> chooseNextLink() {
+      <algorithm to determine ID of next link>
+      return nextLinkId ;
+   }
+}
+\end{lstlisting}
+Similar implementations are needed for all other queries that could be asked of the agent, for example
+\begin{itemize}
+
+\item Should the trip end on the current link?
+
+\item Should the agent alight at the current stop?
+
+\item What is the ID of the vehicle to be used for a trip?
+
+\end{itemize}
+From the perspective of the agent such an approach might be called \emph{event driven}, since the agent performs mental activity only at such events.
+
+There is, indeed, a mechanism to program such agents and to insert
+them into the \verb$QSim$.  This is discussed in more detail in
+Section~\ref{sec:impl-repl-the-ag}.
+
+Challenges with the above approach include:
+\begin{itemize}
+
+\item The complete agent needs to be re-programmed.   This agent needs to have enough capabilities to be oriented about itself; for example, it needs to be able compute plausible routes.
+
+\item There are situations where the capability to decide the turn at each intersection while en-route is, in fact, not needed.  
+
+\end{itemize}
+For example, for typical evacuation applications it makes sense to start all agents on their normal daily plans.  When an emergency warning is distributed, the simulation can go once through all agents and decide how they react.  This will be done by replacing some or all future elements of the current plan.  In some applications this may happen more than once, for example if the recommended evacuation directions change because of a change in wind direction.  In other applications, evacuating agents may become stuck in unexpected congestion which may trigger en-route re-routing.  This may, however, to restricted to relatively small regions, and it may be sufficient to go through such a replanning loop every, say, 300 simulated seconds. 
+
+For such applications, the plan-based approach (Section~\ref{sec:impl-plan-based}) is more suitable.  Rather than having each agent answering certain queries in every time step or at every intersection, the plan-based approach first waits for a trigger (such as an emergency warning, or unexpected congestion), then decides on the affected agents, and then goes through those agents and changes the future portion of their plans.   This is not only conceptually easier than having every agent to answer for him-/herself, but it is also computationally more efficient since it is only called when it is triggered, and for the affected agents. 
+
+Overall, implementers and users will have to balance their needs.  
+%
+If there are relatively few times when agents should re-plan, and these times can be easily identified by, say, corresponding to an emergency signal, then this is an indicator for the plan-based approach.  
+%
+If, on the other hand, an agent goes into the simulation mostly or entirely without a plan, for example for an entirely reactive taxi driver, then this points to the approach of replacing the agent.
+
+\acrshort{matsim} provides infrastructure for both approaches.  The plan-based approach currently provides more support infrastructure, i.e.\ many important use cases can be implemented by re-using existing methods.  The approach that replaces the agent, in contrast, provides more flexibility.  In particular, it makes it possible without additional computational overhead that agents make decisions at the latest possible time.  While this is not entirely realistic behaviorally, such an approach is often desirable from a simulation perspective, where one does not want reproducibility of simulations depend on, say, random elements in terms of how far an agent plans ahead.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Plan-based Implementation}
+\subsection{Implementation alternative 1: Plan-based Implementation}
+\label{sec:impl-plan-based}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 When adding within-day replanning to MATSim, its iterative loop (see Figure \ref{fig:matsimcycle}) has to be adapted as shown in Figure \ref{fig:labelWithinDayMATSimLoop}. On one hand, the additional \emph{within-day replanning} module is added, which interacts with the mobility simulation. On the other hand, multiple iterations are only necessary if a combined simulation approach is used.
@@ -108,7 +177,7 @@ When adding within-day replanning to MATSim, its iterative loop (see Figure \ref
 %---------------------------------------------------------------------
 \createfigure%
 {(Iterative) within-day replanning MATSim loop}%
-{(Iterative) within-day replanning MATSim loop}%
+{(Iterative) within-day replanning MATSim loop \kai{I think this figure needs to come earlier.}}%
 {\label{fig:labelWithinDayMATSimLoop}}%
 {\includegraphics[width=12.5cm, angle=0]{extending/figures/WithinDayReplanning/WithinDayMATSimLoop}}%
 {}%
@@ -193,3 +262,16 @@ but maybe not in another one where the initially selected parking spot is availa
 Creating agents' initial routes using within-day replanning would be an example for an application where persons' plans have to be adapted. By default, creation of those routes is a step performed on person level before the micro-simulation is started for the first time. When this task is moved into the micro-simulation and is performed during their runtime, the created routes have to be still stored in the person's plan. Otherwise they would not be available for later iterations.
 
 The capabilities of this within-day replanning implementation are shown and discussed by \citet{Dobler_PhDThesis_2013} based on two sets of conducted experiments. The first set is based on a model of Zurich city. There it is assumed that the capacities of several arterial roads in the city center are drastically reduced during the morning peak. Travelling agents are given the opportunity to bypass the resulting traffic jams by adapting their routes using within-day replanning. The second set of experiments uses within-day replanning to create agents' initial routes. The results are compared to runs where those routes are created before the simulation is started and without having traffic flow information available.
+
+\subsection{Implementation alternative~2: Replacing the agent}
+\label{sec:impl-repl-the-ag}
+
+
+% Local Variables:
+% mode: latex
+% mode: reftex
+% mode: visual-line
+% TeX-master: "../../main"
+% comment-padding: 1
+% fill-column: 9999
+% End: 
