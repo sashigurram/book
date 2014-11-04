@@ -266,6 +266,39 @@ The capabilities of this within-day replanning implementation are shown and disc
 \subsection{Implementation alternative~2: Replacing the agent}
 \label{sec:impl-repl-the-ag}
 
+The \verb$DriverAgent$ interface structurally is something like
+\begin{itemize}
+
+\item \verb$Id<Link> chooseNextLinkId()$ -- agent is asked at intersection and needs to return how to proceed.
+
+\item \verb$Id<Link> getDestinationLinkId()$ -- agent is essentially asked if it wants to arrive on the current link.\footnote{%
+%
+The method can return {\tt null}.  Arguably, it should be modified to something like {\tt boolean isArrivingOnCurrentLink()}.
+%
+}  
+
+\item \verb$void notifyMoveOverNode(Id<Link> newLinkId)$ -- agent is notified that it has traversed the intersection and entered a new link.
+
+\end{itemize}
+Everything else are relatively simple bookkeeping methods such as \verb$getId()$ -- the agent needs to know its own identifier.
+
+If it is assumed that the agent does not only replan en-route but also while at activities, then also the \verb$MobsimAgent$ interface needs to be implemented.  This is a bit more involved; important methods are
+\begin{itemize}
+
+\item \verb$endLegAndComputeNextState(...)$ -- agent is notified that the current transport leg has ended, and the agent internally needs to decide how to continue.
+
+\item \verb$endActivityAndComputeNextState(...)$ -- agent is notified that the current activity has ended, and the agent internally needs to decide how to continue.
+
+\item \verb$setStateToAbort(...)$ -- if a leg or an activity was not ended cleanly.  This can for example happen if \verb$chooseNextLinkId()$ returns a link that is not outgoing from the current node.\footnote{%
+%
+Despite the name of the method, the agent can recover.  %
+}
+
+\item \verb$getState()$ -- agent needs to return its current state, which essentially either returns \verb$ACTIVITY$ or \verb$LEG$.  The most important function of this is that the framework obtains the information if the agent wants to start a new activity or a new leg.
+
+\end{itemize}
+Again, everything else are bookkeeping methods.
+
 
 % Local Variables:
 % mode: latex
