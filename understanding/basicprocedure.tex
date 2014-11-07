@@ -1,4 +1,4 @@
-\chapter{Basic Procedure of MATSim and System Characteristics}
+\chapter{Basic Procedure and System Characteristics}
 \label{ch:basicprocedure}
 % ##################################################################################################################
 \hfill \textbf{Author:} Andreas Horni 
@@ -6,6 +6,7 @@
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{understanding/figures/fixedpoint.pdf} \end{center}
 
 % ##################################################################################################################
+\section{Basic Procedure}
 The basic procedure of equilibrium-based microsimulations, such as MATSim or TRANSIMS is depicted in Figure \ref{fig:maxUtf}. A comprehensive (discrete) choice model is applied to a population for a specific choice situation. The choices are forwarded to a network load simulation (sometimes also called the physical simulation or mobility simulation). This network simulation takes into account constraints, such as network capacities. Generalized travel costs, calculated in the simulation, are fed back to the choice model. The choice model is also subject to constraints such as opening hours. The microsimulation is instantiated by census data for the population, travel surveys to estimate the models and infrastructure information to define the constraints. This instantiation or application is described for the MATSim Zürich scenario by  \citet[][]{HorniEtAl_TechRep_IVT_2011_a}. %In a very general sense, utility-based transport microsimulations do utility-maximization subject to constraints following the discrete choice methodology.
 
 % ----------
@@ -76,36 +77,11 @@ A very similar approach is maybe productive for transport modeling; $\varphi(.)$
 In first generation models, the fixed points are searched by implementing $\varphi(.)$ with iterative numerical algorithms such as the \emph{method of successive averages} (MSA) \citep[][p.342f]{OrtuzarWillumsen_2001} or the Frank-Wolfe algorithm \citep[][]{FrankWolfe_NRLQ_1956}, \citep[see also][p.4]{CorreaStier_Cochran_2010}. Every person searches its optimum subject to competition leading to an equilibrium state. This is achieved in the MSA by moving a certain share of the flow to the cheapest route, while taking it away from the remaining routes per OD-relation. For first generation models, much is known about existence, stability, uniqueness and computation of fixed points. Thus, by continuing the lines of the first generation models, one can hope to produce something reasonable also for second generation models, but this has to be investigated further. As shown in Section \ref{sec:co-ev}, a possible implementation of $\varphi(.)$ for MATSim is a co-evolutionary algorithm, which, in practice, has shown to efficiently lead to behaviorally sound fixed points.
 
 % ##################################################################################################################
-
-\section{Best Response Versus Random Choice}
-\label{sec:bestResponseOrRandom}
-Kai hatte das im Conceptual Meeting angesprochen -> innovative Module müssen keine exakten Lösungen vorschlagen. 
-Aber: etwas anders dürfte es bei best response sein!
-
-
-Methodische Diskussion:
-route choice -> random walk führt zu nichts
-man könnte best response plus Fehlerterm versuchen
-
-Routing in Hypernetzen?
-Wie kann man Suchraum begrenzen? -> siehe auch equilibration bei Zielwahl.
-
-
-\ah{RandomizedRouter (Gauteng) -> siehe Mail von A. Neumann}
-
-
+\section{System Characteristics}
 % ##################################################################################################################
-\section{Scale and Interfaces}
--> siehe Workshop-Paper Nagel and Axhausen
+\subsection{Aggregate Traffic Flow Characteristics}
+Macroscopic Fundamental Diagram and Volume Delay Function:
 
-% ========================================================================================
-\subsection{Landuse}
-
-% ========================================================================================
-\subsection{Cellular Automaton}
-
-% ##################################################################################################################
-\section{Emergence and Volume-Delay Function}
 Netzweite Volume-Delay Function
 
 Webster
@@ -137,7 +113,7 @@ Hysterese
 MFD: siehe auch Simionis!
 
 % ##################################################################################################################
-\section{Variability}
+\subsection{Results Variability}
 \label{sec:variability}
 
 siehe Horni Papers
@@ -145,53 +121,60 @@ siehe Horni Papers
 and \citet[][]{Neumann_PhDThesis_2014}: AN: ``Sensitivitätsruns (nenne das ``ensemble runs'') zur Abschätzung des Signalrauschens, d.h. z.B. 10 Runs mit gleichem Setup aber verschiedenen Random Seeds. siehe z.B. Abbildungen 7.15/7.16 und Tab 7.2 der Diss (Seiten 133-135)''
 
 % ##################################################################################################################
-% ##################################################################################################################
-a little theory hier unterbringen
+\subsection{Equilibrium}
+\label{sec:matsimeq}
+Not much is known about the characteristics of the equilibrium found by the MATSim co-evolutionary algorithm. The Nash equilibrium and the Wardrop equilibrium as its instance in transport planning are formulated for unilateral changes. But, in the co-evolutionary algorithm of MATSim, per iteration multiple persons (a specified share of the population) are allowed to modify their plans.
 
+Due to, first, potential individual variations in utility function parameters, second, the implicit unobserved heterogeneity introduced by time and route choice, and third, the explicit error terms applied for destination choices the travelers in MATSim do perceive the travel costs differently. Thus, the equilibrium searched for in MATSim is rather a stochastic than a deterministic user equilibrium. Additionally, it is dynamic. The classification of the MATSim equilibrium as a \emph{Mixed Strategy Nash Equilibrium} (MSNE) is often discussed in personal communications. This type of equilibrium is based on decision-makers which do not chose one specific alternative but a stable probability distribution over the alternatives. 
 
+An argument for the MSNE is as follows. The final state of MATSim with respect to the selected plans in one iteration is never perfectly stable if replanning is turned on and if this replanning is based on random mutation. This is the case for the very common replanning dimension \emph{time choice}. However, this argument is weak as the share of replanners is usually relatively small leading to small intra-run fluctuations. Furthermore, one could specify the result to be based not on the modified selected plan of the current iteration, but on the best plan of each agent. Although the stability of the best plans is not researched extensively, experience tells that for the vast majority of the agents the best plan is stable after having reached the global relaxed state.  
 
-\section{The 4-Step Procedure and Aggregate Forecasting Methods}
-blablabla blablabla blablabla
+Another argument for the MSNE can be, at first sight, the selection mechanism of MATSim. For some configurations, the plans are selected for replanning and execution according to a logit-type probability distribution. But having a closer look, this argument is also weak. The plans in an agents memory converge all toward the best plan over the course of iterations, as with every replanning stage the worst plan is removed. 
 
-blablabla blablabla
+In conclusion, this means that no probability distribution is involved from which the agents draw in the equilibrium state, meaning that the arguments for an MSNE are weak. Clearly, the results over \emph{multiple runs} with different random numbers represent a distribution, but this is not related to the discussion here.
 
-blablabla
+The development of static flow equilibria to dynamic particle equilibria and finally agent-based equilibria is presented in \citet[][]{Nagel_unpub_Latsis_2012, NagelFloetteroed_IATBR_2009}, representing an interesting connection point for a methodological discussion of MATSim system characteristics. Another starting point is provided by \citet[][]{Meister_PhDThesis_2011}, who researched stopping criteria in relation to the MATSim user equilibrium.
 
-% ##################################################################################################################
-\section{Assignment Methods: Successors of Beckmann et al.}
-
-% ##################################################################################################################
-\section{Analytical and Other Numerical Methods (Variational Inequalities, Fixed Points)}
+\ah{\citet[][p.509]{NagelBarrett_IJMPC_1997}: Grundidee relaxation procedure schon hier drin! }
 
 % ##################################################################################################################
-\section{Other Microsimulation Frameworks}
-\subsection{Rule-Based vs. Equilibrium-Based Frameworks}
+\subsection{Ergodicity and Emergence}
+As mentioned earlier, the driving forces of the transition from non-equilibrium states to an equilibrium and its empirical and behavioral basis are not well understood. If it happened to be the case, that there is no strong driving force, then the maintaining of the assumption of a dominating equilibrium state, would require ergodicity of the system \citep[see also][p.252]{Holden_JTEP_1989}, meaning that the system is actually able to reach all states of the state space. MATSim ergodicity is discussed in \citet[][]{Floetteroed_unpub_MCM_2012}.    
 
-(agent-based) microsims
+Emergence, the formation of complex patterns generated by interaction of comparatively simple individual units, appear in many systems including transport system. Often, emergent effects are highly significant, such as phantom traffic jams. Consequently, the ability to reproduce them is crucial to modeling these systems. Multi-agent-based simulations are due to their structural similarity to the modeled multi-part systems, expected to be particularly suitable to capture these effects. A glimpse at emergence in MATSim is taken in \citet[][]{HorniMontini_STRC_2013, HorniMontini_TechRep_IVT_2013}. 
 
 % ##################################################################################################################
-\section{Microsims in the Context of Different Types of Equilibria}
-\label{sec:types}
-% ------------------------------------------------------------------
-\copied{\citet[][]{Horni_PhDThesis_2013}}
+\subsection{Model Scope}
+\label{sec:scope}
+Clearly, for most models not the complete range of choice dimensions can be handled endogenously from the beginning, but needs to be fed into the model as input. Successively, during model development, more choice dimensions are included, in \citet[][]{NagelAxhausen_TechRep_IVT_2001} called ``endogenising''. Figure~\ref{fig:scope} loosely derived from \citet[][Figure 2]{NagelAxhausen_TechRep_IVT_2001}) shows the MATSim scope ranging from queue-based traffic flow to demand generation. Time, route, mode and destination choice are endogenously modeled. Activity chains \footnote{Activity chain choice is available in an experimental instance only (Section~\ref{sec:activitychoice}).} and locations for home and work activities are given as model input. Joint activities and rides, sometimes seen as an additional choice dimension, are researched intensively in the context of social networks and households (see Chapter~\ref{ch:jointtrips}). Projects combining MATSim with land use models, here with UrbanSim \citep[][]{NicolaiEtAl_TechRep_VSP_2011, NicolaiEtAl_ERSA_2011, SchirmerEtAl_ERSA_2011, Waddell_unpub_UrbanSimTutorial_2010} are underway (Section~\ref{sec:landuse}).
 
-% ------------------------------------------------------------------
-\textbf{Deterministic User Equilibrium (UE):}
+% ----------
+\createfigure%
+{Model Scope}%
+{Model Scope}%
+{\label{fig:scope}}%
+{\includegraphics[width=0.99\textwidth, angle=0]{understanding/figures/scope.pdf}}%
+{}
+%
+% ----------
 
-% ------------------------------------------------------------------
-\textbf{Stochastic User Equilibrium (SUE):}
- 
-% ------------------------------------------------------------------
-\textbf{Dynamic User Equilibrium (DUE):}
+\ah{Sind wir schon ein wenig in Economics drin?}
 
-% ------------------------------------------------------------------
-\subsection{Existence, Uniqueness, Stability and Behavioral Basis of Equilibria}
-For microsimulations, very little is known about the targeted equilibria. These models are highly dynamic, stochastic and disaggregate with many user classes and behaviorally rich decision principles. In Section \ref{sec:MATSimEquilibrium}, the MATSim equilibrium is discussed. As, in general, for the interpretation of results but also for model development (see equilibration discussion in Section \ref{sec:equilibration}), knowledge about the characteristics of the equilibrium searched is helpful, further research is strongly suggested.
-
-
-\todo{
-Gunnar \\
-Daniel R. Leeds
-}
+% ##################################################################################################################
+\subsection{Best Response Versus (Weighted) Random Choice}
+\label{sec:bestResponseOrRandom}
+Kai hatte das im Conceptual Meeting angesprochen -> innovative Module müssen keine exakten Lösungen vorschlagen. 
+Aber: etwas anders dürfte es bei best response sein!
 
 
+Methodische Diskussion:
+route choice -> random walk führt zu nichts
+man könnte best response plus Fehlerterm versuchen
+
+Routing in Hypernetzen?
+Wie kann man Suchraum begrenzen? -> siehe auch equilibration bei Zielwahl.
+
+
+\ah{RandomizedRouter (Gauteng) -> siehe Mail von A. Neumann}
+
+% ##################################################################################################################
