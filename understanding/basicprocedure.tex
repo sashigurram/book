@@ -115,10 +115,70 @@ MFD: siehe auch Simionis!
 % ##################################################################################################################
 \subsection{Results Variability}
 \label{sec:variability}
+Microsimulation system design as well as concrete microsimulation studies require specification of the measures of interest \footnote{
+Formal system specification (and verification) is discussed e.g., in \citet[][]{FisherWooldridge_IJCIS_1997, BourahlaBenmohamed_ENTCS_2005}. 
+}. For microsimulation design, they need to be general and broadly available, count data are an example. For specific experiments and purposes other measures might be added; \citet[][]{Kitamura_TMIP_1996}, for example, lists measures relevant for emissions modeling. Considering their scale is important for model development, but a certain lack of research exists in this regard. \citet[][Section 2.2]{NagelAxhausen_TechRep_IVT_2001}, for example, say: ``Another question regarding scales is which scale is necessary to answer which question. There is wide-spread intuition but currently little hard knowledge. Rules-of-thumb, such as to include one level of resolution below the level of interest, are just rule-of-thumb.'' 
 
-siehe Horni Papers
+Scale of the measures of interest is also relevant for results production, as different scales or resolution levels usually lead to different levels of \emph{variability} and, thus, to different study costs in terms of required computation effort. Transport microsimulations are usually stochastic. Randomness is, for example, introduced by the error terms of discrete choice models, a common component in utility-based microsimulations. This leads to random variability in results. Parameters or population statistics, such as averages, thus, need to be estimated by random sampling. Microsimulations are thus essentially a sampling tool \citep[][]{WolfDA_CSP_2001}, where one run represents one sample unit (in statistical terms one \emph{realization of a random variable}). This makes clear, that the whole toolbox used for other statistical methods, must be applied also here. As a first step, required sample size---here, the number of runs---to ensure a given confidence in the calculated averages needs to be calculated. In this context, variability is often seen as something tedious, because higher variability leads to larger minimal sample sizes, with usually relatively high costs per sample point. But, this view falls short. Clearly, unobserved variability---modeled as random variability---should be replaced to the extent possible (by explaining it). However, when looking at the very large proportion of temporal variability actually present in reality (Figure \ref{fig:counts}), a substantial part of this variability is---even if it was actually explicable---much more efficiently handled by including randomness, as model complexity would be prohibitively large otherwise. In this sense, microsimulations are a tool to capture these real-world fluctuations \citep[][p.11]{NewmanMEJBarkema_1999}, \citep[][p.704]{EsserNagel_Hensher_2001}. This means also that the focus should not only be on averages, but also on variance incorporated in the calculations of statistical confidence. The following sections broaden the microsimulation variability analysis.
 
-and \citet[][]{Neumann_PhDThesis_2014}: AN: ``Sensitivitätsruns (nenne das ``ensemble runs'') zur Abschätzung des Signalrauschens, d.h. z.B. 10 Runs mit gleichem Setup aber verschiedenen Random Seeds. siehe z.B. Abbildungen 7.15/7.16 und Tab 7.2 der Diss (Seiten 133-135)''
+Multiple possibilities to categorize microsimulations variability exist; some categories are described by \citet[][]{HorniEtAl_TechRep_IVT_2011_b}. Often a distinction between endogenous (model) variability and exogenous (input) variability is made. Equally suitable one can distinguish systematic and random variability. The experiments reported below mainly focus on \emph{random, endogenous} model variability. Random variability stems from inherently random choices and from actually systematic choices not recognized as systematic by the modeler.
+
+MATSim variability was investigated by \citet[][]{HorniEtAl_TechRep_IVT_2011_b, HorniEtAl_STRC_2011, Dayte_TechRep_IVT_2012} coming to the conclusion that at the population level, as expected, there is little variability between simulation results. Little variability exists likewise for \emph{daily} volumes as shown in Figures \ref{fig:linkVolumesAWTVInterScatter} and \ref{fig:linkVolumesInterAWTV200} (with a different visualization), which is consistent with previous work. However, the variability for \emph{hourly} volumes is an issue as shown in Figures~\ref{fig:linkVolumesHour17-18InterScatter} and Figure~\ref{fig:linkVolumesInter200} (with a different visualization).
+
+To interact these substantial simualtion variability with variability observed in reality, \citet[][]{HorniEtAl_STRC_2011} looked at real-world link volumes given for both, the complete year and single months, meaning that a single point in the box plot represents temporal variability of a single network link, either for the whole year, or for a specific month. The hours 11-12 and 17-18 are shown as examples in Figure~\ref{fig:counts}, where similar patterns could be observed for all hours. The plots allow the conclusion that also in reality variability is also substantial.
+
+Further MATSim investigations are reported by \citet[][]{Hackney_PhDThesis_2009, Neumann_PhDThesis_2014}.
+
+\createfigure%
+{Simulated link volumes}%
+{Simulated link volumes}%
+{\label{fig:linkVolumes}}%
+{%
+  \createsubfigure%
+  {Daily Volumes: : Inter-run Variability}%
+	{\includegraphics[width=0.49\textwidth]{understanding/figures/var/linkVolumesAWTVInterScatter.png}}%
+	{\label{fig:linkVolumesAWTVInterScatter}}%
+  {}%
+	\createsubfigure%
+  {Simulated Daily Volumes: Inter-run Variability, Runs 0-29, Iteration 200}%
+	{\includegraphics[width=0.4\textwidth]{understanding/figures/var/linkVolumesInterAWTV200.pdf}}%
+	{\label{fig:linkVolumesInterAWTV200}}%
+  {}%
+  \createsubfigure%
+  {Hourly Volumes (Hour 17-18), Inter-run Variability}%
+	{\includegraphics[width=0.49\textwidth]{understanding/figures/var/linkVolumesHour17-18InterScatter.png}}%
+	{\label{fig:linkVolumesHour17-18InterScatter}}%
+  {}%
+	\createsubfigure%
+  {Simulated Hourly Volumes: Inter-run Variability, Runs 0-29, Iteration 200}%
+	{\includegraphics[width=0.4\textwidth]{understanding/figures/var/linkVolumesInter200.pdf}}%
+	{\label{fig:linkVolumesInter200}}%
+  {}%
+}%
+{} 
+
+\createfigure%
+{Measured volumes}%
+{Measured volumes}%
+{\label{fig:counts}}%
+{%
+	\createsubfigure%
+  {Daily Volumes}%
+	{\includegraphics[width=0.8\textwidth]{understanding/figures/var/countsDaily.pdf}}%
+	{\label{fig:countsDaily}}%
+  {}%
+  \createsubfigure%
+  {11:00-12:00}%
+	{\includegraphics[width=0.8\textwidth]{understanding/figures/var/counts11-12.pdf}}%
+	{\label{fig:H1112}}%
+  {}%
+ 	\createsubfigure%
+  {17:00-18:00}%
+	{\includegraphics[width=0.8\textwidth]{understanding/figures/var/counts17-18.pdf}}%
+	{\label{fig:H1718}}%
+  {}%
+}%
+{}
 
 % ##################################################################################################################
 \subsection{Equilibrium}
@@ -135,7 +195,7 @@ In conclusion, this means that no probability distribution is involved from whic
 
 The development of static flow equilibria to dynamic particle equilibria and finally agent-based equilibria is presented in \citet[][]{Nagel_unpub_Latsis_2012, NagelFloetteroed_IATBR_2009}, representing an interesting connection point for a methodological discussion of MATSim system characteristics. Another starting point is provided by \citet[][]{Meister_PhDThesis_2011}, who researched stopping criteria in relation to the MATSim user equilibrium.
 
-\ah{\citet[][p.509]{NagelBarrett_IJMPC_1997}: Grundidee relaxation procedure schon hier drin! }
+%\ah{\citet[][p.509]{NagelBarrett_IJMPC_1997}: Grundidee relaxation procedure schon hier drin! }
 
 % ##################################################################################################################
 \subsection{Ergodicity and Emergence}
