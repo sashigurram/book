@@ -25,7 +25,7 @@ clean:
 .PHONY: pdf bib clean veryclean tags wc
 
 tags:
-	-etags *.tex */*.tex
+	-etags *.tex */*.tex */*/*.tex
 
 wc:
 	pdftotext ${NAME}.pdf

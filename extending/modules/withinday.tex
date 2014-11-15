@@ -130,7 +130,7 @@ class MyDriverAgent implements DriverAgent {
 }
 \end{lstlisting}
 Similar implementations are needed for all other queries that could be asked of the agent, for example
-\begin{itemize}
+\begin{compactitem}
 
 \item Should the trip end on the current link?
 
@@ -138,22 +138,18 @@ Similar implementations are needed for all other queries that could be asked of 
 
 \item What is the ID of the vehicle to be used for a trip?
 
-\end{itemize}
+\end{compactitem}
 From the perspective of the agent such an approach might be called \emph{event driven}, since the agent performs mental activity only at such events.
 
 There is, indeed, a mechanism to program such agents and to insert
 them into the \verb$QSim$.  This is discussed in more detail in
 Section~\ref{sec:impl-repl-the-ag}.
 
-Challenges with the above approach include:
-\begin{itemize}
+A challenge with that approach is that the complete agent needs to be re-programmed.  This agent needs to have enough capabilities to be oriented about itself; for example, it needs to be able to compute plausible routes.
 
-\item The complete agent needs to be re-programmed.   This agent needs to have enough capabilities to be oriented about itself; for example, it needs to be able compute plausible routes.
-
-\item There are situations where the capability to decide the turn at each intersection while en-route is, in fact, not needed.  
-
-\end{itemize}
-For example, for typical evacuation applications it makes sense to start all agents on their normal daily plans.  When an emergency warning is distributed, the simulation can go once through all agents and decide how they react.  This will be done by replacing some or all future elements of the current plan.  In some applications this may happen more than once, for example if the recommended evacuation directions change because of a change in wind direction.  In other applications, evacuating agents may become stuck in unexpected congestion which may trigger en-route re-routing.  This may, however, to restricted to relatively small regions, and it may be sufficient to go through such a replanning loop every, say, 300 simulated seconds. 
+On the other hand, there are situations where the capability to decide the turn at each intersection while en-route is, in fact, not needed.  
+%
+For example, for typical evacuation applications it makes sense to start all agents on their normal daily plans.  When an emergency warning is distributed, the simulation can go once through all agents and decide how they react.  This will be done by replacing some or all future elements of the current plan.  In some applications this may happen more than once, for example if the recommended evacuation directions change because of a change in wind direction.  In other applications, evacuating agents may become stuck in unexpected congestion which may trigger en-route re-routing.  This may, however, be restricted to relatively small regions, and it may be sufficient to go through such a replanning loop every, say, 300 simulated seconds. 
 
 For such applications, the plan-based approach (Section~\ref{sec:impl-plan-based}) is more suitable.  Rather than having each agent answering certain queries in every time step or at every intersection, the plan-based approach first waits for a trigger (such as an emergency warning, or unexpected congestion), then decides on the affected agents, and then goes through those agents and changes the future portion of their plans.   This is not only conceptually easier than having every agent to answer for him-/herself, but it is also computationally more efficient since it is only called when it is triggered, and for the affected agents. 
 
@@ -266,24 +262,30 @@ The capabilities of this within-day replanning implementation are shown and disc
 \subsection{Implementation alternative~2: Replacing the agent}
 \label{sec:impl-repl-the-ag}
 
+As said earlier, the approach according to Section~\ref{sec:impl-plan-based} assumes that the agent still has a plan.  There may be situations where this is not appropriate, for example when the agent makes up the route as it goes, or when quite in general one wants to investigate models where each agent has its own perception and deliberation, rather than some external algorithm modifying its plan.  As also said earlier, there is no clear recipe when which approach is better; it depends both on the needs of the project and on the personal preference of the developer.
+
+\subsubsection{Agent interface}
+
 The \verb$DriverAgent$ interface structurally is something like
-\begin{itemize}
+\begin{compactitem}
 
-\item \verb$Id<Link> chooseNextLinkId()$ -- agent is asked at intersection and needs to return how to proceed.
+\item \verb$Id<Link> chooseNextLinkId()$ -- agent is asked at intersections and needs to return how to proceed.
 
-\item \verb$Id<Link> getDestinationLinkId()$ -- agent is essentially asked if it wants to arrive on the current link.\footnote{%
-%
-The method can return {\tt null}.  Arguably, it should be modified to something like {\tt boolean isArrivingOnCurrentLink()}.
-%
-}  
+%% \item \verb$Id<Link> getDestinationLinkId()$ -- agent is essentially asked if it wants to arrive on the current link.\footnote{%
+
+%% The method can return {\tt null}.  Arguably, it should be modified to something like {\tt boolean isArrivingOnCurrentLink()}.
+
+%% }  
+
+\item \verb$boolean isWantingToArriveOnCurrentLink()$ -- agent is asked if it wants to arrive on the current link.
 
 \item \verb$void notifyMoveOverNode(Id<Link> newLinkId)$ -- agent is notified that it has traversed the intersection and entered a new link.
 
-\end{itemize}
+\end{compactitem}
 Everything else are relatively simple bookkeeping methods such as \verb$getId()$ -- the agent needs to know its own identifier.
 
 If it is assumed that the agent does not only replan en-route but also while at activities, then also the \verb$MobsimAgent$ interface needs to be implemented.  This is a bit more involved; important methods are
-\begin{itemize}
+\begin{compactitem}
 
 \item \verb$endLegAndComputeNextState(...)$ -- agent is notified that the current transport leg has ended, and the agent internally needs to decide how to continue.
 
@@ -296,8 +298,88 @@ Despite the name of the method, the agent can recover.  %
 
 \item \verb$getState()$ -- agent needs to return its current state, which essentially either returns \verb$ACTIVITY$ or \verb$LEG$.  The most important function of this is that the framework obtains the information if the agent wants to start a new activity or a new leg.
 
-\end{itemize}
+\end{compactitem}
 Again, everything else are bookkeeping methods.
+
+\subsubsection{Agent insertion}
+
+The code accepts several ways to insert such a self-programmed \verb$MobsimAgent$ into the code, but the preferred way is using the \verb$AgentSource$ interface, as follows:
+
+\kai{code snippet missing; wait for Michael Zilske}
+
+\subsubsection{Perception, decision, integration}
+
+The agents somehow need to perceive their environment.  The simulation tells the agent where it is, via \verb$notifyMoveOverNode(Id<Link> nextLinkId)$.  In general, however, this will not be enough.  For example, the agent may want to be informed about congestion, or evacuation directions.
+
+A general way to achieve this is to use the \verb$Events$ channel.
+
+We would probably suggest to separate observer, guidance, and the agent itself.
+
+\paragraph{Observer}
+
+The observer would probably listen to events:
+\begin{lstlisting}
+class MyObserver implements BasicEventHandler {
+   @Override
+   public void handleEvent(Event event) {
+      ... // memorize information
+   }
+   ...
+}
+\end{lstlisting}
+
+\paragraph{Guidance}
+
+A guidance object might give guidance to the agents.  This could also seen as a decision making entity.  This could, in principle, also be moved fully into the agent.  It could, for example, have the following design:
+\begin{lstlisting}
+class MyGuidance {
+   MyGuidance( MyObserver observer ) {
+      ...
+   }
+   Id<Link> chooseNextLinkId( Id<Link> currentLinkId ) {
+      ... // compute and return decision
+   }
+}
+\end{lstlisting}
+
+\paragraph{Agent}
+
+The agent would need access to the guidance:
+\begin{lstlisting}
+class MyAgent implements MobsimDriverAgent {
+   MyGuidance guidance ;
+   MyAgent( MyGuidance guidance ) {
+      this.guidance = guidance ;
+   }  
+   ...
+   @Override
+   Id<Link> chooseNextLinkId() {
+      return this.guidance.chooseNextLinkId( this.currentLinkId ) ;
+   }
+   ...
+}
+\end{lstlisting}
+
+\paragraph{Control script}
+
+This would be plugged together by a variant of the following script:
+
+\kai{code snippet missing; wait for MZ above}
+
+\subsubsection{Using framework methods}
+
+\acrshort{matsim} uses a wide range of methods to plan the day of a simulated traveler.  These can be passed into the guidance module, for example
+\begin{lstlisting}
+   Controler ctrl = new Controler(...) ;
+   ...
+   TripRouter router = ctrl.getTripRouterFactory().instantiateAndConfigureTripRouter() ;
+   MyGuidance guidance = new MyGuidance( router ) ;
+   ...
+\end{lstlisting}
+The guidance object can still be passed to the agent as before; it can now compute and then return, at each intersection, the best turn towards a destination.
+
+
+
 
 
 % Local Variables:
