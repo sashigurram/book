@@ -168,6 +168,10 @@ If, on the other hand, an agent goes into the simulation mostly or entirely with
 \label{sec:impl-plan-based}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\kai{Christoph, die ``mnote'' sind für mich, damit ich einen schnellen Überblick habe, was Du geschrieben hast.  Damit ich das nicht wiederhole, sondern mich ggf.\ darauf beziehe.}
+
+\mnote{day-to-day loop no longer necessary}
+
 When adding within-day replanning to MATSim, its iterative loop (see Figure \ref{fig:matsimcycle}) has to be adapted as shown in Figure \ref{fig:labelWithinDayMATSimLoop}. On one hand, the additional \emph{within-day replanning} module is added, which interacts with the mobility simulation. On the other hand, multiple iterations are only necessary if a combined simulation approach is used.
 
 %---------------------------------------------------------------------
@@ -180,7 +184,11 @@ When adding within-day replanning to MATSim, its iterative loop (see Figure \ref
 %---------------------------------------------------------------------
 \textbf{TODO: redraw this figure using the new (blue) matsim loop?}
 
-The implementation is realized as so-called \emph{MobsimEngine} which can be plugged into the \emph{QSim}. In every simulated time step, the \emph{QSim} iterates over all registered \emph{MobsimEngines} and allows them to simulated the current time step. Besides simulation of the traffic flows, those engines are also able to let agents start or end activities. The engine containing the within-day replanning logic (called \emph{WithinDayEngine}) does not simulate traffic flows but tracks agents and adapts their plans. Doing so is separated into two steps. First, agents whose plans have to be adapted in the current time step are identified. In a second step, the adaption of their plans is performed. 
+\mnote{implementation as MobsimEngine ... tracking agents and plans}
+
+The implementation is realized as so-called \emph{MobsimEngine} which can be plugged into the \emph{QSim}. In every simulated time step, the \emph{QSim} iterates over all registered \emph{MobsimEngines} and allows them to simulate the current time step. Besides simulation of the traffic flows, those engines are also able to let agents start or end activities. The engine containing the within-day replanning logic (called \emph{WithinDayEngine}) does not simulate traffic flows but tracks agents and adapts their plans. Doing so is separated into two steps. First, agents whose plans have to be adapted in the current time step are identified. In a second step, the adaption of their plans is performed. 
+
+\mnote{register identifiers with replanners, replanners with the within-day engine}
 
 Figure \ref{fig:labelWithinDayEngine} shows the structure of the \emph{WithinDayEngine}. Multiple \emph{Replanners} can be registered to the engine. Each \emph{Replanner} represents a unique replanning strategy like re-routing or time mutation and uses a set of \emph{Identifiers} which communicate with agents and select those agents who are given the opportunity to adapt their plans. An \emph{Identifier} can be seen as an information-distributing unit, like a radio station or a policeman. Therefore, not every \emph{Identifier} communicates with all agents. For example, agents at home will probably listen to the radio, but agents walking in the park will not. Each \emph{Identifier} returns a list of agents to its superior \emph{Replanner}, which then adapts those agents' plans.
 
@@ -193,9 +201,19 @@ Figure \ref{fig:labelWithinDayEngine} shows the structure of the \emph{WithinDay
 {}
 %---------------------------------------------------------------------
 
-There is a division of responsibilties between \emph{Replanners} and \emph{Identifiers}. The first ones are responsible for adapting the agents' plans but they should not check whether an agent should be replanned or not. If, for example, a \emph{Replanner} updates an agent's route, it has to be ensured by the \emph{Identifiers} that only agents who are currently performing a leg are replanned. In turn, \emph{Identifiers} should select agents who have to be replanned but should not change their plans. As a result of this division, the often time consuming replanning of the agents' plans can be performed using parallel threads which leads to an almost linear speed-up. In general, simulation results do not depend on the order in which agents are replanned. \emph{Replanners} which use random numbers are a special case. They have to ensure that their \emph{randon number generator} is re-initialized for every replanned agent using a deterministic value (e.g.~a combination of the agent's Id and the current time step).
+\mnote{more about itentifiers and replanners}
 
-Running the \emph{Identifier(s)} to select those agents who have to adapt their plans is performed sequentially. On one hand, an \emph{Identifier's} runtime is typically very short and therefore no significant performance losses are expected. On the other hand, it is a robust design which cannot produce race conditions which could occur if multiple instances of an \emph{Identifier} run concurrently. An example would be an \emph{Identifier} which selects agents on household level, i.e.~if a member of a household is identified, also all other members are added to the list of agents who have to be replanned. In an approach with parallel running instances of an \emph{Identifier}, an instance could identify member A of  a household while concurrently another instance could identify member B of the same household. As a result, the household's members would be twice in the list of agents to be replanned---once added by each \emph{Identifier} instance.
+There is a division of responsibilties between \emph{Replanners} and \emph{Identifiers}. The first ones are responsible for adapting the agents' plans but they should not check whether an agent should be replanned or not. If, for example, a \emph{Replanner} updates an agent's route, it has to be ensured by the \emph{Identifiers} that only agents who are currently performing a leg are replanned. In turn, \emph{Identifiers} should select agents who have to be replanned but should not change their plans. As a result of this division, the often time consuming replanning of the agents' plans can be performed using parallel threads which leads to an almost linear speed-up. In general, simulation results do not depend on the order in which agents are replanned. \emph{Replanners} which use random numbers are a special case. 
+%They have to ensure that 
+In the present implementation, their \emph{random number generator} is re-initialized for every replanned agent using a deterministic value (e.g.~a combination of the agent's Id and the current time step).  This ensures that an agent's decisions can be reproduced even when the global sequence of random numbers changs. \kai{Christoph, ist es das?  ``have to'' (wie Du es vorher hattest), erscheint mir auf jeden Fall zu stark.  Oder hat es etwas mit multi-threading zu tun?}
+
+\mnote{identifiers run sequentially}
+
+Running the \emph{Identifier(s)} to select those agents who have to adapt their plans is performed sequentially. On one hand, an \emph{Identifier's} runtime is typically very short and therefore no significant performance losses are expected. On the other hand, 
+%it is a robust design which 
+this makes the design robust so it cannot produce race conditions which could occur if multiple instances of an \emph{Identifier} run concurrently. An example would be an \emph{Identifier} which selects agents on household level, i.e.~if a member of a household is identified, also all other members are added to the list of agents who have to be replanned. In an approach with parallel running instances of an \emph{Identifier}, an instance could identify member A of  a household while concurrently another instance could identify member B of the same household. As a result, the household's members would be twice in the list of agents to be replanned---once added by each \emph{Identifier} instance.
+
+\mnote{different basic replanners for current/future trips/acts}
 
 \emph{Replanner} implementations are available for every possible basic change of an agent's scheduled daily plan. Any trips and activities can be adapted, although some replanning operations are not available when trip or activity has already been started. Possible adaptations are:
 \begin{compactitem}
@@ -204,8 +222,10 @@ Running the \emph{Identifier(s)} to select those agents who have to adapt their 
     \item current activity (end time)
     \item future activity (add, remove, location, type, start and end time)
 \end{compactitem}
-
+%
 For complex plan adaptations, those basic \emph{Replanners} can be combined. If, for example, an agent currently performing a trip changes the destination of its next activity, routes of the current and next trip have to be adapted.
+
+\mnote{different basic identifiers}
 
 Additionally, four basic \emph{Identifiers} have been implemented so far. They identify agents, which are...
 \begin{compactitem}
@@ -215,18 +235,27 @@ Additionally, four basic \emph{Identifiers} have been implemented so far. They i
     \item performing a trip and are going to move to another link.
 \end{compactitem}
 
+\mnote{AgentFilters (e.g.\ for spatial areas)}
+
 Often, identifiers have to handle only a subset of the population, e.g.~only male agents or agents which are currently performing a car trip. In order to prevent that the same functionality has to be implemented multiple times, so-called \textit{AgentFilters} are introduced. Their task is to remove agents which do not meet the filter criteria from a set of agents. Using \textit{AgentFilters} not only avoids duplicated code but can also reduce the computation effort. An example would be two \textit{Identifiers} which should identify only agents currently travelling in a certain part of the network. Without \textit{AgentFilters}, each of them would have to track all travelling agents and their current positions. When this functionality is moved to an \textit{AgentFilter}, the two \textit{Identifiers} can share a single instance of that filter.
+
+\mnote{filters: simple and re-usable; identifiers: complex and include decision-making}
 
 Basically, simple and re-usable functionality should be implemented as \textit{AgentFilters} while more complex and/or decision making functionality should be part of an \textit{Identifier}. Again, this can be depicted with an example, e.g.\ a scenario in which the search for a parking space is modelled. A filter can be utilized to take only agents into account which are currently travelling by car. The \textit{Identifier} solves the more complex tasks such as deciding when the agent starts its search or selecting the searching strategy to be applied.
 
-Three basic \emph{AgentFilters} have been implemented so far. They filter agents, which are not...
+\mnote{basic AgentFilters}
+
+Three basic \emph{AgentFilters} have been implemented so far. They filter agents which are not...
 \begin{compactitem}
     \item part of a predefined set of agents.
     \item currently using a transport mode included in a given set.
     \item currently located on a link included in a predefined set.
 \end{compactitem}
 
-Besides the logic that identifies agents and adapts their plans, another important part of the within-day replanning framework is code that continuously collects information and provides it to the \emph{Identifiers} which decide based on that data whether agents are replanned or not. In a time step based approach---as it is realized by the \emph{QSim}---collecting, analyzing and aggregating data as well as providing it can be easily realized. Figure~\ref{fig:labelQSimTimeStep} shows the structure of a \emph{QSim's} time step. Each time step is separated into three phases---\emph{before time step}, \emph{do sim step} and \emph{after time step}. During the \emph{do sim step} phase, all registered \emph{MobsimEngines} simulate the current time step. The \emph{before time step} and \emph{after time step} phases allow to execute code before respectively after the simulation of the current time step. A class can collect data like link travel times during the \emph{do sim step} phase. Afterwards, the collected data can be analyzed and aggregated in the \emph{after time step} phase. In the next time step, the \emph{WithinDayEngine's Identifiers} can use that data for their decisions. The \emph{WithinDayEngine} is always the first \emph{MobsimEngine} which executes its \emph{doSimStep} method. This ensures that no agent has changed its state since the \emph{after time step} phase of the previous time step. As a result, the \emph{Identifiers} make their decisions on actual data.
+\mnote{observers}
+
+Besides the logic that identifies agents and adapts their plans, another important part of the within-day replanning framework is code that continuously collects information and provides it to the \emph{Identifiers} which decide based on that data whether agents are replanned or not. In a time step based approach---as it is realized by the \emph{QSim}---collecting, analyzing and aggregating data as well as providing it can be easily realized. Figure~\ref{fig:labelQSimTimeStep} shows the structure of a \emph{QSim's} time step. Each time step is separated into three phases---\emph{before time step}, \emph{do sim step} and \emph{after time step}. During the \emph{do sim step} phase, all registered \emph{MobsimEngines} simulate the current time step. The \emph{before time step} and \emph{after time step} phases allow to execute code before respectively after the simulation of the current time step. A class can collect data like link travel times during the \emph{do sim step} phase. Afterwards, the collected data can be analyzed and aggregated in the \emph{after time step} phase. In the next time step, the \emph{WithinDayEngine's Identifiers} can use that data for their decisions. The \emph{WithinDayEngine} is always the first \emph{MobsimEngine} which executes its \emph{doSimStep} method. This ensures that no agent has changed its state since the \emph{after time step} phase of the previous time step. As a result, the \emph{Identifiers} make their decisions on %actual 
+current data.
 
 %---------------------------------------------------------------------
 \createfigure%
@@ -236,6 +265,8 @@ Besides the logic that identifies agents and adapts their plans, another importa
 {\includegraphics[width=8.0cm, angle=0]{extending/figures/WithinDayReplanning/QSimTimeStep}}%
 {}
 %---------------------------------------------------------------------
+
+\mnote{example: TravelTimeCollector}
 
 An example for such a class is the so-called \emph{TravelTimeCollector}. Its task is to provide actual link travel times to the \emph{Replanners} by collecting and averaging travel times of agents that have recently passed a link during a given time span. A typical time span is 15~minutes; older link travel times are ignored. Duration of the specific time span has an important impact on travel times reported to the \emph{Replanners}. On one hand, significant changes in link travel times will be communicated very slowly, if the time span is too long. On the other hand, a too short duration will overrate outliers.
 
@@ -250,7 +281,9 @@ The \emph{TravelTimeCollector} is a simple, but efficient implementation of a wi
 {}
 %---------------------------------------------------------------------
 
-An important aspect that has to be considered when within-day replanning is used is whether the persons' or only the agents' plans are replanned. In this context, a person is a global object which exists during an entire simulation run. An agent represents a person in the micro-simulation part of an iteration. Moreover, a person has several plans in its memory, an agent only a single one. By default, an agent's plan is only a copy of the plan of the person which is represented. Only the score of the person's plan is updated by MATSim's scoring module. 
+\mnote{matsim person vs.\ matsim agent}
+
+An important aspect that has to be considered when within-day replanning is used is whether the persons' or only the agents' plans are replanned. In this context, a person is a global object which exists during an entire simulation run. An agent represents a person in the (traffic flow) micro-simulation part of an iteration. Moreover, a person has several plans in its memory, an agent only a single one. By default, an agent's plan is only a copy of the plan of the person which is represented. Only the score of the person's plan is updated by MATSim's scoring module. 
 
 In a first one, within-day replanning is used to simulate agents' parking search. A person's plan contains the location where a free parking space is expected. However, if the agent realizes in the micro-simulation that there is no free space left, it starts looking for a free parking spot. As a result, the agent's route is extended. This extension has to be local in the agent's route since it is only necessary in the current iteration
 but maybe not in another one where the initially selected parking spot is available.
