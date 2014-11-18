@@ -177,7 +177,7 @@ When adding within-day replanning to MATSim, its iterative loop (see Figure \ref
 %---------------------------------------------------------------------
 \createfigure%
 {(Iterative) within-day replanning MATSim loop}%
-{(Iterative) within-day replanning MATSim loop \kai{I think this figure needs to come earlier.}}%
+{(Iterative) within-day replanning MATSim loop \kai{I think this figure needs to come earlier, i.e.\ in Sec.~\ref{sec:SimulationApproaches}.}}%
 {\label{fig:labelWithinDayMATSimLoop}}%
 {\includegraphics[width=12.5cm, angle=0]{extending/figures/WithinDayReplanning/WithinDayMATSimLoop}}%
 {}%
@@ -270,7 +270,9 @@ current data.
 
 An example for such a class is the so-called \emph{TravelTimeCollector}. Its task is to provide actual link travel times to the \emph{Replanners} by collecting and averaging travel times of agents that have recently passed a link during a given time span. A typical time span is 15~minutes; older link travel times are ignored. Duration of the specific time span has an important impact on travel times reported to the \emph{Replanners}. On one hand, significant changes in link travel times will be communicated very slowly, if the time span is too long. On the other hand, a too short duration will overrate outliers.
 
-The \emph{TravelTimeCollector} is a simple, but efficient implementation of a within-day travel time calculator. It does not implement features like traffic flow predictions or dynamic weighting of recent travel times based on historical data. Due to the abandonment of such features, it is very robust, even in scenarios where traffic flow conditions change dramatically.
+The \emph{TravelTimeCollector} is a simple, but efficient implementation of a within-day travel time calculator. It does not implement features like traffic flow predictions or dynamic weighting of recent travel times based on historical data. 
+%Due to 
+Because of the abandonment of such features, it is very robust, even in scenarios where traffic flow conditions change dramatically.
 
 %---------------------------------------------------------------------
 \createfigure%
@@ -283,12 +285,32 @@ The \emph{TravelTimeCollector} is a simple, but efficient implementation of a wi
 
 \mnote{matsim person vs.\ matsim agent}
 
-An important aspect that has to be considered when within-day replanning is used is whether the persons' or only the agents' plans are replanned. In this context, a person is a global object which exists during an entire simulation run. An agent represents a person in the (traffic flow) micro-simulation part of an iteration. Moreover, a person has several plans in its memory, an agent only a single one. By default, an agent's plan is only a copy of the plan of the person which is represented. Only the score of the person's plan is updated by MATSim's scoring module. 
+The current \acrshort{matsim} code differentiates between \verb$Person$ and \verb$MobsimAgent$.  
+%
+\verb$Person$ can be seen as a very simple Q-learning entity, possessing multiple \verb$Plan$s (``actions''), each together with an expected score which is updated over the iterations.  In consequence, a \verb$Person$ is persistent over the iterations; in fact, the internal state of each \verb$Person$ is written to file at the end of the iterations.
+%
+\verb$MobsimAgent$, in contrast, is instantiated every time the \verb$QSim$ is called, and does not exist beyond the running time of the \verb$QSim$.  A \verb$MobsimAgent$ is essentially reactive, being queried by the framework about decisions at intersections or arrival points.  In the standard implementation, these queries are answered by the plan, but other implementations can be used and/or additional \verb$MobsimAgent$s can be added which do not correspond to \verb$Person$s.
+
+\mnote{Which plan to modify}
+
+This leads to the question if within-day adaptations to the \verb$Plan$ should be passed through the the \verb$Person$.  Let us call the actual trajectory through the system the ``executed plan''.  This can be different from the original plan, for example using a different route, different departure times, different modes, etc.  The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output.  In consequence, it is not possible to treat the executed plan together with the just obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
+
+In consequence, the code uses a copy of the original plan and modifies the copy.  The score, however, is given to the original plan.  The implementation is free to \kai{Christoph: ``is able to''? (existiert das derzeit als Option?} \emph{also} memorize the executed plan and add it to the set of plans.
+
+%% \mnote{lskdjf}
+
+%% An important aspect that has to be considered when within-day replanning is used is whether the persons' or only the agents' plans are replanned. In this context, a person is a global object which exists during an entire simulation run. An agent represents a person in the (traffic flow) micro-simulation part of an iteration. Moreover, a person has several plans in its memory, an agent only a single one. By default, an agent's plan is only a copy of the plan of the person which is represented. Only the score of the person's plan is updated by MATSim's scoring module. 
+
+\mnote{parking example: parking search route should not be added to plan}
 
 In a first one, within-day replanning is used to simulate agents' parking search. A person's plan contains the location where a free parking space is expected. However, if the agent realizes in the micro-simulation that there is no free space left, it starts looking for a free parking spot. As a result, the agent's route is extended. This extension has to be local in the agent's route since it is only necessary in the current iteration
 but maybe not in another one where the initially selected parking spot is available.
 
+\mnote{starting agents without routes: within-day routes \emph{should} be added to plan (but I don't agree)}
+
 Creating agents' initial routes using within-day replanning would be an example for an application where persons' plans have to be adapted. By default, creation of those routes is a step performed on person level before the micro-simulation is started for the first time. When this task is moved into the micro-simulation and is performed during their runtime, the created routes have to be still stored in the person's plan. Otherwise they would not be available for later iterations.
+
+\kai{some pointers to simulations done with this set-up}
 
 The capabilities of this within-day replanning implementation are shown and discussed by \citet{Dobler_PhDThesis_2013} based on two sets of conducted experiments. The first set is based on a model of Zurich city. There it is assumed that the capacities of several arterial roads in the city center are drastically reduced during the morning peak. Travelling agents are given the opportunity to bypass the resulting traffic jams by adapting their routes using within-day replanning. The second set of experiments uses within-day replanning to create agents' initial routes. The results are compared to runs where those routes are created before the simulation is started and without having traffic flow information available.
 
