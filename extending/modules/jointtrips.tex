@@ -7,13 +7,38 @@
 \begin{center} \includegraphics[width=0.4\textwidth, angle=0]{extending/figures/Jointtrips/group.png} \end{center}
 
 % ##################################################################################################################
+{ % scope for our commands: do not pollute our little friends
+
+% ##################################################################################################################
 
 \newcommand\authoranddate{\citet}
+\newcommand\eg{\emph{e.g.}\xspace}
+\newcommand\eg{\emph{i.e.}\xspace}
+\newcommand\pudptw{Pick-Up and Delivery Problem With Time Windows\xspace}
+\newcommand\structeqmodel{structural equation model\xspace}
+\newcommand\ga{genetic algorithm\xspace}
+\newcommand\gas{genetic algorithms\xspace}
+\newcommand\Gas{Genetic algorithms\xspace}
+\renewcommand\matsim{MATSim\xspace}
 
 \authoranddate{DubernetAxhausen_unpub_Frontiers_2013, DubernetAxhausen_unpub_SmartCities_2013, DubernetAxhausen_STRC_2014,DubernetAxhausen_Transportation_forth}
 
-\section{Joint Decisions and Transport Systems}
+% ##################################################################################################################
+
+This chapter describes the extension of \matsim to consider what we name \emph{joint decisions}.
+\cref{sec:td:intro} explains what we name joint decision, and gives an overview of why such processes
+are important in transportation.
+\cref{sec:td:algo} then presents concepts to model this behavior,
+presents a generalisation of the \matsim algorithm to search for solutions to what
+we call the \emph{joint planning problem},
+and gives technical insights on how this implementation could be achieved,
+given the \matsim software architecture.
+
+\section{Joint Decisions and Transport Systems\label{sec:td:intro}}
 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+\subsection{Motivation}
+\todo{Shorten this A LOT!!!!}
 
 In recent years, there has been a growing interest in the social dimension of travel,
 and how travel decisions are influenced not only by the global state of the transportation system,
@@ -231,11 +256,149 @@ Comparing the results of this scenario with travel diary data,
 limitations of the current implementation are identified,
 and directions for future work are sketched.
 
-\section{An Solution Algorithm for the Joint Planning Problem: a Generalization of the MATSim Process}
+\subsection{The Joint Planning Problem}
+
+\section{An Solution Algorithm for the Joint Planning Problem: a Generalization of the MATSim Process\label{sec:td:algo}}
 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 \subsection{Algorithm}
 %---------------------------------------------------------------------------
 
+Given this theoretical framework, one needs to design and implement an
+algorithm to search for allocations of daily plans to individuals, that
+satisfy this solution concept.
+
+This section presents the EUNOIA implementation, which was build using
+the MATSim software framework. This implementation consists of two
+groups of components:
+
+\begin{enumerate}
+\item
+  A \emph{Controller} that implements the extension of the MATSim
+  co-evolutionary algorithm, outlined hereafter. It is implemented in a
+  modular fashion, to be easily adapted to the specific need of
+  different simulation scenarios
+\item
+  Specific implementations of the modular components, to test the
+  behavior of the approach and apply it to the case studies.
+
+  \begin{enumerate}[i)]
+  \item
+    data structures to represent households and generic social networks
+    were implemented, as well as the ways to identify groups for
+    replanning
+  \item
+    specific replanning modules to explore the set of possible joint
+    decisions were implemented
+  \end{enumerate}
+\end{enumerate}
+
+The solution algorithm and implementation is a generalization of the
+MATSim process presented in the introductory session. The following
+sections outline the different elements implemented in the EUNOIA
+project.
+
+\paragraph{Controller}
+
+The MATSim framework provides a \emph{Controller} to build and configure
+co-evolutionary algorithms, where agents each optimize their plan given
+the (evolving) state of the transport system.
+
+Unfortunately, this approach makes choices of agents independent ---
+which of course goes against the simulation of \emph{joint decisions}.
+To be able to implement an algorithm searching for states without
+blocking coalitions, one needs a way to represent the influence of
+explicit coordination on the utility of a daily plan. This is solved by
+including \emph{joint plans} constraints. A joint plan is a set of
+individual plans executed simultaneously. Different copies of the same
+individual plan can be part of different joint plans --- for instance an
+agent might go to a given restaurant alone, with members of its
+household or with a group of friends. The score of the different copies
+will take into account the influence of the joint plan to which it
+pertains. Those joint plan constraints are included using heuristic
+rules, applied after mutation operators are applied, and are classified
+as strong or weak constraints --- weak constraints are considered when
+selecting plans for execution, but are allowed to be broken when merely
+selecting plans for mutation. They are then part of the evolution
+process. In the current application, the heuristic rules consist in
+joining newly created plans with joint trips (strong) or with leisure
+activities at the same location at the same time (weak).
+
+To allow handling joint plans, replanning needs to be performed for
+groups of agents. This is straightforward for households: all agents of
+a same household are always handled as a single group. For more general
+social networks, agents are handled with all agents with whom they have
+a joint plan, plus some social contacts with whom new joint plans can be
+created. Details are presented in the ``Implementation'' section.
+
+For each group, two actions are then possible. For most groups, an
+allocation of existing plans, fulfilling the joint plans constraints, is
+selected for execution. Based on plan scores, randomized by adding an
+extreme value distributed error term, an allocation without improving
+coalitions is searched for by an algorithm inspired by the ``Top Trading
+Cycle'' algorithm used for the House Allocation Problem
+\cite{SchummerVohra_NisanEtAl_2007}.
+
+For the other groups, a plan allocation is selected and copied. The
+copied plans then undertake mutation, to make the agents explore new
+alternative joint plans. What kind of mutation is performed determines
+which alternative plans will be tried out by the agent. The modules
+currently implemented are presented in the ``Implementation'' section.
+
+Agents have a limited memory size, keeping at most 3 plans per joint
+plan composition, and 10 plans in total. If this limit is exceeded, one
+should keep the plans which have the highest probability to create
+improving coalitions, that is, to be preferred to the other plans in the
+agent's memory. To this end, a lexicographic ordering is used: the
+process removes the joint plan which maximizes the number of individual
+plans which are the worst of the agents' memories. If several joint
+plans have the same number of worst plans, the process chooses among
+them the joint plan which maximizes the number of second worst plans,
+and so on until the ``worst'' joint plan is unique. When the overall
+maximum number of plans in the memory of an agent is reached, the worst
+individual plan for this agent is removed along with plans of other
+agents of the same joint plan. Each agents keeps at least one plan not
+part of a joint plan, as there may otherwise not be any state without
+blocking coalitions. Agents are parsed in random order, to avoid the
+emergence of ``dictators'' over iterations, whose worst plan would
+always be removed, even if it is the only ``bad'' plan of a joint plan.
+
+Though those selection operators seem to be in accordance with the
+chosen solution concept, it is difficult, if not impossible, to prove
+that the process will actually converge towards the state searched. As
+noted by \cite{FiciciEtAl_ITEC_2005}, when they perform a theoretical
+analysis of different selection methods in a co-evolutionary context,
+``Co-evolutionary dynamics are \emph{notoriously complex}. To focus on
+our attention on selection dynamics, we will use a simple evolutionary
+game-theoretic framework to eliminate \emph{confounding factors} such as
+those related to genetic variation, noisy evaluation, and finite
+population size''. Those ``confounding factors'' can however not be
+eliminated from an actual implementation of a co-evolutionary algorithm,
+and rigorously proving that a given algorithm actually implements a
+specific solution concept is very tedious, if not impossible.
+
+With iterations, agents build a choice set of daily plans that becomes
+better and better given the actions of the other agents. However, the
+presence of a large portion of agents with plans resulting from random
+mutation creates noise, not only for the analyst looking at the output
+of the simulation, but for the agents themselves when they compute the
+score of their plans. To solve this issue, when the system reaches a
+stable state, agents stop performing mutation, and only select plans
+from their memory for 100 iterations, using the absence of improving
+coalition with randomized scores. This ensures that the selected plans
+are the result of a behavioral model, rather than the result of random
+mutation operators.
+
 \subsection{Technical Considerations on the Implementation}
 %---------------------------------------------------------------------------
+\begin{itemize}
+	\item normally, extension by adding modular elements (ref mz) \cref{ch:extensionpoints}
+	\item here, need to modify process at its core
+		\begin{itemize}
+			\item replan agents as groups
+			\item hence, replacement of the ``replanning listener''
+		\end{itemize}
+	\item remarks on implications on modularity
+\end{itemize}
+
+} % close scope: all our personal commands are gone (hopefully...)
