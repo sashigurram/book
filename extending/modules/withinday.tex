@@ -287,13 +287,13 @@ Because of the abandonment of such features, it is very robust, even in scenario
 
 The current \acrshort{matsim} code differentiates between \verb$Person$ and \verb$MobsimAgent$.  
 %
-\verb$Person$ can be seen as a very simple Q-learning entity, possessing multiple \verb$Plan$s (``actions''), each together with an expected score which is updated over the iterations.  In consequence, a \verb$Person$ is persistent over the iterations; in fact, the internal state of each \verb$Person$ is written to file at the end of the iterations.
+\verb$Person$ can be seen as a very simple Q-learning entity, possessing multiple \verb$Plan$s (``actions''), each together with an expected score which is updated every time the plan is tried out.  In consequence, a \verb$Person$ is persistent over the iterations; in fact, the internal state of each \verb$Person$ is written to file at the end of the iterations.
 %
-\verb$MobsimAgent$, in contrast, is instantiated every time the \verb$QSim$ is called, and does not exist beyond the running time of the \verb$QSim$.  A \verb$MobsimAgent$ is essentially reactive, being queried by the framework about decisions at intersections or arrival points.  In the standard implementation, these queries are answered by the plan, but other implementations can be used and/or additional \verb$MobsimAgent$s can be added which do not correspond to \verb$Person$s.
+\verb$MobsimAgent$, in contrast, is instantiated every time the \verb$QSim$ is called, and does not exist beyond the running time of the \verb$QSim$.  A \verb$MobsimAgent$ is essentially reactive, being queried by the framework about decisions when approaching intersections, arrival points, or public transit stops.  In the standard implementation, these queries are answered by the plan, but other implementations can be used, and/or additional \verb$MobsimAgent$s can be added which do not correspond to \verb$Person$s.
 
 \mnote{Which plan to modify}
 
-This leads to the question if within-day adaptations to the \verb$Plan$ should be passed through the the \verb$Person$.  Let us call the actual trajectory through the system the ``executed plan''.  This can be different from the original plan, for example using a different route, different departure times, different modes, etc.  The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output.  In consequence, it is not possible to treat the executed plan together with the just obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
+This leads to the question if within-day adaptations to the \verb$Plan$ should be passed through to the \verb$Person$.  Let us call the actual trajectory through the system the ``executed plan''.  This can be different from the original plan, for example using a different route, different departure times, different modes, etc.  The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output.  In consequence, it is not possible to treat the executed plan together with the just obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
 
 In consequence, the code uses a copy of the original plan and modifies the copy.  The score, however, is given to the original plan.  The implementation is free to \kai{Christoph: ``is able to''? (existiert das derzeit als Option?} \emph{also} memorize the executed plan and add it to the set of plans.
 
@@ -303,21 +303,39 @@ In consequence, the code uses a copy of the original plan and modifies the copy.
 
 \mnote{parking example: parking search route should not be added to plan}
 
-In a first one, within-day replanning is used to simulate agents' parking search. A person's plan contains the location where a free parking space is expected. However, if the agent realizes in the micro-simulation that there is no free space left, it starts looking for a free parking spot. As a result, the agent's route is extended. This extension has to be local in the agent's route since it is only necessary in the current iteration
+One example where setting the original to the executed plan clearly does not make snese is parking search \kai{citation?}.
+%In a first one, within-day replanning is used to simulate agents' parking search. 
+A person's plan contains as destination the location where a free parking space is expected. However, if the agent realizes in the mobility simulation that there is no free space left, it starts looking for a free parking spot. As a result, the agent's route is extended. This extension has to be local in the agent's route since it is only necessary in the current iteration
 but maybe not in another one where the initially selected parking spot is available.
 
-\mnote{starting agents without routes: within-day routes \emph{should} be added to plan (but I don't agree)}
+%% \mnote{starting agents without routes: within-day routes \emph{should} be added to plan (but I don't agree)}
 
-Creating agents' initial routes using within-day replanning would be an example for an application where persons' plans have to be adapted. By default, creation of those routes is a step performed on person level before the micro-simulation is started for the first time. When this task is moved into the micro-simulation and is performed during their runtime, the created routes have to be still stored in the person's plan. Otherwise they would not be available for later iterations.
+%% Creating agents' initial routes using within-day replanning would be an example for an application where persons' plans have to be adapted. By default, creation of those routes is a step performed on person level before the micro-simulation is started for the first time. When this task is moved into the micro-simulation and is performed during their runtime, the created routes have to be still stored in the person's plan. Otherwise they would not be available for later iterations.
+\kai{Christoph, habe hier mal tentativ einen Absatz auskommentiert, der mir nicht wirklich hilfreich erscheint.  Solange der Plan, mit dem der Agent losfährt, derjenige ist, der den Score bekommt, ist es unerheblich, wann er berechnet wurde.}
 
 \kai{some pointers to simulations done with this set-up}
 
-The capabilities of this within-day replanning implementation are shown and discussed by \citet{Dobler_PhDThesis_2013} based on two sets of conducted experiments. The first set is based on a model of Zurich city. There it is assumed that the capacities of several arterial roads in the city center are drastically reduced during the morning peak. Travelling agents are given the opportunity to bypass the resulting traffic jams by adapting their routes using within-day replanning. The second set of experiments uses within-day replanning to create agents' initial routes. The results are compared to runs where those routes are created before the simulation is started and without having traffic flow information available.
+The capabilities of this within-day replanning implementation are shown and discussed by \citet{Dobler_PhDThesis_2013} based on two sets of conducted experiments. The first set is based on a model of Zurich city. There it is assumed that the capacities of several arterial roads in the city center are drastically reduced during the morning peak. Travelling agents are given the opportunity to bypass the resulting traffic jams by adapting their routes using within-day replanning.  \kai{Christoph: Vielleicht noch einen Satz über Ergebnisse (oder den vorhergehenden Satz umschreiben: Agents bypass the resulting traffic jams by adapting ..., leading to an overall readuction of travel times XX sec compared to the solution where agents stick to their routes.} The second set of experiments uses within-day replanning to create agents' initial routes. The results are compared to runs where those routes are created before the simulation is started and without having traffic flow information available. \kai{Christoph: Vielleicht noch einen Satz über Ergebnise?}
 
 \subsection{Implementation alternative~2: Replacing the agent}
 \label{sec:impl-repl-the-ag}
 
-As said earlier, the approach according to Section~\ref{sec:impl-plan-based} assumes that the agent still has a plan.  There may be situations where this is not appropriate, for example when the agent makes up the route as it goes, or when quite in general one wants to investigate models where each agent has its own perception and deliberation, rather than some external algorithm modifying its plan.  As also said earlier, there is no clear recipe when which approach is better; it depends both on the needs of the project and on the personal preference of the developer.
+According to \cite{RussellNorvigBook}, an agent is ``anything that can ve viewed as perceiving its environment through sensors and acting upon that environment through effectors.''  As stated above, \acrshort{matsim} has agents on two levels:
+\begin{compactitem}
+
+\item \verb$Person$ is a Q-learning agent that is persistent over the iterations.
+
+\item \verb$MobsimAgent$ is a reactive agent that only exists during the \verb$QSim$.
+
+\end{compactitem}
+
+For the Q-learning agent, perception works through the events, i.e.\ events are used to compute the score, build mental models to generate alternatives, etc.  Acting upon the environment works through the selection of the plan.
+
+For the reactive agent, perception works more directly through callback methods, such as the simulation notifying the agent of just having moved over an intersection.  Acting upon the environment works through making decisions at decision points, e.g.\ about turning directions at intersections, or if to board a certain bus.
+
+As said earlier, the approach described in Section~\ref{sec:impl-plan-based} assumes that the reactive agent still has, and most of the time follows, a plan.  There may, however, be situations where this is not appropriate, for example when the agent makes up the route as it goes, or when quite in general one wants to investigate models where each agent has its own perception and deliberation, rather than some external algorithm modifying its plan.  As also said earlier, there is no clear recipe when which approach is better; it depends both on the needs of the project and on the personal preferences of the developer.
+%
+Here, we will thus look at \verb$MobsimAgent$s which do no longer have a pre-computed plan but make decisions as they go.
 
 \subsubsection{Agent interface}
 
@@ -359,8 +377,28 @@ Again, everything else are bookkeeping methods.
 \subsubsection{Agent insertion}
 
 The code accepts several ways to insert such a self-programmed \verb$MobsimAgent$ into the code, but the preferred way is using the \verb$AgentSource$ interface, as follows:
-
-\kai{code snippet missing; wait for Michael Zilske}
+\begin{lstlisting}[basicstyle=\footnotesize\tt]{}
+class MyAgentSource implements AgentSource {
+   // constructor
+   MyAgentSource ( Guidance guidance ) {
+      ...
+   }
+   public void insertAgentsIntoMobsim() {
+      // insert agent:
+      MobsimAgent ag = new MyMobsimAgent( guidance ) ;
+      qsim.insertAgentIntoMobsim(ag) ;
+        
+      // insert vehicle:
+      Id<Vehicle> vehId = Id.create(ag.getId(), Vehicle.class);
+      VehicleType vehType = VehicleUtils.getDefaultVehicleType();
+      VehiclesFactory vehFactory = VehicleUtils.getFactory();
+      Vehicle vehicle = vehFactory.createVehicle(vehId, vehType );
+      Id<Link> linkId = null ; // replace by something meaningful
+      qsim.createAndParkVehicleOnLink(veh, linkId );
+   }
+}
+\end{lstlisting}
+The variable \verb$guidance$ needs help the agent with making decisions, see below.
 
 \subsubsection{Perception, decision, integration}
 
@@ -418,8 +456,31 @@ class MyAgent implements MobsimDriverAgent {
 \paragraph{Control script}
 
 This would be plugged together by a variant of the following script:
+\begin{lstlisting}[basicstyle=\footnotesize\tt]{}
+Controler ctrl = ... ;
+...
+// create observer object:
+MyObserver observer = new MyObserver() ;
+// add into events channel:
+ctrl.addEventsHandler(observer) ;
+// create guidance object:
+MyGuidance guidance = new MyGuidance( observer ) ;
+// create mobsim factory and set into controler:
+ctrl.setMobsimFactory(new MobsimFactory(){
+   public Mobsim createMobsim(Scenario sc, EventsManager ev ) {
+      MobsimFactory factory = new QSimFactory() ; 
+      QSim qsim = (QSim) factory.createMobsim(sc, ev) ;
+      // add agent source into mobsim:
+      qsim.addAgentSource( new MyAgentSource( guidance ) ) ;
+      return qsim ;
+   }
+}) ;
+...
+ctrl.run() ;
+\end{lstlisting}
+The above ``script'' uses an anonymous class for the \verb$MobsimFactory$.  This way of writing code is quite convenient for adapting \acrshort{matsim} to one's need, also see Chap.~\ref{ch:extensionpoints}.
 
-\kai{code snippet missing; wait for MZ above}
+Code that compiles with the respective version of \acrshort{matsim} can be found in the package \verb$tutorial.programming.ownMobsimAgentWithPerception$ (e.g.\ to be found under \url{http://matsim.org/doxygen}).
 
 \subsubsection{Using framework methods}
 
@@ -433,7 +494,7 @@ This would be plugged together by a variant of the following script:
 \end{lstlisting}
 The guidance object can still be passed to the agent as before; it can now compute and then return, at each intersection, the best turn towards a destination.
 
-
+Code that compiles with the respective version of \acrshort{matsim} can be found in the package \verb$tutorial.programming.ownMobsimAgentUsingRouter$ (e.g.\ to be found under \url{http://matsim.org/doxygen}).
 
 
 
