@@ -3,7 +3,7 @@
 NAME=main
 
 pdf:
-	-pdflatex  ${NAME}
+	-pdflatex  -interaction=nonstopmode ${NAME}
 	makeglossaries ${NAME}
 	makeindex ${NAME}
 	bibtex ${NAME}
