@@ -19,6 +19,12 @@ kaimain:
 kai:
 	pdflatex kai
 
+gregor:
+	pdflatex gregor
+	bibtex gregor
+	pdflatex gregor
+	pdflatex gregor
+
 clean:
 	-rm *.aux *.log *.bbl *.blg *.lof *.lot *.out *.toc *.glg *.glo *.gls *.idx *.ilg *.ind *.ist 
 
