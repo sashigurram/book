@@ -258,27 +258,87 @@ based on rule based simulations of a bargaining processes.
 They are not yet integrated into
 any operational mobility simulation platform.
 
-% intro mon boulot
-Building on all those ideas,\todo{lesquelles? preciser limitations identifies
-et comment l'approche presente resoud tout}
-the work presented in this paper aims at including explicit coordination of individuals
-in a multiagent simulation software framework.
-A game-theoretic model of joint decisions for daily planning is introduced,
-and a simulation algorithm implemented using the
-\matsim software framework.
-The process is designed to be able to handle complex social network topologies,
-%but the current implementation is restrained to a network consisting of
-%isolated \emph{cliques}.
-%Such a network is a good abstraction for the network of intrahousehold relationships,
-%which importance should be clear from the review above.
-but the current study focuses on intrahousehold ties only.
-The results of an implementation for intrahousehold ridesharing
-for a scenario for the Zurich area, Switzerland, are analyzed.
-Comparing the results of this scenario with travel diary data,
-limitations of the current implementation are identified,
-and directions for future work are sketched.
+Those remarks point the need\todo{other word\ldots too strong}
+to include explicit coordination in multiagent simulation platforms.
 
 \subsection{The Joint Planning Problem}
+%---------------------------------------------------------------------------
+
+\todo{define the ``problem''\ldots}
+
+We present here a simulation framework able to represent \emph{joint decisions},
+that is, behavior requiring \emph{explicit} coordination between individuals
+--- such as shared rides, social activities or intra-household task allocation.
+The basic idea is that social contacts will take such a joint decision if it results
+in an improvement in the satisfaction of all participants.
+The modeling of the interaction of individuals with possibly conflicting objectives
+has been the subject of game theory for decades, making this theoretical framework
+particularly well suited for the problem at hand.
+
+\todo{make terminology consistent, between individual, player and agent}
+A game theoretic view of transportation systems has indeed been popular
+since the seminal work of
+\citeauthor{Wardrop_PICE_1952}
+\cite{Wardrop_PICE_1952}.
+The essential idea behind it is to see the transportation system as
+a set of shared resources (road space, public transport vehicle seats\ldots),
+for which individuals compete, individuals in the population trying to maximize
+their own satisfaction, given the resources left available by others.
+Game theory studies \emph{solution concepts} for such strategic interactions.
+A game theoretic solution concept is a definition of which states are
+\emph{equilibria}, that is,
+%considered
+\emph{stable} under assumption of rationality
+--- a state being considered stable if no agent/player has an incentive
+to change its behavior.
+%
+The static, trip-based approach of
+\citeauthor{Wardrop_PICE_1952}
+has been refined and extended with time.
+In particular, the equilibrium idea can be pretty naturally transfered to
+the \emph{activity based} framework:
+individuals do not just try to optimize their trips, 
+but their whole day.
+\todo{formulate better, but remain short}%
+This is in particular the approach of the \matsim software framework
+\cite{Axhausen_SSRL_2006,NagelFloetteroed_IATBR_2009}.
+
+Most solution concepts in transportation are akin to the Nash equilibrium:
+a state where no individual can improve its satisfaction
+by \emph{unilaterally} changing its behavior.
+%
+This kind of solution concept does not allow to represent joint decisions.
+This can be illustrated by a classical game, called the \emph{House Allocation Problem}
+\cite{SchummerVohra_NisanEtAl_2007}.
+This game consists of $n$ players and $n$ houses. Moreover, each player has its individual
+ordering of the houses, from the most preferred to the least preferred,
+and players prefer being allocated alone to any house rather than in the
+same house as somebody else.
+The strategy of a player is the house it chooses to live in.
+
+An interesting feature of this game is that any one-to-one allocation of players to houses is a
+Nash Equilibrium: no player can improve its payoff by \emph{unilaterally} changing its strategy,
+as it would require choosing an occupied house.
+This result however contradicts basic intuition about the stability of such an allocation.
+In this particular case, a more realistic solution concept is the \emph{Absence of Blocking Coalition}:
+given a one-to-one allocation of houses to players, a blocking coalition is a set of players
+which could all be better off by re-allocating their houses among themselves.
+%
+It is to be noted that both solution concepts correspond to rational agents, \ie agents having
+a preference ordering over outcomes.
+The only difference lies in the degree
+of communication which is allowed.
+
+In the activity-based framework, this solution concept naturally becomes what we phrase
+the \emph{Absence of Improving Coalition} solution concept.
+An improving coalition for a given allocation of daily plans
+is a set of social contacts that can all be better off by \emph{simultaneously} changing
+their daily plan
+--- for instance by switching from separate dinners at home to a joint dinner at a restaurant.
+The simulation of joint decision consists in the search of an allocation of daily plans
+without such coalitions.
+
+
 
 \section{An Solution Algorithm for the Joint Planning Problem: a Generalization of the MATSim Process\label{sec:td:algo}}
 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
