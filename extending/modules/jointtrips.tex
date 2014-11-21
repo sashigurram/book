@@ -21,7 +21,29 @@
 \newcommand\Gas{Genetic algorithms\xspace}
 \renewcommand\matsim{MATSim\xspace}
 
-\authoranddate{DubernetAxhausen_unpub_Frontiers_2013, DubernetAxhausen_unpub_SmartCities_2013, DubernetAxhausen_STRC_2014,DubernetAxhausen_Transportation_forth}
+% Figures crap
+\newcommand\insfig[2]{%
+	\insfigwidth{#1}{#2}{.8\textwidth}
+}
+\newcommand\insfigwidth[3]{%
+\createfigure{#1}{#1}{}{%
+		\includegraphics[width=#3]{extending/figures/Jointtrips/#2}%
+		}{}%
+}
+
+\newcommand\inssubfigwidth[3]{%
+\createsubfigure{#2}{%
+		\includegraphics[width=#1]{extending/figures/Jointtrips/#3}%
+		}{}{\quad}%
+}
+\newcommand\inssubfig[2]{%
+\inssubfigwidth{.46\textwidth}{#1}{#2}%
+}
+\newcommand\insfigwithsubfigs[2]{%
+\createfigure{#1}{#1}{}{%
+		#2%
+		}{}%
+}
 
 % ##################################################################################################################
 
@@ -391,14 +413,69 @@ mutation operators.
 
 \subsection{Technical Considerations on the Implementation}
 %---------------------------------------------------------------------------
-\begin{itemize}
-	\item normally, extension by adding modular elements (ref mz) \cref{ch:extensionpoints}
-	\item here, need to modify process at its core
-		\begin{itemize}
-			\item replan agents as groups
-			\item hence, replacement of the ``replanning listener''
-		\end{itemize}
-	\item remarks on implications on modularity
-\end{itemize}
+As highlighted in \cref{ch:extensionpoints},
+the preferred way to add new behaviors to the \matsim software is
+by designing \emph{pluggable} elements,
+that can be added to a \emph{Controler} from a configuring ``script''.
+\todo{check that \cref{ch:extensionpoints} actually phrases it so\ldots}
+
+This modular approach works well in most of the use cases,
+and makes it possible to combine different elements to design highly
+specific runs.
+There is however something that one can not modify this way,
+that is: the general form of the evolutionary process.
+This process is exactly what has to be modified to include joint decisions
+--- 
+this section focuses on the challenges and solutions to undertake such major
+modification, for reference from developers facing this exact problem\todo{reformulate that}.
+
+The one important modification of the process is that in the standard \matsim process,
+\emph{replanning} is performed independently for each agent,
+whereas for joint decisions agents have to be replanned \emph{as groups}:
+selection of plans needs to fulfill \emph{joint plan constraints}
+and is performed using the group-level ``absence of improving coalition''
+criterion, and mutation operators are allowed to work on several plans at the same time,
+for instance to insert \emph{joint trips}, or select the location of a
+\emph{joint activity}.
+
+Doing so requires the replacement of the \emph{replanning listener},
+that is, the element responsible of managing the whole replanning step.
+This can only be done by implementing a separate controller.\todo{say better}
+
+Modularity was kept as high as possible, in particular by providing standard ways
+to use the default individual-based replanning modules from this new element.
+
+\section{Selected Results\label{sec:td:results}}
+%!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+\subsection{Joint Travel and Activities with Leisure Contacts}
+%---------------------------------------------------------------------------
+\insfigwithsubfigs{Share of Passenger Trips Per Purpose}{%
+	\inssubfig{Simulation}{passenger-per-type-ju3-asShareOfPassengerTrips}%
+	\inssubfig{National Travel Survey}{passenger-per-type-MZ-asShareOfPassengerTrips}%
+}
+
+\insfigwidth{Travel Distance to Leisure Activities}{distance-bxp-purpose}{.6\textwidth}
+
+\subsection{Joint Travel within Households}
+%---------------------------------------------------------------------------
+
+\section{Further Reading}
+%!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+The work presented in this chapter has been described in more details in various papers.
+\authoranddate{DubernetAxhausen_TransLett_2013}
+presents an early stage of the algorithm, applied to a toy scenario.
+%\authoranddate{DubernetAxhausen_unpub_Frontiers_2013}
+%\authoranddate{DubernetAxhausen_unpub_SmartCities_2013}
+\authoranddate{DubernetAxhausen_STRC_2014}
+compares gives more theoretical ground,
+by making more explicit reference to game theory,
+and compares two \emph{solution concepts} for
+the solution of the joint planning problem in the household case:
+the absence of improving coalition presented here,
+as well as a ``joint utility'' formulation,
+classical in the literature.
+\authoranddate{DubernetAxhausen_Transportation_forth}
+presents a validation of the model for the household case,
+using a Zurich scenario.
 
 } % close scope: all our personal commands are gone (hopefully...)
