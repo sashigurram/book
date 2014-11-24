@@ -198,20 +198,6 @@ The next section considers network representation and location of traffic signal
 \section{Network Representation \& Traffic Flow}
 \label{sec:signals_network_traffic_flow}
 
-This section discusses the representation of transport networks and traffic signals. In MATSim, the representation of  the transport network is a static, directed graph consisting of nodes and links. 
-Links depict road segments while nodes can be interpreted as decision points in space that have a coordinate as attribute. 
-The location of nodes in space is not supposed to vary over time. 
-Links represent space, all other attributes relevant for the domain are attached to links. 
-Thus, nodes get a geospatial interpretation and can be located in space. 
-The course of the road segments, however, is not specified. 
-Nodes have coordinates, links not. 
-Thus, the course of road segments between nodes may be inaccurate. 
-If, e.g., speed limits or the number of lanes are attached as attributes to links, a node can also represent a point in space where one of these attributes changes.  
-
-Fig.~\ref{fig:real_road_layout} illustrates a typical layout of a real-world road segment with several turning lanes at its end. 
-The layout of the corresponding MATSim network is shown in Fig.~\ref{fig:model_link_layout}. 
-%If each edge is represented by one link spill-back effects between turning lanes can be captured. 
-
 \createfigure%
 {Caption in List of Figures}%
 {Transition from a real road segment to a graph layout}
@@ -222,14 +208,50 @@ The layout of the corresponding MATSim network is shown in Fig.~\ref{fig:model_l
 	{\includegraphics[width=0.475\linewidth]{extending/figures/signalslanes/real_road_layout.pdf}}
 	{\label{fig:real_road_layout}}
   \createsubfigure%
-	{Part of the graph required to model the road layout}
-	{\includegraphics[width=0.475\textwidth]{extending/figures/signalslanes/link_lanes_layout}}
-	{\label{fig:model_link_layout}}
+	{Single queue, spill-back is not captured correctly}%
+	{\includegraphics[width=0.48\textwidth]{extending/figures/signalslanes/single_queue_model_inkscape.pdf}}%
+	{\label{fig:lanes_representation_single_queue}}%
 }%
 {info about source (optional)}
 
+This section discusses the representation of transport networks with microscopically modeled traffic signals. 
+In MATSim, the representation of  the transport network is a static, directed graph consisting of nodes and links. 
+Links depict road segments while nodes can be interpreted as decision points in space that have a coordinate as attribute. 
+The location of nodes in space is not supposed to vary over time. 
+Nodes possess a geospatial interpretation and can be located in space. 
+But, in contrast to links, nodes have no spatial dimension.  
+The course of the road segments, however, is not specified and is inaccurate. 
 
-\subsection{Lanes Motivation from PhD}
+
+Fig.~\ref{fig:real_road_layout} illustrates a typical layout of a real-world road segment with several turn pockets at its end. 
+If the whole road segment is modeled as a single link with MATSim's queue model the first vehicle stopping at a red traffic signal at the end of this link will block all other approaching upstream vehicles, Fig.~\ref{fig:lanes_representation_single_queue}. 
+In respect to the road layout shown in Fig.~\ref{fig:real_road_layout} this is not realistic. 
+Fig.~\ref{fig:model_link_layout} sketches the layout for a more realistic modeling. 
+Vehicles with distinct turn intentions do not block each other until the available space for queueing on the turn pocket is used completely, Fig.\ref{fig:lanes_representation_multiple_queue}. 
+
+\createfigure%
+{Caption in List of Figures}%
+{Influence of traffic signals on traffic flow and spill-back can be modeled by a queue model, if the layout of turn pockets is considered.}
+{\label{fig:lanes_representation}}%
+{%
+  \createsubfigure%
+	{Part of the graph required to model the road layout}
+	{\includegraphics[width=0.475\textwidth]{extending/figures/signalslanes/link_lanes_layout}}
+	{\label{fig:model_link_layout}}
+  \createsubfigure%
+	{Multiple queues, spill-back is captured correctly}%
+	{\includegraphics[width=0.48\textwidth]{extending/figures/signalslanes/multiple_queue_model_inkscape.pdf}}%
+	{\label{fig:lanes_representation_multiple_queue}}%
+}%
+{info about source (optional)}
+
+In principle you can model each turn pocket as single link, place traffic signals at the end of the link and you are done. 
+But, considering overall project constraints, this has several implications for network modeling and routing. 
+
+\mnote{motivation lanes}
+In MATSim, all attributes relevant for the domain that differ from geospatial location are attached to links. 
+If, e.g., speed limits or the number of lanes are attached as attributes to links, a node can also represent a point in space where one of these attributes changes.  
+
 Many different attributes may be attached to the links of a transport network, e.g., traffic count data, transit stops, transit lines, speed limits, etc. 
 Geospatial location may not be sufficient to describe the matching between attributes and links. 
 Often, certain attributes are matched manually. 
@@ -241,33 +263,7 @@ For comparison, one needs some algorithmic that traces the changes in network st
 If the network is changed to capture turn pockets, the shortest path algorithm is responsible to select the appropriate turn pocket on a route. 
 If many turn pockets lead to the same downstream link, the number of required iterations is increased. 
 
-\createfigure%
-{Caption in List of Figures}%
-{Influence of traffic signals on traffic flow and spill-back can be modeled by a queue model, if the layout of turn pockets is considered.}
-{\label{fig:lanes_representation}}%
-{%
-  \createsubfigure%
-	{Single queue, spill-back is not captured correctly}%
-	{\includegraphics[width=0.48\textwidth]{extending/figures/signalslanes/single_queue_model_inkscape.pdf}}%
-	{\label{fig:lanes_representation_single_queue}}%
-  \createsubfigure%
-	{Multiple queues, spill-back is captured correctly}%
-	{\includegraphics[width=0.48\textwidth]{extending/figures/signalslanes/multiple_queue_model_inkscape.pdf}}%
-	{\label{fig:lanes_representation_multiple_queue}}%
-}%
-{info about source (optional)}
-
-
-
-Waiting queues for distinct turning movements, including their spatial extension are modeled explicitly. 
-For that reason, in case of spill-back mutual blocking effects between several turning directions are captured.
-This is important if traffic signals are simulated microscopically, see Fig.~\ref{fig:lanes_representation}: If a single queue is used (Fig.~\ref{fig:lanes_representation_single_queue}), the first vehicle blocks all other vehicles upstream. 
-This can capture reality if the approach has only one lane for all turning moves but does not hold in all cases. 
-In the case, however, that the approach has several lanes for signalized turning-moves, a single queue model distorts the effects of signalization. 
-In contrast, Fig.~\ref{fig:lanes_representation_multiple_queue} shows the modeling approach from~\cite{CremerLandenfeld1998MesoTrafficSignalModel}. Vehicles with distinct turn intentions do not block each other until the available space for queueing on the lane is used completely.
-
-
-
+\mnote{solution lanes}
 To resolve this problem, the implementation in MATSim allows the modeling of a subgraph on top of a link that reflects the structure shown in Fig.~\ref{fig:model_link_layout}. 
 Edges of the subgraph are called \alert{lanes}. 
 Traffic flow on each lane is simulated nearly the same way as for links in the extended queue model. 
@@ -283,6 +279,8 @@ The use of lanes implies a specification of the downstream links, thus, specific
 This requires a modified routing of vehicles.
 
 \subsection{Routing}
+
+\mnote{Routing}
 Within the overall simulation process introduced in Chapter~\ref{sec:matsim-overview} the use of lanes affects the routing module. 
 Routes are specified within MATSim as sequence of links\footnote{In older version of MATSim, this can also be specified by a sequence of nodes.}.  
 The shortest path algorithm is set up on link travel times. 
@@ -293,7 +291,6 @@ Thereby, the turn restrictions are considered when the line graph is created.
 The dynamic link travel times for the line graph reflect the link travel time on the original network plus the travel time for the specific turning move. 
 Then, the shortest path calculation captures the effects of lanes without further modification. 
 
-subsection{Routing}
 \mnote{Lanes \& Routing}
 Within the overall simulation process introduced in Chapter~\ref{sec:matsim-overview} the use of lanes affects the routing module. 
 Routes are specified within MATSim as sequence of links\footnote{In older version of MATSim, this can also be specified by a sequence of nodes.}.  
