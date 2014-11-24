@@ -6,16 +6,59 @@
 \begin{center} \includegraphics[width=0.25\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
 
 % ##################################################################################################################
+\section{Introduction}
+\label{sec:ownmodules-intro}
 
+\subsection{Extensions to and modifications of the co-evolutionary process}
+
+As explained in Section~\ref{sec:co-ev}, \acrshort{matsim} at its core is a co-evolutionary cycle consisting of the three elements \verb$Mobsim$, \verb$Scoring$, and replanning.  All three elements operate on what is essentially an in-memory object-oriented data base of \verb$Person$s \citep{RaneyNagel2006traf-framework}.  
+%
+On a conceptual level, each \verb$Person$ object is a Q-learning agent whose action consists of selecting a \verb$Plan$.  The plan is then executed in the \verb$Mobsim$; the executed plan obtains a score in the \verb$Scoring$; plans are possibly mutated and finally selected in \verb$Replanning$.
+
+In consequence, it is these three elements which can be reconfigured:
+\begin{compactitem}
+
+\item The \textbf{\tt Mobsim} can be replaced, either by an internally available alternative, or by a fully external \verb$Mobsim$.
+
+%% In addition, one can insert additional instructions into the program flow of \verb$QSim$, which is the default implementation of the \verb$Mobsim$.  This is achieved by so-called \verb$MobstimListener$s.
+
+\item The \textbf{\tt Scoring} can be replaced, by possibly giving each individual agent a different recipe to compute its score.
+
+\item Arbitrary implementations of type \verb$PlanStrategy$ can be added to the replanning -- these either generate new plans from scratch or by mutating existing ones, or they select between plans.
+
+\end{compactitem}
+It is also possible to insert additional material between these elements.  This is achieved by so-called \verb$ControlerListener$s.
+
+The \verb$Mobsim$ generates a stream of \verb$Event$s.  These are primarily used in two places:
+\begin{compactitem}
+
+\item The \verb$Scoring$ uses them to track each agent's success at executing its plan, and compute the scoring value based on this.
+
+\item \verb$PlanStrategy$ modules use them to build approximate models of the world in which they operate.  For example, the router obtains time-dependent expected link travel times from a \verb$TravelTime$ object, which in turn listens to link enter and link exit events.
+  
+\end{compactitem}
+In consequence, each \verb$PlanStrategy$ module can use them, either directly or via some observer object, to obtain information about the world in which the plans of the synthetic travelers need to be improved. Additionally, one can write nearly arbitrary handlers for analysis: If one wanted to and if the corresponding information is in the data, then one could extract the average age of all drivers using roads with speed limits 30 or less.
+
+
+\subsection{Extensions to and modifications of specific elements}
+
+Some modules are so large that fully replacing them in order to adapt the simulation system to one's need is too much work.  These are, in particular,
+\begin{compactitem}
+\item the \verb$QSim$, which is the default implementation of the \verb$Mobsim$, and
+\item the router.
+\end{compactitem}
+In consequence, it is possible to add material into the execution flow of the \verb$QSim$ by \verb$MobsimListeners$ in a similar way as this is possible with the \verb$ControlerListeners$ mentioned above.
+%
+The router, in contrast, is most importantly configured by replacing the definition of the generalized travel cost. \kai{more?  modes?  I don't know all the configuration options of the router.}
 
 % ##################################################################################################################
 \section{MATSim Extension Points}
 This section describes what could be called the service provider interface (SPI) of MATSim.
 Historically, the main entry-point for writing a MATSim extension has been to literally extend (in the Java sense)
-the Controler class. This is now discouraged. While this pattern worked when a each member of the team
+the Controler class.  Essentially, one would override the methods calling the mobsim, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. \kai{Michael, previous sentence added; ok?} This is now discouraged. While this pattern worked when a each member of the team
 was working on extending the MATSim core by a different aspect, it fails when it comes to
 integrating those aspects to a single product: There is nothing one can do with a PublicTransportControler, an EmissionsControler, a RoadPricingControler and an OTFVisControler,
-if what one wants is to visualize the emissions of buses on toll roads.
+if one wants to combine them to visualize the emissions of buses on toll roads.
 
 % =========================================================================================
 \subsection{Config Group}
@@ -23,6 +66,19 @@ if what one wants is to visualize the emissions of buses on toll roads.
 
 % =========================================================================================
 \subsection{ScenarioElement}
+
+As explained in Section~\ref{sec:ownmodules-intro}, the \verb$Person$s are stored in an in-memory object-oriented data base.  This means that they are read into memory at the beginning of a run, kept in memory during the whole run, and written to file at the end of a run.
+%
+The same approach, i.e.\ reading a file into memory and keeping it there, has always been used for the network, consisting of links and nodes, although here it is less normal that this data is modified over the iterations.
+
+Since then, additional data containers were introduced for vehicles, households, the transit schedule, and so-called activity facilities (see Section \kai{which one}).  These provide additional modelling options, yet they are only loosely connected to the \acrshort{matsim} core.  It then became increasingly obvious that there is no standard set of data containers, but different modelling tasks need different containers.  For example, traffic signals need signal plans, while freight modelling needs a separate freight population.  It was thus decided to allow for the addition of arbitrary scenario elements, by the syntax
+\begin{lstlisting}
+  scenario.addScenarioElement( "myContainer", new MyContainer() ) ;
+\end{lstlisting}
+This is then retrieved by
+\begin{lstlisting}
+  (MyContainer) scenario.getScenarioElement( "myContainer" ) ;
+\end{lstlisting}
 
 \subsection{Controler}
 \label{sec:controlerextension}
@@ -75,7 +131,7 @@ after the iteration finishes. This can be done in a ControlerListener.
 
 % =========================================================================================
 \subsection{Scoring}
-By default, MATSim uses the Charypar-Nagel utility formulation to score plans. Its parameters
+By default, MATSim uses the so-called Charypar-Nagel utility formulation to score plans. Its parameters
 are configurable.
 The code which maps a stream of mobility simulation events to a score for each agent is placed behind a factory
  interface and replaceable. However, replacing it means replacing the entire utility formulation. There is
@@ -86,14 +142,26 @@ The code which maps a stream of mobility simulation events to a score for each a
   needs to do this manually, in code, accessing the code of all three modules contributing to the score and (for instance) summing
   up their contributions.
 
-As of the writing of this chapter, this makes scoring in a way the least modular part of MATSim.
+As of the writing of this chapter, this makes scoring in a way the least modular part of MATSim. \kai{Ob das wohl daran liegt?  Oder liegt es daran, dass man immer zusätzlich noch ein mindestens randomisierendes Modul implementieren muss, damit eine Änderung der scoring function tatsächlich etwas bewirkt?}
 
 
 % ##################################################################################################################
 \section{Contributing to MATSim ... Technically}
 % =========================================================================================
 \subsection{Getting an Building the Source Code}
+
 http://matsim.org/docs/devguide/development-environment
+
+\kai{Da sollte man aber wohl nur auf die relevanten Webseiten verweisen, oder?}
 
 % =========================================================================================
 % ##################################################################################################################
+
+% Local Variables:
+% mode: latex
+% mode: reftex
+% mode: visual-line
+% TeX-master: "../main"
+% comment-padding: 1
+% fill-column: 9999
+% End: 
