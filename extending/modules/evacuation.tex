@@ -7,7 +7,7 @@
 % add a meaningful figure here.
 \begin{center} \includegraphics[width=0.4\textwidth, angle=0]{extending/figures/Evacuation/evacuation} \end{center}
 
-This chapter presents an integrated approach for performing evacuation simulations with MATSim.
+This chapter presents an integrated approach for performing evacuation simulations with MATSim using the GRIPS extension. GRIPS stands for  GIS-based Risk-Analysis-, Information-, and Planning-System for Regional Evacuation. 
 This integrated approach comprises all steps of the workflow for performing an evacuation analysis, i.e., 
 selecting the evacuation area and defining the population, specifiying the behavioral parameters 
 (i.e.\ the pre-movement time distribution and the mode of evacuation -- car or pedestrian), 
@@ -19,13 +19,21 @@ In this chapter the steps for performing such an integrated analysis are describ
 the example of Hamburg-Wilhelmsburg.
 
 \section{Related work}
-\hl{TODO: give references to existing work MATSim related work (e.g./  Diss, Dobler within-day evacuation ...?).
-References to other work in the evacuation context are given in Laemmel's Diss - needs to be updated, however.}
+
+The simulation of evacuation processes has gained much attention in recent decades. One reason is the increase in frequency and severity of natural hazards affecting human societies and (social) disasters~\citep{Rodr2006HBoDisasterResearch}.
+Another reason is the availibility of large-scale and fast simulation models and tools.~\citet{Laemmel_PhDThesis_2011} discusses such a model that is implemented as an extension to MATSim. Basically, this model implements the same iterative learning approach as it is applied to ``regular'' transport scenarios. In the first instance the cost function comprise travel times only, albeit a combination of travel time and travel distance as a cost function has been investigated as well~\citep{LaemmelKluepfelNagel2009EvacPadangAtBookTimmermanns}. 
+Artificial agents representing evacuees trying to improve their evacuation plans from iteration to iteration by creating new evacuation plans that are best responses to experienced situation. 
+In a typical run the simulation comprise of 500--1000 learning iterations. 
+If after some iteration the best response dynamic produces the same evacuation plans as those that have been just performed the system has reach a steady state. This steady state would be a pure strategy Nash equilibrium regarding the cost function. There is, however, no guaranty that the system ever converges to a steady state. For that reason~\citet{Laemmel_PhDThesis_2011} refers to as Nash equilibrium approach.
+The model is applied to a tsunami related evacuation of the city of Padang, Indonesia (see, e.g.\ \citep{TaubenboeckEtAl2012ConcludingLastMilePaperNatHazards,GosebergEtAl2012LastLastMile}, some details about the scenario are also discussed in Chapter~\ref{sec:padang}). 
+
 Additional work related to evacuation simulations in MATSim is presented by \citet{Dobler_PhDThesis_2013}. The main difference to the approach presented in this chapter is that agents are allowed to adapt their plans on-the-fly using MATSim's within-day replanning framework \citep{DoblerEtAl_TRR_2012}. 
-Based on a behavioral model, agents coordinate their actions on household level. If a household is e.g./ not joined when the evacuation starts, each member estimates the time to return home as well as the time to leave the evacuation area directly. Then, the household decides whether meeting at home and leaving together is preferred over every member leaving on its one.
+Based on a behavioral model, agents coordinate their actions on household level. If a household is e.g.\ not joined when the evacuation starts, each member estimates the time to return home as well as the time to leave the evacuation area directly. Then, the household decides whether meeting at home and leaving together is preferred over every member leaving on its one.
 Since the behavioral model is implemented on agent respectively household level, individual attributes such as presence of children in the household or availability of a car can be taken into account.
 In contrast to regular MATSim simulations, only a single iteration is performed. Since the agents can optimize their plans continuously using real time information, no further replanning is necessary. As a result, it is guaranteed that agents do not foresee future events such as traffic jams caused by people leaving the threatened area.
 
+The remainder of this chapter is organized as follows: Section~\ref{grips:install} gives a brief description about the installatio and running of GRIPS. 
+A short quick start guid for GRIPS is presented in Section~\ref{evac:section:fifteenminute}. How to obtain the required input data is discussed in Section~\ref{grips:input}. Detailed instructions on how to use GRIPS's scenario manager, running a simulations, and analyzing them afterwards is given in  Section~\ref{grips:scm}. This Chapter conludes with a brief outlook in Section~\ref{grips:outlook}.
 
 %\section{Integrated modeling approach for rapid evacuation planning}
 %\hl{TODO: short introduction to GRIPS}
@@ -36,7 +44,7 @@ In contrast to regular MATSim simulations, only a single iteration is performed.
 %\item grips config
 %\end{itemize}
 
-\section{Download Matsim and Grips}
+\section{Download Matsim and Grips}\label{grips:install}
 Even though it is refered here to the MATSim version \verb|0.6.0-SNAPSHOT| the package should also work with any future version of MATSim.
 \begin{enumerate}
 \item 
@@ -74,7 +82,7 @@ If you just want to get a quick impression, then the following steps can be perf
 
 \end{description}
 
-\section{Input data (any place and any size)}
+\section{Input data (any place and any size)}\label{grips:input}
 %\hl{TODO: discribe what is needed, where one may get it from, and how it has to transform (if needed).}
 The only external input that is necessary for performing an evacuation analysis with \verb|org.matsim.contrib.grips| is an OpenStreetMap file.
 You can download OpenStreetMap files from 
@@ -83,7 +91,7 @@ For the sake of this tutorial, we will use the file for Hamburg, Germany.
 Please go to \url{http://download.geofabrik.de/europe/germany/hamburg.html} and download the \verb+hamburg-latest.osm.bz2+ file. This is all the initial preparation you need. Everything else can 
 be done with the GUI, called \verb+ScenarioManager+.
 
-\section{Scenario Manager}
+\section{Scenario Manager}\label{grips:scm}
 
 The scenario setup, evacuation simulation, and analysis is handled by the so called \verb+ScenarioManager+.
 The \verb+ScenarioManager+ is part of the MATSim contribution package \verb+org.matsim.contrib.grips+, where \verb+grips+ stands for GIS-based Risk-Analysis-, Information-, and Planning-System for Regional Evacuation.
@@ -216,7 +224,6 @@ In Case the evacuee evacuates by car or foot then such a plan essentially compri
 As shorter a plan's resulting travel time is as higher is the score it receives. After this step the evacuees' plans are revised some evacuees will receive new plans while others will stick with the current ones. This step is called re-planning. Mobility simulation, scoring, and re-planning are repeated in a loop for a predefined number of iterations. The evacuees' individual performance improve over the iterations. 
 In general transport studies this approach is meant to emulate the real-world travelers behavior when they perform their daily commutes and try to find better travel alternatives. Evacuations, however, are singular events where such a day-to-day re-panning would not occur. We argue here that the chosen iterative learning approach could be seen as the evacuees anticipation of the conditions that are expected during an evacuation. 
 Since people who know their  environment would likely avoid roads that obviously constitute bottlenecks during an evacuation. Nevertheless, there is more research needed in order to get a definitive answer how people choose evacuation routes or how many iterations of learning are realistic to reflect the assumed anticipation skills adequately. As a rule of thumb, running 100 iterations of learning are usually enough to get results the constitute a lower boundary in terms of resulting evacuation times.
-This is only a rough description of the iterative learning frame work. Details about the general framework are discussed in Chapter~\ref{ec:co-ev}. Deeper insights into evacuation planning with MATSim can be found in~\citep{Laemmel_PhDThesis_2011}.
 
 \subsection{Analysis}
 After the last iteration has finished the \verb+ScenrioManager+ enables the analysis module. The analysis modele evaluates the performed simulation run by a number of different methods. 
@@ -232,4 +239,4 @@ The analyses can be run for every single iteration for which the MATSim controll
 \caption{Screenshot of the analysis module showing GIS based evacuation time analysis and the evacuation curve.}\label{chap:evac:fig:analysis}
 \end{figure}
 
-\section{Conclusion}
+\section{Conclusion}\label{grips:outlook}
