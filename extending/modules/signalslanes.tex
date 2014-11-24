@@ -13,24 +13,23 @@
 %\mnote{Traffic Signal Control}
 Traffic signals ensure security of travelers at junctions and regulate right of way. 
 Furthermore, by assigning green times to the different approaches of a junction they are a determinant of the junctions performance. 
-Fixed-time traffic signal control repeats periodically the same schedule for signalization. 
-Traffic-responsive signal control reacts dynamically on the prevailing traffic patterns to improve the performance of the junction or the system as a whole.   
-Even if traffic-responsive control improves the traffic conditions at a single junction, it might not result in benefits for the system as a whole. 
-As result of an improved, traffic-responsive signal control at two single junctions, network wide changes in travel patterns can evolve~\cite{Burghout2007HybridSimulationAdaptiveSignal}. 
+There are different strategies for traffic signal control: fixed-time traffic signal control for example repeats periodically the same schedule for signalization, whereas traffic-responsive signal control reacts dynamically on the prevailing traffic patterns to improve the performance of the junction or the system as a whole.   
+Even if traffic %-responsive 
+control improves the traffic conditions at a single junction, it might not result in benefits for the system as a whole. 
+% As result of an improved traffic-responsive signal control at two single junctions, network wide changes in travel patterns can evolve}~\cite{Burghout2007HybridSimulationAdaptiveSignal}. 
 \citet{Hu1997D2DFlowEvolutionReactiveSignalsDynasmart} argue that
 second order or network effects should be taken into account when effects of signal control strategies are tested. Network effects include drivers' reactions not only in terms of route choice but also in terms of scheduling. 
-Traffic-responsive signals need to obey some constraints. 
-Otherwise, traffic may become unstable at the network level. 
-Thus, traffic-responsive signals can perform much worse than a fixed-time control in some situations~\citep{LaemmerHelbing2010SelfStabilizingSignalControlRealNet}. 
+Thus, traffic control and especially traffic-responsive signals need to obey some constraints. Otherwise, traffic may become unstable at the network level. 
+%Thus, traffic-responsive signals can perform much worse than a fixed-time control in some situations~\citep{LaemmerHelbing2010SelfStabilizingSignalControlRealNet}. 
 MATSim can capture most of these effects. 
 
 This chapter reviews concepts, usage, and restrictions of the traffic signal control extension for MATSim. 
-Before we will go into details, to motivate traffic signal with MATSim, a case study is reviewed. 
+Before we will go into details a case study is reviewed to motivate traffic signal with MATSim. 
 
 \subsection{Case Study}
 
 The Cottbus scenario presented in Chapter~\ref{ch:scenarios:cottbus} is applied to illustrate the influence of traffic signal control. 
-The section summarizes results published in~\citet{GretherBischoffNagel2011CottbusSylviaEventAbstract,Grether2014PhD}, readers interested in details are referred to these publications. 
+This section summarizes results published in~\citet{GretherBischoffNagel2011CottbusSylviaEventAbstract,Grether2014PhD}, readers interested in details are referred to these publications. 
 
 %
 The runs sequence of the base case is performed with three different signal control strategies:
@@ -42,7 +41,7 @@ The next sequence uses the fixed-time setup.
 In the third, final, sequence, all traffic signals are controlled by a traffic-actuated stage length control. 
 The control is based on the pretimed fixed-time schedules. 
 The green times of the fixed-time schedules are reduced to a minimal green time of $5$/$10$ $sec.$. 
-If at the end of this reduced green time vehicles are still approaching the green time is extended up to a predefined maximum. 
+If at the end of this reduced green time vehicles are still approaching, the green time is extended up to a predefined maximum. 
 
 \createfigure%
 {Simulation Results}%
@@ -68,13 +67,13 @@ The number of vehicles simultaneousely on the road is plotted over the time-of-d
 The results are quite similar for all signal control strategies. 
 The differences are small because of the lack of heavy congestion in the Cottbus scenario. 
 
-A change of signal control has more effect if some unexpected traffic occurs on the network. 
-It is assumed that the local football club ``FC Energie Cottbus'' has a derby that takes place on a normal weekday, thus interfering with the regular commuter traffic. 
-In the last iteration of the run sequences, in addition to the commuters $0$ to $2000$ vehicles drive to the football stadium of Cottbus during the evening peak. 
+A change of signal control has more effect if some unexpected traffic occurs in the network. 
+It is assumed that the local soccer club ``FC Energie Cottbus'' has a derby that takes place on a normal weekday, thus interfering with the regular commuter traffic. 
+In the last iteration of the run sequences, in addition to the commuters $0$ to $2000$ vehicles drive to the soccer stadium of Cottbus during the evening peak. 
 It is assumed that 25 \% of these fans come from Cottbus,
-while the other 75 \% come from the ``Spree-Nei{\ss}e'' area, and that all fans start their trips between 17:00 and 18:00. 
+while the other 75 \% come from the ``Spree-Nei{\ss}e'' area around Cottbus, and that all fans start their trips between 17:00 and 18:00. 
 
-Fig.~\ref{fig:unexpected_event} plots the number of football fans on
+Fig.~\ref{fig:unexpected_event} plots the number of soccer fans on
 the x-axis, and the average travel time of all travelers on the
 y-axis. Without any additional vehicles,
 the traffic-actuated signal control leads to a gain of
@@ -85,7 +84,7 @@ Summarizing: In slightly jammed commuter scenarios, simulation results with a ch
 Looking at different objectives with more fine grained analysis tools can reveal network wide effects~\citep[e.g.~see the analysis using macroscopic fundamental diagrams, pp.114]{Grether2014PhD}, but this is work in progress.  
 More heavily jammed scenarios can increase the overall traffic impact of a change in traffic signal control. The case study show significant effects of traffic-responsive signal control, if something unexpected happens and travelers do not react.  
 
-\subsection{Overview -- MATSim \& Traffic Signals?}
+\subsection{Overview}
 
 The presented case study highlights some already researched aspects of MATSim simulations with traffic signals. 
 Sec.~\ref{sec:signals_traffic_signal_control} provides some traffic signal control vocabulary and backgrounds.  
@@ -95,18 +94,19 @@ The remaining chapter provides deeper insight.
 MATSim's open source nature provides hooks and interfaces for extension. 
 But you should consider the amount of work required to get things done in respect to the current state of development and your project planning. 
 If you need highly detailed traffic flow models or a high detail network representation, you should consider other tools. 
-Sec.~\ref{sec:signals_network_traffic_flow} goes into details of network and traffic flow modelling. 
+Sec.~\ref{sec:signals_network_traffic_flow} goes into details of network and traffic flow modeling. 
 If your requirements are met, Sec.~\ref{sec:signals_iterations_learning} considers iterations and learning. 
 When it comes to agent based learning, MATSim is very fast -- the presented case study requires on average~$17$ seconds computation time per iteration -- for scoring, replanning, and output. One complete run sequence ($1000$ iterations, single core mobility simulation, multi core replanning) was simulated in $9 \, h$ and $12 \, min$. 
 The speed of simulation leaves room for exploration of network wide behavioral reactions on changes of traffic signal control. 
 Furthermore, the resource efficient simulation enables the joint simulation of several policies. 
-Before you present your results to public, you should consider certain aspects concerning the  evaluation and interpretation of simulation results, Sec.~\ref{sec:signals_evaluation}. 
-When you decide to go the MATSim way, consider Sec.~\ref{sec:signals_conclusion} for some last checks. 
+%Before you present your results to public, you should consider certain aspects concerning the  evaluation and interpretation of simulation results, Sec.~\ref{sec:signals_evaluation}. 
+When you decide to go the MATSim way, consider Sec.~\ref{sec:signals_traffic_signals_in_matsim} for some MATSim specific hints and Sec.~\ref{sec:signals_conclusion} for some last checks. 
 
 %Thus, it is well worth to consider a extension for the simulation of traffic-responsive signal control. Further, the impacts of recently developed optimization models for fixed-time control can be tested~\citep{KoehlerStrehler2010SignalDemandOptimization}. 
 
 
 \section{Traffic Signal Control}
+\label{sec:signals_traffic_signal_control}
 
 
 
@@ -327,8 +327,21 @@ Evolution seems plausible on both sides of the game -- \citet[e.g.~][]{BazzanEtc
 	\item Document what you have done
 \end{itemize}
 
-\section{Evaluation \& Interpretation}
-\label{sec:signals_evaluation}
+
+\section{Traffic Signals in MATSim}
+\label{sec:signals_traffic_signals_in_matsim}
+
+\begin{itemize}
+	\item How to adapt the config file?
+	\item Which additional files are needed?
+	\item Refer to the user guide.
+\end{itemize}
+
+
+\section{Conclusion}
+\label{sec:signals_conclusion}
+
+\subsection{Evaluation \& Interpretation}
 
 \begin{itemize}
 	\item Evaluation criteria manifold
@@ -336,8 +349,8 @@ Evolution seems plausible on both sides of the game -- \citet[e.g.~][]{BazzanEtc
 	\item Do Not over-interpret results, implement and interpret everything in respect to other simulation steps, document what you have done
 \end{itemize}
 
-\section{Conclusion, why -- again}
-\label{sec:signals_conclusion}
+
+\subsection{Conclusion, why -- again}
 
 \begin{itemize}
 	\item After reading a lot of constraints, why do not use another tool?
