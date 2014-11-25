@@ -58,7 +58,7 @@ The next sequence uses the fixed-time setup.
 In the third, final, sequence, all traffic signals are controlled by a traffic-actuated stage length control. 
 The control is based on the pretimed fixed-time schedules. 
 The green times of the fixed-time schedules are reduced to a minimal green time of $5$/$10$ $sec.$. 
-If at the end of this reduced green time vehicles are still approaching the green time is extended up to a predefined maximum. 
+If vehicles are still approaching at the end of this reduced green time, it is extended up to a predefined maximum. 
 
 \createfigure%
 {Simulation Results}%
@@ -97,9 +97,9 @@ the traffic-actuated signal control leads to a gain of
 approx.~$1 \, min$ per traveler.
 The more additional traffic is approaching the stadium, the more the traffic-actuated control saves travel time. In the case where 2000 additional vehicles are on the road, travel time savings reach ca.~$15\, min$~per traveler. 
 
-Summarizing: In slightly jammed commuter scenarios, simulation results with a change in traffic signal control that leads to heavily decreased overall travel time have not been simulated with MATSim, yet. 
+Summarizing: Slightly jammed commuter scenarios, where a change in traffic signal control leads to heavily decreased overall travel time, have not been simulated with MATSim, yet. 
 Looking at different objectives with more fine grained analysis tools can reveal network wide effects~\citep[e.g.~see the analysis using macroscopic fundamental diagrams, pp.114]{Grether2014PhD}, but this is work in progress.  
-More heavily jammed scenarios can increase the overall traffic impact of a change in traffic signal control. The case study show significant effects of traffic-responsive signal control, if something unexpected happens and travelers do not react.  
+More heavily jammed scenarios can increase the overall traffic impact of a change in traffic signal control. Nevertheless the case study shows significant effects of traffic-responsive signal control, if something unexpected happens and travelers do not react.  
 
 \subsection{Overview -- MATSim \& Traffic Signals?}
 
@@ -135,11 +135,11 @@ These shifts are referred as coordination offsets.
 For optimization of fixed-time signals different regimes of equilibrium traffic flow are determined for several periods of time, e.g., weekday morning, midday, evening and night plus a separate estimate for weekends.   
 Optimization may target all parameters of a signalized junction -- green split, cycle, offsets, and phase composition. 
 %These traffic flows serve as input for optimization~\citep[e.g.~][]{Webster1961SignalSettings,Allsop1972SignalizedJunctionCapacity,Allsop1991SignalsStageBased,Robertson1969Transyt}.  
-But, there is no possibility to react on acute changes of equilibrium traffic flows. 
+But, there is no possibility to react on current changes of equilibrium traffic flows. 
 
-Traffic-responsive control reacts on acute traffic patterns adjusting traffic signal control parameters on the fly. 
+Traffic-responsive control reacts on current traffic patterns adjusting traffic signal control parameters on the fly. 
 In principle all available information on prevailing traffic patterns can be used. 
-The diversity of traffic-responsive control algorithms is wide, for a review of some of the reader is referred to~\citet[][]{Grether2014PhD}. 
+The diversity of traffic-responsive control algorithms is wide, for a review the reader is referred to~\citet[][]{Grether2014PhD}. 
 
 MATSim's traffic signal module is designed to simulate all different kinds of traffic signal control strategies. 
 The module provides a default implementation for fixed-time control. 
@@ -149,12 +149,12 @@ Data is divided into five different types of input:
 	\item[Signals:] The location of the traffic signal hardware on the network is typically independent from the control strategy. Signals can be located at the end of a link or a lane, see the next section for further discussion of lanes. Signals are attached to a system that reflects e.g.~all signals of a junction or even larger units. Each signal system is controlled by exactly one control algorithm at a time.  
 	\item[Signal Groups:] Traffic signals have to be attached to a group. A group of signals shows the same color at the same time. Each time a signal group changes its state a MATSim event is triggered. 
 		There is no explicit representation of phases. If required this can be realized on top of the signal groups.  
-	\item[Control:] Comprises information for fixed-time control and can be used to specify custom control algorithms per system. 
-	\item[Amber:] Specifies the time of amber at the beginning and end of green time. At time of writing this information is only used for visualization purposes. 
+	\item[Control:] A signal control comprises information for fixed-time control and can be used to specify custom control algorithms per system. 
+	\item[Amber:] This input specifies the time of amber at the beginning and end of green time. At time of writing this information is only used for visualization purposes. 
 		Driving is not permitted if a traffic signal shows amber light. 
-	\item[Intergreens:] Specifies the minimal time period between the ending of the one and the beginning of another signal group's green time.  
+	\item[Intergreens:] An intergreen time specifies the minimal time period between the ending of the one and the beginning of another signal group's green time.  
 		This information is fairly important as MATSim's traffic flow model does not contain any collision detection. 
-		When available a validation module reads the event stream and triggers a warning or an error if security constraints are violated. 
+		When available, a validation module reads the event stream and triggers a warning or an error if security constraints are violated. 
 		Further, customized control strategies can access this information to ensure the validity of control in respect to security aspects.    
 \end{description}
 
@@ -215,19 +215,19 @@ The next section considers network representation and location of traffic signal
 {info about source (optional)}
 
 This section discusses the representation of transport networks with microscopically modeled traffic signals. 
-In MATSim, the representation of  the transport network is a static, directed graph consisting of nodes and links. 
-Links depict road segments while nodes can be interpreted as decision points in space that have a coordinate as attribute. 
-The location of nodes in space is not supposed to vary over time. 
-Nodes possess a geospatial interpretation and can be located in space. 
-But, in contrast to links, nodes have no spatial dimension.  
-The course of the road segments, however, is not specified and is inaccurate. 
+In MATSim, the representation of the transport network is a static, directed graph consisting of nodes and links. 
+Links depict road segments while nodes can be interpreted as decision points in space that have a coordinate as attribute, but no spatial dimension. 
+%The location of nodes in space is not supposed to vary over time. 
+%Nodes possess a geospatial interpretation and can be located in space. 
+%But, in contrast to links, nodes have no spatial dimension.  
+%The course of the road segments, however, is not specified and is inaccurate. 
 
 
 Fig.~\ref{fig:real_road_layout} illustrates a typical layout of a real-world road segment with several turn pockets at its end. 
-If the whole road segment is modeled as a single link with MATSim's queue model the first vehicle stopping at a red traffic signal at the end of this link will block all other approaching upstream vehicles, Fig.~\ref{fig:lanes_representation_single_queue}. 
+If the whole road segment is modeled as a single link with MATSim's queue model the first vehicle stopping at a red traffic signal at the end of this link will block all other vehicles approaching upstream, see Fig.~\ref{fig:lanes_representation_single_queue}. 
 In respect to the road layout shown in Fig.~\ref{fig:real_road_layout} this is not realistic. 
 Fig.~\ref{fig:model_link_layout} sketches the layout for a more realistic modeling. 
-Vehicles with distinct turn intentions do not block each other until the available space for queueing on the turn pocket is used completely, Fig.\ref{fig:lanes_representation_multiple_queue}. 
+Vehicles with distinct turn intentions do not block each other until the available space for queueing on the turn pocket is used completely, see Fig.\ref{fig:lanes_representation_multiple_queue}. 
 
 \createfigure%
 {Caption in List of Figures}%
@@ -245,11 +245,11 @@ Vehicles with distinct turn intentions do not block each other until the availab
 }%
 {info about source (optional)}
 
-In principle you can model each turn pocket as single link, place traffic signals at the end of the link and you are done. 
+In principle you can model each turn pocket as single link and simply place traffic signals at its end. 
 But, considering overall project constraints, this has several implications for network modeling and routing. 
 
 \mnote{motivation lanes}
-In MATSim, all attributes relevant for the domain that differ from geospatial location are attached to links. 
+In MATSim, all domain relevant attributes that differ from geospatial location are attached to links. 
 If, e.g., speed limits or the number of lanes are attached as attributes to links, a node can also represent a point in space where one of these attributes changes.  
 
 Many different attributes may be attached to the links of a transport network, e.g., traffic count data, transit stops, transit lines, speed limits, etc. 
@@ -265,16 +265,16 @@ If many turn pockets lead to the same downstream link, the number of required it
 
 \mnote{solution lanes}
 To resolve this problem, the implementation in MATSim allows the modeling of a subgraph on top of a link that reflects the structure shown in Fig.~\ref{fig:model_link_layout}. 
-Edges of the subgraph are called \alert{lanes}. 
+Edges of the subgraph are called \emph{lanes}. 
 Traffic flow on each lane is simulated nearly the same way as for links in the extended queue model. 
-Just the calculation of minimum travel time slightly differs to avoid systematic errors of temporal resolution~\citep[][p.~38]{GawronPhd}. 
+Just the calculation of minimum travel times slightly differs to avoid systematic errors of temporal resolution~\citep[][p.~38]{GawronPhd}. 
 The calculation for lanes is set up in a way that is compatible to a link of the extended queue model without lanes, i.e., in freeflow conditions both models result in exactly the same travel times. 
 This avoids further propagation of systematic errors. 
 At the beginning of the link only one lane may exist. 
 %
 The next lane is determined by the necessity to be in the correct turning lane for the next downstream link of the vehicle's precomputed route.
-According to the Cremer and Landenfeld approach, the vehicle is placed on the lane that currently contains the smallest number of other vehicles if there are several lanes leading to the same downstream link.
-Note, that the lanes of the model have no 1:1 relation to the lanes existing on a link in reality.
+According to Cremer and Landenfeld (see \citep{CremerLandenfeld1998MesoTrafficSignalModel}), the vehicle is placed on the lane that currently contains the smallest number of other vehicles if there are several lanes leading to the same downstream link.
+Note, that lanes in the model have no 1:1 relation to lanes existing on a link in reality.
 The use of lanes implies a specification of the downstream links, thus, specific turning moves can be forbidden. 
 This requires a modified routing of vehicles.
 
