@@ -19,6 +19,12 @@ kaimain:
 kai:
 	pdflatex kai
 
+kaibib:
+	pdflatex kai
+	bibtex kai
+	pdflatex kai
+	pdflatex kai
+
 gregor:
 	pdflatex gregor
 	bibtex gregor
