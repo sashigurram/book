@@ -2,7 +2,7 @@
 \label{ch:roadpricing}
 % ##################################################################################################################
 
-\hfill \textbf{Author:} Kai Nagel?
+\hfill \textbf{Author:} Kai Nagel
 
 \begin{center} \includegraphics[width=0.25\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
 
@@ -12,8 +12,76 @@ Modules in the config:
 	\item \lstinline|roadpricing|
 \end{itemize}
 
-Usage: Contrib via config
+Usage: Contrib via config \kai{not sure what that means}
 
 Literature: \citet[][]{RieserEtAl_TechRep_VSP_2007, Rieser_unpub_IVT_2008, GretherEtAl_ERSA_2008, RieserEtAl_TRBTDF_2008} \who{Rieser, Chakirov, Grether, Kickhöfer, Nagel}
 
 % ##################################################################################################################
+
+\section{Invocation}
+
+\subsection{Minimal}
+
+The least amount of infrastructure is necessary when running roadpricing from the command line.  For this, the \acrshort{matsim} jar, its libraries, \emph{and} the roadpricing jar need to be downloaded either from a release or from the nightly builds. \kai{explained where?}  After unzipping all zipfiles, the necessary command approximately is
+\begin{lstlisting}
+java -Xmx2000m -cp MATSim.jar:roadpricing-.../roadpricing-...jar org.matsim.roadpricing.run.Main config.xml  
+\end{lstlisting}
+where \verb$config.xml$ needs to contain a section
+\begin{lstlisting}
+	<module name="roadpricing" >
+		<param name="tollLinksFile" value="<path>/<tollfilename>" />
+	</module>
+\end{lstlisting}
+The toll file looks like this:
+\begin{lstlisting}
+<roadpricing type="link" name="abc">
+   <links>
+      <link id="11">
+         <cost start_time="05:00" end_time="10:00" amount="1." />
+         <cost start_time="17:00" end_time="20:00" amount="1." />
+      </link>             
+      <link id="12" />
+   </links>
+
+   <!--this is for all links with no cost entry above:-->
+   <cost start_time="05:00" end_time="10:00" amount="2.00"/>
+
+</roadpricing>
+\end{lstlisting}
+As one can see, there is a section where each link can be entered separately.  There can also be a separate cost structure for each link.  All links that are listed completely without a separate cost structure fall back on the general cost structure listed at the end.
+
+\subsection{As ``script in Java''}
+
+The above \verb$org.matsim.roadpricing.run.Main$ class can also be used as a starting point for one's own ``script in Java'':
+\begin{lstlisting}
+public static void main(String[] args) {
+	// load the config, telling it to "materialize" the road pricing section:
+	Config config = ConfigUtils.loadConfig( args[0], 
+           new RoadPricingConfigGroup() ) ;
+	
+	// load the scenario:
+	Scenario scenario = ScenarioUtils.loadScenario(config) ;
+
+	// instantiate the controler:
+	Controler controler = new Controler(scenario) ;
+
+	// instantiate road pricing and add it as controler listener:
+	RoadPricing roadPricing = new RoadPricing() ;
+	controler.addControlerListener( roadPricing ) ;
+
+	// run the controler:
+	controler.run() ;
+}
+\end{lstlisting}
+
+
+
+
+% Local Variables:
+% mode: latex
+% mode: reftex
+% mode: visual-line
+% TeX-master: "../../main"
+% comment-padding: 1
+% fill-column: 9999
+% End: 
