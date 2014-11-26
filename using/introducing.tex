@@ -1,15 +1,32 @@
 \chapter{Introducing MATSim}
 \label{ch:introducing}
 % ##################################################################################################################
-\hfill \textbf{Author:} ..., Andreas Horni, ...
+\hfill \textbf{Author:} Kay W. Axhausen, Andreas Horni, ...
 
 \begin{center} \includegraphics[width=0.7\textwidth, angle=0]{figures/matsimcycle.pdf} \end{center}
 
 % ##################################################################################################################
-\ah{A Glimpse at MATSim's History and a few adverts. It's zu trocken now. \who{Nagel, Axhausen}.}
 
-The development of the multi-agent transport simulation MATSim \citep[][]{MATSIM-T_Webpage_2014, BalmerEtAl_TRR_2006} has started approximately a decade ago as a collaborative effort of Prof.\ Nagel (now: TU Berlin) and Prof.\ Axhausen (ETH Zurich). It has its roots in \citet[][]{Axhausen_PhDThesis_1988} and in the transport simulation TRANSIMS \citep[][]{RaneyEtAl_LNCS_2002}, which was developed by Prof.\ Nagel as research team leader at the Los Alamos National Laboratory. As shown on the web page \citep[][]{MATSIM-T-Scenarios_Webpage_2015} and detailed in Chapter \ref{ch:scenarios}, MATSim has been applied by local research groups world-wide for several different regions.
+%\ah{The development of the multi-agent transport simulation MATSim \citep[][]{MATSIM-T_Webpage_2014, BalmerEtAl_TRR_2006} has started approximately a decade ago as a collaborative effort of Prof.\ Nagel (now: TU Berlin) and Prof.\ Axhausen (ETH Zurich). It has its roots in \citet[][]{Axhausen_PhDThesis_1988} and in the transport simulation TRANSIMS \citep[][]{RaneyEtAl_LNCS_2002}, which was developed by Prof.\ Nagel as research team leader at the Los Alamos National Laboratory.}
 
+% ##################################################################################################################
+\section{How It Started}
+The multi-agent transport simulation MATSim \citep[][]{MATSIM-T_Webpage_2014} started with the wish of Prof. Nagel, then at ETH Zurich, to improve on his work with and for the TRANSIMS project \citep[][]{SmithEtAl_NTRPAC_1995} and to make the resulting code open-source. His background in traffic flow was then complemented with experience in the agent-based modeling of travel demand, when after Prof. Nagel departure to Berlin in 2004 Prof. Axhausen joined the effort in earnest. 
+
+It is this merger of two, actually three large and old streams of research, which has made the system unique from the start: microscopic description of demand by tracing the daily schedule and the decisions involved of the agents modeled, integral microscopic simulation of the resulting traffic flows and the resulting congestion, optimization of the experienced utilities of the whole schedule through the co-evolutionary search for the resulting equilibrium or steady state (see Section~\ref{sec:co-ev}). The robustness of this framework for the description of all congested spatial behaviors became clear, as the development progressed to include the congestion inside facilities and buildings or as parking was added. 
+
+Agent-based modeling had been the basis of traffic flow simulation from the start in the 1970’s, e.g., \citet[][]{Wiedemann_PhDThesis_1974} or \citet[][]{Seddon_Simulation_1972}, but the work on traffic flow limited itself to individual links or small sequences of links and could therefore not address equilibrium as the aggregate assignment models could do from the 1970’s onward \citep[see][]{OrtuzarWillumsen_2011}. The expansion to whole and large networks came with the increasingly more powerful computers in the 1980’s and fast and accurate enough flow models (e.g. \citet[][]{NagelSchreckenberg_JdPI_1992, Schwerdtfeger_VolmulerHamerslag_1984, Daganzo_TransResPartB_1994}, but these agent-based simulations were not used to find an equilibrium at first. 
+
+Agent-based modeling of travel demand had been developed in Germany \citep[][]{AxhausenHerz_JTE_1989}, but then also in English speaking countries after the seminar book of \citet[][]{JonesEtAl_1983}. While the Anglophone authors focused on sample enumeration methods to estimate the total demand with their agent-based demand models (see \citet[see][]{BradleyBowman_TRBTDF_2006} for the North American, mostly discrete choice model based, developments, and \citet[][]{ArentzeTimmermans_2000} for an alternative Dutch approach), the simpler German approach was linked with an integral mesoscopic traffic flow simulation in \citet[][]{Axhausen_PhDThesis_1988}, but not used for equilibrium search. It had already a simple description of the total utility of the daily schedule.
+
+Nash-equilibrium like approaches had been developed in transport assignment since the seminal \citet[][]{Wardrop_PICE_1952} paper, these aggregate flow based approaches were expanded to account for perception errors of the user and for the social optimum \citep[see][]{DaganzoSheffi_TransScience_1977}, but their reformulation for an disaggregate agent-based solution had to wait until the late 1990’s with \citet[][]{Gawron_IJMPC_1998} and TRANSSIMS \citep[][]{SmithEtAl_NTRPAC_1995}. These approaches translated the logic of genetic algorithms into co-evolutionary search scheme, which efficiently identified the optima of each agent’s daily schedule.
+
+At the end of 1990’s the scene was set for a merger of these strands into a computationally efficient, modular and open-source software enabling further development on travel behavior, network response and efficient computation. 
+
+As shown on the web page \citep[][]{MATSIM-T-Scenarios_Webpage_2015} and detailed in Chapter \ref{ch:scenarios}, MATSim has been applied by local research groups world-wide for several different regions.
+
+% ##################################################################################################################
+\section{In Brief}
 MATSim is an activity-based, extendable, multi-agent simulation toolkit implemented with the programming language \gls{java}. It is open-source and can be downloaded freely at \citep[][]{MATSIM-T_Webpage_2015, SourceForge_Webpage_2015}. The framework is especially designed for large-scale scenarios, meaning that, the features of all models are generally stripped down to efficiently handle the targeted functionality, where emphasis has been also been laid on parallelization \citep[e.g.,][]{Dobler_TechRep_IVT_2011, Charypar_PhDThesis_2008}. For the network loading simulation, for example, a queue-based model is implemented, leaving out the very complex car-following behavior (see Section~\ref{sec:trafficflowmodel}).
 
 For now, MATSim is conceptually designed to model a \emph{single day}, a common unit of analysis for activity-based models (see, for example, the review in \citet[][]{Bowman_TEC_2009_1}). In other words, MATSim is basically a cross-sectional model. Nevertheless, in principle a longitudinal model could be implemented \citep[][]{HorniEtAl_TechRep_IVT_2012_a}.
