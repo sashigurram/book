@@ -44,7 +44,7 @@ wc:
 	wc ${NAME}.txt
 
 localbib:
-	bibexport.sh -a -o 0/tub.bib ../../shared-svn/documents/inputs/bib/vsp ../../shared-svn/documents/inputs/bib/kai ../../shared-svn/documents/inputs/bib/ref
+	- bibexport.sh -a -o 0/tub.bib ../../shared-svn/documents/inputs/bib/vsp ../../shared-svn/documents/inputs/bib/kai ../../shared-svn/documents/inputs/bib/ref
 	../../shared-svn/documents/inputs/bib/repair_bib.rb 0/tub.bib
 
 spin:
