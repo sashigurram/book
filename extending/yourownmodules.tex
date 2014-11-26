@@ -37,7 +37,7 @@ The \verb$Mobsim$ generates a stream of \verb$Event$s.  These are primarily used
 \item \verb$PlanStrategy$ modules use them to build approximate models of the world in which they operate.  For example, the router obtains time-dependent expected link travel times from a \verb$TravelTime$ object, which in turn listens to link enter and link exit events.
   
 \end{compactitem}
-In consequence, each \verb$PlanStrategy$ module can use them, either directly or via some observer object, to obtain information about the world in which the plans of the synthetic travelers need to be improved. Additionally, one can write nearly arbitrary handlers for analysis: If one wanted to and if the corresponding information is in the data, then one could extract the average age of all drivers using roads with speed limits 30 or less.
+In consequence, each \verb$PlanStrategy$ module can use them to obtain information about the world in which the plans of the synthetic travelers need to be improved. Additionally, one can write nearly arbitrary handlers for analysis: If one wanted to and if the corresponding information is in the data, then one could extract the average age of all drivers using roads with speed limits 30 or less.
 
 
 \subsection{Extensions to and modifications of specific elements}
@@ -49,13 +49,13 @@ Some modules are so large that fully replacing them in order to adapt the simula
 \end{compactitem}
 In consequence, it is possible to add material into the execution flow of the \verb$QSim$ by \verb$MobsimListeners$ in a similar way as this is possible with the \verb$ControlerListeners$ mentioned above.
 %
-The router, in contrast, is most importantly configured by replacing the definition of the generalized travel cost. \kai{more?  modes?  I don't know all the configuration options of the router.}
+The router, in contrast, is most importantly configured by replacing the definition of the generalized travel cost. 
 
 % ##################################################################################################################
 \section{MATSim Extension Points}
 This section describes what could be called the service provider interface (SPI) of MATSim.
 Historically, the main entry-point for writing a MATSim extension has been to literally extend (in the Java sense)
-the Controler class.  Essentially, one would override the methods calling the mobsim, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. \kai{Michael, previous sentence added; ok?} This is now discouraged. While this pattern worked when a each member of the team
+the Controler class.  Essentially, one would override the methods calling the mobsim, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. This is now discouraged. While this pattern worked when a each member of the team
 was working on extending the MATSim core by a different aspect, it fails when it comes to
 integrating those aspects to a single product: There is nothing one can do with a PublicTransportControler, an EmissionsControler, a RoadPricingControler and an OTFVisControler,
 if one wants to combine them to visualize the emissions of buses on toll roads.
@@ -63,15 +63,37 @@ if one wants to combine them to visualize the emissions of buses on toll roads.
 % =========================================================================================
 \subsection{Config Group}
 \label{sec:config}
+The configuration of a MATSim run is a grouped list of key-value pairs, stored in XML
+format, often in a file named \verb$config.xml$:
+\begin{lstlisting}
+<module name="qsim" >
+		<param name="flowCapacityFactor" value="0.2" />
+		<param name="storageCapacityFactor" value="0.3" />
+
+		<!-- `queue' for the standard queue model, `withHolesExperimental' (experimental!!) for the queue model with holes -->
+		<param name="trafficDynamics" value="queue" />
+</module>
+<module name="transit" >
+		<!-- Comma-separated list of transportation modes that are handled as transit. Defaults to 'pt,bus,train,tram'. -->
+		<param name="transitModes" value="pt" />
+
+		<!-- Input file containing the transit schedule to be simulated. -->
+		<param name="transitScheduleFile" value="network/transitSchedule.xml.gz" />
+</module>
+\end{lstlisting}
+At runtime, the entire configuration is stored in an instance of \verb$Config$, from which instances of \verb$Module$ can be accessed by their name.
+The author of an extension can subclass the \verb$Module$ class to provide named accessors for the parameters.
+There is even a utility class \verb$ReflectiveModule$ which you can use if you want to define the mapping of named parameters to accessors
+using Java annotations.
 
 % =========================================================================================
 \subsection{ScenarioElement}
 
-As explained in Section~\ref{sec:ownmodules-intro}, the \verb$Person$s are stored in an in-memory object-oriented data base.  This means that they are read into memory at the beginning of a run, kept in memory during the whole run, and written to file at the end of a run.
+As explained in Section~\ref{sec:ownmodules-intro}, the \verb$Person$s are stored in an in-memory object-oriented data base.  This means that they are read into memory at the beginning of a run, kept in memory during the whole run, and written to files at the end of a run.
 %
 The same approach, i.e.\ reading a file into memory and keeping it there, has always been used for the network, consisting of links and nodes, although here it is less normal that this data is modified over the iterations.
 
-Since then, additional data containers were introduced for vehicles, households, the transit schedule, and so-called activity facilities (see Section \kai{which one}).  These provide additional modelling options, yet they are only loosely connected to the \acrshort{matsim} core.  It then became increasingly obvious that there is no standard set of data containers, but different modelling tasks need different containers.  For example, traffic signals need signal plans, while freight modelling needs a separate freight population.  It was thus decided to allow for the addition of arbitrary scenario elements, by the syntax
+Since then, additional data containers were introduced for vehicles, households, the transit schedule, and activity facilities (see Section \kai{which one}).  These provide additional modelling options, yet they are only loosely connected to the \acrshort{matsim} core.  It then became increasingly obvious that there is no standard set of data containers, but different modelling tasks need different containers.  For example, traffic signals need signal plans, while freight modelling needs a separate population of freight forwarders.  It was thus decided to allow for the addition of arbitrary scenario elements, by the syntax
 \begin{lstlisting}
   scenario.addScenarioElement( "myContainer", new MyContainer() ) ;
 \end{lstlisting}
@@ -123,8 +145,8 @@ by implementing an EventHandler interface and registering the implementation wit
 an EventHandler can be chosen by the developer. Normally, an EventHandler lives as long as the simulation run.
 It is notified before the beginning of each new iteration so that its state can be reset to listen to a new
 iteration. This pattern can be used to collect information over all iterations. But if the purpose of
-an EventHandler is used to make a calculation based on one single iteration, it may be more natural
-to create a new EventHandler instance for each iteration, querying it for its result and discarding it
+an EventHandler is to make a calculation based on one single iteration, it may be more natural
+to create a new EventHandler instance for each iteration, query it for its result and discard it
 after the iteration finishes. This can be done in a ControlerListener.
 % =========================================================================================
 \subsection{PlanStrategy}
