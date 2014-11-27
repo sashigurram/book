@@ -152,10 +152,30 @@ after the iteration finishes. This can be done in a ControlerListener.
 
 \subsection{PlanStrategy}
 
-A \verb$PlanStrategy$ is a piece of code which specifies how an agent changes its behavior
-from iteration to iteration. Most generally, it is an operation on the plan memory
+Replanning in MATSim is specified by defining a set of weighted strategies. In each
+iteration, each agent makes a draw from this set and executes the selected strategy. The
+strategy specifies how the agent changes its behavior. Most generally, it is an operation on the plan memory
 of an agent: It adds and/or removes plans, and it marks one of these plans as selected.
 
+Strategies are implementations of the \verb$PlanStrategy$ interface. 
+The most common case is that a \verb$PlanStrategy$ picks one plan from memory
+at random, copies it, mutates it in some specific aspect, adds the mutated plan to the plan memory, and
+marks this new plan as selected. MATSim provides a helper class which can be used
+to implement this strategy template, where only the mutation operation has to specified.
+
+The four most commonly used strategies shipped with MATSim are:
+
+\begin{compactitem}
+\item Select from the existing plans at random, which are weighted by their current score.
+\item Mutate a random existing plan by re-routing all trips.
+\item Mutate a random existing plan by randomly shifting all activity end times backwards or forwards and re-routing 
+all trips.
+\item Mutate a random existing plan by changing the mode of transport and re-routing one or more trips or tours.
+\end{compactitem}
+
+Routes are computed based on the traffic conditions of the previous iteration, which are measured
+by means of an \verb$EventHandler$. Using the same pattern, your own \verb$PlanStrategy$ can use any data which
+can be computed from the mobility simulation.
 
 % =========================================================================================
 \subsection{Scoring}
