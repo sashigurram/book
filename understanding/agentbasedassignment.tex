@@ -319,7 +319,6 @@ As is well known, the above also works for \emph{dynamic} traffic
 assignment \citep[DTA; see][]{peeta-2001}, where both the demand and the network conditions are now time-dependent and the time-dependent travel times in the network now define a physically meaningful progression of a demand unit through the network. 
 
 The structure of the algorithm does not change. The individual steps now look as follows:
-
 \begin{algorithm}[H]
 \label{dynamic-macro-routes}
 
@@ -1440,7 +1439,7 @@ obvious how to do that: One has to extend the cost
 function that is used for routing to a general scoring function for
 complete daily plans.
 
-\todoNextRevision{start with an example?}
+%%\todoNextRevision{start with an example?}
 
 That is, the performance of a daily plan needs to be scored.  An
 established method to estimate scoring functions for different
@@ -1456,284 +1455,16 @@ arguments may serve as starting points:
 
 \item For the activities, one should select functions where the
   marginal reward of doing an activity decreases over time.
-  \todoNextRevision{read Feil/Joh!}
+  %%\todoNextRevision{read Feil/Joh!}
 
 \item Without additional effects, such as opening times or
   time-varying congestion, the marginal utilities of all performed
   activities should be the same.  
 
 \end{itemize}
-
-MATSim has, in the past years, gained some experience with the
-approach described in the following paragraphs.
-
-%%\todoKai{Wenn wir uns an die uebliche Notation halten wollen, dann
-%%sollten wir im Folgenden $V$ fuer "systematic utility" verwenden.
-%%$U=V+\varepsilon$ is die random utility. Weiss aber nicht, wie gut
-%%das dann zu der sonstigen Matsim-Literatur passt. Gunnar}
-
-\paragraph{Total utility}
-
-The total score of a plan is computed as the sum of individual
-contributions:
-%%\todoKai{Replaced $n$ by $m$ because $n$ is already the agent
-%%index. Gunnar}
-%% ok. kai
-\begin{equation}
-\label{eq:UtilityFunction}
-U_{total}= \sum_{i=1}^{m} U_{\it perf,i} + \sum_{i=1}^{m} U_{\it late,i} + \sum_{i=1}^{m} U_{\it tr,i}\ ,
-\end{equation}
-where $U_{total}$ is the total utility for a given plan; $m$ is the
-number of activities, which equals the number of trips (the first and
-the last activity---both of the same type and at the same
-location---are counted as one); $U_{\it perf,i}$ is the (positive)
-utility earned for performing activity $i$; $U_{\it late,i}$ is the
-(negative) utility earned for arriving late to activity $i$; and
-$U_{\it tr,i}$ is the (negative) utility earned for traveling during
-trip $i$.
-
-\paragraph{Utility of performing an activity}
-
-A logarithmic form is used for the positive utility earned by
-performing an activity:
-\begin{equation}
-\label{eq:U_perf}
-U_{\it perf,i}(t_{\it perf,i}) = \beta_{\it perf}\cdot t_{*,i} \cdot
-\ln\left(\frac{t_{\it perf,i}}{t_{0,i}}\right)
-\end{equation}
-where $t_{\it perf}$ is the actual performed duration of the activity, 
-$t_{*}$ is the ``typical'' duration of an activity, and
-$\beta_{\it perf}$ is the marginal utility of an activity at its typical
-duration:
-\begin{equation}
-U'_{\perf,i}(x)|_{x=t_{*,i}} 
-%
-= \beta_{\perf} \cdot t_{*,i} \cdot \frac{1}{x} \Big|_{x=t_{*,i}}
-%
-= \beta_{\perf} \ .
-\end{equation}
-$\beta_{\it perf}$ is the same for all activities since in
-equilibrium all activities at their typical duration need to have the
-same marginal utility.
-
-At this point, both $\beta_{perf}$ and $t_{*,i}$ are fixed because
-they are effectively only one free parameter which is split into its
-two components in order to simplify the interpretation.
-
-$t_{0,i}$ is a scaling parameter.  Since $\ln(t_{perf}/t_0) =
-\ln(t_{perf}) - \ln(t_0)$, its effect is that of shifting the curve up
-and down, and thus determining when it crosses the zero line.
-Although interpretations for this come to mind (such as a minimum
-duration of an activity, below which it should not be performed), we
-have found that this does not work well in practice.  The practical
-problem is that one needs to control the \emph{curvature}, i.e.\ the
-second derivative, at the typical duration, because it is the
-\emph{change} of the marginal utility that determines the slack of an
-activity when the dayplan comes under pressure.  The second derivative
-at the typical duration is:
-\begin{equation}
-U''_{perf,i}(x)|_{x=t_{*,i}} 
-%
-= \beta_{perf} \cdot t_{*,i} \cdot \frac{-1}{x^2} \Big|_{x=t_{*,i}}
-%
-= - \frac{\beta_{perf}}{t_{*,i}} \ .
-\end{equation}
-Since both $\beta_{perf}$ and $t_{*,i}$ are already fix, it turns out
-that, with Eq.~(\ref{eq:U_perf}), one cannot separately control the
-curvature at the typical duration. At the same time, the remaining free
-parameter, $t_{0,i}$, controls aspects that seem comparatively less
-important.
-
-Overall, a better form of the utility function needs to be found, with
-a functional form that minimally allows to control the first and
-second derivative at the typical duration.  See, e.g., work by Joh
-\citep{JohEtc2003utlFct} or by Feil \citep{FeilEtc2009NewUtlFct},
-although we have not yet detected direct control over the second
-derivative in these works.
-
-%%that is related both to the minimum
-%%duration and to the importance of an activity.  %If the actual duration
-% falls below $t_{0,i}$, then the utility contribution of the activity
-% becomes negative, implying that the agent should rather completely
-% drop that activity.  
-%%As long as dropping activities from the plan is not allowed, $t_{0,i}$
-%%has essentially no effect.
-
-\paragraph{Disutility of traveling}
-
-The (dis)utility of traveling is uniformly assumed as:
-\begin{equation}
-\label{eq:U_travel}
-U_{\it tr,i} = \beta_{tr} \cdot t_{tr,i}\ ,
-\end{equation}
-where $\beta_{tr}$ is the marginal utility (in Euro/h) for travel, and
-$t_{tr,i}$ is the number of hours spent traveling during trip $i$.
-$\beta_{tr}$ is usually negative.  Clearly, it is no problem to use
-other forms.
-
-\paragraph{Disutility of schedule delay}
-
-The (dis)utility of being late is uniformly assumed as:
-\begin{equation}
-\label{eq:U_late}
-U_{\it late,i} = \beta_{\it late} \cdot t_{\it late,i}\ ,
-\end{equation}
-where
-$\beta_{\it late}$ is the marginal utility (in Euro/h) for being late, and
-$t_{\it late,i}$ is the number of hours late to activity $i$.
-$\beta_{\it late}$ is usually negative.  Once more, clearly it is no
-problem to use other forms.
-
-In principle, arriving early or leaving early could also be punished.
-There is, however, no immediate need to punish early arrival since
-waiting times are already indirectly punished by foregoing the reward
-that could be accumulated by doing an activity instead (opportunity
-cost of time).  In consequence, the effective marginal (dis)utility of
-waiting is already $U'_{\it perf,i}(x) = - \beta_{\it perf} \, t_{*,i}
-/ x \approx -\beta_{\it perf}$, where the final approximation is valid
-as long as the actual duration of the activity, $x$, is approximately
-as long as the typical duration of the activity, $t_{*,i}$.
-Similarly, that opportunity cost has to be added to the time spent
-traveling, arriving at an effective (dis)utility of traveling of
-$\beta_{tr} - \beta_{\it perf} \, t_{*,i} / t_{\it perf,i} \approx
-\beta_{tr} - \beta_{\it perf}$, where, again, $\beta_{tr}$ typically
-is negative.
-%%\todoKai{Warum steht $\beta_{tr}$ hier in Betraegen? Wenn es tatsächlich
-%%positiv ist, dann geht es hier negativ ein ... Gunnar}
-
-No opportunity cost needs to be added to late arrivals, because the
-late arrival time is spent somewhere else.  In consequence, the
-effective (dis)utility of arriving late remains at $\beta_{\it late}$.
--- These values, $\beta_{\it perf}$, $\beta_{\it perf} - \beta_{tr}$,
-and $-\beta_{\it late}$, are the values that correspond to the
-parameters of the Vickrey model \citep{ArnottEtcBottleneck-inelastic}.
-%%\todoKai{Gleiche Frage zu $\beta_{late}$. Warum die Betraege? Gunnar}
-% 
-% The utility function could be extended with additional terms. For
-% example, one could think of tolls or parking costs that could be
-% included into the score.
-
-\todoNextRevision{work by arentze/timmermans 
-  $\Rightarrow$ Da kenne ich mich nicht aus. Gunnar}
-
-\todoNextRevision{w/o scores, the approach would still work w/o but ...}
-
-
+MATSim has, in the past years, gained some experience with the approach described in Chapter~\ref{ch:scoring} and with more theory in Chapter~\ref{ch:economicEval}; this then closes the loop.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Network modeling}
-
-As stated in the introduction, including additional choice
-dimenensions into the iterations has much to gain if this leads to
-additional consistency.
-%%, such as travelers being able to take their
-%%own car from a location only if they brought it to that location
-%%before.  
-This implies that a ``behavioral'' network loading model
-should not just take trips from a time-dependent OD matrix but should
-rather model the complete execution of a plan such as in
-Sec.~\ref{sec:agent-based-sue}.
-%Fig.~\ref{fig:plan-detailed}.\todoKai{missing figure}
-
-For this, the behavioral network model needs to be microscopic,
-i.e., it should follow every individual agent and every individual
-vehicle.  In addition, it should maintain the integrity of those
-entities, i.e., agents should only be able to depart from an activity
-if they are actually there (i.e., after they have shown up), and
-vehicles should only be able to depart from a location if they are
-actually there.  In addition, the feedback from the network loading
-should be microscopic, i.e., for every agent and every vehicle there
-should be a trace of their actions.  
-
-In practice, it has turned out that using so-called \textbf{events} is
-a good means of transmitting such performance information.  For the
-plan in Sec.~\ref{sec:agent-based-sue},
-%Fig.~\ref{fig:plan-detailed}, 
-events may include the following (again
-using XML as a language):
-%%\todoKai{missing figure -- Ich weiss leider nicht
-%%was fuer eine Zeichnung Du hier im Sinn hast. Gunnar}
-\begin{lstlisting}
-<event type="endAct" time="07:23:45" personId="321" .../>
-<event type="departure" mode="car" time="07:23:45" vehId="..." ... />
-<event type="lvLink" time="..." vehId="..." .../>
-<event type="enterLink" time="..." ... />
-...
-<event type="arrival" time="..." ... />
-<event type="beginAct" actType="work" time="..." ... />
-\end{lstlisting}
-This is an elegant method to couple the network loading module
-with other modules \citep[see,
-  e.g.][]{FerberBook,Naumov2006phd,MastLundeEtc2009Tollsim}.
-
-Note that the term ``microscopic'' refers to the \textbf{resolution}
-of the model (every synthetic traveler is individually resolved),
-while at the same time the \textbf{fidelity} of the model can be very
-much reduced.  The fastest implementations use simple
-store-and-forward mechanisms for their links
-\citep{SimaoQueueing,Gawron1998IterativeAlgorithmto,GawronPhd,BottomThesis}.
-Although simple, such models obey, per link, flow capacity limits,
-speed limits, and storage limits.  Since flow capacity and storage
-limits together cause spillback, such models are able to model
-physical queues.  The speed of the backwards traveling kinematic
-congestion wave is too fast compared to reality
-\citep{SimonNagel1999queueTrb}, but this can be corrected
-\citep{Charypar2008PhD,osorio-2010c}.  The approach can be implemented in parallel
-\citep{CetinBurriNagel2003queue}, in an event-driven way
-\citep{CharyparAxhausenEtAl2007Event-DrivenQueueBasedTraffic}, and
-those two approaches can be combined
-\citep{CharyparAxhausenEtAl2007event-drivenparallelqueue-based}.  Even
-without parallelization, this can be set up so that a full day of all
-of Switzerland (8~million inhabitants) can be simulated in about
-1.5~hours \citep{WaraichEtc2009JDQSim}; with parallel hardware, linear
-speed-up can be achieved
-\citep{CetinBurriNagel2003queue,CharyparAxhausenEtAl2007event-drivenparallelqueue-based},
-dividing the runtime by the number of available CPUs.
-
-
-%%\vfill\eject
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%\section{Additional elements}
-
-%%\subsection{Demand vs.\ supply vs.\ ``physics''}
-
-%%\todoKai{The ``physical'' module is the one that computes the scoring
-%%  based on the performance in the synthetic reality; not sure in how
-%%  many words we should state this in particular since there is some
-%%  disagreement between ``supply simulation'' and ``physical
-%%  simulation''.  (For me, the network loading is what the economists
-%%  call ``technology''.  A supply simulation simulates a traffic
-%%  management center that decides about management strategies, or a
-%%  political system that decides about supply expansions.)  Es gibt
-%%  auch einen geplanten Abschnitt ``Demand vs supply vs physics'', wo
-%%  das diskutiert werden koennte. Kai
-%%  $\Rightarrow$ Wir meinen mit Sicherheit dasselbe. Ich habe den Eindruck,
-%%  dass die meisten DTA-Leute supply = network loading setzen, was hier ja
-%%  noch passt. Aber wenn Du hier noch detaillierter werden moechtest, dann
-%%  sollten wir zu Deiner Terminologie uebergehen. Gunnar}
-
-%%\subsection{Risk}
-
-%%\subsection{Consequences in the economic interpretation (and things
-%%  that are conventionally probably wrong)}
-
-%%route assignment w/ times ... econ analysis with generalized costs
-%%... ???  But w/ rule of half this still works???
-
-%%\subsection{Feedback to upstream models}
-
-%%\todoKai{is this related to ``econ interpretation''?  Gunnar --- Ich
-%%  denke vor allem an ``feedback to urbansim''.  Kai
-%%  $\Rightarrow$
-%%  Es sollte erwaehnt werden, dass das feedback mit den agents zumindest prinzipiell
-%%  leicht auf land use ausgedehnt werden kann. "econ interpretation" scheint mir da
-%%  aber der uebernaechste Schritt. Aber gehoert dies denn in die "theo" section? Gunnar}
-
-
-%%%%\vfill\eject
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 \label{sec:conclusion}
@@ -1793,23 +1524,21 @@ in the travel demand literature.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Acknowledgements}
+%% \section{Acknowledgements}
 
-This paper derives much from the MATSim project, which is a
-collaboration between many people and institutions.  For the issues
-investigated in this paper, we benefited from discussions with
-%
-M.~Bierlaire,
-A.~Borning, % uw cs search project
-D.~Fox, % uw cs search project
-P.~Henry, % uw cs search project
-D.~Layton, % uw cs search project
-F.~Marchal, 
-F.~Martinez,
-%
-and P.~Waddell.
-
-%%\todoKai{Repair citations; see mail. Gunnar}
+%% This paper derives much from the MATSim project, which is a
+%% collaboration between many people and institutions.  For the issues
+%% investigated in this paper, we benefited from discussions with
+%% %
+%% M.~Bierlaire,
+%% A.~Borning, % uw cs search project
+%% D.~Fox, % uw cs search project
+%% P.~Henry, % uw cs search project
+%% D.~Layton, % uw cs search project
+%% F.~Marchal, 
+%% F.~Martinez,
+%% %
+%% and P.~Waddell.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
