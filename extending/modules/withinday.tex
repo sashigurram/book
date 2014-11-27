@@ -96,7 +96,6 @@ Other agents might want to share their cars, so an actual meeting must be confir
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\textbf{TODO: describe why there are two different implementations!}
 
 \subsection{General thoughts}
 
@@ -342,7 +341,7 @@ Here, we will thus look at \verb$MobsimAgent$s which do no longer have a pre-com
 The \verb$DriverAgent$ interface structurally is something like
 \begin{compactitem}
 
-\item \verb$Id<Link> chooseNextLinkId()$ -- agent is asked at intersections and needs to return how to proceed.
+\item \verb$Id chooseNextLinkId()$ -- agent is asked at intersections and needs to return how to proceed.
 
 %% \item \verb$Id<Link> getDestinationLinkId()$ -- agent is essentially asked if it wants to arrive on the current link.\footnote{%
 
@@ -352,7 +351,7 @@ The \verb$DriverAgent$ interface structurally is something like
 
 \item \verb$boolean isWantingToArriveOnCurrentLink()$ -- agent is asked if it wants to arrive on the current link.
 
-\item \verb$void notifyMoveOverNode(Id<Link> newLinkId)$ -- agent is notified that it has traversed the intersection and entered a new link.
+\item \verb$void notifyMoveOverNode(Id newLinkId)$ -- agent is notified that it has traversed the intersection and entered a new link.
 
 \end{compactitem}
 Everything else are relatively simple bookkeeping methods such as \verb$getId()$ -- the agent needs to know its own identifier.
@@ -398,7 +397,7 @@ class MyAgentSource implements AgentSource {
    }
 }
 \end{lstlisting}
-The variable \verb$guidance$ needs help the agent with making decisions, see below.
+\verb$Guidance$ helps the agent with making decisions, see below.
 
 \subsubsection{Perception, decision, integration}
 
@@ -423,7 +422,7 @@ class MyObserver implements BasicEventHandler {
 
 \paragraph{Guidance}
 
-A guidance object might give guidance to the agents.  This could also seen as a decision making entity.  This could, in principle, also be moved fully into the agent.  It could, for example, have the following design:
+A guidance object might give guidance to the agents.  This could also be seen as a decision making entity.  This could, in principle, also be moved fully into the agent.  It could, for example, have the following design:
 \begin{lstlisting}
 class MyGuidance {
    MyGuidance( MyObserver observer ) {
