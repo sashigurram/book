@@ -21,6 +21,7 @@ kai:
 
 kaibib:
 	pdflatex kai
+	makeindex kai
 	bibtex kai
 	pdflatex kai
 	pdflatex kai
