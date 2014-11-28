@@ -1,3 +1,6 @@
+clean:
+	cd .. ; ${MAKE} clean
+
 kai:
 	cd .. ; ${MAKE} kai
 

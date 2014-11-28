@@ -1,4 +1,4 @@
-.PHONY: pdf clean quick
+.PHONY: pdf clean quick veryclean
 
 NAME=main
 
@@ -33,7 +33,10 @@ gregor:
 	pdflatex gregor
 
 clean:
-	-rm *.aux *.log *.bbl *.blg *.lof *.lot *.out *.toc *.glg *.glo *.gls *.idx *.ilg *.ind *.ist 
+	-rm *.aux *.log 
+
+veryclean: clean
+	-rm *.bbl *.blg *.lof *.lot *.out *.toc *.glg *.glo *.gls *.idx *.ilg *.ind *.ist 
 
 .PHONY: pdf bib clean veryclean tags wc
 
