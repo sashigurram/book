@@ -9,43 +9,43 @@
 
 \subsection{Extensions to and modifications of the co-evolutionary process}
 
-As explained in Section~\ref{sec:co-ev}, \acrshort{matsim} at its core is a co-evolutionary cycle consisting of the three elements \verb$Mobsim$, \verb$Scoring$, and replanning.  All three elements operate on what is essentially an in-memory object-oriented data base of \verb$Person$s \citep{RaneyNagel2006traf-framework}.  
+As explained in Section~\ref{sec:co-ev}, \acrshort{matsim} at its core is a co-evolutionary cycle consisting of the three elements \lstinline$Mobsim$, \lstinline$Scoring$, and replanning.  All three elements operate on what is essentially an in-memory object-oriented data base of \lstinline$Person$s \citep{RaneyNagel2006traf-framework}.  
 %
-On a conceptual level, each \verb$Person$ object is a Q-learning agent whose action consists of selecting a \verb$Plan$.  The plan is then executed in the \verb$Mobsim$; the executed plan obtains a score in the \verb$Scoring$; plans are possibly mutated and finally selected in \verb$Replanning$.
+On a conceptual level, each \lstinline$Person$ object is a Q-learning agent whose action consists of selecting a \lstinline$Plan$.  The plan is then executed in the \lstinline$Mobsim$; the executed plan obtains a score in the \lstinline$Scoring$; plans are possibly mutated and finally selected in \lstinline$Replanning$.
 
 In consequence, it is these three elements which can be reconfigured:
 \begin{compactitem}
 
-\item The \textbf{\tt Mobsim} can be replaced, either by an internally available alternative, or by a fully external \verb$Mobsim$.
+\item The \textbf{\tt Mobsim} can be replaced, either by an internally available alternative, or by a fully external \lstinline$Mobsim$.
 
-%% In addition, one can insert additional instructions into the program flow of \verb$QSim$, which is the default implementation of the \verb$Mobsim$.  This is achieved by so-called \verb$MobstimListener$s.
+%% In addition, one can insert additional instructions into the program flow of \lstinline$QSim$, which is the default implementation of the \lstinline$Mobsim$.  This is achieved by so-called \lstinline$MobstimListener$s.
 
 \item The \textbf{\tt Scoring} can be replaced, by possibly giving each individual agent a different recipe to compute its score.
 
-\item Arbitrary implementations of type \verb$PlanStrategy$ can be added to the replanning -- these either generate new plans from scratch or by mutating existing ones, or they select between plans.
+\item Arbitrary implementations of type \lstinline$PlanStrategy$ can be added to the replanning -- these either generate new plans from scratch or by mutating existing ones, or they select between plans.
 
 \end{compactitem}
-It is also possible to insert additional material between these elements.  This is achieved by so-called \verb$ControlerListener$s.
+It is also possible to insert additional material between these elements.  This is achieved by so-called \lstinline$ControlerListener$s.
 
-The \verb$Mobsim$ generates a stream of \verb$Event$s.  These are primarily used in two places:
+The \lstinline$Mobsim$ generates a stream of \lstinline$Event$s.  These are primarily used in two places:
 \begin{compactitem}
 
-\item The \verb$Scoring$ uses them to track each agent's success at executing its plan, and compute the scoring value based on this.
+\item The \lstinline$Scoring$ uses them to track each agent's success at executing its plan, and compute the scoring value based on this.
 
-\item \verb$PlanStrategy$ modules use them to build approximate models of the world in which they operate.  For example, the router obtains time-dependent expected link travel times from a \verb$TravelTime$ object, which in turn listens to link enter and link exit events.
+\item \lstinline$PlanStrategy$ modules use them to build approximate models of the world in which they operate.  For example, the router obtains time-dependent expected link travel times from a \lstinline$TravelTime$ object, which in turn listens to link enter and link exit events.
   
 \end{compactitem}
-In consequence, each \verb$PlanStrategy$ module can use them to obtain information about the world in which the plans of the synthetic travelers need to be improved. Additionally, one can write nearly arbitrary handlers for analysis: If one wanted to and if the corresponding information is in the data, then one could extract the average age of all drivers using roads with speed limits 30 or less.
+In consequence, each \lstinline$PlanStrategy$ module can use them to obtain information about the world in which the plans of the synthetic travelers need to be improved. Additionally, one can write nearly arbitrary handlers for analysis: If one wanted to and if the corresponding information is in the data, then one could extract the average age of all drivers using roads with speed limits 30 or less.
 
 
 \subsection{Extensions to and modifications of specific elements}
 
 Some modules are so large that fully replacing them in order to adapt the simulation system to one's need is too much work.  These are, in particular,
 \begin{compactitem}
-\item the \verb$QSim$, which is the default implementation of the \verb$Mobsim$, and
+\item the \lstinline$QSim$, which is the default implementation of the \lstinline$Mobsim$, and
 \item the router.
 \end{compactitem}
-In consequence, it is possible to add material into the execution flow of the \verb$QSim$ by \verb$MobsimListeners$ in a similar way as this is possible with the \verb$ControlerListeners$ mentioned above.
+In consequence, it is possible to add material into the execution flow of the \lstinline$QSim$ by \lstinline$MobsimListeners$ in a similar way as this is possible with the \lstinline$ControlerListeners$ mentioned above.
 %
 The router, in contrast, is most importantly configured by replacing the definition of the generalized travel cost. 
 
@@ -62,7 +62,7 @@ if one wants to combine them to visualize the emissions of buses on toll roads.
 \subsection{Config Group}
 \label{sec:config}
 The configuration of a MATSim run is a grouped list of key-value pairs, stored in XML
-format, often in a file named \verb$config.xml$:
+format, often in a file named \lstinline$config.xml$:
 \begin{lstlisting}
 <module name="qsim" >
 		<param name="flowCapacityFactor" value="0.2" />
@@ -79,15 +79,15 @@ format, often in a file named \verb$config.xml$:
 		<param name="transitScheduleFile" value="network/transitSchedule.xml.gz" />
 </module>
 \end{lstlisting}
-At runtime, the entire configuration is stored in an instance of \verb$Config$, from which instances of \verb$Module$ can be accessed by their name.
-The author of an extension can subclass the \verb$Module$ class to provide named accessors for the parameters.
-There is even a utility class \verb$ReflectiveModule$ which you can use if you want to define the mapping of named parameters to accessors
+At runtime, the entire configuration is stored in an instance of \lstinline$Config$, from which instances of \lstinline$Module$ can be accessed by their name.
+The author of an extension can subclass the \lstinline$Module$ class to provide named accessors for the parameters.
+There is even a utility class \lstinline$ReflectiveModule$ which you can use if you want to define the mapping of named parameters to accessors
 using Java annotations.
 
 % =========================================================================================
 \subsection{ScenarioElement}
 
-As explained in Section~\ref{sec:ownmodules-intro}, the \verb$Person$s are stored in an in-memory object-oriented data base.  This means that they are read into memory at the beginning of a run, kept in memory during the whole run, and written to files at the end of a run.
+As explained in Section~\ref{sec:ownmodules-intro}, the \lstinline$Person$s are stored in an in-memory object-oriented data base.  This means that they are read into memory at the beginning of a run, kept in memory during the whole run, and written to files at the end of a run.
 %
 The same approach, i.e.\ reading a file into memory and keeping it there, has always been used for the network, consisting of links and nodes, although here it is less normal that this data is modified over the iterations.
 
@@ -155,8 +155,8 @@ iteration, each agent makes a draw from this set and executes the selected strat
 strategy specifies how the agent changes its behavior. Most generally, it is an operation on the plan memory
 of an agent: It adds and/or removes plans, and it marks one of these plans as selected.
 
-Strategies are implementations of the \verb$PlanStrategy$ interface. 
-The most common case is that a \verb$PlanStrategy$ picks one plan from memory
+Strategies are implementations of the \lstinline$PlanStrategy$ interface. 
+The most common case is that a \lstinline$PlanStrategy$ picks one plan from memory
 at random, copies it, mutates it in some specific aspect, adds the mutated plan to the plan memory, and
 marks this new plan as selected. MATSim provides a helper class which can be used
 to implement this strategy template, where only the mutation operation has to specified.
@@ -172,7 +172,7 @@ all trips.
 \end{compactitem}
 
 Routes are computed based on the traffic conditions of the previous iteration, which are measured
-by means of an \verb$EventHandler$. Using the same pattern, your own \verb$PlanStrategy$ can use any data which
+by means of an \lstinline$EventHandler$. Using the same pattern, your own \lstinline$PlanStrategy$ can use any data which
 can be computed from the mobility simulation.
 
 % =========================================================================================
@@ -191,7 +191,7 @@ be re-defined, in code, for every combination of modules which contribute to the
 
 Keep in mind that scoring and replanning are not inherently coupled or automatically consistent with each other. 
 Consider a scoring function which penalizes left-turns. This is straight-forward to program: You would 
-iterate over every route an agent has taken. Looking at the \verb$Network$, you would calculate for each change of
+iterate over every route an agent has taken. Looking at the \lstinline$Network$, you would calculate for each change of
 links if you consider it a left-turn, and if so, add a (negative) penalty to the score. However, this would not by itself lead to a
 solution where routes are distributed according to this scoring function. The reason is that the default replanning only proposes
  fastest routes, in other words, least-cost paths with respect to travel time. By default, the plan memory of an agent will only ever

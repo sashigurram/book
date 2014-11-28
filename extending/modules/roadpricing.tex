@@ -20,23 +20,20 @@ Literature: \citet[][]{RieserEtAl_TechRep_VSP_2007, Rieser_unpub_IVT_2008, Greth
 
 \section{Introduction}
 
-Roadpricing is an often-discussed policy measure \citep[e.g.][]{}.  Its implementation in \acrshort{matsim} is conceptually straightforward: Essentially, for each vehicle entering a link at a given time, the appropriate toll is computed and charged to the vehicle's driver.  The scoring/utility function will pick this up by an additional term
+Roadpricing is an often-discussed policy measure \citep[e.g.][]{...}.  Its implementation in \acrshort{matsim} is conceptually straightforward: Essentially, for each vehicle entering a link at a given time, the appropriate toll is computed, and charged to the vehicle's driver.  The scoring function will pick this up by the term (see Equation~(\ref{eq:tdisutility})
 \[
-V_i = ... - \beta_{\it money} \cdot \tau \ ,
+S_{trav,car,q} = ... + \beta_{c} \cdot (- \tau) ... \ ,
 \]
-where $\tau$ is the sum of all toll payments, and $\beta_{\it money}$ is the utility of money (also see Chapter~\ref{ch:economicEval}.  The driver then takes this into account for decision-making, e.g.\ with respect to route choice, departure time choice, mode choice, location choice, etc., trading off toll payments with other elements of his or her utility function.
+where $\tau$ is the sum of all toll payments, and $\beta_{c}$ is the marginal utility of money (also see Chapter~\ref{ch:economicEval}).  The driver then takes this into account for decision-making, e.g.\ with respect to route choice, departure time choice, mode choice, location choice, etc., trading off toll payments with other elements of his or her function.
 
-It should be clear that this picks automatically up all kinds of heterogeneities.  
-
-
-
+It should be clear that this picks automatically up all kinds of heterogeneities, for example:
 \begin{compactitem}
 
 \item Travelling at a different time may lead to a different toll, but possibly also to different schedule delay costs. \kai{wo wird das mit dem schedule delay erklärt?}
 
-\item Different vehicles may be charged different tolls \citep{KickhoeferNagel2012EmissionInternalization}.
+\item Different vehicle types may be charged different tolls \citep{KickhoeferNagel2012EmissionInternalization}.
 
-\item Different travellers may have different values of time, which may even vary by time-of-day.
+\item Different travellers may have different values of time \citep{NagelKickhoeferJoubertHeterogeneousVoTs}, which may even vary by time-of-day.
   
 \end{compactitem}
 
@@ -48,14 +45,14 @@ The least amount of infrastructure is necessary when running roadpricing from th
 \begin{lstlisting}
 java -Xmx2000m -cp MATSim.jar:roadpricing-.../roadpricing-...jar org.matsim.roadpricing.run.Main config.xml  
 \end{lstlisting}
-where \verb$config.xml$ needs to contain a section
-\begin{lstlisting}
+where \lstinline$config.xml$ needs to contain a section
+\begin{xml}
 	<module name="roadpricing" >
 		<param name="tollLinksFile" value="<path>/<tollfilename>" />
 	</module>
-\end{lstlisting}
+\end{xml}
 The toll file looks like this:
-\begin{lstlisting}
+\begin{xml}
 <roadpricing type="link" name="abc">
    <links>
       <link id="11">
@@ -69,12 +66,12 @@ The toll file looks like this:
    <cost start_time="05:00" end_time="10:00" amount="2.00"/>
 
 </roadpricing>
-\end{lstlisting}
+\end{xml}
 As one can see, there is a section where each link can be entered separately.  There can also be a separate cost structure for each link.  All links that are listed completely without a separate cost structure fall back on the general cost structure listed at the end.
 
 \subsection{As ``script in Java''}
 
-The above \verb$org.matsim.roadpricing.run.Main$ class can also be used as a starting point for one's own ``script in Java'':
+The above \lstinline$org.matsim.roadpricing.run.Main$ class can also be used as a starting point for one's own ``script in Java'':
 \begin{lstlisting}
 public static void main(String[] args) {
 	// load the config, telling it to "materialize" the road pricing section:

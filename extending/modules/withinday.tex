@@ -99,7 +99,7 @@ Other agents might want to share their cars, so an actual meeting must be confir
 
 \subsection{General thoughts}
 
-Within-day or en-route replanning means that travelers replan during the day or while they are on their route.  This means that the simulation needs to find some way to influence the agent while the mobility simulation (network loading) is running.  For the \acrshort{matsim} main network loading module, the so-called \verb$QSim$, this could be achieved by inserting an agent-loop, as follows:
+Within-day or en-route replanning means that travelers replan during the day or while they are on their route.  This means that the simulation needs to find some way to influence the agent while the mobility simulation (network loading) is running.  For the \acrshort{matsim} main network loading module, the so-called \lstinline$QSim$, this could be achieved by inserting an agent-loop, as follows:
 \begin{lstlisting}
    void doSimStep() {
       for ( each agent ) {   // <-- agent loop
@@ -141,7 +141,7 @@ Similar implementations are needed for all other queries that could be asked of 
 From the perspective of the agent such an approach might be called \emph{event driven}, since the agent performs mental activity only at such events.
 
 There is, indeed, a mechanism to program such agents and to insert
-them into the \verb$QSim$.  This is discussed in more detail in
+them into the \lstinline$QSim$.  This is discussed in more detail in
 Section~\ref{sec:impl-repl-the-ag}.
 
 A challenge with that approach is that the complete agent needs to be re-programmed.  This agent needs to have enough capabilities to be oriented about itself; for example, it needs to be able to compute plausible routes.
@@ -284,15 +284,15 @@ Because of the abandonment of such features, it is very robust, even in scenario
 
 \mnote{matsim person vs.\ matsim agent}
 
-The current \acrshort{matsim} code differentiates between \verb$Person$ and \verb$MobsimAgent$.  
+The current \acrshort{matsim} code differentiates between \lstinline$Person$ and \lstinline$MobsimAgent$.  
 %
-\verb$Person$ can be seen as a very simple Q-learning entity, possessing multiple \verb$Plan$s (``actions''), each together with an expected score which is updated every time the plan is tried out.  In consequence, a \verb$Person$ is persistent over the iterations; in fact, the internal state of each \verb$Person$ is written to file at the end of the iterations.
+\lstinline$Person$ can be seen as a very simple Q-learning entity, possessing multiple \lstinline$Plan$s (``actions''), each together with an expected score which is updated every time the plan is tried out.  In consequence, a \lstinline$Person$ is persistent over the iterations; in fact, the internal state of each \lstinline$Person$ is written to file at the end of the iterations.
 %
-\verb$MobsimAgent$, in contrast, is instantiated every time the \verb$QSim$ is called, and does not exist beyond the running time of the \verb$QSim$.  A \verb$MobsimAgent$ is essentially reactive, being queried by the framework about decisions when approaching intersections, arrival points, or public transit stops.  In the standard implementation, these queries are answered by the plan, but other implementations can be used, and/or additional \verb$MobsimAgent$s can be added which do not correspond to \verb$Person$s.
+\lstinline$MobsimAgent$, in contrast, is instantiated every time the \lstinline$QSim$ is called, and does not exist beyond the running time of the \lstinline$QSim$.  A \lstinline$MobsimAgent$ is essentially reactive, being queried by the framework about decisions when approaching intersections, arrival points, or public transit stops.  In the standard implementation, these queries are answered by the plan, but other implementations can be used, and/or additional \lstinline$MobsimAgent$s can be added which do not correspond to \lstinline$Person$s.
 
 \mnote{Which plan to modify}
 
-This leads to the question if within-day adaptations to the \verb$Plan$ should be passed through to the \verb$Person$.  Let us call the actual trajectory through the system the ``executed plan''.  This can be different from the original plan, for example using a different route, different departure times, different modes, etc.  The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output.  In consequence, it is not possible to treat the executed plan together with the just obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
+This leads to the question if within-day adaptations to the \lstinline$Plan$ should be passed through to the \lstinline$Person$.  Let us call the actual trajectory through the system the ``executed plan''.  This can be different from the original plan, for example using a different route, different departure times, different modes, etc.  The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output.  In consequence, it is not possible to treat the executed plan together with the just obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
 
 In consequence, the code uses a copy of the original plan and modifies the copy.  The score, however, is given to the original plan.  The implementation is free to \kai{Christoph: ``is able to''? (existiert das derzeit als Option?} \emph{also} memorize the executed plan and add it to the set of plans.
 
@@ -322,9 +322,9 @@ The capabilities of this within-day replanning implementation are shown and disc
 According to \cite{RussellNorvigBook}, an agent is ``anything that can be viewed as perceiving its environment through sensors and acting upon that environment through effectors.''  As stated above, \acrshort{matsim} has agents on two levels:
 \begin{compactitem}
 
-\item \verb$Person$ is a Q-learning agent that is persistent over the iterations.
+\item \lstinline$Person$ is a Q-learning agent that is persistent over the iterations.
 
-\item \verb$MobsimAgent$ is a reactive agent that only exists during the \verb$QSim$.
+\item \lstinline$MobsimAgent$ is a reactive agent that only exists during the \lstinline$QSim$.
 
 \end{compactitem}
 
@@ -334,48 +334,48 @@ For the reactive agent, perception works more directly through callback methods,
 
 As said earlier, the approach described in Section~\ref{sec:impl-plan-based} assumes that the reactive agent still has, and most of the time follows, a plan.  There may, however, be situations where this is not appropriate, for example when the agent makes up the route as it goes, or when quite in general one wants to investigate models where each agent has its own perception and deliberation, rather than some external algorithm modifying its plan.  As also said earlier, there is no clear recipe when which approach is better; it depends both on the needs of the project and on the personal preferences of the developer.
 %
-Here, we will thus look at \verb$MobsimAgent$s which do no longer have a pre-computed plan but make decisions as they go.
+Here, we will thus look at \lstinline$MobsimAgent$s which do no longer have a pre-computed plan but make decisions as they go.
 
 \subsubsection{Agent interface}
 
-The \verb$DriverAgent$ interface structurally is something like
+The \lstinline$DriverAgent$ interface structurally is something like
 \begin{compactitem}
 
-\item \verb$Id chooseNextLinkId()$ -- agent is asked at intersections and needs to return how to proceed.
+\item \lstinline$Id chooseNextLinkId()$ -- agent is asked at intersections and needs to return how to proceed.
 
-%% \item \verb$Id<Link> getDestinationLinkId()$ -- agent is essentially asked if it wants to arrive on the current link.\footnote{%
+%% \item \lstinline$Id<Link> getDestinationLinkId()$ -- agent is essentially asked if it wants to arrive on the current link.\footnote{%
 
 %% The method can return {\tt null}.  Arguably, it should be modified to something like {\tt boolean isArrivingOnCurrentLink()}.
 
 %% }  
 
-\item \verb$boolean isWantingToArriveOnCurrentLink()$ -- agent is asked if it wants to arrive on the current link.
+\item \lstinline$boolean isWantingToArriveOnCurrentLink()$ -- agent is asked if it wants to arrive on the current link.
 
-\item \verb$void notifyMoveOverNode(Id newLinkId)$ -- agent is notified that it has traversed the intersection and entered a new link.
+\item \lstinline$void notifyMoveOverNode(Id newLinkId)$ -- agent is notified that it has traversed the intersection and entered a new link.
 
 \end{compactitem}
-Everything else are relatively simple bookkeeping methods such as \verb$getId()$ -- the agent needs to know its own identifier.
+Everything else are relatively simple bookkeeping methods such as \lstinline$getId()$ -- the agent needs to know its own identifier.
 
-If it is assumed that the agent does not only replan en-route but also while at activities, then also the \verb$MobsimAgent$ interface needs to be implemented.  This is a bit more involved; important methods are
+If it is assumed that the agent does not only replan en-route but also while at activities, then also the \lstinline$MobsimAgent$ interface needs to be implemented.  This is a bit more involved; important methods are
 \begin{compactitem}
 
-\item \verb$endLegAndComputeNextState(...)$ -- agent is notified that the current transport leg has ended, and the agent internally needs to decide how to continue.
+\item \lstinline$endLegAndComputeNextState(...)$ -- agent is notified that the current transport leg has ended, and the agent internally needs to decide how to continue.
 
-\item \verb$endActivityAndComputeNextState(...)$ -- agent is notified that the current activity has ended, and the agent internally needs to decide how to continue.
+\item \lstinline$endActivityAndComputeNextState(...)$ -- agent is notified that the current activity has ended, and the agent internally needs to decide how to continue.
 
-\item \verb$setStateToAbort(...)$ -- if a leg or an activity was not ended cleanly.  This can for example happen if \verb$chooseNextLinkId()$ returns a link that is not outgoing from the current node.\footnote{%
+\item \lstinline$setStateToAbort(...)$ -- if a leg or an activity was not ended cleanly.  This can for example happen if \lstinline$chooseNextLinkId()$ returns a link that is not outgoing from the current node.\footnote{%
 %
 Despite the name of the method, the agent can recover.  %
 }
 
-\item \verb$getState()$ -- agent needs to return its current state, which essentially either returns \verb$ACTIVITY$ or \verb$LEG$.  The most important function of this is that the framework obtains the information if the agent wants to start a new activity or a new leg.
+\item \lstinline$getState()$ -- agent needs to return its current state, which essentially either returns \lstinline$ACTIVITY$ or \lstinline$LEG$.  The most important function of this is that the framework obtains the information if the agent wants to start a new activity or a new leg.
 
 \end{compactitem}
 Again, everything else are bookkeeping methods.
 
 \subsubsection{Agent insertion}
 
-The code accepts several ways to insert such a self-programmed \verb$MobsimAgent$ into the code, but the preferred way is using the \verb$AgentSource$ interface, as follows:
+The code accepts several ways to insert such a self-programmed \lstinline$MobsimAgent$ into the code, but the preferred way is using the \lstinline$AgentSource$ interface, as follows:
 \begin{lstlisting}[basicstyle=\footnotesize\tt]{}
 class MyAgentSource implements AgentSource {
    // constructor
@@ -397,13 +397,13 @@ class MyAgentSource implements AgentSource {
    }
 }
 \end{lstlisting}
-\verb$Guidance$ helps the agent with making decisions, see below.
+\lstinline$Guidance$ helps the agent with making decisions, see below.
 
 \subsubsection{Perception, decision, integration}
 
-The agents somehow need to perceive their environment.  The simulation tells the agent where it is, via \verb$notifyMoveOverNode(Id<Link> nextLinkId)$.  In general, however, this will not be enough.  For example, the agent may want to be informed about congestion, or evacuation directions.
+The agents somehow need to perceive their environment.  The simulation tells the agent where it is, via \lstinline$notifyMoveOverNode(Id<Link> nextLinkId)$.  In general, however, this will not be enough.  For example, the agent may want to be informed about congestion, or evacuation directions.
 
-A general way to achieve this is to use the \verb$Events$ channel.
+A general way to achieve this is to use the \lstinline$Events$ channel.
 
 We would probably suggest to separate observer, guidance, and the agent itself.
 
@@ -477,9 +477,9 @@ ctrl.setMobsimFactory(new MobsimFactory(){
 ...
 ctrl.run() ;
 \end{lstlisting}
-The above ``script'' uses an anonymous class for the \verb$MobsimFactory$.  This way of writing code is quite convenient for adapting \acrshort{matsim} to one's need, also see Chap.~\ref{ch:extensionpoints}.
+The above ``script'' uses an anonymous class for the \lstinline$MobsimFactory$.  This way of writing code is quite convenient for adapting \acrshort{matsim} to one's need, also see Chap.~\ref{ch:extensionpoints}.
 
-Code that compiles with the respective version of \acrshort{matsim} can be found in the package \verb$tutorial.programming.ownMobsimAgentWithPerception$ (e.g.\ to be found under \url{http://matsim.org/doxygen}).
+Code that compiles with the respective version of \acrshort{matsim} can be found in the package \lstinline$tutorial.programming.ownMobsimAgentWithPerception$ (e.g.\ to be found under \url{http://matsim.org/doxygen}).
 
 \subsubsection{Using framework methods}
 
@@ -493,7 +493,7 @@ Code that compiles with the respective version of \acrshort{matsim} can be found
 \end{lstlisting}
 The guidance object can still be passed to the agent as before; it can now compute and then return, at each intersection, the best turn towards a destination.
 
-Code that compiles with the respective version of \acrshort{matsim} can be found in the package \verb$tutorial.programming.ownMobsimAgentUsingRouter$ (e.g.\ to be found under \url{http://matsim.org/doxygen}).
+Code that compiles with the respective version of \acrshort{matsim} can be found in the package \lstinline$tutorial.programming.ownMobsimAgentUsingRouter$ (e.g.\ to be found under \url{http://matsim.org/doxygen}).
 
 
 
