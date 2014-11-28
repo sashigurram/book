@@ -18,6 +18,7 @@ kaimain:
 
 kai:
 	pdflatex kai
+	pdflatex kai
 
 kaibib:
 	pdflatex kai
