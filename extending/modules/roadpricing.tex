@@ -14,15 +14,26 @@ Modules in the config:
 
 Usage: Contrib via config \kai{not sure what that means}
 
-Literature: \citet[][]{RieserEtAl_TechRep_VSP_2007, Rieser_unpub_IVT_2008, GretherEtAl_ERSA_2008, RieserEtAl_TRBTDF_2008} \who{Rieser, Chakirov, Grether, Kickhöfer, Nagel}
+%% Literature: \citet[][]{RieserEtAl_TechRep_VSP_2007, Rieser_unpub_IVT_2008, GretherEtAl_ERSA_2008, RieserEtAl_TRBTDF_2008} 
+
+\who{Rieser, Chakirov, Grether, 
+  Kickhöfer, Nagel}
 
 % ##################################################################################################################
 
 \section{Introduction}
+\label{sec:roadpricing-intro}
 
-Roadpricing is an often-discussed policy measure \citep[e.g.][]{...}.  Its implementation in \acrshort{matsim} is conceptually straightforward: Essentially, for each vehicle entering a link at a given time, the appropriate toll is computed, and charged to the vehicle's driver.  The scoring function will pick this up by the term (see Equation~(\ref{eq:tdisutility})
+Roadpricing is an often-discussed policy measure \citep[e.g.][]{...}.  Its implementation in \acrshort{matsim} is conceptually straightforward \citep{%
+%
+%RieserEtAl_TechRep_VSP_2007,%
+RieserBeuckNagel2007early-toll-zrh-etc,%
+RieserEtAl_TRBTDF_2008,%
+GretherEtAl_ERSA_2008%
+%
+}: Essentially, for each vehicle entering a link at a given time, the appropriate toll is computed, and charged to the vehicle's driver.  The scoring function will pick this up by the term (cf.\ Equation~\ref{eq:tdisutility})
 \[
-S_{trav,car,q} = ... + \beta_{c} \cdot (- \tau) ... \ ,
+S_{trav,car,q} = ... + \beta_{c} \cdot (- \tau) + ... \ ,
 \]
 where $\tau$ is the sum of all toll payments, and $\beta_{c}$ is the marginal utility of money (also see Chapter~\ref{ch:economicEval}).  The driver then takes this into account for decision-making, e.g.\ with respect to route choice, departure time choice, mode choice, location choice, etc., trading off toll payments with other elements of his or her function.
 
@@ -36,6 +47,31 @@ It should be clear that this picks automatically up all kinds of heterogeneities
 \item Different travellers may have different values of time \citep{NagelKickhoeferJoubertHeterogeneousVoTs}, which may even vary by time-of-day.
   
 \end{compactitem}
+
+A challenge is, however, that the innovative \kai{??} modules need to be consistent with the scoring: The approach will not work if, say, the router consistently generates toll avoiding routes for a synthetic person with a high value of time -- since, if a suitable route is never generated, then the scoring has no chance to identify it and thus the choice process has no chance to select it in subsequent iterations.  
+
+However, passing all details of an individual, i.e.\ not only the marginal utility of money but also the specific time pressure at the time of the route search, is quite complex, in particular since time pressure is only implicitly given by the first derivative of the scoring function \emph{given the agent's current schedule}.  
+
+An alternative approach is to make the router \emph{randomizing}, i.e.\ to run it with a randomly generated value of time every time it is called for a given person.  Computational experiments with this approach show that this finds solutions for the synthetic travellers which are about as good or even better than an ``engineered'' router \citep{NagelKickhoeferJoubertHeterogeneousVoTs}.  At the same time, the software consistency burden is significantly reduced, noticeable in the much reduced amount of information that needs to be extracted from the agent during each call of the router.
+
+\section{Some results}
+
+\paragraph{Effect of an afternoon toll on morning traffic}
+
+As an early illustration of the capabilities, an afternoon toll for the Zurich area was simulated.  While this is not the most probable policy scheme, it still clearly demonstrated the advantage of the integrated approach over other approaches: Not only did the syntethic travelers switch to public transit, but they also did so for the morning rush hour, where no toll was charged.  Thus, the \acrshort{matsim} approach proved its capability to affect the whole daily plan, not just the trip.  For more information, see \cite{RieserEtAl_TRBTDF_2008}.
+
+\kai{search for picture}
+
+\paragraph{Income-dependent values of time}
+
+\kai{todo}
+
+\paragraph{Integrated passenger and freight toll simulation for the Gauteng province in South Africa}
+
+A large scale application was undertaken for the Gauteng province in South Africa (cf.\ Section~\ref{sec:gauteng}).  It is based on the so-called e-toll, which was switched on in december 2013.  The e-toll plausibly charges different rates for different vehicle types, charging higher rates for heavy trucks.  Again plausibly, this should go along with higher values of time of the driver-vehicle-units.  Somewhat surprisingly, this turned out to be difficult to do with the \acrshort{matsim} software structure that was there when the project was started in 2008.  While it was easy to charge the higher toll to the freight vehicles, it was difficult to give different replanning methods and a different scoring function to the freight population, and it was essentially impossible to feed the router with the different values of time of the freight population.  This was an important driver for much development in recent years, including making the scoring function better accessible (cf.\ Section~\ref{sec:scoring-extension-point}), allowing different replanning strategies for different sub-populations \kai{erwähnen wir die sub-populations irgendwo?}, and reducing the consistency requirements between the router, the vehicle-based toll and the driver-based scoring function \citep{NagelEtAl_PCS_2014}.
+
+\kai{picture?}
+
 
 \section{Invocation}
 
@@ -67,16 +103,29 @@ The toll file looks like this:
 
 </roadpricing>
 \end{xml}
-As one can see, there is a section where each link can be entered separately.  There can also be a separate cost structure for each link.  All links that are listed completely without a separate cost structure fall back on the general cost structure listed at the end.
+As one can see, there is a section where each link can be entered separately.  There can also be a separate cost structure for each link.  All links that are listed, but without a cost structure, fall back on the general cost structure listed at the end.  Links which are not listed are without toll.
 
-\subsection{As ``script in Java''}
+\subsection{Toll schemes}
+
+\paragraph{Link toll, distance toll} The example refers to the ``link'' toll scheme, indicated by \lstinline$type="link"$. Another useful scheme is ``distance'', indicated by \lstinline$type="distance"$.  Here, the \lstinline$amount$ is interpreted as amount per length unit (cf.\ Section~\ref{sec:unitsconventions}).   This is most useful with only a list of tolled links, and a uniform distance cost for all these links noted at the end of the file.
+
+\paragraph{Area toll} The simulation of an \emph{area toll} -- i.e.\ a toll where one has to pay a flat fee for a given time period, often a day, once one drives anywhere inside the area -- suffers from a combinatorial challenge: Driving through the tolled area early in the day may only pay off if one can re-use the permit later in the day.  The code in principle addresses that by routing the agent twice: once under the assumption of a zero toll and once under the assumption of a very large toll.  Afterwards, the toll is added to the generalized cost of the first option, and then both options are compared.  
+%
+In the end, the approach suffered from the same consistency burden as the general approach (see end of Section~\ref{sec:roadpricing-intro}): The router made the decision about which variant was better rather than leaving the decision to the agent.  It should be re-implemented using the same principles as used by \citet{NagelEtAl_PCS_2014}.
+
+\paragraph{Cordon toll}
+
+\emph{Cordon toll} was derived from the area scheme, in the sense that one could use the same file that listed all links in the area also for the cordon toll.  The code made sure that toll was only charged when a vehicle moved from an untolled link to a tolled link -- thereby effectively crossing the cordon.  A challenge with this approach is that it is confusing if there is not a connected area and instead several links in sequence are tolled.  Then, if these links are connected, the toll is only charged on the first of them; if there is a small section missing, maybe because it was overlooked, then the toll is charged again. 
+
+
+
+\subsection{Invocation as ``script in Java''}
 
 The above \lstinline$org.matsim.roadpricing.run.Main$ class can also be used as a starting point for one's own ``script in Java'':
 \begin{lstlisting}
 public static void main(String[] args) {
 	// load the config, telling it to "materialize" the road pricing section:
-	Config config = ConfigUtils.loadConfig( args[0], 
-           new RoadPricingConfigGroup() ) ;
+	Config config = ConfigUtils.loadConfig(args[0], new RoadPricingConfigGroup());
 	
 	// load the scenario:
 	Scenario scenario = ScenarioUtils.loadScenario(config) ;
@@ -93,7 +142,9 @@ public static void main(String[] args) {
 }
 \end{lstlisting}
 
+\subsection{More information}
 
+\url{http://ci.matsim.org:8080/job/MATSim_contrib_M2/org.matsim.contrib$roadpricing/javadoc/?}
 
 
 % Local Variables:
