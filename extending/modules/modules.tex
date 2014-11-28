@@ -1,7 +1,6 @@
 \chapter{Available Modules and How to Use Them}
 \label{ch:modules}
 % ##################################################################################################################
-% ##################################################################################################################
 
 \hfill \textbf{Author:} Andreas Horni
 
@@ -32,7 +31,11 @@ The term ``module is furthermore used for contributions, residing in the \lstinl
 
 \kai{Von mir aus können wir das durchgängig ``contribs'' oder ``contributions'' oder ``extensions'' nennen.  Leider hat Marcel für die package einen anderen Namen (contrib) gewählt als für die Doku (extensions).  Aber ``module'' muss nicht sein.}
 
+\ah{Könnten wir sie trotzdem als Modul bezeichnen (einfach mit weniger negativem Unterton)? Die Story wird sonst sehr unübersichtlich (auch Kapitel "`Your Own Modules/Extensions...). Die anderen Probleme mit dem inflationären Gebrauch des Begriff bleiben ja.}
+
 \kai{Contribs haben im Prinzip keine config sections mehr im default config file. locationchoice ist, soweit ich sehe, die einzige verbliebene Ausnahme :-); wir können sie gerne mal abräumen.}
+
+\ah{Dann nehme ich das mal raus. replace(getParam, findParam) müsste das Problem wohl lösen.}
 
 
 \paragraph{External Functionality:} % --------------
@@ -78,16 +81,16 @@ The description of the modules in this and the following chapters is based on fo
 	\hline
 	\textbf{Strategy Modules} & Section~\ref{sec:strategymodules} \\
 	\hline
-	Time Choice & Section~\ref{sec:timechoice} \\
-	Route Choice & Section~\ref{sec:routechoice} \\
-	Mode Choice & Section~\ref{sec:modechoice} \\
+	Time Innovation & Section~\ref{sec:timechoice} \\
+	Route Innovation & Section~\ref{sec:routechoice} \\
+	Mode Innovation & Section~\ref{sec:modechoice} \\
 	Selectors & Section~\ref{sec:selectors} \\
-	Destination Choice & Chapter~\ref{ch:destinationchoice} \\
+	Destination Innovation & Chapter~\ref{ch:destinationchoice} \\
 	\hline
-	\textbf{Further Choice Modules} & Section~\ref{sec:furtherchoicemodules} \\
+	\textbf{Further Innovation Modules} & Section~\ref{sec:furtherchoicemodules} \\
 	\hline
 	Planomat & Section~\ref{sec:planomat} \\
-	Activity Choice a.k.a. PlanomatX & Section~\ref{sec:activitychoice} \\
+	Activity Innovation a.k.a. PlanomatX & Section~\ref{sec:activitychoice} \\
 	Within-day Replanning & Chapter~\ref{ch:withinday} \\
 	\hline
 	\textbf{Supply-Side Modules} & Section~\ref{sec:supplysidemodules} \\
@@ -164,7 +167,7 @@ The description of the modules in this and the following chapters is based on fo
 % ##################################################################################################################
 \section{Strategy Modules}
 \label{sec:strategymodules}
-The strategy modules are the basic choice modules available in MATSim. All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
+The strategy modules are the basic innovation modules available in MATSim. All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
 
 \begin{lstlisting}
 <module name="strategy" >
@@ -189,29 +192,29 @@ Combining different modules is not straight-forward in MATSim. This important to
 {%
   \begin{tabular}[c]{|c|c|c|}
    \hline
-\textbf{Choice Dimension}	& \textbf{Default Strategy} & \textbf{Public Transport}\\
+\textbf{Innovation Dimension}	& \textbf{Default Strategy} & \textbf{Public Transport}\\
 \hline
-time choice & TimeAllocationMutator &  TransitTimeAllocationMutator\\
+time innovation & TimeAllocationMutator &  TransitTimeAllocationMutator\\
 \hline
-route choice & ReRoute & ReRoute \\
+route innovation & ReRoute & ReRoute \\
 \hline
-mode choice & \multirow{2}{*}{ChangeLegMode} & \multirow{2}{*}{TransitChangeLegMode} \\
+mode innovation & \multirow{2}{*}{ChangeLegMode} & \multirow{2}{*}{TransitChangeLegMode} \\
 (all legs get same mode) &  &  \\
 \hline
-mode choice & \multirow{2}{*}{ChangeSingleLegMode} & \multirow{2}{*}{TransitChangeSingleLegMode} \\
+mode innovation & \multirow{2}{*}{ChangeSingleLegMode} & \multirow{2}{*}{TransitChangeSingleLegMode} \\
 (each leg can have a different mode) &  &  \\
 \hline
-mode choice & \multirow{2}{*}{SubtourModeChoice} & \multirow{2}{*}{TransitSubtourModeChoice} \\
+mode innovation & \multirow{2}{*}{SubtourModeChoice} & \multirow{2}{*}{TransitSubtourModeChoice} \\
 (subtour-based) &  &  \\
 \hline
-destination choice & LocationChoice & LocationChoice \\
+destination innovation & LocationChoice & LocationChoice \\
 \hline
   \end{tabular}
 }%
 {}
 
 % ===================================================================================
-\subsection{Time Choice}
+\subsection{Time Innovation}
 \label{sec:timechoice}
 \begin{compactitem}
 \item Invoking the module: Time choice is applied by defining its parameters in the configuration file and by adapting the configuration file strategy module as follows
@@ -231,7 +234,7 @@ destination choice & LocationChoice & LocationChoice \\
 The module shifts activity end times randomly within a configurable range as described by \citet[][]{BalmerEtAl_Timmermans_2005, Raney_PhDThesis_2005, Balmer_unpub_VSP_2004, BalmerEtAl_unpub_EIRASS_2004, BalmerEtAl_unpub_STRC_2004}. A best-reponse approach to time choice is applied by ``planomat'' described in Section \ref{sec:planomat}.
 
 % ===================================================================================
-\subsection{Route Choice}
+\subsection{Route Innovation}
 \label{sec:routechoice}
 \begin{compactitem}
 \item Invoking the module: Route choice is applied by defining its parameters in the configuration file and by adapting the configuration file strategy module as follows
@@ -259,7 +262,7 @@ The module shifts activity end times randomly within a configurable range as des
 MATSim routing is described by \citet[]{LefebvreBalmer_STRC_2007, LefebvreBalmer_TechRep_IVT_2007}. The configuration necessary for public transport is shown in Chapter \ref{ch:pt}.
 
 % ===================================================================================
-\subsection{Mode Choice}
+\subsection{Mode Innovation}
 \label{sec:modechoice}
 \begin{compactitem}
 \item Invoking the module: Mode choice is applied by defining its parameters in the configuration file and by adapting the configuration file strategy module by choosing one of the mode choice options as follows
@@ -324,13 +327,14 @@ Besides the selectors for plan modification and execution, in the near future al
 \ah{siehe Mail by M. Zilske, August 14 ``[Matsim-devel] custom plan selector for removal'')}
 
 % ##################################################################################################################
-\section{Further Choice Modules}
+\section{Further Innovation Modules}
 \label{sec:furtherchoicemodules}
 % ===================================================================================
 \subsection{\st{Planomat}}
 \label{sec:planomat}
 
 \kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus MATSim entfernt haben.}
+\ah{Ist die Frage, ob man die Historie noch mitschleppen will oder nur den aktuellen Stand beschreiben will. Bin in diesem Fall etwas unschlüssig. Planomat war für zwei grosse Projekte hier ein wichtiges Teil, deshalb wird man gute Argumente hören dafür es drinzulassen. Für den aktuellen Stand ist es aber tatsächlich nicht mehr relevant.}
 
 {\color{lightgray}\tiny
 
@@ -341,7 +345,6 @@ Besides the selectors for plan modification and execution, in the near future al
 \end{compactitem}
 
 A special replanning module using a different logic than undirected trial-and-error was Planomat. Planomat did not evaluate just one random alternative per iteration but multiple alternatives within one single iteration to obtain a (at least locally) optimal solution. It used a genetic algorithm \citep[][]{MeisterEtAl_IATBR_2006, MeisterEtAl_STRC_2006, Meister_PhDThesis_2011} for this purpose. Planomat was successfully applied in the project \emph{KTI Frequencies} for time choice and mode choice for sub-tours \citep[][p.10]{BalmerEtAl_ResRep_datapuls_2010}.
-
 }
 
 % ===================================================================================
@@ -349,6 +352,7 @@ A special replanning module using a different logic than undirected trial-and-er
 \label{sec:activitychoice}
 
 \kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus MATSim entfernt haben.}
+\ah{Ähnlich oben, nur dass ich hier die Argumente dann nicht so gut nachvollziehen kann.}
 
 {\color{lightgray}\tiny
 
@@ -359,7 +363,6 @@ A special replanning module using a different logic than undirected trial-and-er
 \end{compactitem}
 
 PlanomatX performing activity choice and adopting a Tabu Search approach is described by \citet[][]{Feil_PhDThesis_2010}. To cope with curse of dimensionality due to the added choice dimension, PlanomatX introduced schedule recycling, which is basically a warmstart concept. Due to the problems with a logarithmic utility function for activity choice as reported in Section \ref{sec:utfextensions}, PlanomatX furthermore replaced to standard MATSim scoring function by an S-shaped one. Rough estimates for its parameters based on an multinomial logit model (MNL) exist.
-
 }
 
 % ===================================================================================
@@ -657,7 +660,7 @@ The coupling of MATSim with UrbanSim \citep[][]{Waddell_unpub_UrbanSimTutorial_2
 
 As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in MATSim simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. Clearly, the number of threads should correspond with available processor cores. As mentioned above, the mobsim \emph{QSim} is running parallel by default.
 
-Being able to speed-up scenarios migth become even more important than today, when additional choice dimensions are added with large variability in the parameters rendering ensemble runs necessary (see Section~\ref{sec:variability}).
+Being able to speed-up scenarios migth become even more important than today, when additional innovation (choice) dimensions are added with large variability in the parameters rendering ensemble runs necessary (see Section~\ref{sec:variability}).
 
 \ah{auch Doblers Arbeiten einfügen!?}
 

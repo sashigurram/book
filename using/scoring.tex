@@ -7,40 +7,58 @@
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{using/figures/utf.png} \end{center}
 
 % ##################################################################################################################
-MATSim scoring is a central element of MATSim. The user has the possibility to configure numerous parameters to calibrate the choice behavior. \ah{Kann man jetzt UTF im Config zusammensetzen? Rashid?} \kai{Was ist ``UTF''?}  When users are ready to extend MATSim in the next book part, they will also be able to plug in their own customized utility function.
+MATSim scoring is a central element of MATSim. The user has the possibility to configure numerous parameters to calibrate the choice behavior. \ah{Kann man jetzt UTF im Config zusammensetzen? Rashid?} When users are ready to extend MATSim in the next book part, they will also be able to plug in their own customized utility function.
 
-MATSim is based on utility-maximization. Thus, estimated discrete choice models can be applied in MATSim. However, due to MATSim's iterative structure, and because it is based on complete day plans, the application of models for parts of day plans only (for example mode choice) is not straight forward as detailed in Section~\ref{sec:estimation}.
+MATSim is based on utility-maximization. Thus, estimated discrete choice models can be applied in MATSim. However, because of MATSim's iterative structure, and because it is based on complete day plans, the application of models for parts of day plans only (for example mode choice) is not straight forward as detailed in Section~\ref{sec:estimation}.
 
-Due to the absence of a complete-day-utility function, MATSim has been started with the so-called Charypar-Nagel utility function (Section~\ref{sec:charyparnagel}) and extended for some purposes (Section~\ref{sec:utfextensions}). Readily applicable estimates for a full-day utility function is not yet available. 
+% "due to" vs "because of" see http://web.ku.edu/~edit/because.html
+
+Because of the absence of complete-day-utility functions in the literature, MATSim has been started with the so-called Charypar-Nagel utility function (Section~\ref{sec:charyparnagel}) and extended for some purposes (Section~\ref{sec:utfextensions}). Readily applicable estimates for a full-day utility function is not yet available. 
 
 % ##################################################################################################################
 \section{The Current Charypar-Nagel Utility Function}
 \label{sec:charyparnagel}
-The first and still basic MATSim utility function was formulated by \citet[][]{CharyparNagel_Transportation_2005} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far, indicated that the MATSim function is also appropriate for modeling the further choice dimensions.
 
-As in the discrete choice modeling framework (see Chapter~\ref{ch:discretechoice}), the utility $U$ is composed of a deterministic part $V$ and a random error term $\varepsilon$, i.e., $U = V + \varepsilon$. Except for destination choice the error term is not explicitly generated but stems from the random noise produced by the co-evolutionary process. Randomness is added in various ways in the process, an example is the order in which agents undergo the replanning (e.g., in which iteration choices are modified). \ah{Hier Diskussion Section~\ref{sec:discussion_scoring} noch weiter vertiefen}.
+\subsection{Mathematical form}
 
-For the basic function, the utility of a plan $U_{plan}$ is computed as the sum of all activity utilities $U_{act,q}$ plus the sum of all travel (dis)utilities $U_{trav,mode, q}$:
+The first and still basic MATSim utility function was formulated by \citet[][]{CharyparNagel_Transportation_2005} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far indicated that the MATSim function is also appropriate for modeling the further choice dimensions.
+%
+It is, however, almost certainly not appropriate for activity dropping (see Section~\ref{sec:scoring-current}).
+
+%% As in the discrete choice modeling framework (see Chapter~\ref{ch:discretechoice}), the utility $S_{}$ is composed of a deterministic part $V$ and a random error term $\varepsilon$, i.e., $S_{} = V_{} + \varepsilon$. Except for destination choice the error term is not explicitly generated but stems from the random noise produced by the co-evolutionary process.  \kai{(*)}  Randomness is added in various ways in the process, an example is the order in which agents undergo the replanning (e.g., in which iteration choices are modified). \ah{Hier Diskussion Section~\ref{sec:discussion_scoring} noch weiter vertiefen}.
+
+%% \kai{Andreas, die Aussage (*) stimmt so leider nicht.  Zum einen \emph{erzeugt} die Simulation Noise (wie Du schreibst), zum anderen \emph{parametrisiert} das Logit-Modell (wenn eingestellt) weiteren Noise.  Dies vor allem bei VSP; ihr seid ja weitgehend bei SelectBest geblieben, was sich hier als die theoretisch bessere Lösung herausstellt.}
+
+%% \kai{Noch besser wäre es vermutlich, Deinen Ansatz mit den ``frozen epsilons'' breiter anzuwenden.}
+
+For the basic function, the utility of a plan $S_{plan}$ is computed as the sum of all activity utilities $S_{act,q}$ plus the sum of all travel (dis)utilities $S_{trav,mode, q}$:
 %
 \begin{equation}
 \label{eq:matsimUTF}
-U_{plan}=\sum^N_{q=1} U_{act,q} + \sum^{N-1}_{q=1} U_{trav, mode, q}
+S_{plan}=\sum^N_{q=1} S_{act,q} + \sum^{N-1}_{q=1} S_{trav, mode, q}
 \end{equation}
-with $N$ as the number of activities. Note that trip $q$ is the trip that follows activity $q$. The last activity does not have an associated trip, thus the sum goes only up to $N-1$
+with $N$ as the number of activities. Note that trip $q$ is the trip that follows activity $q$. The last activity does not have an associated trip, thus the sum goes only up to $N-1$.  \kai{Andreas, Macht Ihr das so?  Die Standard-Variante, die auch am VSP verwendet wird, ``näht'' die erste und die letzte Aktivität zusammen.  Damit haben wir genauso viele Aktivitäten wie Trips.}
 
 The utility of an activity $q$ is defined as follows (see also \citet[][p.377ff]{CharyparNagel_Transportation_2005}):
-\begin{equation*}
-U_{act,q} = U_{dur,q} + U_{wait,q} + U_{late.ar,q} + U_{early.dp, q} + U_{short.dur, q},
-\end{equation*}
+\begin{equation}
+S_{act,q} = S_{dur,q} + S_{wait,q} + S_{late.ar,q} + S_{early.dp, q} + S_{short.dur, q},
+\label{eq:matsimUTFact}
+\end{equation}
 where:
 \begin{itemize}
-\item $U_{dur,q}= \beta_{dur,q} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q})$ is the utility of performing activity $q$, where opening times of activity locations are taken into account. $t_{dur,q}$ is performed activity duration, $\beta_{dur,q}$ is marginal utility of activity duration for its typical duration $t_{typ,q}$ and $t_{0,q}$ is minimal duration, or in other words, the duration for which utility starts to be positive. 
+\item $S_{dur,q}= \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q})$ 
 
-\item $ U_{wait,q} = \beta_{wait, q} \cdot t_{wait,q}$ 
+is the utility of performing activity $q$, where opening times of activity locations are taken into account. $t_{dur,q}$ is performed activity duration, $\beta_{dur}$ is marginal utility of activity duration (the same for all activities),
+% for its typical duration $t_{typ,q}$, 
+and $t_{0,q}$ is minimal duration, or in other words, the duration for which utility starts to be positive. 
 
-denotes the waiting time spent for example in front of a yet closet store, where $\beta_{wait,q}$ is marginal utility of waiting and $t_{wait,q}$ is the waiting time.
+\kai{Andreas, betaPerf gibt es (absichtlich) nur einmal, und nicht pro Aktivitätentyp.  Unterschiedlicher Zeitdruck kann sich immer noch ergeben, weil EQ~(\ref{eq:mUTTSfull}) für Akvitiäten innerhalb eines bestimmten Zeitfensters höher sein kann (weil dann für diese Aktivitäten $t_{dur,q}$, wg.\ Zeitknappheit, relative gesehen kürzer ist).}  
+
+\item $ S_{wait,q} = \beta_{wait, q} \cdot t_{wait,q}$ 
+
+denotes the waiting time spent for example in front of a yet closed store, where $\beta_{wait,q}$ is marginal utility of waiting and $t_{wait,q}$ is the waiting time.
 		
-\item $U_{late.ar,q}= \left\{
+\item $S_{late.ar,q}= \left\{
   \begin{array}{l l}
     \beta_{late.ar,q} \cdot (t_{start,q} - t_{latest.ar,q}) & \quad \text{if $t_{start,q} > t_{latest.ar,q}$}\\
     0 & \quad \text{else}
@@ -48,7 +66,7 @@ denotes the waiting time spent for example in front of a yet closet store, where
   
   specifies the late arrival penalty, where $t_{start,q}$ is the starting time of activity $q$ and $t_{latest.ar}$ is the latest possible starting time of that activity for example given by opening times.
 
-\item $U_{early.dp} = \left\{
+\item $S_{early.dp} = \left\{
   \begin{array}{l l}
     \beta_{early.dp,q} \cdot (t_{earliest.dp, q} - t_{end,q}) & \quad \text{if $t_{end,q} > t_{earliest.dp,q}$}\\
     0 & \quad \text{else}
@@ -56,7 +74,7 @@ denotes the waiting time spent for example in front of a yet closet store, where
 
 defines the penalty for staying not long enough, where $t_{end,q}$ is the ending time of the activity and $t_{earliest.dp,q}$ is the earliest possible end time for activity $q$.
 
-\item $ U_{short.dur, q} = \left\{
+\item $ S_{short.dur, q} = \left\{
   \begin{array}{l l}
     \beta_{short.dur,q} \cdot (t_{short.dur, q} - t_{dur,q}) & \quad \text{if $t_{dur,q} < t_{short.dur,q}$}\\
     0 & \quad \text{else}
@@ -68,7 +86,7 @@ defines the penalty for staying not long enough, where $t_{end,q}$ is the ending
 Travel disutility is given as 
 \begin{equation}
 \label{eq:tdisutility}
-U_{trav, mode, q} = C_{mode} + \beta_{trav, mode, q} \cdot t_{trav, q} + \beta_{c} \cdot c  + (\beta_{d, mode, q} + \beta_{c} \gamma_{d, mode}) \cdot d_{trav,q} + V_{transfer,q} \,
+S_{trav, mode, q} = C_{mode} + \beta_{trav, mode, q} \cdot t_{trav, q} + \beta_{c} \cdot c  + (\beta_{d, mode, q} + \beta_{c} \gamma_{d, mode}) \cdot d_{trav,q} + S_{transfer,q} \,
 \end{equation} 
 where:
 \begin{compactitem} 
@@ -80,31 +98,37 @@ where:
 \item $\beta_{d, mode}$ is the  marginal utility of distance (normally negative),
 \item $\gamma_{d, mode}$ is the mode-specific distance cost rate (normally negative),
 \item $d_{trav, q}$ is the distance traveled, and,
-\item $V_{transfer, mode, q}$ are transfer penalties in public transport (normally negative).
+\item $S_{transfer, mode, q}$ are transfer penalties in public transport (normally negative).
 \end{compactitem}
 %
 Note that the distance contributes to disutility in two ways. First, it is included in a direct manner via $\beta_{d, mode,q}$, which is natural for modes with physical efforts such as walking or cycling. Second, distance is also included monetarily via $\beta_c \cdot \gamma_{d, mode}$ which is natural for mode car or pt, where monetary costs increase dependent on distance.
 
-Further note that travel receives an additional implicit penalty from the opportunity cost of time: If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer. The marginal utility of travel time savings is thus:
+\kai{distance both via distance cost rate and via direct marginal utl.  ok with me, BK will (probably) be less happy.  If it stays this way, config needs to be made consistent with text above.}
+
+It is important to note that travel receives an additional implicit penalty from the opportunity cost of time: If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer. The marginal utility of travel time savings is thus:
 %
 \[
-mUTTS = - \frac{\partial}{\partial t_{trav}} U_{trav} + \frac{\partial}{\partial t_{dur}}U_{dur} 
+mUTTS = - \frac{\partial}{\partial t_{trav}} S_{trav} + \frac{\partial}{\partial t_{dur}}S_{dur} 
 \]
 which is 
-\[
-mUTTS = - \frac{\partial}{\partial t_{trav}} U_{trav} +  \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} 
-\]
+\begin{equation}
+mUTTS = - \frac{\partial}{\partial t_{trav}} S_{trav} +  \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} 
+\label{eq:mUTTSfull}
+\end{equation}
 and at the typical duration of an activity
 \[
-mUTTS = \beta_{trav} + \beta_{dur}.
+mUTTS(t_{dur,q} = t_{typ,q}) = \beta_{trav} + \beta_{dur}.
 \]
 The marginal utility of travel time savings at the typical duration can be transformed to the more common value of travel time savings by division with $\beta_{c}$:
 \[
-VTTS = \frac{mUTTS}{\beta_{c}} = \frac{\beta_{trav} - \beta_{dur}}{\beta{c}}
+VTTS = \frac{mUTTS}{\beta_{c}} = \frac{\beta_{trav} - \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} }{\beta{c}}
+\]
+\[
+VTTS(t_{dur,q} = t_{typ,q}) = \frac{mUTTS}{\beta_{c}} = \frac{\beta_{trav} - \beta_{dur}}{\beta{c}}
 \]
 This is important for calibration of the utility function.
 
-The extensions made over time to the original utility function are described in the next section. Clearly, only a few extensions made it into the default current utility function.
+The extensions made over time to the original utility function are described in the next section~\ref{sec:utfextensions}. Clearly, only a few extensions made it into the default current utility function. \kai{I added a section ``Current version ...'' so wie can summarize which of the extensions actually made it into the default.}
 
 % ======================================================================================================================
 \subsection{Parameters}
@@ -112,10 +136,10 @@ The extensions made over time to the original utility function are described in 
 The basic Charypar-Nagel scoring function is inspired by \citet[][]{ArnottEtAl_TAER_1993}, which provides an extension of the Vickrey model \citep[][]{Vickrey_TAER_1969}. Parameters are thus derived from this model by also consulting \citet[][]{ChaumetEtAl_2006}. A frequently applied parameter set is the following 
 %
 \begin{compactitem}
-\item $\beta_{dur,q}= 6\ utils/h$,
+\item $\beta_{dur}= 6\ utils/h$,
 \item $\beta_{trav, mode, q}= -6\ utils/h$,
-\item $U_{wait,q}=0\ utils/h$,
-\item $\beta_{short.dur,q} = 0 utils/h$
+\item $S_{wait,q}=0\ utils/h$,
+\item $\beta_{short.dur,q} = 0\ utils/h$
 \item $\beta_{late.ar,q}=-18\ utils/h$,
 \item $\beta_{early.dp,q}=-18\ utils/h$.
 \end{compactitem}
@@ -147,7 +171,7 @@ Project Westumfahrung \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009} used the Züric
 
 % ======================================================================================================================
 \paragraph{Project Location-Based Services:}
-\citet[][]{BalmerEtAl_ResRep_datapuls_2010} was simulated on the Swiss scenario version 2 \citep[][]{HorniEtAl_TechRep_IVT_2011_a}. Innovations related to the utility function are agent-specific typical activity durations and facility-specific opening hours. Summation of activity duration for activities of the same duration (denoted as $U_{cum}$) was added by \citet[][p.9 and p.28]{BalmerEtAl_ResRep_datapuls_2010}. Facility-loading penalties were included as detailed below. The parameters \citep[][Table 2 on p.31]{BalmerEtAl_ResRep_datapuls_2010} of the multi-modal utility function including monetary costs was heavily based on the estimates by Kickhöfer \citep[][]{Kickhoefer_MastersThesis_2009}. Egress and access times to and from public transport stops was included, public transport travel times were not simulated but imputed. Due to problems with spreading of many plans into the next day a penalty for too long day plans was added.
+\citet[][]{BalmerEtAl_ResRep_datapuls_2010} was simulated on the Swiss scenario version 2 \citep[][]{HorniEtAl_TechRep_IVT_2011_a}. Innovations related to the utility function are agent-specific typical activity durations and facility-specific opening hours. Summation of activity duration for activities of the same duration (denoted as $S_{cum}$) was added by \citet[][p.9 and p.28]{BalmerEtAl_ResRep_datapuls_2010}. Facility-loading penalties were included as detailed below. The parameters \citep[][Table 2 on p.31]{BalmerEtAl_ResRep_datapuls_2010} of the multi-modal utility function including monetary costs was heavily based on the estimates by Kickhöfer \citep[][]{Kickhoefer_MastersThesis_2009}. Egress and access times to and from public transport stops was included, public transport travel times were not simulated but imputed. Due to problems with spreading of many plans into the next day a penalty for too long day plans was added.
 
 % ======================================================================================================================
 \paragraph{Project Herbie Mode Choice:}
@@ -197,7 +221,7 @@ The influence of interaction in \emph{transport} infrastructure for people's rou
 
 In \citet[][]{HorniEtAl_TRR_2009}, based on the Zürich scenario, a singly-constrained model is presented that introduces competition for space-time slots on the activity infrastructure. The actual load is coupled with time-dependent capacity restraints for every activity location and incorporated explicitly into the agent's destination choice process as detailed below. 
 
-Activity location load, computed for time bins of 15 minutes, is derived from events that are delivered by the Mobsim. The load of one particular iteration combined with time-dependent activity location capacity restraints is considered in the agents' choice process of the succeeding iteration. In detail, this means that the utility function term $U_{dur,q}$, described above, is multiplied by $max(0; 1 - f_{load\ penalty})$ penalizing the agents dependent on the load of the location they frequented. $f_{load\ penalty}$ is a power function, as this has shown to be a good choice for modeling capacity restraints (remember that the well-known cost-flow function by \citet[][]{TA_manual_1964} is a power function). To introduce additional heterogeneity regarding the activity locations, an attractiveness factor $f_{attractiveness}$ is introduced that is defined to be logarithmically dependent on the store size given by the official census of workplaces.
+Activity location load, computed for time bins of 15 minutes, is derived from events that are delivered by the Mobsim. The load of one particular iteration combined with time-dependent activity location capacity restraints is considered in the agents' choice process of the succeeding iteration. In detail, this means that the utility function term $S_{dur,q}$, described above, is multiplied by $max(0; 1 - f_{load\ penalty})$ penalizing the agents dependent on the load of the location they frequented. $f_{load\ penalty}$ is a power function, as this has shown to be a good choice for modeling capacity restraints (remember that the well-known cost-flow function by \citet[][]{TA_manual_1964} is a power function). To introduce additional heterogeneity regarding the activity locations, an attractiveness factor $f_{attractiveness}$ is introduced that is defined to be logarithmically dependent on the store size given by the official census of workplaces.
 
 Likewise for demonstration purposes, capacity restraints are exclusively applied to shopping locations, where in principle leisure activity locations could be handled similarly. However, deriving capacity restraints for leisure activity locations is expected to be much more difficult than for shopping locations because data availability is much smaller for leisure locations and capacity restraints vary much more between different leisure locations than between different shopping activities (hiking versus going to the movies might be an illustrative example).
 
@@ -227,11 +251,50 @@ Both \citet[][p.127f]{Feil_PhDThesis_2010} and \citet[][p.32]{MATSim_Userguide_2
 In project Surprice \citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014}, agent-specific travel preferences and individual income-dependent marginal utilities of money are incorporated. It is simulated with a 1\% multi-modal Zürich scenario, the preference values however, are assigned randomly. 
 
 % ##################################################################################################################
+\section{Current Version of the \acrshort{matsim} Default Utility Function}
+\label{sec:scoring-current}
+
+This section summarizes the current implementation of the default \acrshort{matsim} scoring function.  The section can be skipped as long as it is kept in mind that what has been said before is not the full story.
+
+\kai{Habe das jetzt mal geschrieben, damit es vollständig ist.  Natürlich wird es auf diesem Weg immer detaillierter und damit didaktisch immer ungünstiger.  Bessere Alternativen willkommen.}
+
+\paragraph*{Zero utility duration}
+
+The duration at which the utility of an activity is exactly zero is computed by the somewhat cryptic expression
+\[
+t_{0,q} := t_{typ,q} \cdot \exp\left( - \frac{10}{(t_{typ,q}/1\,h) \cdot prio} \right) \ ,
+\]
+where $prio$ is a configurable parameter.  This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \cite{CharyparNagel2005ga4acts}.  Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the ``home'' activity gets dropped first, which is clearly not plausible.  See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives.  In the meantime, the recommendations are:
+\begin{compactitem}
+\item Do not set the \verb$priority$ value in the config away from its default value.
+\item Recognize that the current \acrshort{matsim} default scoring/utility function is not suitable for activity dropping.
+\end{compactitem}
+
+
+\paragraph*{Negative durations}
+
+In \acrshort{matsim}, somewhat curiously it is possible to have activities with negative durations.  This can happen because of the ``wrap around'' mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored.  Note that scoring the two activities separately would lead to a different result, because of the nonlinear (logarithmic) form of the utility of performing. \kai{Dies müsste eigentlich weiter oben stehen.}
+
+\kai{make picture}
+
+\kai{Der Ansatz, dass man alle Aktivitäten des selben Typs erst aufsummiert, würde dies hier natürlich auch lösen.}
+
+In that situation \kai{und auch wenn wir es anders machen würden!!}, it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration.  However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration at zero cost would lead to more time elsewhere which could be used to accumulate score.  This is a bit similar to the question of a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
+
+For an adaptive algorithm, such a penalty needs to guide the adaptation back into the feasible region.  From this, it follows that the penalty needs to become larger with increasing negativity.  It also needs to be larger, i.e.\ more strongly negative, than any score value for a positive activity duration -- which is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above.  The current approach is to take the slope of when the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ crosses zero, and extend this towards minus infinity.
+
+\kai{make picture}
+
+
+
+
+
+% ##################################################################################################################
 \section{Estimating a Utility Function}
 \label{sec:estimation}
-With the exception of \citet[][]{BalmerEtAl_ResRep_datapuls_2010}, the estimates by \citet[][]{Kickhoefer_MastersThesis_2009} has not been considered for the various calibrations and extensions mentioned above although it represents a valuable base for further estimations. Having such a base at hand is important as estimating and applying a MATSim utility function is non-trivial due to the following. 
+With the exception of \citet[][]{BalmerEtAl_ResRep_datapuls_2010}, the estimates by \citet[][]{Kickhoefer_MastersThesis_2009} have not been considered for the various calibrations and extensions mentioned above although it represents a valuable base for further estimations. Having such a base at hand is important as estimating and applying a MATSim utility function is non-trivial due to the following. 
 
-The agents optimize complete day plans (see also \citet[][Section 6.3.1]{MATSim_Userguide_2014}). This means that the single choice dimension utility terms need to neatly fit into the complete function. It is not possible to apply functions estimated independently for only a single choice dimensions. If for example all alternatives for destination choice evaluated with an inappropriate utility function generate negative utility, then the complete activity is simply dropped. This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. The inseparability of choice dimensions means that in MATSim we can only consistently handle choices if we assume an absolute utility level rather than a relative level usually assumed for discrete choice models. 
+The agents optimize complete day plans \citep[see also][Section 6.3.1]{MATSim_Userguide_2014}. This means that the single choice dimension utility terms need to neatly fit into the complete function. It is not possible to apply functions estimated independently for only a single choice dimensions. If for example all alternatives for destination choice evaluated with an inappropriate utility function generate negative utility, then the complete activity is simply dropped. This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. The inseparability of choice dimensions means that in MATSim we can only consistently handle choices if we assume an absolute utility level rather than a relative level usually assumed for discrete choice models. 
 
 Incorporating an extension, for example for parking or destination choice, in combination with absolute utilities becomes even more tricky as the Charypar-Nagel function is non-linear, which means that available models very often being linear, need to be incorporated by workarounds such as approximation procedures and distinction of cases as described in \citet[][p.75ff]{Horni_PhDThesis_2013}. Furthermore, it is based on travel times, which is usually seen as an unreliable information gathered from classical surveys. GPS or smartphone-based surveys, however, provide this information with great precision and, thus, they are advantageously used for future estimations.
 
@@ -252,10 +315,10 @@ Wir notieren die Nutzenfunktionen in MATSim immer als $V_{i,car} = ...$ etc. Ich
 
 Habe gerade (im noch nicht committeten economic eval Kapitel folgenden Kommentar von mir gesehen, und dachte ich teile das mal:
 
-"I would strongly recommend to use $V_p$ instead of $U_p$ for an agent's plan even though this is not entirely the same as in Discrete Choice Theory, since some of the $\varepsilon$ is already captured by the simulation noise that Gunnar called $\eta$...In consequence, the score is NOT equal to $V_p$. 
+"I would strongly recommend to use $V_p$ instead of $S_p$ for an agent's plan even though this is not entirely the same as in Discrete Choice Theory, since some of the $\varepsilon$ is already captured by the simulation noise that Gunnar called $\eta$...In consequence, the score is NOT equal to $V_p$. 
 We should explain that in more detail."
 
-Bei deinen frozen epsilon und BestSelect ist $U$ dann zwar wahrscheinlich richtig, aber so wie es jetzt in dem Kapitel über Charypar-Nagel steht ist es m.E. falsch.
+Bei deinen frozen epsilon und BestSelect ist $S_{}$ dann zwar wahrscheinlich richtig, aber so wie es jetzt in dem Kapitel über Charypar-Nagel steht ist es m.E. falsch.
 
 Was meinst du/ihr?
 }
@@ -276,11 +339,20 @@ schreiben, wobei $x_i$ weiterhin stochastische Attribute aus der mobsim sein kö
 
 -$\varepsilon$ gibt es explizit momentan nur für Destination Choice (Mail Gunnar).
 
--ohne $E\{.\}$ ist man mit $U$ wohl mindestens so nahe an der Wahrheit dran wie mit $V$ (wegen $\eta$) (Mail Benjamin).
+-ohne $E\{.\}$ ist man mit $S_{}$ wohl mindestens so nahe an der Wahrheit dran wie mit $V$ (wegen $\eta$) (Mail Benjamin).
 
-- Konsistenz: in sehr vielen Publ. kommt seit Jahren $U_{plan}=U_{act}+U_{travel}$ vor. Könnte mir vorstellen, dass gerade neue User verwirrt sind, wenn wir davon abrücken (ohne grosse Not?-> $\eta$!).
+- Konsistenz: in sehr vielen Publ. kommt seit Jahren $S_{plan}=S_{act}+S_{travel}$ vor. Könnte mir vorstellen, dass gerade neue User verwirrt sind, wenn wir davon abrücken (ohne grosse Not?-> $\eta$!).
 }
 
 \ah{Gunnars Mail doch noch kapiert. So müsste es gehen.}
 
 % ##################################################################################################################
+
+% Local Variables:
+% mode: latex
+% mode: reftex
+% mode: visual-line
+% TeX-master: "../main"
+% comment-padding: 1
+% fill-column: 9999
+% End: 
