@@ -1,9 +1,7 @@
-\chapter{How to Write Your Own Modules and Contribute Them to MATSim \who{Zilske}}
+\chapter{How to Write Your Own Modules and Contribute Them to MATSim}
 \label{ch:extensionpoints}
 % ##################################################################################################################
 \hfill \textbf{Authors:} Michael Zilske
-
-\begin{center} \includegraphics[width=0.25\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
 
 % ##################################################################################################################
 \section{Introduction}
@@ -184,23 +182,22 @@ are configurable.
 The code which maps a stream of mobility simulation events to a score for each agent is placed behind a factory
  interface and replaceable. However, replacing it means replacing the entire utility formulation. There is
  currently no mechanism for composing a utility formulation from contributions by different modules.
- For instance, a module which simulates weather conditions would probably calculate penalties for pedestrians
+For instance, a module which simulates weather conditions would probably calculate penalties for pedestrians
   walking in heavy rain, and the Cadyts calibration scheme already uses utility offsets in its formulation. A modeller
   who wishes to compose a scoring function from the Charypar-Nagel utility, the rain penalty and the calibration offset
   needs to do this manually, in code, accessing the code of all three modules contributing to the score and (for instance) summing
-  up their contributions.
+  up their contributions. As of the writing of this chapter, this makes scoring in a way the least modular part of MATSim: It has to 
+be re-defined, in code, for every combination of modules which contribute to the utility.
 
-As of the writing of this chapter, this makes scoring in a way the least modular part of MATSim. \kai{Ob das wohl daran liegt?  Oder liegt es daran, dass man immer zusätzlich noch ein mindestens randomisierendes Modul implementieren muss, damit eine Änderung der scoring function tatsächlich etwas bewirkt?}
-
-
-% ##################################################################################################################
-\section{Contributing to MATSim ... Technically}
-% =========================================================================================
-\subsection{Getting an Building the Source Code}
-
-http://matsim.org/docs/devguide/development-environment
-
-\kai{Da sollte man aber wohl nur auf die relevanten Webseiten verweisen, oder?}
+Keep in mind that scoring and replanning are not inherently coupled or automatically consistent with each other. 
+Consider a scoring function which penalizes left-turns. This is straight-forward to program: You would 
+iterate over every route an agent has taken. Looking at the \verb$Network$, you would calculate for each change of
+links if you consider it a left-turn, and if so, add a (negative) penalty to the score. However, this would not by itself lead to a
+solution where routes are distributed according to this scoring function. The reason is that the default replanning only proposes
+ fastest routes, in other words, least-cost paths with respect to travel time. By default, the plan memory of an agent will only ever
+ contain routes which have in one iteration been a fastest route. The behavior of the router is, in this case, inconsistent with the utility
+ formulation.
+   
 
 % =========================================================================================
 % ##################################################################################################################
