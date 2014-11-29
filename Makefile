@@ -1,4 +1,4 @@
-.PHONY: pdf clean quick veryclean
+.PHONY: pdf clean quick veryclean kai kai.aux
 
 NAME=main
 
@@ -16,7 +16,9 @@ quick:
 kaimain:
 	pdflatex "\def\user{kai}\input{main}"
 
-kai:
+kai: kai.aux
+
+kai.aux:
 	pdflatex kai
 	pdflatex kai
 
@@ -54,3 +56,5 @@ localbib:
 
 spin:
 	make pdf; while true; do inotifywait -r . $(shell find . -type l -xtype d -printf '%p/*\n') $(shell find . -type l -xtype f) -e CREATE,MODIFY,DELETE; make -j2 pdf; done
+
+
