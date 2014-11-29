@@ -4,6 +4,9 @@ default:
 kai:
 	cd .. ; ${MAKE} kai
 
+kaibib:
+	cd .. ; ${MAKE} kaibib
+
 quick:
 	cd .. ; ${MAKE} quick
 
