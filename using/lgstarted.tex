@@ -149,7 +149,7 @@ The network describes the infrastructure on which the agents (or the vehicles, r
 Each element has an identifier id. Nodes are described by an \lstinline|x| and a \lstinline|y| coordinate value. Links have more attributes: The \lstinline|from| and \lstinline|to| attribute reference nodes and describe the geometry of the network. Additional attributes describe the traffic-related aspects of the network:
 \begin{compactitem}
     \item the \lstinline|length| of the link, typically in meters (see Section~\ref{sec:unitsconventions}).
-    \item the flow \lstinline|capacity| of the link, i.e. the number of vehicles that can pass the link, typically in vehicles per hour.
+    \item the flow \lstinline|capacity| of the link, i.e.\ the number of vehicles that can pass the link, typically in vehicles per hour.
     \item the \lstinline|freespeed| is the maximum speed at which vehicles are allowed to travel along the link, typically in meters per seconds.
     \item the number of lanes (\lstinline|permlanes|) available in the direction specified by the from and to nodes.
     \item the list of \lstinline|modes| allowed on the link. This is a comma-separated list, e.g.\ \lstinline|modes="car,bike,taxi"|.
@@ -206,11 +206,9 @@ The population data format is one of the most central data structures in MATSim 
    <person id="1"> 
       <plan> 
          <act type="home" x="5.0" y="8.0" end_time="08:00:00" /> 
-         <leg mode="car"> 
-         </leg> 
+         <leg mode="car" /> 
          <act type="work" x="1500.0" y="890.0" end_time="17:30:00" /> 
-         <leg mode="car"> 
-         </leg> 
+         <leg mode="car" /> 
          <act type="home" x="5.0" y="8.0" /> 
       </plan> 
    </person> 
@@ -240,12 +238,10 @@ An example listing is as follows.
 <!DOCTYPE facilities SYSTEM "http://www.matsim.org/files/dtd/facilities_v1.dtd">
 <facilities name="test facilities for triangle network">
 	<facility id="1" x="60.0" y="110.0">
-		<activity type="home">
-		</activity>
+		<activity type="home" />
 	</facility>
 	<facility id="10" x="110.0" y="270.0">
-		<activity type="education">
-		</activity>
+		<activity type="education" />
 	</facility>
 </facilities>
 \end{xml}
@@ -322,7 +318,7 @@ After the stop facilities, the transit lines, their routes and schedules are des
 
 Each transit line must have a unique id. Each transit route has an id which must be unique within that one line, so the same route id can be used with different lines. The \lstinline|transportMode| describes on which links in the network the line runs (Actually, this is currently not yet enforced. It would be possible to let a bus run on train links in the simulation. It might be enforced in the future).
 
-The \lstinline|routeProfile| describes the stops this route serves, while route itself describes the series of links in the network the transit vehicle's driver has to drive along (thus often referred to as network route. Note that the complete route, i.e. all links the vehicle drives along, must be listed in the route, and not only the ones where stops are located. All the specified stops should occur along this route in the specified order. The time offsets given for each stop in the \lstinline|routeProfile| describe the relative time offset to an actual departure time. If a bus is to depart at 7 o'clock in the morning, and stop 2 has a \lstinline|departureOffset| of 00:03:00, this must be read that the bus is expected to depart at 07:03 at the specific stop. All stops in the route profile must have a departure offset defined, except the last one. All stops, except the first one, can optionally have an arrival offset defined. This is mostly useful for large trains that stop for several minutes at a station to help the routing algorithm to find connecting services at the correct time, namely the expected arrival time of the train.
+The \lstinline|routeProfile| describes the stops this route serves, while route itself describes the series of links in the network the transit vehicle's driver has to drive along (thus often referred to as network route. Note that the complete route, i.e.\ all links the vehicle drives along, must be listed in the route, and not only the ones where stops are located. All the specified stops should occur along this route in the specified order. The time offsets given for each stop in the \lstinline|routeProfile| describe the relative time offset to an actual departure time. If a bus is to depart at 7 o'clock in the morning, and stop 2 has a \lstinline|departureOffset| of 00:03:00, this must be read that the bus is expected to depart at 07:03 at the specific stop. All stops in the route profile must have a departure offset defined, except the last one. All stops, except the first one, can optionally have an arrival offset defined. This is mostly useful for large trains that stop for several minutes at a station to help the routing algorithm to find connecting services at the correct time, namely the expected arrival time of the train.
 
 As last part of the description of a transit route, the list of departures should be given. Each departure has an id, which must be unique within the route, and gives the departure time at the first stop of the specified route profile. In addition, the departure specifies with which vehicle the service should be run. This vehicle must be defined in the aforementioned list of transit vehicles. 
 
@@ -381,23 +377,33 @@ It starts with a header containing general descriptive information about the cou
 \label{sec:outputdata}
 MATSim creates a bunch of output data, which can be used to analyze the results but also to monitor the correct working of the current simulation setup. Some of the files are created once for a run, others are created for every iteration and for some (typically for the large ones, such as the population) the output frequency can be specified in the config file. The text files, which are created once per run, are created on the fly such that a continous monitoring of the run is possible. There are data, that are created by default (such as the score files) and there are ones, which need to be triggered by a respective configuration file section (such as count data). All output data goes to the output folder, which can be specified in the \lstinline|controler| section of the config file.
 
-Following output data is generated.
+The following output data is generated.
+
+\kai{Sollten wir (1) den Unterschied zwischen ``main'' und ``ITERS'' directory beschreiben, und (2) darauf hinweisen, wo die folgenden Dateien jeweils sind?}
 
 \paragraph{Events:} Every action in the simulation is recorded as a so-called MATSim event, be it the starting of an activity or the change of a network link. Each \lstinline|Event| hosts one or multiple attributes. By default, the time when the \lstinline|Event| occurred is contained. Additionally, information like the id of the agent who caused the event or the id of the link where the \lstinline|Event| occurred could be included.  By default, the MATSim simulation module creates a so called Events-file in every 10th iteration. This file contains every single \lstinline|Event| that has been created by the simulation. The events file is thus a formidable base for post-analyses for example with the visualizers. Events are discussed in detail in Section~\ref{sec:events-extension-point}.
 
 \paragraph{Log File:}
 During each MATSim run, a log file is created. This file contains several information, that you might need later for your analyses. Additionally, it might be very helpful, if a run has crashed for some unknown reason. 
 
+
+\paragraph{Warnings and Errors Log File:}
 Sometimes, MATSim recognizes problems in the simulation or the configuration of it. It will then write warnings and errors to the log file. As the log file contains a lot of information, such warnings might get overlooked. For this reason, a separate log file is generated in the output directory of a run containing only warnings and error messages. It is advised to have a look during/after a run into this file to see if there have been any major problems.
 
 \paragraph{Score Statistics:}
 Once per run the score statistics are printed out. They are available as picture (\lstinline|scorestats.png|) as well as a text file (\lstinline|scorestats.txt|). They show the average best, worst, executed and average of all plans of an agent for every iteration. An example score plot is shown in Figure~\ref{fig:scoreprogress}.
 
+\kai{``run'' vs ``iterations'': Wir benutzen normalerweise die Semantik, dass ein ``run'' die Summe aller ``iterations'' ist.  Dann wäre das oben ``Once per iteration''.  Oder ``At the end of each run'', obwohl das technisch nicht richtig ist, weil es tatsächlich am Ende einer jeden Iteration neu erzeugt wird; so kann man alles bereits während der Iterationen mitverfolgen.}
+
 \paragraph{Leg Travel Distance Statistics:}
 Also once per run, leg travel distance statistics are generated. They are comparable to the score statistics, but instead of the score, the travel distance is plotted. The files are named \lstinline|traveldistancestats.png| and \lstinline|traveldistancestats.txt|.
 
+\kai{dto}
+
 \paragraph{Stopwatch:}
 Once per run, timing information is printed. The stopwatch file (\lstinline|stopwatch.txt|) contains the durations of actions like the replanning or the execution of the mobility simulation for every iteration. This data might be helpful for performance analyses (e.g.\ how long does the replanning take compared to the mobility simulation?).
+
+\kai{dto}
 
 \paragraph{Leg Histogram:}
 In every iteration, a leg histogram is plotted. A leg histogram depicts the number of agents that arrive, depart or are en route per time unit. Histograms are created for each transport mode and, additionally, for the sum of all transport modes. Each file starts with the iteration number and ends with the transport mode (e.g.\ \lstinline|1.legHistogram_car.png| or \lstinline|1.legHistogram_all.png|). Moreover, a text file is created (e.g.\ \lstinline|1.legHistogram.txt|) that contains the data for all transport modes.
@@ -406,21 +412,34 @@ In every iteration, a leg histogram is plotted. A leg histogram depicts the numb
 Per iteration, a trip durations text file (e.g.\ \lstinline|1.tripdurations.txt|) listing the number of trips and their durations on a time bin level for each activity pair (e.g.\ from work to home or from home to shopping) is put out.
 
 \paragraph{Link Volumes:}
-The printing of the link volume comparison (between simulated and counted volumes) needs to be triggered by a config file entry. The comparison generates overview summaries for the whole netwoek but also analyses for individual links. An link analysis might like like Figure~\ref{fig:countcomparison}.
+The printing of the link volume comparison (between simulated and counted volumes) needs to be triggered by a config file entry. The comparison generates overview summaries for the whole netwoek but also analyses for individual links. A link analysis might like like Figure~\ref{fig:countcomparison}.
 
 % ----------
 \createfigure%
 {Example for a Link Volumes Comparison Between Simulation and Road Count Values}%
 {Example for a Link Volumes Comparison Between Simulation and Road Count Values}%
 {\label{fig:countcomparison}}%
-{\includegraphics[width=0.8\textwidth, angle=0]{using/figures/link101227.png}}%
+{\includegraphics[width=0.7\textwidth, angle=0]{using/figures/link101227.png}}%
 {}
 % ----------
+
+\paragraph{kmz:}
+
+\kai{??}
 
 
 % ===============================================================================================
 \subsection{An Example Scenario}
-The MATSim release is shipped with an example scenario named \lstinline|equil| in the folder \lstinline|examples/equil|. The scenario contains the following files \lstinline|config.xml|, \lstinline|network.xml| and \lstinline|plans100.xml| containing 100 persons with their day plans, one using public transport, the other person using car mode. Additional populations containing only 2 persons (\lstinline|plans2.xml|) or 2000 persons are provided (\lstinline|plans200.xml.gz|). Demand of exactly 100 trips (\lstinline|plans100trips.xml|) or trips with taxi mode is also provided (\lstinline|plans-w-taxi.xml|). Furthermore, hand-made count data can be found in the folder (\lstinline|counts100.xml|). A tolls file can be used for road pricing scenarios not discussed here (\lstinline|toll.xml|).
+The MATSim release is shipped with an example scenario named \lstinline|equil| in the folder \lstinline|examples/equil|. The scenario contains the following files \lstinline|config.xml|, \lstinline|network.xml| and \lstinline|plans100.xml| containing 100 persons with their day plans, one using public transport, the other person using car mode \kai{100 or 2 persons?}. Additional populations containing only 2 persons (\lstinline|plans2.xml|) or 2000 persons are provided (\lstinline|plans2000.xml.gz|). Furthermore, an example for count data can be found in the folder (\lstinline|counts100.xml|). 
+
+%% or trips with taxi mode is also provided (\lstinline|plans-w-taxi.xml|). 
+
+%% A tolls file can be used for road pricing scenarios not discussed here (\lstinline|toll.xml|).
+
+
+\kai{Habe da neulich, als Resultat einer Diskussion, etwas ausgedünnt.  Müssen wir ggf.\ anpassen, aber m.E.\ stimmt es so nun.}
+
+There is also a file with a demand of exactly 100 \emph{trips} (\lstinline|plans100trips.xml|), i.e.\ demand just going from one location to another, using a \lstinline$dummy$ activity type at each end.  This is provided to show that \acrshort{matsim} can also be run as a fully trip-based approach.  Clearly, it loses some of its expressiveness, but the basic concepts, including route and even departure time adaptation, still work in exactly the same way.
 
 The network of the scenario is shown in Figure~\ref{fig:equil}.
 
@@ -449,6 +468,8 @@ As shown in the listing below, this scenario uses replanning. 10\% of the agents
 </module>
 \end{xml}
 
+\kai{I think there is a better syntax for the above now (without the numbering); should we use that?}
+
 The section \lstinline|planCalcScore| defines the parameters used for scoring. The parameters are explained in Chapter~\ref{ch:scoring}. As can be seen in the example the two activity types \lstinline|h| (home) and \lstinline|w| (work) are specified. The scenario is run for 10 iterations, writes the output files to \lstinline|./output/equil| (Section~\ref{sec:outputdata}), and uses \lstinline|qsim| as the mobility simulation (more on \gls{mobsim}s in Section~\ref{sec:trafficflowmodel} and \ref{sec:mobsims}).
 
 \begin{xml}
@@ -458,6 +479,8 @@ The section \lstinline|planCalcScore| defines the parameters used for scoring. T
 	<param name="mobsim" value="qsim" />	
 </module>
 \end{xml}
+
+\kai{I would suggest to say something about via already at this point.  There is a free educational version so I think that this would be ok.}
 
 % ===============================================================================================
 \subsection{Units, Conventions and Coordinate Systems}
@@ -486,7 +509,7 @@ MATSim makes heavy uses of identifiers, short \lstinline|Id|s. This Ids can be a
 \subsubsection{Coordinate Systems}
 \label{sec:coordinatesystems}
 \paragraph{Preparing Your Data in the Right Coordinate System:}
-In several input files, you need to specify coordinates, e.g.\ for the nodes of the network. It is strongly suggested not to use WGS84 coordinates (i.e. GPS coordinates, or any other kind of spherical coordinates; coordinates ranging from -180 to +180 in west-east direction, and from -90 to +90 in south-north direction). MATSim needs to calculate distances between two points in several places of the code. The calculation of distances between spheric coordinates is very complex and potentially slow. Instead, MATSim uses the simple Pythagoras' theorem, but this requires the coordinates to be in a Cartesian coordinate system. Thus is is stronlgy advised to use a Cartesian coordinate system along with MATSim, preferably one where the distance unit corresponds to one meter.
+In several input files, you need to specify coordinates, e.g.\ for the nodes of the network. It is strongly suggested not to use WGS84 coordinates (i.e.\ GPS coordinates, or any other kind of spherical coordinates; coordinates ranging from -180 to +180 in west-east direction, and from -90 to +90 in south-north direction). MATSim needs to calculate distances between two points in several places of the code. The calculation of distances between spheric coordinates is very complex and potentially slow. Instead, MATSim uses the simple Pythagoras' theorem, but this requires the coordinates to be in a Cartesian coordinate system. Thus is is stronlgy advised to use a Cartesian coordinate system along with MATSim, preferably one where the distance unit corresponds to one meter.
 
 Many countries and regions have custom coordinate system defined, optimized for usages in their apropriet areas. It might be best to ask some GIS specialists in your region of interest what the most commonly used local coordinate system is and use that as well for your data.
 
