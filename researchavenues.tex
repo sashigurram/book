@@ -13,15 +13,69 @@
 %
 \kai{Das ist jetzt ok, oder?}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{\acrshort{matsim} and Agents}
+
+% Q-learning: learn utility for each state-action pair
+%
+% utility learning: learn utility for each state
+%
+% difference: In the second case, need to have a model about the world.  I.e. need to know which actions lead to which probabilities for the next state.
+
+% 20.2 passive learning in a known environment
+
+% naive: proceed until terminal state, backpropagate utility to all previous states, average over all such utility values ever collected per state
+
+% adaptive dynamic programming: U(i) = R(i) + \sum_j M_{ij} U(j)
+
+% where R(i) is the reward at i and M_{ij} are the transition probas 
+% (recall that this is passive learning)
+
+% I don't that that this can be sampled ... needs to solve the equations
+
+% temporal difference (TD) learning: U(i) <-- U(i) + alpha * ( R(i) + U(j) - U(i) ) 
+
+% 20.3 passive learning in an unknown environment
+
+% Since TD never neede M_{ij}, it will still work as before.  Will now also 
+% learn M_{ij}, but separately
+
+% 20.4 active learning in an unknown environment
+
+% Now M^a_{ij} (depending on the action)
+
+% U(i) = R(i) + max_a \sum_j M^a_{ij} U(j)
+
+% TD approach same as before
+
+% 20.5 Exploration
+
+% 20.6 Learning an action-value function (Q values, Q-learning)
+
+The core \acrshort{matsim} architecture -- where agents learn utilities for plans -- was originally derived from the so-called field of Complex Adaptive Systems (CAS).  
+%
+\cite{ArthurBar} addresses a coordination problem, where agents receive a payoff only when less than 60 out of 100 go to an event.  He addresses this by first generating a large number of heuristic predictors for the next round's attendance, such as ``same as in last round'' or ``trend of last four rounds''.  He next gives each agent a randomly selected handful of these strategies, so that agents in general have different sets of predictors.  Then, many rounds of the game are played, where the score of each predictor is updated based on its prediction quality, and agents act based on their currently best predictor.  Simulations demonstrate that the approach leads to successful coordination, i.e.\ around 60~agents show up in every round.
+%
+That approach in turn builds on work by \cite{PalmerEtAl_PhysicaD_1994}, who simulate a stock market,  \cite{Holland_1992}, whose classifier systems have more structure than Arthur's model but have a similar model of performance learning, or \cite{AxelrodBook}, who investigates adaptive agent in the face of repeated non-cooperative games.  
+
+\citet{ArthurBar} kept each agent's predictors fixed after initialization.  In contrast,
+\cite{HraberJonesForrestEcho} simulate an artificial ecosystem, where the individual agent strategies are based on so-called genes, which are adapted over the rounds/iterations by a genetic algorithms \citep{Goldberg_1989}.
+
+The focus of CAS is on many agents, agent interaction, and emergence.  Artificial intelligence (AI) in contrast concentrated on single agents.  In AI terms, the original \acrshort{matsim} agents (those that do day-to-day learning) are very simple active reinforcement learning agents \citep[][Chapter 21.3]{RusselNorvig2010ArtificialIntelligence}.  Since these \acrshort{matsim} have only one state and each plan is simply an action, the distinction between Q-learning and utility learning actually collapses, and what remains is the temporal difference learning scheme for the utility, which translated to the \acrshort{matsim} situation updates the score/performance/utility value of each plan every time it is selected.
+
+That is, overall, the original \acrshort{matsim} system has inherited the focus on large systems, interaction, and emergence as well as the approach to strategy innovation from CAS, while the score updating rather comes from the field of AI.
+
+In the meantime, both AI and the field of transport simulation have moved on, increasingly looking at agents that can react immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}.
+
+\kai{to do more}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Within-Day Replanning and the User Equilibrium}
 \label{sec:researchavenues-withinday}
-
-A Q-learning agent has 
-
 
 \vfill\eject
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
