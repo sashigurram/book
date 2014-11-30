@@ -349,9 +349,7 @@ without such coalitions.
 Given this theoretical framework, one needs to design and implement an
 algorithm to search for allocations of daily plans to individuals, that
 satisfy this solution concept.
-
-This section presents the EUNOIA implementation, which was build using
-the MATSim software framework. This implementation consists of two
+This implementation consists of two
 groups of components:
 
 \begin{enumerate}
@@ -361,24 +359,11 @@ groups of components:
   modular fashion, to be easily adapted to the specific need of
   different simulation scenarios
 \item
-  Specific implementations of the modular components, to test the
-  behavior of the approach and apply it to the case studies.
-
-  \begin{enumerate}[i)]
-  \item
-    data structures to represent households and generic social networks
-    were implemented, as well as the ways to identify groups for
-    replanning
-  \item
-    specific replanning modules to explore the set of possible joint
-    decisions were implemented
-  \end{enumerate}
+  Specific implementations of the modular components,
+  namely replanning strategies and scoring functions,
+  to allow explore the set of possible \emph{joint plans},
+  and represent possible preferences specific to joint decisions.
 \end{enumerate}
-
-The solution algorithm and implementation is a generalization of the
-MATSim process presented in the introductory session. The following
-sections outline the different elements implemented in the EUNOIA
-project.
 
 \paragraph{Controller}
 
@@ -411,7 +396,8 @@ groups of agents. This is straightforward for households: all agents of
 a same household are always handled as a single group. For more general
 social networks, agents are handled with all agents with whom they have
 a joint plan, plus some social contacts with whom new joint plans can be
-created. Details are presented in the ``Implementation'' section.
+created.
+%Details are presented in the ``Implementation'' section.
 
 For each group, two actions are then possible. For most groups, an
 allocation of existing plans, fulfilling the joint plans constraints, is
@@ -424,10 +410,11 @@ Cycle'' algorithm used for the House Allocation Problem
 For the other groups, a plan allocation is selected and copied. The
 copied plans then undertake mutation, to make the agents explore new
 alternative joint plans. What kind of mutation is performed determines
-which alternative plans will be tried out by the agent. The modules
-currently implemented are presented in the ``Implementation'' section.
+which alternative plans will be tried out by the agent.
+%The modules
+%currently implemented are presented in the ``Implementation'' section.
 
-Agents have a limited memory size, keeping at most 3 plans per joint
+Agents have a limited memory size, keeping by default at most 3 plans per joint
 plan composition, and 10 plans in total. If this limit is exceeded, one
 should keep the plans which have the highest probability to create
 improving coalitions, that is, to be preferred to the other plans in the
@@ -466,11 +453,10 @@ mutation creates noise, not only for the analyst looking at the output
 of the simulation, but for the agents themselves when they compute the
 score of their plans. To solve this issue, when the system reaches a
 stable state, agents stop performing mutation, and only select plans
-from their memory for 100 iterations, using the absence of improving
+from their memory for a given number of iterations, using the absence of improving
 coalition with randomized scores. This ensures that the selected plans
 are the result of a behavioral model, rather than the result of random
 mutation operators.
-with household membership information from the census.\todo{ref}
 
 \subsection{Technical Considerations on the Implementation}
 %---------------------------------------------------------------------------
