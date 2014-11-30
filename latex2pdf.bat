@@ -1,7 +1,7 @@
-xelatex main
+pdflatex main
 makeglossaries main
 makeindex main
 bibtex main
-xelatex main
-xelatex main
+pdflatex main
+pdflatex main
 

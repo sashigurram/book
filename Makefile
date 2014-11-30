@@ -3,37 +3,37 @@
 NAME=main
 
 pdf:
-	-xelatex  -interaction=nonstopmode ${NAME}
+	-pdflatex  -interaction=nonstopmode ${NAME}
 	makeglossaries ${NAME}
 	makeindex ${NAME}
 	bibtex ${NAME}
-	xelatex -interaction=nonstopmode ${NAME}
-	xelatex -interaction=nonstopmode ${NAME}
+	pdflatex -interaction=nonstopmode ${NAME}
+	pdflatex -interaction=nonstopmode ${NAME}
 
 quick:
-	xelatex ${NAME}
+	pdflatex ${NAME}
 
 kaimain:
-	xelatex "\def\user{kai}\input{main}"
+	pdflatex "\def\user{kai}\input{main}"
 
 kai: kai.aux
 
 kai.aux:
-	xelatex kai
-	xelatex kai
+	pdflatex kai
+	pdflatex kai
 
 kaibib:
-	xelatex kai
+	pdflatex kai
 	makeindex kai
 	bibtex kai
-	xelatex kai
-	xelatex kai
+	pdflatex kai
+	pdflatex kai
 
 gregor:
-	xelatex gregor
+	pdflatex gregor
 	bibtex gregor
-	xelatex gregor
-	xelatex gregor
+	pdflatex gregor
+	pdflatex gregor
 
 clean:
 	-rm *.aux *.log 
