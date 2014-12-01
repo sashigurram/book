@@ -309,9 +309,14 @@ A numerical problem, particularly relevant for activity choice, concerns the fun
 Estimating a utility function for MATSim is associated with another problem. The function is applied iteratively for a travel demand which is in the beginning of the relaxation process usually not very similar to the situation where the function was estimated. In other words, the function is used for a whole range of working points, where it has been estimated for only one  possibly completely different working point. The MATSim function thus must be also correct in the elasticities, to be able to efficiently drive the relaxation process toward the final relaxation point, where the estimated function is valid by construction. 
 
 % ##################################################################################################################
-\section{Discussion and TODOs}
+\section{Discussion}
 \label{sec:discussion_scoring}
 Will be commented, when chapter is finished. Make final results traceable.
+
+% =====================================================================================
+\subsection{Nutzenfunktion}
+\label{sec:utfd}
+
 
 \benjamin{noch was (relativ wichtiges):
 
@@ -349,6 +354,120 @@ schreiben, wobei $x_i$ weiterhin stochastische Attribute aus der mobsim sein kö
 }
 
 \ah{Gunnars Mail doch noch kapiert. So müsste es gehen.}
+
+% =====================================================================================
+\subsection{Score and Its Interpretation}
+\label{sec:scored}
+\kai{
+Die ursprüngliche Aussage war: 
+
+(1) Matsim produziert einen "score", analog einer "fitness" in evolutionary algorithms.  Notiert als "S".
+
+(2) Wie das dann interpretiert wird, ist ein zweiter Schritt. (Z.B. ob als U oder als V.)
+
+
+IVT argumentiert, dass sämtlicher Noise durch die Simulation erzeugt wird, und verwendet "SelectBest" bei choice.  Dann ist U = S.  (Also: Aller Nutzen des Agenten kommt aus dem Score.)
+
+VSP verwendet ein logit model bei choice ... und argumentiert damit letztendlich (aber bisher nicht absichtlich), dass beim choice \textbf{weiterer} (durch den scale parameter parametrisierter) noise hinzugefügt wird.  Dann ist U = S + epsilon .   (Wichtig: Es gibt Nutzen für den Agenten über den Score hinaus.)
+
+
+Für den zweiten Fall gilt Gunnars Theorie von conceptual meeting: "one can only convincingly claim that S = V when S is an expected value".
+
+Ich weiß gar nicht, was für den ersten Fall gilt.
+
+
+Kohärent aufschreiben kann man das m.E. nur, indem man konsistent bei "S" bleibt, und den Schritt der Interpretation separiert von dem, was MATSim tut.
+
+
+Wie jetzt weiter?
+
+
+(a) matsim output konsistent als "S" notieren statt "U" oder "V"?
+
+(Der Latex-Aufwand würde sich m.E. in Grenzen halten; es wäre m.E. die konsistenteste Lösung; fraglicher wäre die Lesbarkeit.)
+
+
+(b) bei "U" bleiben, aber Fußnoten dranmachen im Sinne von "matsim agent-based score is loosely interpreted as agent-based utility; for a discussion and relation to discrete choice see Chap XY and YZ".
+
+
+(c) weitere Vorschläge?
+
+
+Ich bin auf jeden Fall derzeit skeptisch, ob wir wirklich alle U nach V umwandeln sollen, und ich bin auch skeptisch, ob wir bereits im "using" Teil überhaupt von U = V + eps sprechen wollen.
+
+
+Kommentare?  Meinungen?
+
+}
+
+\gunnar{ich möchte meine Antwort hierauf gerne ein paar Stunden, max einen Tag, aufschieben und das "choice models in matsim" Kapitel entsprechend formulieren.}
+
+\ah{Bin nicht sicher, ob das hier am IVT tatsächlich alle machen, oder nur ich, wenn ich das Best-Response-Modul Destination Choice anwerfe. Ich jedenfalls nehme auch Logit, wenn ich keine Destination Choice mache.
+
+Bis zu Gunnars Kapitel bei "S" bleiben und dann erst den Link zu Discrete Choice machen, fände ich eine gute Lösung. Man müsste im Scoring-Kapitel (und Glossar) dann halt kurz erklären warum wir jetzt plötzlich nicht mehr wie alle die Jahre "U", sondern vorerst mal "S" schreiben. U=V+eps ist ja eigentlich in den ersten beiden Teilen nur für Zielwahl wirklich relevant, und das kriege ich dann schon auf Gunnars Kapitel angepasst.
+
+Verständnisfrage: Die Aussage gilt nur für Random-Mutation-Settings, oder? Für Route-Choice, z.B., wird bloss das Konvergenzverhalten beeinflusst, oder? }
+
+\kai{
+Leider keine einfache Sache, siehe auch unsere Kapitel über econ eval. 
+
+(A) Was macht matsim derzeit?
+
+(1) Ein choice model $\exp(V_i) / \sum_j \exp(V_j)$ impliziert einen echten Nutzen von U = V + eps .
+
+(2) Der erwartete (= mittlere) Nutzen ist dann der logsum term:  $E(U) = ln \sum_j \exp(V_j)$
+
+(3) Ordnen wir die Pläne so, dass der Plan mit dem höchsten Nutzen die Nummer 1 ist.  dann
+
+$ln \sum_j \exp(V_j) = ln ( \exp(V_1) * ( 1 + \sum_{j \ge 2} \exp(V_j - V_1) ) = V_1 + ln( 1 + ... )$
+
+Das ist offensichtlich größer als $V_1$; der mittlere Nutzen ist größer als der höchste Score!
+
+So geht das ganz generell: Die Hinzufügung weiterer Pläne, selbst wenn sie schlechter sind als der beste, erzeugen bei diesem Ansatz zusätzlichen mittleren Nutzen.
+
+Das gilt auch dann, wenn sich die zusätzlichen Pläne nur in der Route unterscheiden.
+
+
+(B) Ist das sinnvoll?
+
+Fraglich.  Oft hat matsim am Ende der Iterationen 5 identische Pläne; die erzeugen dann in der Rechnung $ln(5)$ an zusätzlichem Nutzen; das ist aber auch formal nicht richtig, weil vollständig korrelierte Optionen nicht zum Nutzen beitragen dürfen.  Gunnar wird vielleicht einwenden, dass man hier "path size logit" verwenden sollte ... 
+
+... ich selber würde inzwischen sagen, dass ich finde, dass das zu kompliziert wird.  Die Schönheit des agenten-basierten Ansatzes war doch, dass dass man auch ohne solche statistisch komplizierten Argumente auskommt.
+
+
+(C) Was tun?
+
+Mittelfristig ist das eine Forschungsfrage.  Ein erster Ansatz wäre u.E. eine Variante Deiner frozen epsilons auch für andere Situationen.  Jeder neue Plan kommt dann zusammen mit einem neuen frozen epsilon, wobei die Bandbreite sich eigentlich daran orientieren müsste, wie sehr sich dieser Plan von anderen Plänen unterscheidet.  Dann z.B.:
+
+* nur neue Route -- frozen epsilon wird übernommen
+
+* ...
+
+* neue location -- frozen epsilon stammt aus Horni-Ansatz
+
+Damit ist dann klar, dass der Agent einen $score > V_best$ erhalten kann; das geht ja bereits bei Deinem Paper so.  Aber alle epsilons ist dann bereits im "S" drin, und der Score, den matsim ausspuckt, ist dann einfach nur der tatächliche Nutzen, den der Agent erhält.
+
+(Leider weiß ich nicht, was das mit Cadyts macht, aber man könnte behaupten, dass Cadyts halt genau die frozen epsilons kalibriert.)
+
+
+Nun ja.  Wolltest Du es so genau wissen?  :-)
+
+}
+
+\kwaah{
+danke, soweit ich mich erinnere (siehe Ben-Akiva und Lerman) ist der log sum Term der maximale Nutzen ueber alle Alternativen, d.h. solange die Alternativen nicht identisch
+sind, erhoeht eine wahre zusaetzliche Alternative den Nutzen des Satzes der Alternativen. 
+
+Das ist auch das Argument hinter der Nutzung des log sum terms als Wohlfahrtsmass. 
+}
+
+\gunnar{
+Es gilt in beiden Fällen, so war es ja konstruiert. Kombiniere U = S (1. obiger Abschnitt) und S = V (3. Abschnitt); das liefert U = V. Da $V=E\{U\}$ per Definition, gilt das weiterhin nur, wenn U (also S im 1. Abschnitt) ein Erwartungswert ist.
+
+> bereits im "using" Teil überhaupt von U = V + eps sprechen:
+
+Nur S im "using" Teil, mit einem Verweis auf Teil 3.
+}
 
 % ##################################################################################################################
 
