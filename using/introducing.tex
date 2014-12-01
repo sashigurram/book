@@ -36,9 +36,7 @@ Nash-equilibrium like approaches had been developed in transport assignment sinc
 
 At the end of 1990’s the scene was set for a merger of these strands into a computationally efficient, modular and open-source software enabling further development on travel behavior, network response and efficient computation. 
 
-As shown on the web page \citep[][]{MATSIM-T-Scenarios_Webpage_2015} and detailed in Chapter \ref{ch:scenarios}, MATSim has been applied by local research groups world-wide for multiple different regions.
-
-\kai{Wie gesagt, ich wäre gegen ``MATSim-T'' und für einfach nur ``MATSim''.  Siehe \url{http://matsim.org/conceptual-meeting/2012/notes}.}
+As shown on the web page \citep[][]{MATSIM-T-Scenarios_Webpage_2015} and detailed in Chapter \ref{ch:scenarios}, MATSim has been applied by local research groups world-wide for multiple different regions. \ah{see Discussion~\ref{sec:matsimtd}}
 
 % ##################################################################################################################
 \section{In Brief}
@@ -110,8 +108,67 @@ As MATSim is designed for large-scale scenarios it adopts the computationally ef
 {\includegraphics[width=0.99\textwidth, angle=0]{using/figures/queue.pdf}}%
 {}
 
-For computational reasons the waiting-queue approach is combined with an event-based update step \citep[][]{CharyparEtAl_TRB_2009}. In other words, there is no time-step-based updating process of any agent in the scenario.\footnote{%
+For computational reasons the waiting-queue approach is combined with an event-based update step \citep[][]{CharyparEtAl_TRB_2009}. In other words, there is no time-step-based updating process of any agent in the scenario. \ah{see Discussion~\ref{sec:scenariod}}
 %
+\kai{Aber in der QSim ist das nicht so; die ist ganz normal time-stepped.  Sie schaltet nur Kanten ab, die nicht ``aktiv'' sind.} 
+%
+Instead agents are only touched if they actually require an action. For example, during the time an agent needs to pass a link (i.e., he is waiting in the queue), he does not need to be processed.  \kai{Ich kriege Ärger, wenn agents immer nur männlich sind.  Ist kein Witz; wurde mir bei meinen ersten öffentlichen Auftritten in Berlin sehr deutlich bedeutet.}  Triggering of update events is managed by a global scheduler.
+
+The MATSim traffic flow model, and as we will see also gridlock modeling, is heavily based on the two attributes of a link: storage capacity and flow capacity. Storage capacity defines the number of cars fitting onto a network link. It is a physical property and thus fixed in the simulation. 
+%% For scenarios with a population smaller then the full population, say a 10\% sample, however, it needs to be scaled down, since otherwise there will be no spill-back any more.
+
+Flow capacity specifies the outflow capacity of a link, i.e., how many travelers can leave the respective link. It is an individual attribute of the link. In the earlier DEQSim and in the current JDEQSim an additional inflow capacity can be specified in addition to capture breakdowns at link entries \citep[][p.99]{Charypar_PhDThesis_2008}. The many simulation experiments with Qsim (and queueSimulation) have shown that neglecting inflow capacity does not have a substantial effect but further reduces model complexity. 
+
+An important property of the queue model \kai{...}
+
+
+
+This basic traffic flow model has been extended with various modules: signals and multiple lane modeling have been added (Chapter~\ref{ch:signalslanes}), backward-moving gaps as realized by \citet[][]{Charypar_PhDThesis_2008} are included in Qsim. Interactions between different modes are described in Chapter~\ref{ch:multimodalsim}. Limitations of the traffic flow model concern link dynamics (in particular overtaking and slow drivers) and intersection dynamics (in particular turn restrictions not explicitly modeled in the network). 
+
+
+% ##################################################################################################################
+\section{MATSim's Co-Evolutionary Algorithm}
+\label{sec:co-ev}
+
+
+% ------------
+\createfigure%
+{The Co-Evolutionary Algorithm in MATSim}%
+{The Co-Evolutionary Algorithm in MATSim \kai{Nett.  Gibt es eine Quelle für den ``co-evolutionary algorithm''?}}%
+{\label{fig:ea}}%
+{\includegraphics[width=0.99\textwidth, angle=0]{using/figures/MATSimVSea.pdf}}%
+{}
+% ------------
+
+As illustrated in Figure \ref{fig:ea}, the MATSim equilibrium is searched by a \emph{\index{co-evolutionary algorithm}}. These algorithms co-evolve different species subject to interaction (e.g., competition). In MATSim, the individuals are represented by their plans, where a person represents a species. With the co-evolutionary algorithm, optimization is performed in terms of agents' plans , i.e.\ across the whole daily plan of activities and travel. It achieves more then the standard traffic flow equilibria, which ignore the activities. Eventually, an equilibrium is reached subject to constraints, where the agents cannot further improve their plans unilaterally. Strictly speaking, there is a difference between application of an evolutionary algorithm and a \emph{co}-evolutionary algorithm. An evolutionary algorithm would lead to a system optimum as optimization is applied with a global (or population) fitness function. The co-evolutionary algorithm instead leads to a (stochastic) user equilibrium as optimization is performed in terms of \emph{individual} utility functions and within an agent's set of plans. At the moment, the MATSim co-evolutionary algorithm only includes mutation; recombination may come into play when co-ordinated day plans of family members, for example, are included in the future.
+
+
+% ##################################################################################################################
+\section{Discussions}
+% =============================================================================================
+\subsection{MATSim-T, MATSim-F, MATSim}
+\label{sec:matsimtd}
+
+\kai{Wie gesagt, ich wäre gegen ``MATSim-T'' und für einfach nur ``MATSim''.  Siehe \url{http://matsim.org/conceptual-meeting/2012/notes}.}
+
+\kai{
+Bei einem der meetings (m.E. conceptual, aber es mach auch developer gewesen sein) gab es mal eine Diskussion, ob wir die Bezeichnung "toolbox" wirklich beibehalten wollen.
+
+Wir waren uns damals einig, dass matsim eher ein framework als eine toolbox ist.
+
+(ca. 30 vs. ca. 3 hits auf matsim.org)
+
+Inzwischen, mit den "scripts-in-java", weicht das langsam ein wenig auf.  Aber wir hatten damals eigentlich beschlossen, sowohl auf "-T" als auch auf "-F" zu verzichten.
+
+(Wir brauchen einen "Stadtschreiber", damit wir uns an solche Diskussionen erinnern. :-) )
+
+Sollten wir das dann nicht auch im "Buch" machen?  Gibt es Personen, die an dem "-T" hängen?
+
+}
+
+% =============================================================================================
+\subsection{Scenario}
+\label{sec:scenariod}
 \kwaah{We should add at the start that 'scenario' is the combination of case study data (population size, initial plans, networks and facilities), policies, the selected replanning modules and the selected traffic flow simulation.} 
 %
 \kai{I have to admit that I have that differently in my head.  
@@ -123,7 +180,8 @@ Selected replanning modules and selected traffic flow simulation is config; a sc
 And policy is policy; essentially the difference between (base case scenario | base case config) and (policy case scenario | policy case config).  
 %
 All three things together are a study for me.} 
-%
+
+
 \kai{Wobei ``scenario'' so wie hier im ursprünglichen Text benutzt m.E.\ stehen bleiben kann.}
 %
 
@@ -188,41 +246,6 @@ Kay
 
 \gunnar{Ich weiss nicht, ob es hilft: Ich habe bislang "scenario" als "sufficient set of boundary conditions to execute the simulation" verstanden und "configuration" dann als dessen technische Spezifikation.
 }
-
-}
-%
-\kai{Aber in der QSim ist das nicht so; die ist ganz normal time-stepped.  Sie schaltet nur Kanten ab, die nicht ``aktiv'' sind.} 
-%
-Instead agents are only touched if they actually require an action. For example, during the time an agent needs to pass a link (i.e., he is waiting in the queue), he does not need to be processed.  \kai{Ich kriege Ärger, wenn agents immer nur männlich sind.  Ist kein Witz; wurde mir bei meinen ersten öffentlichen Auftritten in Berlin sehr deutlich bedeutet.}  Triggering of update events is managed by a global scheduler.
-
-The MATSim traffic flow model, and as we will see also gridlock modeling, is heavily based on the two attributes of a link: storage capacity and flow capacity. Storage capacity defines the number of cars fitting onto a network link. It is a physical property and thus fixed in the simulation. 
-%% For scenarios with a population smaller then the full population, say a 10\% sample, however, it needs to be scaled down, since otherwise there will be no spill-back any more.
-
-Flow capacity specifies the outflow capacity of a link, i.e., how many travelers can leave the respective link. It is an individual attribute of the link. In the earlier DEQSim and in the current JDEQSim an additional inflow capacity can be specified in addition to capture breakdowns at link entries \citep[][p.99]{Charypar_PhDThesis_2008}. The many simulation experiments with Qsim (and queueSimulation) have shown that neglecting inflow capacity does not have a substantial effect but further reduces model complexity. 
-
-An important property of the queue model \kai{...}
-
-
-
-This basic traffic flow model has been extended with various modules: signals and multiple lane modeling have been added (Chapter~\ref{ch:signalslanes}), backward-moving gaps as realized by \citet[][]{Charypar_PhDThesis_2008} are included in Qsim. Interactions between different modes are described in Chapter~\ref{ch:multimodalsim}. Limitations of the traffic flow model concern link dynamics (in particular overtaking and slow drivers) and intersection dynamics (in particular turn restrictions not explicitly modeled in the network). 
-
-
-% ##################################################################################################################
-\section{MATSim's Co-Evolutionary Algorithm}
-\label{sec:co-ev}
-
-
-% ------------
-\createfigure%
-{The Co-Evolutionary Algorithm in MATSim}%
-{The Co-Evolutionary Algorithm in MATSim \kai{Nett.  Gibt es eine Quelle für den ``co-evolutionary algorithm''?}}%
-{\label{fig:ea}}%
-{\includegraphics[width=0.99\textwidth, angle=0]{using/figures/MATSimVSea.pdf}}%
-{}
-% ------------
-
-As illustrated in Figure \ref{fig:ea}, the MATSim equilibrium is searched by a \emph{\index{co-evolutionary algorithm}}. These algorithms co-evolve different species subject to interaction (e.g., competition). In MATSim, the individuals are represented by their plans, where a person represents a species. With the co-evolutionary algorithm, optimization is performed in terms of agents' plans , i.e.\ across the whole daily plan of activities and travel. It achieves more then the standard traffic flow equilibria, which ignore the activities. Eventually, an equilibrium is reached subject to constraints, where the agents cannot further improve their plans unilaterally. Strictly speaking, there is a difference between application of an evolutionary algorithm and a \emph{co}-evolutionary algorithm. An evolutionary algorithm would lead to a system optimum as optimization is applied with a global (or population) fitness function. The co-evolutionary algorithm instead leads to a (stochastic) user equilibrium as optimization is performed in terms of \emph{individual} utility functions and within an agent's set of plans. At the moment, the MATSim co-evolutionary algorithm only includes mutation; recombination may come into play when co-ordinated day plans of family members, for example, are included in the future.
-
 
 % ##################################################################################################################
 
