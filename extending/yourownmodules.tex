@@ -7,7 +7,6 @@
 \section{Introduction}
 \label{sec:ownmodules-intro}
 
-\subsection{Extensions to and modifications of the co-evolutionary process}
 
 As explained in Section~\ref{sec:co-ev}, \acrshort{matsim} at its core is a co-evolutionary cycle consisting of the three elements \lstinline$Mobsim$, \lstinline$Scoring$, and replanning.  All three elements operate on what is essentially an in-memory object-oriented data base of \lstinline$Person$ objects \citep{RaneyNagel2006traf-framework}.  
 %
@@ -42,11 +41,10 @@ Additionally, one can write nearly arbitrary event handlers for analysis.
 Such analysis is either possible during the iterations, or after a run by re-playing the events file.
 
 
-\subsection{Extensions to and modifications of specific elements}
 
 Some modules are so large that fully replacing them in order to adapt the simulation system to one's need is too much work.  These are, in particular,
 \begin{compactitem}
-\item the \lstinline$QSim$, which is the default implementation of the \lstinline$Mobsim$, and
+\item the \lstinline$QSim$, which is the default implementation of the \lstinline$Mobsim$ interface, and
 \item the router.
 \end{compactitem}
 In consequence, it is possible to add material into the execution flow of the \lstinline$QSim$ by \lstinline$MobsimListeners$ in a similar way as this is possible with the \lstinline$ControlerListeners$ mentioned above.
@@ -54,7 +52,7 @@ In consequence, it is possible to add material into the execution flow of the \l
 The router, in contrast, is most importantly configured by replacing the definition of the generalized travel cost. 
 
 % ##################################################################################################################
-\section{MATSim Extension Points}
+\section{Extension Points}
 This section describes what could be called the service provider interface (SPI) of MATSim.
 Historically, the main entry-point for writing a MATSim extension has been to literally extend (in the Java sense)
 the Controler class.  Essentially, one would override the methods calling the mobsim, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. This is now discouraged. While this pattern worked when a each member of the team
@@ -104,16 +102,12 @@ This is then retrieved by
   (MyContainer) scenario.getScenarioElement( "myContainer" ) ;
 \end{lstlisting}
 
-\subsection{Controler}
-\label{sec:controlerextension}
-%http://ci.matsim.org:8080/job/MATSim_M2/javadoc/org/matsim/core/controler/package-summary.html
-Controler remains the main user-facing class of MATSim, but please do not subclass it. Rather,
-use its setter methods to plug in your own code.
-
 % =========================================================================================
 \subsection{ControlerListener}
 \label{sec:controlerListener-extension-point}
-
+\label{sec:controlerextension}
+Controler remains the main user-facing class of MATSim, but please do not subclass it. Rather,
+use its setter methods to plug in your own code.
 ControlerListeners are called at the transitions of the washing-machine diagram, in undefined order.
 Thus, AControlerListener may only rely on the computation of BControlerListener if BControlerListener
  makes that computation in an earlier transition. For instance, if BControlerListener is a StartupListener
@@ -178,6 +172,15 @@ the framework. It is generally not safe to share state between them. The framewo
 the methods of an \lstinline$EventHandler$ instance are called sequentially, but two different instance
 may run on different threads of execution. Access to shared data must be synchronized externally. Whenever
 possible, different \lstinline$EventHandler$ instances should only communicate through events.
+
+\subsection{Mobsim}
+Besides adding \lstinline$MobsimListener$ implementations to enrich the standard \lstinline$Mobsim$, it is also possible to replace
+the entire \lstinline$Mobsim$ by a custom implementation. A \lstinline$Mobsim$ is basically
+a \lstinline$Runnable$ which is supposed to take a \lstinline$Scenario$ and
+produce a stream of \lstinline$Events$.
+This allows you to use the co-evolutionary framework of MATSim while replacing the traffic model itself.
+Your implementation need not be written in Java. The framework includes a helper class to call an arbitrary
+executable which is then expected to write its \lstinline$Event$ stream into a file. 
 
 \subsection{PlanStrategy}
 \label{sec:replanning-extension-point}
