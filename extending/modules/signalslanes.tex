@@ -1,4 +1,4 @@
-\chapter{Signals and Lanes}
+\chapter{Traffic Signals and Lanes}
 \label{ch:signalslanes}
 % ##################################################################################################################
 
@@ -19,7 +19,7 @@ control improves the traffic conditions at a single junction, it might not resul
 % As result of an improved traffic-responsive signal control at two single junctions, network wide changes in travel patterns can evolve}~\cite{Burghout2007HybridSimulationAdaptiveSignal}. 
 \citet{Hu1997D2DFlowEvolutionReactiveSignalsDynasmart} argue that
 second order or network effects should be taken into account when effects of signal control strategies are tested. Network effects include drivers' reactions not only in terms of route choice but also in terms of scheduling. 
-Thus, traffic control and especially traffic-responsive signals need to obey some constraints. Otherwise, traffic may become unstable at the network level. 
+Thus, traffic control and especially traffic-responsive signals need to obey some constraints. Otherwise, traffic may become unstable, already at two nearby junction, or at the network level~\citep{LaemmerHelbing2010SelfStabilizingSignalControlRealNet}. 
 %Thus, traffic-responsive signals can perform much worse than a fixed-time control in some situations~\citep{LaemmerHelbing2010SelfStabilizingSignalControlRealNet}. 
 MATSim can capture most of these effects. 
 
@@ -51,7 +51,7 @@ The Cottbus scenario presented in Chapter~\ref{ch:scenarios:cottbus} is applied 
 This section summarizes results published in~\citet{GretherBischoffNagel2011CottbusSylviaEventAbstract,Grether2014PhD}, readers interested in details are referred to these publications. 
 
 %
-The runs sequence of the base case is performed with three different signal control strategies:
+The runs sequence is performed with three different signal control strategies:
 %
 In a first simulation sequence, all traffic signals are switched off. This can be used as a lower bound for results concerning signal control since it assumes that vehicles are able to traverse a crossing without any accident, i.e., they are able to drive ``through each other''. 
 %
@@ -88,7 +88,7 @@ The differences are small because of the lack of heavy congestion in the Cottbus
 
 A change of signal control has more effect if some unexpected traffic occurs in the network. 
 It is assumed that the local soccer club ``FC Energie Cottbus'' has a derby that takes place on a normal weekday, thus interfering with the regular commuter traffic. 
-In the last iteration of the run sequences, in addition to the commuters $0$ to $2000$ vehicles drive to the soccer stadium of Cottbus during the evening peak. 
+In iteration 1000 of the commuter scenario, in addition to the commuters $0$ to $2000$ vehicles drive to the soccer stadium of Cottbus during the evening peak. 
 It is assumed that 25 \% of these fans come from Cottbus,
 while the other 75 \% come from the ``Spree-Nei{\ss}e'' area around Cottbus, and that all fans start their trips between 17:00 and 18:00. 
 
@@ -100,21 +100,22 @@ approx.~$1 \, min$ per traveler.
 The more additional traffic is approaching the stadium, the more the traffic-actuated control saves travel time. In the case where 2000 additional vehicles are on the road, travel time savings reach ca.~$15\, min$~per traveler. 
 
 Summarizing: Slightly jammed commuter scenarios, where a change in traffic signal control leads to heavily decreased overall travel time, have not been simulated with MATSim, yet. 
-Looking at different objectives with more fine grained analysis tools can reveal network wide effects~\citep[e.g.~see the analysis using macroscopic fundamental diagrams, pp.114]{Grether2014PhD}, but this is work in progress.  
+Looking at different objectives with more fine grained analysis tools can reveal network wide effects~\citep[e.g.~see the analysis using macroscopic fundamental diagrams][pp.114]{Grether2014PhD}, but this is work in progress.  
 More heavily jammed scenarios can increase the overall traffic impact of a change in traffic signal control. Nevertheless the case study shows significant effects of traffic-responsive signal control, if something unexpected happens and travelers do not react.  
 
 \subsection{Overview -- MATSim \& Traffic Signals}
 
 The presented case study highlights some already researched aspects of MATSim simulations with traffic signals. 
 MATSim is not the tool of choice for all questions concerning traffic signal control. 
-The codebase, however, can also help to simulate other use cases, e.g.~evacuation or air transport scenarios. 
+The codebase, however, can also help to simulate other use cases, e.g., evacuation or air transport scenarios. 
 MATSim's open source nature provides hooks and interfaces for extension. 
 But you should consider the amount of work required to get things done in respect to the current state of development and your project planning. 
 The remaining chapter provides deeper insight.  
 %If you need highly detailed traffic flow models or a high detail network representation, you should consider other tools. 
-Sec.~\ref{sec:signals_traffic_signal_control} provides some traffic signal control backgrounds, vocabulary, and options for modeling with MATSim. More details can be found in the traffic signals user guide.  
+Sec.~\ref{sec:signals_traffic_signal_control} provides some traffic signal control backgrounds, vocabulary, and options for modeling traffic signals with MATSim. 
+Technical details can be found in the traffic signals user guide.  
 Sec.~\ref{sec:signals_network_traffic_flow} goes into details of network and traffic flow modeling. 
-If your requirements are met, Sec.~\ref{sec:signals_iterations_learning} considers iterations and learning. 
+Iterations and learning are discussed in Sec.~\ref{sec:signals_iterations_learning}. 
 When it comes to agent based learning, MATSim is very fast -- the presented case study requires on average~$17$ seconds computation time per iteration -- for scoring, replanning, and output. One complete run sequence ($1000$ iterations, single core mobility simulation, multi core replanning) was simulated in $9 \, h$ and $12 \, min$. 
 The speed of simulation leaves room for exploration of network wide behavioral reactions on changes of traffic signal control. 
 Furthermore, the resource efficient simulation enables the joint simulation of several policies. 
@@ -144,18 +145,25 @@ The diversity of traffic-responsive control algorithms is wide, for a review the
 
 MATSim's traffic signal module is designed to simulate all different kinds of traffic signal control strategies. 
 The module provides a default implementation for fixed-time control. 
-Traffic-responsive strategies require custom implementation of the control algorithm but can make use of the existing data formats. 
+Traffic-responsive strategies require custom implementation of the control algorithm but can make use of the existing data formats and fixed-time control infrastructure. 
 Data is divided into five different types of input:
 \begin{description}
-	\item[Signals:] The location of the traffic signal hardware on the network is typically independent from the control strategy. Signals can be located at the end of a link or a lane, see the next section for further discussion of lanes. Signals are attached to a system that reflects e.g.~all signals of a junction or even larger units. Each signal system is controlled by exactly one control algorithm at a time.  
-	\item[Signal Groups:] Traffic signals have to be attached to a group. A group of signals shows the same color at the same time. Each time a signal group changes its state a MATSim event is triggered. 
-		There is no explicit representation of phases. If required this can be realized on top of the signal groups.  
-	\item[Control:] A signal control comprises information for fixed-time control and can be used to specify custom control algorithms per system. 
-	\item[Amber:] This input specifies the time of amber at the beginning and end of green time. At time of writing this information is only used for visualization purposes. 
-		Driving is not permitted if a traffic signal shows amber light. 
-	\item[Intergreens:] An intergreen time specifies the minimal time period between the ending of the one and the beginning of another signal group's green time.  
+	\item[Signals \& Systems:] The location of the traffic signal hardware on the network is typically independent from the control strategy. 
+		Signals can be located at the end of a link or a lane, see the next section for further discussion of lanes. Signals are attached to a system that reflects, e.g., all signals of a junction or even larger units. 
+		Each signal system is controlled by exactly one control algorithm at a time.  
+	\item[Signal Groups:] Traffic signals have to be attached to a group. 
+		A group of signals shows the same color at the same time. 
+		Each time a signal group changes its state a MATSim event is triggered. 
+		There is no explicit representation of phases. 
+		If required this can be realized on top of signal groups.  
+	\item[Signal Control:] Specifies the control algorithm for each signal system. 
+		Data comprises information for fixed-time control and can be extended to capture parameters of custom control algorithms. 
+	\item[Amber:] Specifies the time of amber at the beginning and end of green time. 
+		At time of writing this information is only used for visualization purposes. 
+		Driving is not permitted if a traffic signal group shows amber light. 
+	\item[Intergreens:] The intergreen time specifies the minimal time period between the ending of the one and the beginning of another signal group's green time.  
 		This information is fairly important as MATSim's traffic flow model does not contain any collision detection. 
-		When available, a validation module reads the event stream and triggers a warning or an error if security constraints are violated. 
+		A validation module reads the event stream and triggers a warning or an error if security constraints are violated. 
 		Further, customized control strategies can access this information to ensure the validity of control in respect to security aspects.    
 \end{description}
 
@@ -229,7 +237,7 @@ Links depict road segments while nodes can be interpreted as decision points in 
 Fig.~\ref{fig:real_road_layout} illustrates a typical layout of a real-world road segment with several turn pockets at its end. 
 If the whole road segment is modeled as a single link with MATSim's queue model the first vehicle stopping at a red traffic signal at the end of this link will block all other vehicles approaching upstream, see Fig.~\ref{fig:lanes_representation_single_queue}. 
 In respect to the road layout shown in Fig.~\ref{fig:real_road_layout} this is not realistic. 
-Fig.~\ref{fig:model_link_layout} sketches the layout for a more realistic modeling. 
+Fig.~\ref{fig:model_link_layout} sketches the network layout for a more realistic modeling. 
 Vehicles with distinct turn intentions do not block each other until the available space for queueing on the turn pocket is used completely, see Fig.\ref{fig:lanes_representation_multiple_queue}. 
 
 \createfigure%
@@ -253,11 +261,11 @@ But, considering overall project constraints, this has implications for network 
 
 In MATSim, all domain relevant attributes that differ from geospatial location, e.g.~traffic count data, transit stops, transit lines, or speed limits, are attached to links. 
 If one of this attributes changes you have to model several links. 
-Frequently, geospatial location of such attributes is not sufficient for an fully automatic matching between attributes and links. 
-Some attributes and links require manual postprocessing. 
+Frequently, geospatial location of such attributes is not sufficient for a fully automatic matching from attributes to links. 
+Some data requires manual postprocessing. 
 If you want to simulate traffic signals and turn pockets with an already existing scenario, spend some thoughts on your matching process before you change the network.  
 
-MATSim specifies routes as sequences of links. 
+Routes of travelers are specified by sequences of links within MATSim. 
 Routes are generated by a shortest path algorithm that needs a cost function for links. 
 In standard MATSim travel time on links is part of a link's cost.
 While modeling turn pockets as links, the shortest path algorithm is responsible to select the appropriate turn pocket on a route.
@@ -268,33 +276,33 @@ So, it is important that you understand the interaction of route generation and 
 If the network modeling or routing issues conflicts with other goals of your project, there is an alternative available. 
 MATSim allows the modeling of a subgraph on top of each link that reflects the structure shown in Fig.~\ref{fig:model_link_layout}. 
 The links of the subgraph are then called \emph{lanes}. 
-At the beginning of a link only one lane is necessary. 
-But at the end of a link different lanes may exist to model the available turn pockets. 
-So, for a vehicle it is necessary to be in the correct turning lane for the next downstream link of it's route.
+At the beginning of a link only one lane can be modelled while at the end of a link different lanes can exist to model turn pockets. 
+For a vehicle it is necessary to be in the correct turning lane for the next downstream link of it's route. 
+If there is only one lane towards the downstream link the vehicle uses this lane. 
 If there is more than one lane leading to the next downstream link the vehicle is placed on the lane that currently contains the smallest number of other vehicles. % if there are several lanes leading to the same downstream link. 
-Specific turning moves can be forbidden. 
-If lanes are used, the shortest path algorithm is set up on the line graph of the original network graph.  
-Thereby, the turn restrictions are considered when the line graph is created. 
+Using lanes, specific turning moves can be forbidden as the shortest path algorithm underlying network graph is modified.  
+Thereby, the turn restrictions are considered when the network graph is created. 
+%set up on the line graph of the original network graph.  
 %The dynamic link travel times for the line graph reflect the link travel time on the original network plus the travel time for the specific turning move. 
-The shortest path calculation captures the effects of lanes without further modification. 
+The shortest path calculation captures the effects of lanes without further modification, see \citet[][pp.~21]{Grether2014PhD}.  
 %In addition, turn restrictions cannot be captured by standard shortest path algorithms. 
 
 Besides the mentioned differences lanes behave similar or equal to links.  
+Vehicles entering or leaving lanes trigger events that possess the same structure and information as link enter and leave events.
 Traffic signals can be placed at the end of links and lanes. 
 Traffic on each lane is simulated the same way as for links. 
-Traffic flow increases linear in the green time of a signal. 
-Vehicles entering or leaving lanes trigger events that possess the same structure and information as link enter and leave events.
+Traffic flow increases linear in the green time of a signal for both, links and lanes. 
 
 At the end it is up to you to use lanes or not. 
 Most MATSim scenarios with signals are set up using lanes, the codebase is considered well debugged. 
-Without lanes the code for traffic signals is also tested, but you should double check the routing for artefacts. 
+Without lanes the code for traffic signals is also tested, but you should double check for artefacts and understand influences on the route generation. 
 
 \section{Iterations \& Learning}
 \label{sec:signals_iterations_learning}
 
 This section discusses the interaction between traffic signals and travelers within the MATSim iteration cycle. 
 
-\citet{Meneguzzer1997ModelReviewTrafficAssignmentSignalControl} defines the {\bf combined traffic assignment and control problem} (CTAC) as finding a tuple $(f^{*}, g^{*})$ of traffic flows $f$ and signal settings $g$ under policy $P$ that fulfills  
+\citet{Meneguzzer1997ModelReviewTrafficAssignmentSignalControl} defines the combined traffic assignment and control problem as finding a tuple $(f^{*}, g^{*})$ of traffic flows $f$ and signal settings $g$ under policy $P$ that fulfills  
 \[
 f^{*} = f^{e}[g^{P}(f^{*})] \mbox{  or  equivalently } g^{*} = g^{P}[f^{e}(g^{*})]
 \]
@@ -304,21 +312,22 @@ Nicely, the formulation shows the mutual interaction of traffic patterns and sig
 The time horizon, on that these interactions take place, is not captured by the formulations. 
 
 The interpretation of traffic signals within the MATSim iteration cycle depends strongly on the type of signal control and your interpretation of the learning mechanism. 
-For a fixed-time control the fixed-point interpretation can be valid, at least if you do not expect something unexpected. 
+For a fixed-time control the fixed-point interpretation can be valid, at least if you do not expect something unexpected happening on the demand side. 
 For traffic-actuated signal control strategies no standard interpretation can be provided. 
-Readers willing to dig deeper are referred to~\citet[pp.~75][]{Grether2014PhD}.  
+Readers willing to dig deeper are referred to~\citet[][pp.~75]{Grether2014PhD}.  
 Here we conclude with the advice to document clearly what and how you have simulated and provide an interpretation that makes sense from your point of view.    
 
 \section{Conclusion} %{Traffic Signals in MATSim}
 \label{sec:signals_evaluation_conclusion}
 
-Before we conclude, a few thoughts on evaluation of traffic signal control. 
+%Before we conclude, a few thoughts on evaluation of traffic signal control. 
 MATSim can simulate traffic signal control microscopically. 
 But, certain effects of traffic signals are not represented by MATSim without further customization and implementation, e.g.~microscopic de- and acceleration as reaction on traffic control. 
-So check your evaluation and interpretation against your simulation setup. 
+So check your evaluation and interpretation against your simulation setup if everything that you derive from simulation results is also appropriately simulated.  
+
 
 After reading this chapter you got an overview of traffic signals in MATSim. 
-You know what to consider before you make your first steps in a larger scenario. 
+You know what to consider before you make your first steps in  larger scenarios. 
 As technical documentation outdates quickly the chapter tries to avoid technical details as there is also an incrementally improving user guide\footnote{Find the user guide  in the contribution ``signals'' where in future days the package \lstinline|signalsystems| is moved \kai{vermutl.\ \url{http://ci.matsim.org:8080/job/MATSim_contrib_M2/org.matsim.contrib$signals/javadoc/?}, sobald ex functioniert.}}.  
 We think that MATSim is a great tool if it comes to microscopic simulated traffic-responsive signal control that shall be analyzed network wide assuming heterogeneous user reactions. 
 
