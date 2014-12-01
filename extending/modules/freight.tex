@@ -1,30 +1,74 @@
-\chapter{Freight Traffic \who{Zilske, Joubert, Schröder?}}
+\chapter{Freight Traffic}
 \label{ch:freight}
 % ##################################################################################################################
 
 \hfill \textbf{Author:} Michael Zilske, Johan W. Joubert
 
-\begin{center} \includegraphics[width=0.25\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
-
 % ##################################################################################################################
 
-Package:
-\begin{itemize}
-	\item \lstinline|org.matsim.contrib.freight|
-\end{itemize}
 
-Usage: CarrierControlerListener
+\section{Carriers}
+\label{sec:carriers}
 
-Literature: \citet[][]{ZilskeEtAl_TechRep_VSP_2012, ShahM_TechRep_IVT_2010}
+Up to now, real-world scenarios set up with MATSim have modeled the freight traffic share of
+the demand by using a set of plans with activities at the depot and at pick-up and delivery
+locations, but with no variability in any choice dimension except route choice. We improve on
+this situation by modeling freight vehicles as non-autonomous agents employed by and serving
+the interests of freight operators. The missing choice dimensions of freight vehicle drivers are
+then realized as logistics decisions made by the freight operators who employ them. In the
+freight transport sector, decisions are distributed among actors with different roles. Freight
+transport decisions include lot-size choice, path-searches in logistical networks, vehicle choice
+and tour planning. The planning problem of a freight operator is therefore quite different from
+its passenger counterpart:
 
-matrix-based?
+Firstly, the success of freight transport plans is not determined by the utility of time
+spent at activity locations, but rather by their commercial success. They have to meet the
+requirements of customers, like meeting time windows and providing enough capacity at
+a reasonable cost.
+
+Secondly, freight operators often do not operate one single vehicle but several, and their
+options include rescheduling deliveries from one vehicle to another or even changing the
+number of vehicles which are used at all.
+
+Therefore, a new software layer populated by \emph{carrier agents} was introduced into the
+simulation. Each carrier agent represents a firm with a vehicle fleet, depots and contracts.
+Contracts determine type and quantity of goods to be carried. A contract contains the respective 
+origin and destination as well as pick-up and delivery time windows.
+The plan of a carrier agent contains a schedule of a tour for each of the vehicles in the fleet. 
+The schedule contains planned pick-up, delivery or arrival times at customer locations and a route through 
+the physical network. In our basic model, all vehicle schedules of a carrier begin and end at one of its depots.
+When a simulation scenario is initialized, the carrier agents build a schedule for each of their vehicles, 
+including a route through the transport network, with pick-up and delivery activities corresponding to their contracts.
+At the interface between the freight operator plans and the mobility simulation, the set of routed vehicles 
+from each carrier plan is injected into the traffic demand as individual driver agents, where they move 
+through the traffic system along with passenger vehicles. While executing their plans, the freight driver 
+agents report their shipment-related activities back to the carrier.
+When all plans have been executed, agents evaluate the success of their plan. The carrier agents use a custom 
+utility function that captures their economic success. Their cost is calculated as a sum of vehicle-dependent 
+distance and time costs incurred by their scheduled vehicles, and some individual fixed costs, plus penalties 
+incurred by missed time windows.
+Finally, carrier agents create new plans to improve their performance in the next iteration. For instance, 
+a time dependent vehicle routing heuristic can be plugged in to replan vehicle schedules. Shipments can be 
+switched between vehicles, or even an entire vehicle added or removed.
+During repeated executions of their plans, passengers as well as carriers collect experience from the transport 
+system. The carriers pick up congestion and other disturbances in the traffic system when they incur a higher 
+cost through longer vehicle usage, or by penalizing missed pick-up and delivery times.
+
+The planning algorithms themselves are implemented in the project jsprit, a library separate from MATSim.
+In the replanning phase of each iteration, jsprit is called and replans the carrier plans.
+
+For more details about the implementation as well as more references see the technical report by \citet[][]{ZilskeEtAl_TechRep_VSP_2012}.
+
 
 % Package that plugs freight algorithms (programmed in external package jsprit) into matsim.
 % * A good starting point is <a href="https://github.com/jsprit/jsprit/wiki/Network-Based-VRPs"> 
 % * https://github.com/jsprit/jsprit/wiki/Network-Based-VRPs</a>.
 
 
+% ##################################################################################################################
+\section{Zurich}
 
+Literature: \citet[][]{ShahM_TechRep_IVT_2010}
 
 %Sebastian Schneider has done a Ph.D. dissertation about generating freight vehicle chains by essentially re-sampling the information
 % * contained in the German survey KiD.  Since the KiD is essentially an activity-based travel diary, the method should also be applicable

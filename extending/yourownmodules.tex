@@ -69,10 +69,8 @@ format, often in a file named \lstinline$config.xml$:
 <module name="qsim" >
 		<param name="flowCapacityFactor" value="0.2" />
 		<param name="storageCapacityFactor" value="0.3" />
-
-		<!-- `queue' for the standard queue model, `withHolesExperimental' (experimental!!) for the queue model with holes -->
-		<param name="trafficDynamics" value="queue" />
 </module>
+
 <module name="transit" >
 		<!-- Comma-separated list of transportation modes that are handled as transit. Defaults to 'pt,bus,train,tram'. -->
 		<param name="transitModes" value="pt" />
@@ -89,18 +87,15 @@ using Java annotations.
 % =========================================================================================
 \subsection{ScenarioElement}
 
-As explained in Section~\ref{sec:ownmodules-intro}, the \lstinline$Person$ objects are stored in an in-memory object-oriented data base.  This means that they are read into memory at the beginning of a run, kept in memory during the whole run, and written to files at the end of a run.
-%
-The same approach, i.e.\ reading a file into memory and keeping it there, has always been used for the network, consisting of links and nodes, although here it is less normal that this data is modified over the iterations.
+The object-oriented in-memory database which holds the \lstinline$Person$ objects with their plan memories is accessible via the
+\lstinline$Population$ interface. The \lstinline$Network$ interface gives access to the traffic network graph, consisting of links and nodes.
+There is a \lstinline$TransitSchedule$ interface which represents the public transit schedule. Your own modelling tasks may need an additional data container
+like these. We call them scenario elements. The freight carrier population of the freight extension described in section \ref{sec:carriers} is a typical example. 
 
-Since then, additional data containers were introduced for vehicles, households, the transit schedule, and activity facilities (see Section \kai{which one}).  These provide additional modelling options, yet they are only loosely connected to the \acrshort{matsim} core.  It then became increasingly obvious that there is no standard set of data containers, but different modelling tasks need different containers.  For example, traffic signals need signal plans, while freight modelling needs a separate population of freight forwarders.  It was thus decided to allow for the addition of arbitrary scenario elements, by the syntax
-\begin{lstlisting}
-  scenario.addScenarioElement( "myContainer", new MyContainer() ) ;
-\end{lstlisting}
-This is then retrieved by
-\begin{lstlisting}
-  (MyContainer) scenario.getScenarioElement( "myContainer" ) ;
-\end{lstlisting}
+\lstinline$Scenario$ is the interface which ties all scenario elements together. You can add your own named scenario element
+to the \lstinline$Scenario$ at startup, for example in a \lstinline$StartupListener$. All standard scenario elements are populated
+from XML files at startup, but your own scenario elements could just as well be interfaces to an external relational database.
+
 
 % =========================================================================================
 \subsection{ControlerListener}
