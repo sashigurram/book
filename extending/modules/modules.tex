@@ -14,6 +14,48 @@ In this chapter you will learn about the possibilities to configure, extend, and
 % ##################################################################################################################
 \section{MATSim Modularity}
 
+\kai{Andreas, haben wir noch eine Chance, diese Ungleichheiten in der Nomenklatur geradezuziehen?  contrib vs extension; PlanStrategy vs StrategyModule; ... Marcel hat das irgendwie nie gestört, oder er hatte besonderen Spass daran.}
+
+\subsection{Levels of access}
+
+\acrshort{matsim} currently provides four levels of access: using the core only, using core and contribs, writing ``scripts in \gls{java}'', and finally writing your own extensions.
+
+\paragraph{Using the core only}
+
+In order to use the core only, one needs to do the following:
+\begin{compactitem}
+\item Download a \acrshort{matsim} release or a nightly build \kai{url?}.
+\item Minimally obtain a network file and an initial plans file.  Small versions can be typed by hand; larger versions should be generated automatically by some computational method.
+\item Write or edit a config file.
+\item Click on the \acrshort{matsim} jar file\footnote{This works since winter 2014/15 and should be in the 0.7.0 release.} and follow the instructions. 
+\end{compactitem}
+We think that the \acrshort{matsim} core is already quite powerful; for example, the synthetic persons already follow full daily plans with a full daily scoring function and in consequence opening times for activity types, departure time choice, and schedule delay can be investigated.  Also, schedule-based public transit assignment is contained in the core.
+
+\paragraph{Using core and contribs}
+
+Contribs are in a separate part of the repository, separate from the core.  The documentation is not yet fully organized, but one way to find out about contribs is \url{http://matsim.org/javadoc}, where they are listed.  There are also release versions \kai{check} and nightly builds \kai{url?}.
+
+In general, contribs should provide main methods with which they can be used.  We might eventually provide clickable jar files here as well, but for the time being the extensions need to be bundled with core \acrshort{matsim} (and potentially other contribs).  The syntax roughly is
+\begin{lstlisting}
+java -Xmx2000m -cp MATSim.jar:contrib/contrib.jar org.matsim.contrib.run.Main config.xml  
+\end{lstlisting}
+\kai{Maybe better point to electronic docu?}
+where
+\begin{compactitem}
+\item \lstinline$-Xmx2000m$ increases the \gls{java} heap space so that most \acrshort{matsim} runs fit in
+\item \lstinline$MATSim.jar$ needs to be replaced by a relative or absolute path to the \acrshort{matsim} jar to be used
+\item \lstinline$contrib/contrib.jar$ needs to be replaced by a relative or absolute path to the contrib jar to be used
+\item \lstinline$org.matsim.contrib.run.Main$ needs to be replaced by full java class name containing the desired main method (given by the contrib documentation)
+\item \lstinline$config.xml$ needs to be replaced by a relative or absolute path to a config file, which may contain additional sections specifically for the contrib
+\end{compactitem}
+
+It is possible to combine several contribs in this way, provided someone has made available a corresponding main method.  This can in principle be done relatively quickly, so persons who want to run studies with combinations of existing contributions but without programming skills can ask someone with access to the repository to help.
+
+\subsection{The ideas behind this setup}
+
+
+\subsection{Other}
+
 \paragraph{Rings}
 \begin{compactitem}
 \item data containers  
