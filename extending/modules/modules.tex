@@ -179,18 +179,27 @@ Also the standalone tools referencing MATSim as a library, such as the network e
 
 % ===================================================================================
 \subsection{Current Problems With Modules}
-The majority of the replanning modules have their own section in the configuration file, but some do not, such as the \lstinline|TripsToLegsModule|. In that package---called modules---there are furthermore, the factories for the plan selectors. For the selectors and their factories, it is unclear if they are modules.
 
-To make things worse, there are cases where module names in the configuration file are not (yet) consistent with the naming in the code. Examples are ``\lstinline|strategy|'' in the configuration file and ``\lstinline|StrategyManager|'' in the code, or ``strategy module'' in the config file and ``\lstinline|PlanStrategy|'' in the code \ah{Nochmals nachsehen!}. Furthermore, modules are atomic. There is, for example, a module called ``\lstinline|ChangeSingleLegMod|'', a module ``\lstinline|ChangeLegMode|'' and a module ``\lstinline|SubtourModeChoic|'' instead of one single module called ``\lstinline|ModeChoice|''. This, on the one hand, has historical reasons; the three modules were developed temporally separated. On the other hand, the parameter set for a module is only minimal and unambiguous if provided for atomic modules as different parameters are required for the three modules.
+\kai{Habe diesen ganzen Abschnitt mal probehalber auskommentiert.  Module können auf vielen Ebenen auftreten, dass sie das tun, ist kein Fehler.  Manche der Aspekte können wir immer noch in den spezifischen Kapiteln beschreiben (es gibt tatsächlich einen Grund, warum es die ganzen unterschiedlichen mode innovation modules gibt); manche können wir vielleicht noch vor Fertigstellung des Buches im Code aufräumen.}
 
-For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be ``mode choice'' instead of the atomic categories, where we use terms ``functionality'' for the larger categories and ``module'' for the atomic components.
+%% The majority of the replanning modules have their own section in the configuration file, but some do not, such as the \lstinline|TripsToLegsModule|. 
+%% \kai{Aber warum ist das ein Problem?  Die sind halt nicht weiter konfigurierbar.}
+%% %
+%% In that package---called modules---there are furthermore, the factories for the plan selectors. For the selectors and their factories, it is unclear if they are modules.
+%% \kai{factories sind keine modules, sondern extension points, um module zu erzeugen und in den code zu stöpseln.  Selectors selber sind PlanStrategies und insofern modulare Bestandteile.}
 
-Due to the distributed and project- and dissertation-driven MATSim contribution process (see Chapter \ref{ch:developmentprocess}) modules are usually implemented for a specific practical purpose leading to various limitations of the respective module, e.g., modules might only work for a specific mode or for a defined calling order. Before, an additional effort is undertaken to generalize the module toward its embedding in the complete framework, the combination of a specific module with other functionality remains a non-straight-forward task. This means, that the user is in charge of systematically testing a specific modules combination before productively applying it.
+%% To make things worse, there are cases where module names in the configuration file are not (yet) consistent with the naming in the code. Examples are ``\lstinline|strategy|'' in the configuration file and ``\lstinline|StrategyManager|'' in the code, or ``strategy module'' in the config file and ``\lstinline|PlanStrategy|'' in the code \ah{Nochmals nachsehen!}. Furthermore, modules are atomic. There is, for example, a module called ``\lstinline|ChangeSingleLegMod|'', a module ``\lstinline|ChangeLegMode|'' and a module ``\lstinline|SubtourModeChoic|'' instead of one single module called ``\lstinline|ModeChoice|''. This, on the one hand, has historical reasons; the three modules were developed temporally separated. On the other hand, the parameter set for a module is only minimal and unambiguous if provided for atomic modules as different parameters are required for the three modules.
+
+
 
 % ##################################################################################################################
 \section{An Overview of Existing Modules}
 Figure~\ref{fig:matsimmodules} shows where in the MATSim loop, common MATSim modules can be plugged in. The technical details for their usage, in particular the parameter sets are described in \citep[][]{MATSim_Userguide_2014} and in the javadoc.
-%
+
+For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be ``mode choice'' instead of the atomic categories, where we use terms ``functionality'' for the larger categories and ``module'' for the atomic components. \kai{adapt table structure to revised chapter structure}
+
+Due to the distributed and project- and dissertation-driven MATSim contribution process (see Chapter \ref{ch:developmentprocess}) modules are usually implemented for a specific practical purpose leading to various limitations of the respective module, e.g., modules might only work for a specific mode or for a defined calling order. Before, an additional effort is undertaken to generalize the module toward its embedding in the complete framework, the combination of a specific module with other functionality remains a non-straight-forward task. This means, that the user is in charge of systematically testing a specific modules combination before productively applying it.
+
 \createfigure%
 {MATSim functionality}%
 {MATSim functionality}%
@@ -199,13 +208,13 @@ Figure~\ref{fig:matsimmodules} shows where in the MATSim loop, common MATSim mod
 {}
 %
 The description of the modules in this and the following chapters is based on following categorization.
-%
-\createtable%
-{Modules}%
-{Modules}%
-{\label{tab:modules}}%
-{%
-  \begin{tabular}[c]{|l|l|}
+
+\kai{TODO: macros for section names to re-use for table entries}
+
+\begin{table}
+\caption{Modules}
+\label{tab:modules}
+\begin{longtable}[c]{|l|l|}
 	\hline
 	\textbf{Strategy Modules} & Section~\ref{sec:strategymodules} \\
 	\hline
@@ -215,11 +224,13 @@ The description of the modules in this and the following chapters is based on fo
 	Selectors & Section~\ref{sec:selectors} \\
 	Destination Innovation & Chapter~\ref{ch:destinationchoice} \\
 	\hline
+	\hline
 	\textbf{Further Innovation Modules} & Section~\ref{sec:furtherchoicemodules} \\
 	\hline
 	Planomat & Section~\ref{sec:planomat} \\
 	Activity Innovation a.k.a. PlanomatX & Section~\ref{sec:activitychoice} \\
 	Within-day Replanning & Chapter~\ref{ch:withinday} \\
+	\hline
 	\hline
 	\textbf{Supply-Side Modules} & Section~\ref{sec:supplysidemodules} \\
 	\hline
@@ -227,6 +238,7 @@ The description of the modules in this and the following chapters is based on fo
 	Counts & Section~\ref{sec:counts} \\
 	Facilities & Section~\ref{sec:facilities} \\
 	Signals and Lanes & Chapter~\ref{ch:signalslanes} \\
+	\hline
 	\hline
 	\textbf{Demand-Side Modules and Specific Transport Modes Modules} & Section~\ref{sec:dsm} \\
 	\hline
@@ -243,6 +255,7 @@ The description of the modules in this and the following chapters is based on fo
 	Parking & Chapter~\ref{ch:parking} \\
 	Electric Vehicles & Chapter~\ref{ch:elvehicles} \\
 	\hline
+	\hline
 	\textbf{Mobsims} & Section~\ref{sec:mobsims} \\
 	\hline
 	QSim & Section~\ref{sec:qsim} \\
@@ -250,23 +263,25 @@ The description of the modules in this and the following chapters is based on fo
 	%%queueSimulation & Section~\ref{sec:queueSimulation} \\
 	DEQSim & Section~\ref{sec:deqsim} \\
 	\hline
-	\end{tabular}
-}%
-{}
-
-\createtable%
-{Modules continued}%
-{Modules continued}%
-{\label{tab:modulescontinued}}%
-{%
-  \begin{tabular}[c]{|l|l|}
+	%% \end{longtable}
+%% \end{table}
+%
+%% \createtable%
+%% {Modules continued}%
+%% {Modules continued}%
+%% {\label{tab:modulescontinued}}%
+%% {%
+%%   \begin{tabular}[c]{|l|l|}
 	\hline
 	\textbf{General Purpose Modules} & Section\ref{sec:generalpurposemodules} \\
 	\hline
 	Controler & Section~\ref{sec:controler} \\
 	Global & Section~\ref{sec:global} \\
 	Scenario & Section~\ref{sec:scenario} \\
-	Scoring & Section~\ref{sec:scoring} \\
+	\hline
+	\hline
+	\textbf{Scoring} & Section~\ref{sec:scoring} \\
+	\hline
 	\hline
 	\textbf{Special Purpose Modules, Tools and Functionalities} & Section~\ref{sec:specialpurpose} \\
 	\hline
@@ -288,9 +303,9 @@ The description of the modules in this and the following chapters is based on fo
 	Network editors &  Chapter~\ref{ch:networkeditor} \\
 	Business Analytics & Chapter~\ref{ch:businessanalytics} \\
 	\hline
-	\end{tabular}
-}%
-{}
+	%% \end{tabular}
+\end{longtable}
+\end{table}
 
 % ##################################################################################################################
 \section{\acrshort{matsim} data containers}
@@ -307,7 +322,7 @@ The description of the modules in this and the following chapters is based on fo
 
 The \lstinline|scenario| module is, on the one hand, a container containing the main components of a scenario such as the \lstinline|config|, the \lstinline|network|, the \lstinline|population|, the \lstinline|facilities|, the \lstinline|transitSchedule|, \lstinline|households| and \lstinline|vehicles|.
 
-The config file section is, on the other hand, used in a slightly different manner. It defines the usage of lanes, signal systems, road pricing, agent knowledges, vehicles, households and public transport. Still a respective config file section is required for every additional functionality.
+The config file section is, on the other hand, used in a slightly different manner. It defines the usage of lanes, signal systems, road pricing, agent knowledges, vehicles, households and public transport. Still a respective config file section is required for every additional functionality. \kai{Ist das genau so?  Ich habe da ehrlich gesagt das genaue Design nie verstanden.  Oft für ein Eintrag in der scenario config group nur dafür, dass die Daten gelesen werden, und sonst passiert gar nichts.  Hm ...  Geradeziehen???}
 
 \subsection{Supply side data containers}
 \label{sec:supplysidemodules}
@@ -357,6 +372,8 @@ networkChangeEvent0.setLanesChange(new ChangeValue(...));
 network.addNetworkChangeEvent(networkChangeEvent);
 \end{lstlisting}
 
+\kai{lieber ein Verweis auf ein code snippet?  U.a. muss man auf NetworkImpl casten, was wir gerne irgendwann loswerden wollen und daher nicht im Buch haben wollen.}
+
 % ===================================================================================
 \subsubsection{Counts}
 \label{sec:counts}
@@ -384,7 +401,7 @@ Facilities are a non-mandatory element of MATSim scenarios. They identify activi
 % ===================================================================================
 
 % ##################################################################################################################
-\subsection{Demand-Side Modules and Specific Transport Modes Modules}
+\subsection{Demand-Side Modules}
 \label{sec:dsm}
 
 % ===================================================================================
@@ -412,11 +429,9 @@ Similar to the vehicles module, the household module is not used by default in M
 \subsubsection{Vehicles}
 \label{sec:vehicles}
 
-\kai{is vehicles demand side or supply side?  Wenn die Fahrzeuge vom Staat bereitgestellt würden, wäre es wohl offensichtlich supply side, oder?  Wenn in der Datei Busse drin sind (was sie ja sind), ist das m.E.\ auch supply side.  --  Ich muss sagen, ich mag diese Unterteilung ohnehin nicht besonders gerne.  Ich kann damit leben, solange man die ``mobsim'' raushält; die ist weder demand noch supply, sondern ``Schiedsrichter''.}
-
 \begin{compactitem}
 \item Invoking the module: Vehicles need to be enabled in the \lstinline|scenario| configuration file section.
-\item Configuration: At the moment vehicles are only used for public transport (Chapter \ref{ch:pt}), i.e., motorized individual traffic vehicles are not used in MATSim nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section. \ah{Klären, ob man diese kleine Inkonsistenz beheben möchte.} This might change one day when the parking module will start to use vehicles. \citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households.
+\item Configuration: At the moment vehicles are only used for public transport (Chapter \ref{ch:pt}), i.e., motorized individual traffic vehicles are not used in MATSim nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section. \ah{Klären, ob man diese kleine Inkonsistenz beheben möchte.}  \kai{Ist das nicht schon erledigt?}  This might change one day when the parking module will start to use vehicles. \citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households.
 \item Code: \lstinline|org.matsim.vehicles|
 \end{compactitem}
 
@@ -425,9 +440,122 @@ The vehicles package provides a file reader and a factory to create vehicles.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ===================================================================================
+\section{Global modules and global aspects}
+
+% ===================================================================================
+\subsection{Controler}
+\label{sec:controler}
+\begin{compactitem}
+\item Invoking the module: Run \lstinline|org.matsim.run.Controler|
+\item Configuration: \lstinline|controler| configuration file section
+\item Code: \lstinline|org.matsim.core.controler|
+\end{compactitem}
+
+The controler is an indispensable module for running MATSim. The module, can be furthermore extended by \lstinline|Events| and \lstinline|Listeners| as detailed in Chapter~\ref{ch:extensionpoints}. 
+%% Classes implementing one or more \lstinline|Listener Interfaces| and can be registered with the Controler with \lstinline|addControlerListener()|. The controler fires \lstinline|Controler Events| at specific points during the run to the registered \lstinline|Listeners|, which can then execute their own code.
+%
+%Das ist nur ein Ausschnitt von dem, was der Controler kann.  Da es im entsprechenden Kap. ja beschrieben wird, brauchen wir das hier m.E. nicht nochmal. kai, dec'14
+
+%% \textcolor{gray}{\st{Another possibility to customize the controler is by inheritence from the class} \lstinline|org.matsim.core.controler|.}  \kai{Please do not do or advertise this any more.}
+
+% ===================================================================================
+\subsection{Global}
+\label{sec:global}
+\begin{compactitem}
+\item Invoking the module: The module is very sparse and only used to transfer some parameters to the simulation. Add a respective config file section.
+\item Configuration: \lstinline|global| config file section. Arguably, this section should be merged with the controler section.
+\item Code: \lstinline|org.matsim.core.config.groups.GlobalConfigGroup|
+\end{compactitem}
+
+The replanning modules get their information about number of threads from this module. \kai{nicht unter parallel computing?  Wäre meiner Erfahrung nach tatsächlich hilfreich, die paralellen Aspekte zusammenzufassen.}
+
+
+
+\subsection{Parallel Computing}
+\label{sec:parallelcomputing}
+\begin{compactitem}
+\item Invoking the module: Define the number of threads in the \lstinline|qsim| and the \lstinline|parallelEventHandling| section
+\item Configuration: \lstinline|parallelEventHandling| and \lstinline|qsim| configuration file section
+\item Code: mainly \lstinline|org.matsim.core.events.ParallelEventsManagerImpl| for parallel event handling. See qsim for parallel mobsim running.
+\end{compactitem}
+
+As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in MATSim simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. Clearly, the number of threads should correspond with available processor cores.  \kai{Meine Erfahrung ist eine andere, und je nach Maschine kann man das manchmal überauslasten und manchmal sollte man es eher unterauslasten.}  As mentioned above, the mobsim \emph{QSim} is running parallel by default.
+
+Being able to speed-up scenarios migth become even more important than today, when additional innovation (choice) dimensions are added with large variability in the parameters rendering ensemble runs necessary (see Section~\ref{sec:variability}).
+
+\ah{auch Doblers Arbeiten einfügen!?}
+
+\ah{Marcel hatte mal Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.) geplant. Nachfragen, ob schon was vorhanden}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% % ===================================================================================
+%\subsection{Flight Traffic}
+%\label{sec:flighttraffic}
+%Flight traffic is described by \citet[][]{Grether_PhDThesis_2014}.
+
+% ===================================================================================
+
+% ##################################################################################################################
+\section{Mobsims}
+\label{sec:mobsims}
+An overview of MATSim mobility simulations is given in \citet[][]{Dobler_TechRep_IVT_2011}. See also the presentation of \citet[][]{Rieser_unpub_IVT_2011}.
+
+% ===================================================================================
+\subsection{QSim}
+\label{sec:qsim}
+\begin{compactitem}
+\item Invoking the module: Set the parameter \lstinline|mobsim| of \lstinline|controler| config file section to \lstinline|qsim| provide a \lstinline|qsim| config file section.
+\item Configuration: \lstinline|qsim| config section
+\item Code: \lstinline|org.matsim.core.mobsim.qsim|
+\end{compactitem}
+
+At the moment, in most applications \emph{QSim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is used. It has started as a software branch of \emph{queueSimulation} before supplanting this later simulation. Through multiple engines it can be run in parallel and simulate multi-modal traffic (Chapter~\ref{ch:multimodalsim}). It is queue-based and time-step based. The simulation is able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, public transport \citep[][]{Rieser_PhDThesis_2010} and in an experimental manner also traffic lights \citep[][]{Neumann_MastersThesis_2008}). Inclusion of public transport is described in Chapter~\ref{ch:pt}.
+
+% ===================================================================================
+\subsection{JDEQSim}
+\label{sec:jdeqsim}
+\begin{compactitem}
+\item Invoking the module: Set the parameter \lstinline|mobsim| of \lstinline|controler| config file section to \lstinline|JDEQSim| provide a \lstinline|jdeqsim| config file section.
+\item Configuration: \lstinline|jdeqsim| config file section
+\item Code: \lstinline|org.matsim.core.mobsim.jdeqsim|
+\end{compactitem}
+
+\emph{JDEQSim} \citep[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} was used for project \emph{KTI Frequencies} \citep[][]{BalmerEtAl_ResRep_datapuls_2010}. It is is a java reimplementation of \emph{DEQSim} shown below \citep[][]{WaraichEtAl_STRC_2009, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009} and provides parallel event handling but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps, traffic lights, public transport and within-day replanning are not supported.
+
+% ===================================================================================
+%%\subsection{queueSimulation (deprecated)}
+%%\label{sec:queueSimulation}
+%%The queueSim cannot be invoked directly anymore; it is not available in current releases anymore but can be downloaded from SVN history. The \lstinline|simulation| config file section is deprecated as well. \ah{stimmt das so?}\michaz{Yes. IMO let's not even mention it. The fact that it was forked from QSim at all is a technicality which nobody wants to know.})
+
+% ===================================================================================
+% ##################################################################################################################
+%% \section{General Purpose Modules}
+%% \label{sec:generalpurposemodules}
+
+
+% ===================================================================================
+\section{Scoring}
+\label{sec:scoring}
+\begin{compactitem}
+\item Invoking the module: add below section to config file
+\item Configuration: \lstinline|planCalcScore| config file section
+\item Code: \lstinline|org.matsim.core.scoring|
+\end{compactitem}
+
+The parameters related to scoring described in Chapter \ref{ch:scoring}.
+
+% ===================================================================================
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Strategy Modules}
 \label{sec:strategymodules}
+
+\kai{Habe ``strategy'' ans Ende gezogen, weil ein matsim run so auch tatsächlich losgeht: erst mobsim, dann scoring, dann replanning.  Gibt es Argumente für andere Reihenfolgen?}
+
 The strategy modules are the basic innovation modules available in MATSim. All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
 
 \begin{lstlisting}
@@ -590,73 +718,7 @@ Note, that the \lstinline|BestScore| should be used with care as it is prone to 
 Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. Per default, the plan with the lowest score is removed if the agent's memory is full. In line with the requirements of e.g., simulated annealing approaches, the removal of candidates will be configurable to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This will reduce the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
 \ah{siehe Mail by M. Zilske, August 14 ``[Matsim-devel] custom plan selector for removal'')}
 
-% ##################################################################################################################
-
-
-% % ===================================================================================
-%\subsection{Flight Traffic}
-%\label{sec:flighttraffic}
-%Flight traffic is described by \citet[][]{Grether_PhDThesis_2014}.
-
-% ===================================================================================
-
-% ##################################################################################################################
-\section{Mobsims}
-\label{sec:mobsims}
-An overview of MATSim mobility simulations is given in \citet[][]{Dobler_TechRep_IVT_2011}. See also the presentation of \citet[][]{Rieser_unpub_IVT_2011}.
-
-% ===================================================================================
-\subsection{QSim}
-\label{sec:qsim}
-\begin{compactitem}
-\item Invoking the module: Set the parameter \lstinline|mobsim| of \lstinline|controler| config file section to \lstinline|qsim| provide a \lstinline|qsim| config file section.
-\item Configuration: \lstinline|qsim| config section
-\item Code: \lstinline|org.matsim.core.mobsim.qsim|
-\end{compactitem}
-
-At the moment, in most applications \emph{QSim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is used. It has started as a software branch of \emph{queueSimulation} before supplanting this later simulation. Through multiple engines it can be run in parallel and simulate multi-modal traffic (Chapter~\ref{ch:multimodalsim}). It is queue-based and time-step based. The simulation is able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, public transport \citep[][]{Rieser_PhDThesis_2010} and in an experimental manner also traffic lights \citep[][]{Neumann_MastersThesis_2008}). Inclusion of public transport is described in Chapter~\ref{ch:pt}.
-
-% ===================================================================================
-\subsection{JDEQSim}
-\label{sec:jdeqsim}
-\begin{compactitem}
-\item Invoking the module: Set the parameter \lstinline|mobsim| of \lstinline|controler| config file section to \lstinline|JDEQSim| provide a \lstinline|jdeqsim| config file section.
-\item Configuration: \lstinline|jdeqsim| config file section
-\item Code: \lstinline|org.matsim.core.mobsim.jdeqsim|
-\end{compactitem}
-
-\emph{JDEQSim} \citep[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} was used for project \emph{KTI Frequencies} \citep[][]{BalmerEtAl_ResRep_datapuls_2010}. It is is a java reimplementation of \emph{DEQSim} shown below \citep[][]{WaraichEtAl_STRC_2009, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009} and provides parallel event handling but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps, traffic lights, public transport and within-day replanning are not supported.
-
-% ===================================================================================
-%%\subsection{queueSimulation (deprecated)}
-%%\label{sec:queueSimulation}
-%%The queueSim cannot be invoked directly anymore; it is not available in current releases anymore but can be downloaded from SVN history. The \lstinline|simulation| config file section is deprecated as well. \ah{stimmt das so?}\michaz{Yes. IMO let's not even mention it. The fact that it was forked from QSim at all is a technicality which nobody wants to know.})
-
-% ===================================================================================
-\subsection{DEQSim (deprecated)}
-\label{sec:deqsim}
-\emph{DEQSim} was used for project \emph{Westumfahrung} \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009}. It is a is a queue-based, event-based parallel simulation written in C++ \citep[][]{CharyparEtAl_TRR_2007, Charypar_PhDThesis_2008}. This simulation includes handling of reduced capacities due to traffic lights in an aggregate manner \citep[][p.139 ff]{Charypar_PhDThesis_2008}. It further supports modeling of gap back propagation at junctions \citep[][p.98 ff]{Charypar_PhDThesis_2008}. Events handling is done via file input and output. This represents a major bottleneck in terms of framework performance. Development of this simulation has been stopped and been replaced by the JAVA mobsim \emph{JDEQSim}.
-
-% ===================================================================================
-% ##################################################################################################################
-%% \section{General Purpose Modules}
-%% \label{sec:generalpurposemodules}
-
-
-% ===================================================================================
-\section{Scoring}
-\label{sec:scoring}
-\begin{compactitem}
-\item Invoking the module: add below section to config file
-\item Configuration: \lstinline|planCalcScore| config file section
-\item Code: \lstinline|org.matsim.core.scoring|
-\end{compactitem}
-
-The parameters related to scoring described in Chapter \ref{ch:scoring}.
-
-% ===================================================================================
-
-% ##################################################################################################################
+%##################################################################################################################
 \section{Observational modules}
 \label{sec:specialpurpose}
 
@@ -681,53 +743,6 @@ The routing module, as an example, needs travel time estimations for all links o
 \end{compactitem}
 
 Link stats allow to specify the output interval of simulation statistics of individual links. They are amongst other, used for the comparison with count values. It is configurable, if the simulated volumes should be written per iteration or averaged over multiple iterations.
-
-% ===================================================================================
-\section{Global modules and global aspects}
-
-\kai{muss/sollte dies vielleicht direkt hinter ``matsim data containers'' (also noch vor ``strategy modules'')?}
-
-% ===================================================================================
-\subsection{Controler}
-\label{sec:controler}
-\begin{compactitem}
-\item Invoking the module: Run \lstinline|org.matsim.run.Controler|
-\item Configuration: \lstinline|controler| configuration file section
-\item Code: \lstinline|org.matsim.core.controler|
-\end{compactitem}
-
-The controler is an indispensable module for running MATSim. The module, can be furthermore extended by \lstinline|Events| and \lstinline|Listeners| as detailed in Chapter~\ref{ch:extensionpoints}. Classes implementing one or more \lstinline|Listener Interfaces| and can be registered with the Controler with \lstinline|addControlerListener()|. The controler fires \lstinline|Controler Events| at specific points during the run to the registered \lstinline|Listeners|, which can then execute their own code.
-
-\textcolor{gray}{Another possibility to customize the controler is by inheritence from the class \lstinline|org.matsim.core.controler|.}  \kai{Please do not do or advertise this any more.}
-
-% ===================================================================================
-\subsection{Global}
-\label{sec:global}
-\begin{compactitem}
-\item Invoking the module: The module is very sparse and only used to transfer some parameters to the simulation. Add a respective config file section.
-\item Configuration: \lstinline|global| config file section. Arguably, this section should be merged with the controler section.
-\item Code: \lstinline|org.matsim.core.config.groups.GlobalConfigGroup|
-\end{compactitem}
-
-The replanning modules get their information about number of threads from this module.
-
-
-
-\subsection{Parallel Computing}
-\label{sec:parallelcomputing}
-\begin{compactitem}
-\item Invoking the module: Define the number of threads in the \lstinline|qsim| and the \lstinline|parallelEventHandling| section
-\item Configuration: \lstinline|parallelEventHandling| and \lstinline|qsim| configuration file section
-\item Code: mainly \lstinline|org.matsim.core.events.ParallelEventsManagerImpl| for parallel event handling. See qsim for parallel mobsim running.
-\end{compactitem}
-
-As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in MATSim simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. Clearly, the number of threads should correspond with available processor cores. As mentioned above, the mobsim \emph{QSim} is running parallel by default.
-
-Being able to speed-up scenarios migth become even more important than today, when additional innovation (choice) dimensions are added with large variability in the parameters rendering ensemble runs necessary (see Section~\ref{sec:variability}).
-
-\ah{auch Doblers Arbeiten einfügen!?}
-
-\ah{Marcel hatte mal Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.) geplant. Nachfragen, ob schon was vorhanden}
 
 % ===================================================================================
 %\subsection{Extension of Simulation Horizon}
