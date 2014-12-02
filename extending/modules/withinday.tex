@@ -84,6 +84,16 @@ The second parameter categorizing a replanning action depends on when the replan
 
 Due to the limited available information, a within-day replanning approach will, in contrast to an iterative approach, not converge to a user equilibrium. Decisions made during the simulated time period may seem to be optimal when they are made. However, evaluated retrospectively, an agent might realize that they were not.
 
+Figure \ref{fig:labelWithinDayMATSimLoop} shows how within-day replanning can be integrated into MATSim's iterative optimization loop. An additional block builds another (inner) loop with the mobility simulation. Depending on the type of simulated scenario, the outer loop can be skipped.
+%---------------------------------------------------------------------
+\createfigure%
+{(Iterative) within-day replanning MATSim loop}%
+{(Iterative) within-day replanning MATSim loop \kai{I think this figure needs to come earlier, i.e.\ in Sec.~\ref{sec:SimulationApproaches} \textbf{TODO: redraw this figure using the new (blue) matsim loop?}.}}%
+{\label{fig:labelWithinDayMATSimLoop}}%
+{\includegraphics[width=12.5cm, angle=0]{extending/figures/WithinDayReplanning/WithinDayMATSimLoop}}%
+{}%
+%---------------------------------------------------------------------
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Combined Approaches} \label{sec:CombinedApproaches}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,16 +183,6 @@ If, on the other hand, an agent goes into the simulation mostly or entirely with
 
 When adding within-day replanning to MATSim, its iterative loop (see Figure \ref{fig:matsimcycle}) has to be adapted as shown in Figure \ref{fig:labelWithinDayMATSimLoop}. On one hand, the additional \emph{within-day replanning} module is added, which interacts with the mobility simulation. On the other hand, multiple iterations are only necessary if a combined simulation approach is used.
 
-%---------------------------------------------------------------------
-\createfigure%
-{(Iterative) within-day replanning MATSim loop}%
-{(Iterative) within-day replanning MATSim loop \kai{I think this figure needs to come earlier, i.e.\ in Sec.~\ref{sec:SimulationApproaches}.}}%
-{\label{fig:labelWithinDayMATSimLoop}}%
-{\includegraphics[width=12.5cm, angle=0]{extending/figures/WithinDayReplanning/WithinDayMATSimLoop}}%
-{}%
-%---------------------------------------------------------------------
-\textbf{TODO: redraw this figure using the new (blue) matsim loop?}
-
 \mnote{implementation as MobsimEngine ... tracking agents and plans}
 
 The implementation is realized as so-called \emph{MobsimEngine} which can be plugged into the \emph{QSim}. In every simulated time step, the \emph{QSim} iterates over all registered \emph{MobsimEngines} and allows them to simulate the current time step. Besides simulation of the traffic flows, those engines are also able to let agents start or end activities. The engine containing the within-day replanning logic (called \emph{WithinDayEngine}) does not simulate traffic flows but tracks agents and adapts their plans. Doing so is separated into two steps. First, agents whose plans have to be adapted in the current time step are identified. In a second step, the adaption of their plans is performed. 
@@ -204,7 +204,8 @@ Figure \ref{fig:labelWithinDayEngine} shows the structure of the \emph{WithinDay
 
 There is a division of responsibilities between \emph{Replanners} and \emph{Identifiers}. The first ones are responsible for adapting the agents' plans but they should not check whether an agent should be replanned or not. If, for example, a \emph{Replanner} updates an agent's route, it has to be ensured by the \emph{Identifiers} that only agents who are currently performing a leg are replanned. In turn, \emph{Identifiers} should select agents who have to be replanned but should not change their plans. As a result of this division, the often time consuming replanning of the agents' plans can be performed using parallel threads which leads to an almost linear speed-up. In general, simulation results do not depend on the order in which agents are replanned. \emph{Replanners} which use random numbers are a special case. 
 %They have to ensure that 
-In the present implementation, their \emph{random number generator} is re-initialized for every replanned agent using a deterministic value (e.g.~a combination of the agent's Id and the current time step).  This ensures that an agent's decisions can be reproduced even when the global sequence of random numbers changs. \kai{Christoph, ist es das?  ``have to'' (wie Du es vorher hattest), erscheint mir auf jeden Fall zu stark.  Oder hat es etwas mit multi-threading zu tun?}
+In the present implementation, their \emph{random number generator} is re-initialized for every replanned agent using a deterministic value (e.g.~a combination of the agent's Id and the current time step). On one hand, this ensures that an agent's decisions can be reproduced even when the global sequence of random numbers changes. On the other hand, the simulation outcomes do not change if the number of threads used for the replanning is changed.
+% \kai{Christoph, ist es das?  ``have to'' (wie Du es vorher hattest), erscheint mir auf jeden Fall zu stark.  Oder hat es etwas mit multi-threading zu tun?}
 
 \mnote{identifiers run sequentially}
 
@@ -294,7 +295,9 @@ The current \acrshort{matsim} code differentiates between \lstinline$Person$ and
 
 This leads to the question if within-day adaptations to the \lstinline$Plan$ should be passed through to the \lstinline$Person$.  Let us call the actual trajectory through the system the ``executed plan''.  This can be different from the original plan, for example using a different route, different departure times, different modes, etc.  The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output.  In consequence, it is not possible to treat the executed plan together with the just obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
 
-In consequence, the code uses a copy of the original plan and modifies the copy.  The score, however, is given to the original plan.  The implementation is free to \kai{Christoph: ``is able to''? (existiert das derzeit als Option?} \emph{also} memorize the executed plan and add it to the set of plans.
+In consequence, the code uses a copy of the original plan and modifies the copy.  The score, however, is given to the original plan.  The implementation is able to 
+\kai{``is able to''? (existiert das derzeit als Option? -Christoph: sollte da sein, sofern der Code nicht inzwischen zerschossen wurde. Ich hatte das für den Initial Routes Creation Abschnitt in meiner Diss verwendet. Ich wollte da auch nochmal genauer drauf schauen, was die produzierten Ergebnisse eigentlich bedeuten - habe ich dann aber irgendwie nie mehr Zeit dafür gefunden.} 
+\emph{also} memorize the executed plan and add it to the set of plans.
 
 %% \mnote{lskdjf}
 
@@ -302,19 +305,21 @@ In consequence, the code uses a copy of the original plan and modifies the copy.
 
 \mnote{parking example: parking search route should not be added to plan}
 
-One example where setting the original to the executed plan clearly does not make sense is parking search \kai{citation?}.
+One example where setting the original to the executed plan clearly does not make sense is parking search \kai{citation? Christoph: keine. Eventuell könntem an den Absatz auch weglassen? Der Standard ist ja mittlerweile, dass man den Plan der Person nicht verändert. Andererseits wäre dann der Absatz unten (mit den initial Routes) eher interessant, weil der eben ein Beispiel dafür gibt, wo die Standardeinstellung nicht sinnvoll ist.}.
 %In a first one, within-day replanning is used to simulate agents' parking search. 
 A person's plan contains as destination the location where a free parking space is expected. However, if the agent realizes in the mobility simulation that there is no free space left, it starts looking for a free parking spot. As a result, the agent's route is extended. This extension has to be local in the agent's route since it is only necessary in the current iteration
 but maybe not in another one where the initially selected parking spot is available.
 
 %% \mnote{starting agents without routes: within-day routes \emph{should} be added to plan (but I don't agree)}
 
-%% Creating agents' initial routes using within-day replanning would be an example for an application where persons' plans have to be adapted. By default, creation of those routes is a step performed on person level before the micro-simulation is started for the first time. When this task is moved into the micro-simulation and is performed during their runtime, the created routes have to be still stored in the person's plan. Otherwise they would not be available for later iterations.
-\kai{Christoph, habe hier mal tentativ einen Absatz auskommentiert, der mir nicht wirklich hilfreich erscheint.  Solange der Plan, mit dem der Agent losfährt, derjenige ist, der den Score bekommt, ist es unerheblich, wann er berechnet wurde.}
+%Creating agents' initial routes using within-day replanning would be an example for an application where persons' plans have to be adapted. By default, creation of those routes is a step performed on person level before the micro-simulation is started for the first time. When this task is moved into the micro-simulation and is performed during their runtime, the created routes have to be still stored in the person's plan. Otherwise they would not be available for later iterations. 
+%\kai{Christoph, habe hier mal tentativ einen Absatz auskommentiert, der mir nicht wirklich hilfreich erscheint.  Solange der Plan, mit dem der Agent losfährt, derjenige ist, der den Score bekommt, ist es unerheblich, wann er berechnet wurde.}
+%\kai{some pointers to simulations done with this set-up}
 
-\kai{some pointers to simulations done with this set-up}
+The capabilities of this within-day replanning implementation are shown and discussed by \citet{Dobler_PhDThesis_2013} based on two sets of conducted experiments. The first set is based on a model of Zurich city. There it is assumed that the capacities of several arterial roads in the city center are drastically reduced during the morning peak. Travelling agents are given the opportunity to bypass the resulting traffic jams by adapting their routes using within-day replanning. As a result, the average travel time of an agent affected by the incident is reduced from 42 to 23 minutes. Another intersting finding is that even if only 50\% of the population adapts its routes still the average travel times are reduced to 25 minutes.
+%\kai{Christoph: Vielleicht noch einen Satz über Ergebnisse (oder den vorhergehenden Satz umschreiben: Agents bypass the resulting traffic jams by adapting ..., leading to an overall readuction of travel times XX sec compared to the solution where agents stick to their routes.} 
 
-The capabilities of this within-day replanning implementation are shown and discussed by \citet{Dobler_PhDThesis_2013} based on two sets of conducted experiments. The first set is based on a model of Zurich city. There it is assumed that the capacities of several arterial roads in the city center are drastically reduced during the morning peak. Travelling agents are given the opportunity to bypass the resulting traffic jams by adapting their routes using within-day replanning.  \kai{Christoph: Vielleicht noch einen Satz über Ergebnisse (oder den vorhergehenden Satz umschreiben: Agents bypass the resulting traffic jams by adapting ..., leading to an overall readuction of travel times XX sec compared to the solution where agents stick to their routes.} The second set of experiments uses within-day replanning to create agents' initial routes. The results are compared to runs where those routes are created before the simulation is started and without having traffic flow information available. \kai{Christoph: Vielleicht noch einen Satz über Ergebnise?}
+The second set of experiments uses within-day replanning to create agents' initial routes. The results are compared to runs where those routes are created before the simulation is started and without having traffic flow information available. It is shown that agents' average travel times are already very close to the values in a relaxed state. When using MATSim's traditional approach, 10 to 15 iteration have to be performed before the average travel times have reached this level. %\kai{Christoph: Vielleicht noch einen Satz über Ergebnisse?}
 
 \subsection{Implementation alternative~2: Replacing the agent}
 \label{sec:impl-repl-the-ag}
