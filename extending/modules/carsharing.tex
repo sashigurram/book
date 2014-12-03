@@ -68,12 +68,27 @@ The use of free-floating carsharing by an agent is simulated using similar steps
 % -------------------------------------------------------------------
 %\subsubsection{Generalized Cost of Carsharing Travel}
 \subsection{Generalized Cost of Carsharing Travel}
-In general, performing activities increases the score (positive utility), while traveling decreases it (negative utility). The function representing generalized cost of travel for car sharing traveling from activity $q-1$ to activity $q$ is:
+The function representing generalized cost of travel for car sharing traveling from activity $q-1$ to activity $q$ is:
 %
 \begin{equation}
+S_{trav, q, cs} = \alpha_{cs} + \beta_{c,cs} \cdot c_{t} \cdot t_r + \beta_{c,cs} \cdot c_d \cdot d + \beta_{t, walk} \cdot (t_a + t_e) + \beta_{t,cs} \cdot  t
 \end{equation}
 %
-The same equation is used for all modeled forms of carsharing but the values of the parameters will be different. The first term is a constant which can be used as calibration parameter and will also be, generally, different for different types of carsharing (and for different context. The second and third terms refer to the time dependent and the distance dependent part of the fee, respectively. RT is the total reservation time and ct represents the monetary cost for one hour reservation time, while Dist is the total reservation distance and cd is the monetary cost for on km travel. The parameter  represents the marginal utility of an additional unit of money spent on traveling with carsharing. The third term is the walk path to and from the station (Access time and egress time) and is evaluated as a normal walk leg. The parameter represents the marginal utility of an additional unit of time spent on traveling with carsharing, where TT is the actual (in vehicle) travel time. 
+The same equation is used for all modeled forms of carsharing but the values of the parameters will be different. 
+%
+The first term $\alpha_{cs}$ is a constant which can be used as calibration parameter and will also be, generally, different for different types of carsharing (and for different context.
+%
+The second and third terms refer to the time dependent and the distance dependent part of the fee, respectively. 
+%
+$t_r$ is the total reservation time and $c_t$ represents the monetary cost for one hour reservation time.
+%
+$d$ is the total reservation distance and $c_d$ is the marginal monetary cost for one km travel. 
+%
+The parameter $\beta_{c,cs}$ represents the marginal utility of an additional unit of money spent on traveling with carsharing. 
+%
+The fourth term is the walk path to and from the station (access time $t_a$ and egress time $t_e$) and is evaluated as a normal walk leg. 
+%
+The parameter $\beta_{t,cs}$ represents the marginal utility of an additional unit of time spent on traveling with carsharing, where $t$ is the actual (in vehicle) travel time. 
 
 % ===================================================================================
 \section{Carsharing Membership}
@@ -81,14 +96,15 @@ Carsharing is a membership program. In order to be able to access a specific car
 An important feature of the model, however, is that carsharing accessibility is explicitly considered, both from home and from work. So accessibility A of person p is calculated with the following formula:
 %
 \begin{equation}
+A(n) = \mathrm{ln} \left(\sum_{s=1}^m X_s \cdot \mathrm{e}^{-\beta \cdot d_{sh}}\right) + \mathrm{ln} \left(\sum_{s=1}^{m} X_s \cdot \mathrm{e}^{-\beta \cdot d_{sw}}\right)
 \end{equation}
 %
-The weight parameter for distances is set to 0.2 as in \citet[][]{Weis_PhDThesis_2012} \ah{ref correct?}, and more details on it are given below. Assuming $n$ as the number of stations in the system, distih and distiw, are calculated for each station as the distance between the station i and the home and work location of person p respectively; and Xi is the number of cars at station i. 
+The weight parameter for distances is set to 0.2 as in \citet[][]{Weis_PhDThesis_2012} \ah{ref correct?}, and more details on it are given below. Assuming $m$ as the number of stations in the system, $d_{sh}$ and $d_{sw}$, are calculated for each station as the distance between the station $s$ and the home and work location of person $n$ respectively; and $X_s$ is the number of cars at station $s$. 
 The model is not directly transferable to other regions but a different model can be easily implemented in the Java code created. 
 
 % ##################################################################################################################
 \section{Validation}
-The simulation model has been calibrated in order to reproduce the actual modal share for carsharing in the Zurich region, in Switzerland. It was made using bookings data from the Swiss operator Mobility. With the same data the results were validated along several dimensions. Since Mobility only offered round-trip based carsharing until now, it was only possible to validate this model.  Dimensions included in the validation process were: distance from the last activity to the pick-up station, departure times, purpose of the rental (main purpose of the subtour) and temporal length of the rental. 
+The simulation model has been calibrated in order to reproduce the actual modal share for carsharing in the Zurich region, in Switzerland. It was made using bookings data from the Swiss operator Mobility. With the same data the results were validated along several dimensions. Since Mobility only offered round-trip based carsharing until now, it was only possible to validate this model. Dimensions included in the validation process were: distance from the last activity to the pick-up station, departure times, purpose of the rental (main purpose of the subtour) and temporal length of the rental. 
 
 % ##################################################################################################################
 \section{Applications}
