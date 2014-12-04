@@ -37,9 +37,12 @@ For the basic function, the utility of a plan $S_{plan}$ is computed as the sum 
 %
 \begin{equation}
 \label{eq:matsimUTF}
-S_{plan}=\sum^N_{q=1} S_{act,q} + \sum^{N-1}_{q=1} S_{trav, mode, q}
+S_{plan}=\sum^N_{q=1} S_{act,q} + \sum^{N}_{q=1} S_{trav, mode, q}
 \end{equation}
-with $N$ as the number of activities. Note that trip $q$ is the trip that follows activity $q$. The last activity does not have an associated trip, thus the sum goes only up to $N-1$.  \kai{Andreas, Macht Ihr das so?  Die Standard-Variante, die auch am VSP verwendet wird, ``näht'' die erste und die letzte Aktivität zusammen.  Damit haben wir genauso viele Aktivitäten wie Trips.}
+with $N$ as the number of activities. Trip $q$ is the trip that follows activity $q$. The last activity is for scoring merged with the first activity, thus there is an equal number of trips and activities.
+%does not have an associated trip, thus the sum goes only up to $N-1$.  
+\kai{Andreas, Macht Ihr das so?  Die Standard-Variante, die auch am VSP verwendet wird, ``näht'' die erste und die letzte Aktivität zusammen.  Damit haben wir genauso viele Aktivitäten wie Trips.}
+\ah{dann lag ich hier wohl falsch. korrigiert.}
 
 \paragraph{Activities}
 
@@ -109,6 +112,8 @@ Note that the distance contributes to disutility in two ways. First, it is inclu
 
 \kai{distance both via distance cost rate and via direct marginal utl.  ok with me, BK will (probably) be less happy.  If it stays this way, config needs to be made consistent with text above.}
 
+\ah{Hatte, glaube ich, aus dem User Guide abgeguckt.}
+
 It is important to note that travel receives an additional implicit penalty from the opportunity cost of time: If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer. The marginal utility of travel time savings is thus:
 %
 \[
@@ -163,7 +168,7 @@ Nowadays the utility function measures in the unit $utils$, where an earlier int
 % ##################################################################################################################
 \section{Extensions and replacements of the \acrshort{matsim} scoring function}
 \label{sec:utfextensions}
-The following paragraphs describe, how the basic utility function explained in \citet[][]{CharyparNagel_Transportation_2005} has been extended by monetary and distance costs and mode-specific travel parameters including constants. Please be aware, that the MATSim code base and in particular the scoring functionality has changed a lot in recent years, e.g., the scoring is now based on events rather than on plans \ah{...}. Thus, the historical development is accompanied by various conceptual and technical modifications leading to the current utility function described above. This also means, that the reported parameter settings are an indication not a direct recommendation.
+The following paragraphs describe, how the basic utility function explained in \citet[][]{CharyparNagel_Transportation_2005} has been extended by monetary and distance costs and mode-specific travel parameters including constants. Please be aware, that the MATSim code base and in particular the scoring functionality has changed a lot in recent years, e.g.,\,the scoring is now based on events rather than on plans as it was the case in the beginning of MATSim. Thus, the historical development is accompanied by various conceptual and technical modifications leading to the current utility function described above. This also means, that the reported parameter settings are an indication not a direct recommendation.
 
 % ======================================================================================================================
 \paragraph{Project Westumfahrung Zürich:}
@@ -186,8 +191,8 @@ Project Herbie \citep[][]{VitinsEtAl_VW_2012} provided a thorough calibration of
 \citet[][]{BekhorEtAl_TRB_2011, DoblerEtAl_TechRep_IVT_2014} combine MATSim with the Tel-Aviv activity-based model \citep[][]{CambrigeSystemsInc_ResRep_TelAviv_2008}. Its multi-nomial zone-based utility function is integrated into MATSim by disaggregating the zones into facilities.
 
 % ======================================================================================================================
-\paragraph{Project MATSim 2030:}
-Switzerland. \ah{wait for working paper}
+%\paragraph{Project MATSim 2030:}
+%Switzerland. \ah{wait for working paper}
 
 % ======================================================================================================================
 \paragraph{Singapore:}
@@ -207,7 +212,7 @@ Road pricing is a MATSim extension. It can be added by an event listener to the 
 
 % ======================================================================================================================
 \paragraph{Social Contacts and Joint Trips:}
-There are two approaches modeling social contacts in MATSim, \citet[][]{Hackney_PhDThesis_2009} and the work performed by Thibaud Dubernet. Both modify scoring in a similar way; by increasing each individuals score if they coincidently perform an activity of the same type in the same facility. Both restricted the type to leisure to begin with. Dubernet also includes joint car rides in that calculation; but sometimes instead the marginal utility of travel is modified (Thubaud Dubernet, personal communication, March 2014). Linear and logarithmic functions have been tried by Dubernet, where recent experiments showed that, as expected, a logarithmic function increases the number of friend contacts, giving the microsimulation user another calibration parameter. 
+There are two approaches modeling social contacts in MATSim, \citet[][]{Hackney_PhDThesis_2009} and the work performed by Thibaud Dubernet. Both modify scoring in a similar way; by increasing each individuals score if they coincidently perform an activity of the same type in the same facility. Both restricted the type to leisure to begin with. Dubernet also includes joint car rides in that calculation; but sometimes instead the marginal utility of travel is modified (Thibaud Dubernet, personal communication, March 2014). Linear and logarithmic functions have been tried by Dubernet, where recent experiments showed that, as expected, a logarithmic function increases the number of friend contacts, giving the microsimulation user another calibration parameter. 
 
 % ======================================================================================================================
 \paragraph{Destination Choice:}
