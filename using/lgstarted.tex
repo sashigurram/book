@@ -16,7 +16,7 @@ Getting the source code into different computing environments and extending MATS
 
 % ================================================================================================
 \subsection{Setting Up MATSim}
-To run MATSim you have to install the Java Platform Standard Edition (SE) that complies with the MATSim version to be run. At the time of writing this book, this is JAVA SE 7.
+To run MATSim you have to install the Java Platform Standard Edition (SE) that complies with the MATSim version to be run. At the time of writing this book, this is JAVA~SE~7.
 
 Furthermore you need the official MATSim release, which comes as a zip file (usually named with the version number \lstinline|matsim-yy.yy.yy.zip|) including everything that is required to run it. It can be downloaded following the links on the MATSim web page. Unzip it and continue with Section~\ref{sec:runexample}.
 
@@ -119,7 +119,7 @@ Count data are the common evaluation measure in transport planning. In MATSim co
 
 Some of the files, especially \lstinline|population.xml|, but also \lstinline|network.xml| or \lstinline|facilities.xml|, might get quite large. To save space, MATSim supports reading and writing the data in a compressed format. MATSim uses GZIP-compression for this. Thus, in many cases, the file names have the additional suffix \lstinline|.gz|, as in \lstinline|population.xml.gz|. MATSim automatically detects if files are compressed or should be written compressed based on the filename. 
 
-In more detail the input files look as follows. Note that the configuration file is presented above.
+In more detail, the input files look as follows. Note that the configuration file is presented above.
 
 % -----------------------------------------------------------------------
 \subsubsection{network.xml}
@@ -154,9 +154,9 @@ Each element has an identifier id. Nodes are described by an \lstinline|x| and a
     \item the flow \lstinline|capacity| of the link, i.e.\ the number of vehicles that can pass the link, typically in vehicles per hour.
     \item the \lstinline|freespeed| is the maximum speed at which vehicles are allowed to travel along the link, typically in meters per seconds.
     \item the number of lanes (\lstinline|permlanes|) available in the direction specified by the from and to nodes.
-    \item the list of \lstinline|modes| allowed on the link. This is a comma-separated list, e.g.\ \lstinline|modes="car,bike,taxi"|.
+    \item the list of \lstinline|modes| allowed on the link. This is a comma-separated list, e.g.\, \lstinline|modes="car,bike,taxi"|.
 \end{compactitem}
-Note that all links are uni-directional. If a road can be traveled in both directions, two links have to be defined with alternating \lstinline|to| and \lstinline|from| attributes (see links with id 2 and 3 in the example given in the lsiting above). Thus, the network can be seen as a directed graph. 
+Note that all links are uni-directional. If a road can be traveled in both directions, two links have to be defined with alternating \lstinline|to| and \lstinline|from| attributes (see links with id 2 and 3 in the example given in the listing above). Thus, the network can be seen as a directed graph. 
 
 % -----------------------------------------------------------------------
 \subsubsection{population.xml}
@@ -197,9 +197,9 @@ The list of activities and legs in each plan describe the planned actions by eac
 
 A \gls{leg} describes how agents plan to travel from one location to the next one. Each leg must have a transport mode assigned. Optionally, legs may have an attribute \lstinline|trav_time| which describes the expected travel time for this leg. For a leg to be simulated, it must contain a route. The format of a route depends on the mode of a leg. For car-legs, the route lists the links that the agent has to travel along in the given order, while for transit-legs information about the stop locations and expected transit services are stored.
 
-An agent starts a leg directly after the previous activity (or leg) has ended. Depending on the mode, the mobility simulation might handle the agent differently. By default, car- and transit-legs are well-supported by the mobility simulation. If the mobsim encounters a mode it does not know, it defaults to teleportation: In this case, the agent is removed from the simulated reality, and after the leg's expected travel time has passed, re-inserted at the agent's target location.
+An agent starts a leg directly after the previous activity (or leg) has ended. Depending on the mode, the mobility simulation might handle the agent differently. By default, car- and transit-legs are well-supported by the mobility simulation. If the \gls{mobsim} encounters a mode it does not know, it defaults to teleportation: In this case, the agent is removed from the simulated reality, and after the leg's expected travel time has passed, re-inserted at the agent's target location.
 
-The population data format is one of the most central data structures in MATSim and might be a bit overwhelming at first. Luckily, to get started, only a small subset must be known of it. Following liusting shows how a minimal population file could look like. 
+The population data format is one of the most central data structures in MATSim and might be a bit overwhelming at first. Luckily, to get started, only a small subset must be known of it. Following listing shows how a minimal population file could look like. 
 
 \begin{xml}
 <?xml version="1.0" encoding="utf-8"?> 
@@ -252,7 +252,7 @@ An example listing is as follows.
 \subsubsection{transitVehicles.xml}
 To simulate public transport in MATSim, two additional input files are necessary. One is \lstinline|transitSchedule.xml|, which describes the vehicles which serve the lines: are they big buses, small buses, trains or light rail vehicles, and describes how many passengers each vehicle can transport.
 
-The description of public transport vehicles can be split into two parts: In a first part, vehicle types have to be described, specifying how many passengers such a vehicle can transport (Note that the term ``vehicle'' can refer to multiple vehicles in reality, e.g.\ a train with several wagons should be specified as one long vehicle with a high number of seats). In the second part, actual vehicles have to be listed. Each vehicle has an identifier and is of a previously specified vehicle type. The following shows an example of a such a file, describing one vehicle type and two vehicles of that type. 
+The description of public transport vehicles can be split into two parts: In a first part, vehicle types have to be described, specifying how many passengers such a vehicle can transport (Note that the term ``vehicle'' can refer to multiple vehicles in reality, e.g.,\,a train with several wagons should be specified as one long vehicle with a high number of seats). In the second part, actual vehicles have to be listed. Each vehicle has an identifier and is of a previously specified vehicle type. The following shows an example of a such a file, describing one vehicle type and two vehicles of that type. 
 
 \begin{xml}
 <?xml version="1.0" encoding="UTF-8"?> 
@@ -320,7 +320,7 @@ After the stop facilities, the transit lines, their routes and schedules are des
 
 Each transit line must have a unique id. Each transit route has an id which must be unique within that one line, so the same route id can be used with different lines. The \lstinline|transportMode| describes on which links in the network the line runs (Actually, this is currently not yet enforced. It would be possible to let a bus run on train links in the simulation. It might be enforced in the future).
 
-The \lstinline|routeProfile| describes the stops this route serves, while route itself describes the series of links in the network the transit vehicle's driver has to drive along (thus often referred to as network route. Note that the complete route, i.e.\ all links the vehicle drives along, must be listed in the route, and not only the ones where stops are located. All the specified stops should occur along this route in the specified order. The time offsets given for each stop in the \lstinline|routeProfile| describe the relative time offset to an actual departure time. If a bus is to depart at 7 o'clock in the morning, and stop 2 has a \lstinline|departureOffset| of 00:03:00, this must be read that the bus is expected to depart at 07:03 at the specific stop. All stops in the route profile must have a departure offset defined, except the last one. All stops, except the first one, can optionally have an arrival offset defined. This is mostly useful for large trains that stop for several minutes at a station to help the routing algorithm to find connecting services at the correct time, namely the expected arrival time of the train.
+The \lstinline|routeProfile| describes the stops this route serves, while route itself describes the series of links in the network the transit vehicle's driver has to drive along (thus often referred to as network route. Note that the complete route, i.e.,\,all links the vehicle drives along, must be listed in the route, and not only the ones where stops are located. All the specified stops should occur along this route in the specified order. The time offsets given for each stop in the \lstinline|routeProfile| describe the relative time offset to an actual departure time. If a bus is to depart at 7 o'clock in the morning, and stop 2 has a \lstinline|departureOffset| of 00:03:00, this must be read that the bus is expected to depart at 07:03 at the specific stop. All stops in the route profile must have a departure offset defined, except the last one. All stops, except the first one, can optionally have an arrival offset defined. This is mostly useful for large trains that stop for several minutes at a station to help the routing algorithm to find connecting services at the correct time, namely the expected arrival time of the train.
 
 As last part of the description of a transit route, the list of departures should be given. Each departure has an id, which must be unique within the route, and gives the departure time at the first stop of the specified route profile. In addition, the departure specifies with which vehicle the service should be run. This vehicle must be defined in the aforementioned list of transit vehicles. 
 
@@ -372,49 +372,60 @@ MATSim provides funtionality to compare traffic volumes from your simulation to 
 </counts>
 \end{xml}
 
-It starts with a header containing general descriptive information about the counts, including a year to describe how current the data is. Next, for each link having real world counts data, the hourly volumes can be specified. The network-link is referenced by the \lstinline|loc_id| attribute, in the example, it's link 2. The attribute \lstinline|cs_id| (counting station identifier) can be used to store an arbitrary description of the counting station. Most often it is used to note the original real word counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day (counting starts with hour ``1'') and its value, are optional: That is, not for every hour a value must be given. If for a counting station data is only available for certain hours of the day (e.g.\ only during peak hours) it is possible to omit the other hours from the XML listing. 
+It starts with a header containing general descriptive information about the counts, including a year to describe how current the data is. Next, for each link having real world counts data, the hourly volumes can be specified. The network-link is referenced by the \lstinline|loc_id| attribute, in the example, it's link 2. The attribute \lstinline|cs_id| (counting station identifier) can be used to store an arbitrary description of the counting station. Most often it is used to note the original real word counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day (counting starts with hour ``1'') and its value, are optional: That is, not for every hour a value must be given. If for a counting station data is only available for certain hours of the day (e.g.\,,only during peak hours) it is possible to omit the other hours from the XML listing. 
 
 % ===============================================================================================
 \subsection{Typical Output Data}
 \label{sec:outputdata}
-MATSim creates a bunch of output data, which can be used to analyze the results but also to monitor the correct working of the current simulation setup. Some of the files are created once for a run, others are created for every iteration and for some (typically for the large ones, such as the population) the output frequency can be specified in the config file. The text files, which are created once per run, are created on the fly such that a continous monitoring of the run is possible. There are data, that are created by default (such as the score files) and there are ones, which need to be triggered by a respective configuration file section (such as count data). All output data goes to the output folder, which can be specified in the \lstinline|controler| section of the config file.
-
-The following output data is generated.
+MATSim creates a bunch of output data, which can be used to analyze the results but also to monitor the correct working of the current simulation setup. 
+A \gls{matsimrun} contains a configurable number of \gls{iterations}. \ah{vielleicht muss das noch an einen anderen Ort.}
+Some of the files summarize the complete run, while others are created for a specific iteration only. 
+The first ones go directly to the top level of the output folder, which can be specified in the \lstinline|controler| section of the config file.
+The latter ones are stored in iteration-specific folders \lstinline|ITERS.it{iteration number}| continuously created in the output folder.
+For some files (typically for the large ones, such as the population) the output frequency can be specified in the config file. They go to the respective iteration folder.
+The files, which summarize the complete run, are build-up on the fly, i.e.,\,after every iteration the currently computed iteration values are stored, such that a continuous monitoring of the run is possible. 
+There are data, that are created by default (such as the score files) and there are ones, which need to be triggered by a respective configuration file section (such as count data).
 
 \kai{Sollten wir (1) den Unterschied zwischen ``main'' und ``ITERS'' directory beschreiben, und (2) darauf hinweisen, wo die folgenden Dateien jeweils sind?}
+\ah{sollte jetzt erledigt sein}
 
-\paragraph{Events:} Every action in the simulation is recorded as a so-called MATSim event, be it the starting of an activity or the change of a network link. Each \lstinline|Event| hosts one or multiple attributes. By default, the time when the \lstinline|Event| occurred is contained. Additionally, information like the id of the agent who caused the event or the id of the link where the \lstinline|Event| occurred could be included.  By default, the MATSim simulation module creates a so called Events-file in every 10th iteration. This file contains every single \lstinline|Event| that has been created by the simulation. The events file is thus a formidable base for post-analyses for example with the visualizers. Events are discussed in detail in Section~\ref{sec:events-extension-point}.
+The following output files are contentiously build-up to summarize the complete run.
 
 \paragraph{Log File:}
-During each MATSim run, a log file is created. This file contains several information, that you might need later for your analyses. Additionally, it might be very helpful, if a run has crashed for some unknown reason. 
-
+During a MATSim run, a log file is printed. This file contains several information, that you might need later for your analyses. Additionally, it might be very helpful, if a run has crashed for some unknown reason. 
 
 \paragraph{Warnings and Errors Log File:}
 Sometimes, MATSim recognizes problems in the simulation or the configuration of it. It will then write warnings and errors to the log file. As the log file contains a lot of information, such warnings might get overlooked. For this reason, a separate log file is generated in the output directory of a run containing only warnings and error messages. It is advised to have a look during/after a run into this file to see if there have been any major problems.
 
 \paragraph{Score Statistics:}
-Once per run the score statistics are printed out. They are available as picture (\lstinline|scorestats.png|) as well as a text file (\lstinline|scorestats.txt|). They show the average best, worst, executed and average of all plans of an agent for every iteration. An example score plot is shown in Figure~\ref{fig:scoreprogress}.
-
-\kai{``run'' vs ``iterations'': Wir benutzen normalerweise die Semantik, dass ein ``run'' die Summe aller ``iterations'' ist.  Dann wäre das oben ``Once per iteration''.  Oder ``At the end of each run'', obwohl das technisch nicht richtig ist, weil es tatsächlich am Ende einer jeden Iteration neu erzeugt wird; so kann man alles bereits während der Iterationen mitverfolgen.}
+Score statistics are available as picture (\lstinline|scorestats.png|) as well as a text file (\lstinline|scorestats.txt|). They show the average best, worst, executed and average of all plans of an agent for every iteration. An example score plot is shown in Figure~\ref{fig:scoreprogress}.
 
 \paragraph{Leg Travel Distance Statistics:}
-Also once per run, leg travel distance statistics are generated. They are comparable to the score statistics, but instead of the score, the travel distance is plotted. The files are named \lstinline|traveldistancestats.png| and \lstinline|traveldistancestats.txt|.
-
-\kai{dto}
+Leg travel distance statistics are comparable to the score statistics, but instead of the score, the travel distance is plotted. The files are named \lstinline|traveldistancestats.png| and \lstinline|traveldistancestats.txt|.
 
 \paragraph{Stopwatch:}
-Once per run, timing information is printed. The stopwatch file (\lstinline|stopwatch.txt|) contains the durations of actions like the replanning or the execution of the mobility simulation for every iteration. This data might be helpful for performance analyses (e.g.\ how long does the replanning take compared to the mobility simulation?).
+The stopwatch file (\lstinline|stopwatch.txt|) contains the durations of actions like the replanning or the execution of the mobility simulation for every iteration. This data might be helpful for performance analyses (e.g.\ how long does the replanning take compared to the mobility simulation?).
 
-\kai{dto}
+
+\kai{``run'' vs ``iterations'': Wir benutzen normalerweise die Semantik, dass ein ``run'' die Summe aller ``iterations'' ist.  Dann wäre das oben ``Once per iteration''.  Oder ``At the end of each run'', obwohl das technisch nicht richtig ist, weil es tatsächlich am Ende einer jeden Iteration neu erzeugt wird; so kann man alles bereits während der Iterationen mitverfolgen.}
+\ah{sollte jetzt erledigt sein}
+
+The following output files are created for specific iterations:
+
+\paragraph{Events:} Every action in the simulation is recorded as a so-called MATSim event, be it the starting of an activity or the change of a network link. Each \lstinline|Event| hosts one or multiple attributes. By default, the time when the \lstinline|Event| occurred is contained. Additionally, information like the id of the agent who caused the event or the id of the link where the \lstinline|Event| occurred could be included. By default, the MATSim simulation module creates a so called events-file in every 10th iteration. This file contains every single \lstinline|Event| that has been created by the simulation. The events file is thus a formidable base for post-analyses for example with the visualizers. Events are discussed in detail in Section~\ref{sec:events-extension-point}.
+
+\paragraph{Plans:} At configurable iterations the current state of the population with the agents' plans is printed.
+
+The final iteration's plans and events are also generated on the top level of the output folder.
 
 \paragraph{Leg Histogram:}
-In every iteration, a leg histogram is plotted. A leg histogram depicts the number of agents that arrive, depart or are en route per time unit. Histograms are created for each transport mode and, additionally, for the sum of all transport modes. Each file starts with the iteration number and ends with the transport mode (e.g.\ \lstinline|1.legHistogram_car.png| or \lstinline|1.legHistogram_all.png|). Moreover, a text file is created (e.g.\ \lstinline|1.legHistogram.txt|) that contains the data for all transport modes.
+In every iteration, a leg histogram is plotted. A leg histogram depicts the number of agents that arrive, depart or are en route per time unit. Histograms are created for each transport mode and, additionally, for the sum of all transport modes. Each file starts with the iteration number and ends with the transport mode (e.g.,\,\lstinline|1.legHistogram_car.png| or \lstinline|1.legHistogram_all.png|). Moreover, a text file is created (e.g.,\,\lstinline|1.legHistogram.txt|) that contains the data for all transport modes.
 
 \paragraph{Trip Durations:}
-Per iteration, a trip durations text file (e.g.\ \lstinline|1.tripdurations.txt|) listing the number of trips and their durations on a time bin level for each activity pair (e.g.\ from work to home or from home to shopping) is put out.
+Per iteration, a trip durations text file (e.g.\ \lstinline|1.tripdurations.txt|) listing the number of trips and their durations on a time bin level for each activity pair (e.g.,\,from work to home or from home to shopping) is put out.
 
 \paragraph{Link Volumes:}
-The printing of the link volume comparison (between simulated and counted volumes) needs to be triggered by a config file entry. The comparison generates overview summaries for the whole netwoek but also analyses for individual links. A link analysis might like like Figure~\ref{fig:countcomparison}.
+The printing of the link volume comparison (between simulated and counted volumes) needs to be triggered by a config file entry. The comparison generates overview summaries for the whole network but also analyses for individual links. A link analysis might look like Figure~\ref{fig:countcomparison}.
 
 % ----------
 \createfigure%
@@ -425,14 +436,9 @@ The printing of the link volume comparison (between simulated and counted volume
 {}
 % ----------
 
-\paragraph{kmz:}
-
-\kai{??}
-
-
 % ===============================================================================================
 \subsection{An Example Scenario}
-The MATSim release is shipped with an example scenario named \lstinline|equil| in the folder \lstinline|examples/equil|. The scenario contains the following files \lstinline|config.xml|, \lstinline|network.xml| and \lstinline|plans100.xml| containing 100 persons with their day plans, one using public transport, the other person using car mode \kai{100 or 2 persons?}. Additional populations containing only 2 persons (\lstinline|plans2.xml|) or 2000 persons are provided (\lstinline|plans2000.xml.gz|). Furthermore, an example for count data can be found in the folder (\lstinline|counts100.xml|). 
+The MATSim release is shipped with an example scenario named \lstinline|equil| in the folder \lstinline|examples/equil|. The scenario contains the following files \lstinline|config.xml|, \lstinline|network.xml| and \lstinline|plans100.xml|, \lstinline|plans2000.xml.gz| containing 100 and 2000 persons respectively with their day plans using the car mode only. A tiny population containing only 2 persons (\lstinline|plans2.xml|) one using public transport, the other person using car mode are provided. Furthermore, an example for count data can be found in the folder (\lstinline|counts100.xml|). 
 
 %% or trips with taxi mode is also provided (\lstinline|plans-w-taxi.xml|). 
 
@@ -456,7 +462,7 @@ The network of the scenario is shown in Figure~\ref{fig:equil}.
 
 The following lines explain the scenario by picking the most important sections from the config file \lstinline|config.xml|.
 
-As shown in the listing below, this scenario uses replanning. 10\% of the agents reroute their current route (module \lstinline|ReRoute|). The remaining 90\% select their highest score plan for reexecution in the current iteration (module \lstinline|BestScore|). Plans get deleted from the agent's memeory if it is full defined by \lstinline|maxAgentPlanMemorySize|. By default, the plan with the lowest score is removed, while this is configurable and currently subject of intense reserach (see Section~\ref{sec:choicesets}).
+As shown in the listing below, this scenario uses replanning. 10\,\% of the agents reroute their current route (module \lstinline|ReRoute|). The remaining 90\,\% select their highest score plan for re-execution in the current iteration (module \lstinline|BestScore|). Plans get deleted from the agent's memory if it is full defined by \lstinline|maxAgentPlanMemorySize|. By default, the plan with the lowest score is removed, while this is configurable and currently subject of intense research (see Section~\ref{sec:choicesets}).
 %
 \begin{xml}
 <module name="strategy">
@@ -471,6 +477,7 @@ As shown in the listing below, this scenario uses replanning. 10\% of the agents
 \end{xml}
 
 \kai{I think there is a better syntax for the above now (without the numbering); should we use that?}
+\ah{ja}
 
 The section \lstinline|planCalcScore| defines the parameters used for scoring. The parameters are explained in Chapter~\ref{ch:scoring}. As can be seen in the example the two activity types \lstinline|h| (home) and \lstinline|w| (work) are specified. The scenario is run for 10 iterations, writes the output files to \lstinline|./output/equil| (Section~\ref{sec:outputdata}), and uses \lstinline|qsim| as the mobility simulation (more on \gls{mobsim}s in Section~\ref{sec:trafficflowmodel} and \ref{sec:mobsims}).
 
@@ -483,6 +490,9 @@ The section \lstinline|planCalcScore| defines the parameters used for scoring. T
 \end{xml}
 
 \kai{I would suggest to say something about via already at this point.  There is a free educational version so I think that this would be ok.}
+\ah{ok}
+
+Simulation results can be comfortably analyzed using one of the visualizers, via (Chapter~\ref{ch:via}) or the OTFVis (Chapter~\ref{ch:otfvis}).
 
 % ===============================================================================================
 \subsection{Units, Conventions and Coordinate Systems}
@@ -501,7 +511,7 @@ While MATSim supports an hour:minute:second notation in several places, internal
 
 \paragraph{Money}
 
-Money is unit-free.  The units are implictly given by the marginal utility of money (cf.\ Equation~(\ref{eq:tdisutility}).  That is when, say, one moves from Germany to Switzerland, then the parameter $\beta_c$ has to be changed from ``utility per Euro'' to ``utility per Swiss franc''.
+Money is unit-free. The units are implicitly given by the marginal utility of money (cf.,\,Equation~(\ref{eq:tdisutility}). That is when, say, one moves from Germany to Switzerland, then the parameter $\beta_c$ has to be changed from "utility per Euro" to "utility per Swiss franc".
 
 % ----------------------------------------------------------------------------
 \subsubsection{Conventions}
@@ -511,16 +521,16 @@ MATSim makes heavy uses of identifiers, short \lstinline|Id|s. This Ids can be a
 \subsubsection{Coordinate Systems}
 \label{sec:coordinatesystems}
 \paragraph{Preparing Your Data in the Right Coordinate System:}
-In several input files, you need to specify coordinates, e.g.\ for the nodes of the network. It is strongly suggested not to use WGS84 coordinates (i.e.\ GPS coordinates, or any other kind of spherical coordinates; coordinates ranging from -180 to +180 in west-east direction, and from -90 to +90 in south-north direction). MATSim needs to calculate distances between two points in several places of the code. The calculation of distances between spheric coordinates is very complex and potentially slow. Instead, MATSim uses the simple Pythagoras' theorem, but this requires the coordinates to be in a Cartesian coordinate system. Thus is is stronlgy advised to use a Cartesian coordinate system along with MATSim, preferably one where the distance unit corresponds to one meter.
+In several input files, you need to specify coordinates, e.g.\ for the nodes of the network. It is strongly suggested not to use WGS84 coordinates (i.e.,\,GPS coordinates, or any other kind of spherical coordinates; coordinates ranging from -180 to +180 in west-east direction, and from -90 to +90 in south-north direction). MATSim needs to calculate distances between two points in several places of the code. The calculation of distances between spherical coordinates is very complex and potentially slow. Instead, MATSim uses the simple Pythagoras' theorem, but this requires the coordinates to be in a Cartesian coordinate system. Thus is is strongly advised to use a Cartesian coordinate system along with MATSim, preferably one where the distance unit corresponds to one meter.
 
-Many countries and regions have custom coordinate system defined, optimized for usages in their apropriet areas. It might be best to ask some GIS specialists in your region of interest what the most commonly used local coordinate system is and use that as well for your data.
+Many countries and regions have custom coordinate system defined, optimized for usages in their appropriate areas. It might be best to ask some GIS specialists in your region of interest what the most commonly used local coordinate system is and use that as well for your data.
 
 If you don not have any clue about what coordinate system is used in your region, it might be best to use the Universal Transverse Mercator coordinate system. This coordinate system divides the world into multiple bands, each six degrees width and separated into a northern and southern part, which it calls UTM zones. For each zone, an optimized coordinate system is defined. Choose the UTM zone which covers your region (Wikipedia has a nice map showing the zones) and use its coordinate system. 
 
 \paragraph{Telling MATSim about Your Coordinate System:}
-In some places, MATSim requires to know which coordinate system your data is in. You have multiple ways to specify the coordinate system you use. The easiest one is to use the so-called ``EPSG codes''. Most of the commonly used coordinate systems got standardized and numbered. The EPSG code uniquely identifies a coordinate system and can be directly used by MATSim. As an alternative, MATSim can also parse the description of a coordinate system in the so-called WKT format. As the WKT format is much more error prone it is suggested to use EPSG codes whenever possible.
+In some places, MATSim requires to know which coordinate system your data is in. You have multiple ways to specify the coordinate system you use. The easiest one is to use the so-called "EPSG codes". Most of the commonly used coordinate systems got standardized and numbered. The EPSG code uniquely identifies a coordinate system and can be directly used by MATSim. As an alternative, MATSim can also parse the description of a coordinate system in the so-called WKT format. As the WKT format is much more error prone it is suggested to use EPSG codes whenever possible.
 
-To find the correct EPSG code for your coordinate system (e.g.\ for one of the UTM zones), the website \url{http://www.spatialreference.org} is of great use. Search on this website for your coordinate system, e.g.\ for ``WGS84 / UTM Zone 8N'' (for the northern-hemisphere UTM Zone 8) to find a list of matching coordinate systems along with their EPSG codes.
+To find the correct EPSG code for your coordinate system (e.g.\ for one of the UTM zones), the website \url{http://www.spatialreference.org} is of great use. Search on this website for your coordinate system, e.g.\ for "WGS84 / UTM Zone 8N" (for the northern-hemisphere UTM Zone 8) to find a list of matching coordinate systems along with their EPSG codes.
 
 For some operations, MATSim must know the coordinate system your data is in. Some analyses may create output to be visualized in Google Earth for example, where the coordinates need to be converted back to WGS84. The coordinate system used by your data can be specified in the config file:
 
@@ -538,7 +548,7 @@ This allows MATSim to work with your coordinates and convert them whenever neede
 \subsubsection{Demand}
 Demand estimation is the main purpose of MATSim. That means that---in theory---only these demand components have to be provided to MATSim, which in reality do \emph{not} change during the simulated average working day. Examples are the population and its residential and working locations. In practice, however, MATSim is not quite there yet to endogenously model the complete travel demand. The sequence and preferred durations of activities for example have to be provided as input. In consequence all travel demand choices, which are not covered by the MATSim cycle, have to be endogenously estimated. 
 
-For population generation, basically two possibilities exist. The comfortable way is to translate full population census and the slightly more demanding way is synthetic population generation \citep[e.g.,][]{} based on sample or structure surveys. For MATSim both ways have been implemented based on \citet[][]{BfS_VZ_2000} and \citet[][]{Mueller_unpub_STRC_2011} respectively.
+For population generation, basically two possibilities exist. The comfortable way is to translate full population census and the slightly more demanding way is synthetic population generation \citep[e.g.,\,][]{GuoBhat_TRR_2007} based on sample or structure surveys. For MATSim both ways have been implemented based on \citet[][]{BfS_VZ_2000} and \citet[][]{Mueller_unpub_STRC_2011} respectively.
 
 The travel demand is usually derived from surveys; for Switzerland from the Swiss Travel Survey \citep[][]{BfS-MZ2005_manual_2006}. Newer data sources, such as GPS or smartphone travel diaries might be an interesting future possibility.
 
@@ -592,12 +602,12 @@ Often neglected, but important, is performing sensitivity analysis (sometimes du
 
 As mentioned above, models are in general flexible enough to be calibrated to target data. Thus, validation \emph{must} be performed using a different data set than for preceding modeling steps \citep[][p.1]{CambridgeSystematics_manual_2008}, \citep[][p.56]{CFD_TRB_2007}, \citep[][p.18]{OrtuzarWillumsen_2001}. In statistics, this is called cross-validation. It is particularly important for forecasting models, which need to be general enough to capture temporal changes. Calibration and validation should thus be strictly separated, however, in microsimulation practice, according to the author's opinion, they are (too) often mixed, sometimes due to the vast amount of data required for model implementation and calibration. In MATSim, for example, after model calibration only road count data is left for validation \citep[][]{HorniEtAl_STRC_2009}. New data sources, such as road speed analyses based on GPS \citep[][]{HackneyEtAl_JGS_2007}, should be included.
 
-Having said that, validation of a large-scale transport simulation is very difficult. Many central and comfortable characteristics of systems known from natural sciences are only seldom available for the social science, such as path-independence, decomposability, isolation, and on top of that repeatability of experiments. As a result, there is still a debate if social science actually can provide something similar as laws. \citet[][p.107ff]{Abel_1976} lists and discusses the 12 claims of the ``\emph{Verstehen Position}''; although, he finds contrary arguments to every claim, nevertheless, something definitely remains true, making social science model validation exceptionally difficult. For microsimulation results interpretation and model validation, it helped me to visualize the following example. A microsimulation forecast (or backcast) regarding the construction of the ``Westumfahrung Zürich'' provides a probability distribution of scenarios, and it is essentially an exercise in Monte Carlo sampling. 4 years later we have exactly one actual state, and there is no way to assess the forecasted (or backcasted) probability distribution beyond checking that this actual state is contained in the probability distribution, and hopefully with high probability. There is nothing like Monte Carlo sampling when it comes to aggregate real system states. In other words the existing state is \emph{unique}. In essence, we thus compare an observed Dirac impulse with a computed probability distribution, which is a difficult undertaking.
+Having said that, validation of a large-scale transport simulation is very difficult. Many central and comfortable characteristics of systems known from natural sciences are only seldom available for the social science, such as path-independence, decomposability, isolation, and on top of that repeatability of experiments. As a result, there is still a debate if social science actually can provide something similar as laws. \citet[][p.107ff]{Abel_1976} lists and discusses the 12 claims of the "\emph{Verstehen Position}"; although, he finds contrary arguments to every claim, nevertheless, something definitely remains true, making social science model validation exceptionally difficult. For microsimulation results interpretation and model validation, it helped me to visualize the following example. A microsimulation forecast (or backcast) regarding the construction of the ``Westumfahrung Zürich'' provides a probability distribution of scenarios, and it is essentially an exercise in Monte Carlo sampling. 4 years later we have exactly one actual state, and there is no way to assess the forecasted (or backcasted) probability distribution beyond checking that this actual state is contained in the probability distribution, and hopefully with high probability. There is nothing like Monte Carlo sampling when it comes to aggregate real system states. In other words the existing state is \emph{unique}. In essence, we thus compare an observed Dirac impulse with a computed probability distribution, which is a difficult undertaking.
 
 % ----------
 \createfigure%
 {Modeling Process}%
-{Modeling Process: Modeling starts with observation and measurement of reality (in \citet[][]{Petty_SokolowskiBanks_2010} called ``\emph{simuland}'') for acquisition of knowledge (in \citet[][]{Petty_SokolowskiBanks_2010} called ``\emph{referent}''). Model creation---in a strict sense usually referred to as \emph{modeling}--- is based on the modeler's knowledge about the world. Based on a conceptual model, an executable model is implemented and calibrated. The executable model is evaluated in a verification step in terms of ``\emph{was the model made right?}'' \citep[][p.332]{Petty_SokolowskiBanks_2010}. Validation compares results with the referent in the sense of ``\emph{was the right model made?}'' \citep[][p.332]{Petty_SokolowskiBanks_2010}.}%
+{Modeling Process: Modeling starts with observation and measurement of reality (in \citet[][]{Petty_SokolowskiBanks_2010} called ``\emph{simuland}'') for acquisition of knowledge (in \citet[][]{Petty_SokolowskiBanks_2010} called ``\emph{referent}''). Model creation---in a strict sense usually referred to as \emph{modeling}---is based on the modeler's knowledge about the world. Based on a conceptual model, an executable model is implemented and calibrated. The executable model is evaluated in a verification step in terms of ``\emph{was the model made right?}'' \citep[][p.332]{Petty_SokolowskiBanks_2010}. Validation compares results with the referent in the sense of ``\emph{was the right model made?}'' \citep[][p.332]{Petty_SokolowskiBanks_2010}.}%
 {\label{fig:modeling}}%
 {\includegraphics[width=0.8\textwidth, angle=0]{using/figures/modeling.pdf}}%
 {}
