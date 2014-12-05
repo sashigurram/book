@@ -2,12 +2,12 @@
 \label{ch:scoring}
 % ##################################################################################################################
 
-\hfill \textbf{Author:} ..., Andreas Horni, ...
+\hfill \textbf{Author:} ..., Andreas Horni, \ah{Kai Nagel?}
 
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{using/figures/utf.png} \end{center}
 
 % ##################################################################################################################
-MATSim scoring is a central element of MATSim. The user has the possibility to configure numerous parameters to calibrate the choice behavior. \ah{Kann man jetzt UTF im Config zusammensetzen? Rashid?} When users are ready to extend MATSim in the next book part, they will also be able to plug in their own customized utility function.
+MATSim scoring is a central element of MATSim. The user has the possibility to configure numerous parameters to calibrate the choice behavior. When users are ready to extend MATSim in the next book part, they will also be able to plug in their own customized utility function.
 
 MATSim is based on utility-maximization. Thus, estimated discrete choice models can be applied in MATSim. However, because of MATSim's iterative structure, and because it is based on complete day plans, the application of models for parts of day plans only (for example mode choice) is not straight forward as detailed in Section~\ref{sec:estimation}.
 
@@ -21,7 +21,7 @@ Because of the absence of complete-day-utility functions in the literature, MATS
 
 \subsection{Mathematical form}
 
-The first and still basic MATSim utility function was formulated by \citet[][]{CharyparNagel_Transportation_2005} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far indicated that the MATSim function is also appropriate for modeling the further choice dimensions.
+The first and still basic MATSim \gls{utility} function was formulated by \citet[][]{CharyparNagel_Transportation_2005} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far indicated that the MATSim function is also appropriate for modeling the further choice dimensions.
 %
 It is, however, almost certainly not appropriate for activity dropping (see Section~\ref{sec:scoring-current}).
 
@@ -37,9 +37,12 @@ For the basic function, the utility of a plan $S_{plan}$ is computed as the sum 
 %
 \begin{equation}
 \label{eq:matsimUTF}
-S_{plan}=\sum^N_{q=1} S_{act,q} + \sum^{N-1}_{q=1} S_{trav, mode, q}
+S_{plan}=\sum^{N-1}_{q=0} S_{act,q} + \sum^{N-1}_{q=0} S_{trav, mode, q}
 \end{equation}
-with $N$ as the number of activities. Note that trip $q$ is the trip that follows activity $q$. The last activity does not have an associated trip, thus the sum goes only up to $N-1$.  \kai{Andreas, Macht Ihr das so?  Die Standard-Variante, die auch am VSP verwendet wird, ``näht'' die erste und die letzte Aktivität zusammen.  Damit haben wir genauso viele Aktivitäten wie Trips.}
+with $N$ as the number of activities. Trip $q$ is the trip that follows activity $q$. The last activity is for scoring merged with the first activity, thus there is an equal number of trips and activities.
+%does not have an associated trip, thus the sum goes only up to $N-1$.  
+\kai{Andreas, Macht Ihr das so?  Die Standard-Variante, die auch am VSP verwendet wird, ``näht'' die erste und die letzte Aktivität zusammen.  Damit haben wir genauso viele Aktivitäten wie Trips.}
+\ah{dann lag ich hier wohl falsch. korrigiert.}
 
 \paragraph{Activities}
 
@@ -109,6 +112,8 @@ Note that the distance contributes to disutility in two ways. First, it is inclu
 
 \kai{distance both via distance cost rate and via direct marginal utl.  ok with me, BK will (probably) be less happy.  If it stays this way, config needs to be made consistent with text above.}
 
+\ah{Hatte, glaube ich, aus dem User Guide abgeguckt.}
+
 It is important to note that travel receives an additional implicit penalty from the opportunity cost of time: If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer. The marginal utility of travel time savings is thus:
 %
 \[
@@ -150,6 +155,8 @@ The basic Charypar-Nagel scoring function is inspired by \citet[][]{ArnottEtAl_T
 %
 Nowadays the utility function measures in the unit $utils$, where an earlier interpretation was based on monetary terms (e.g., $\EUR$).
 
+\ah{Hier Schätzung von Kickhöfer erwähnen und etwas History wie man auf die Werte kommt?}
+
 %\citet[][p.164, p.173]{ArnottEtAl_TAER_1993} defines 
 %$\alpha=5.00\ \$/h$ the shadow cost of travel time,
 %$\beta=3.05\ \$/h$ the unit cost of arriving early at work, and
@@ -163,61 +170,77 @@ Nowadays the utility function measures in the unit $utils$, where an earlier int
 % ##################################################################################################################
 \section{Extensions and replacements of the \acrshort{matsim} scoring function}
 \label{sec:utfextensions}
-The following paragraphs describe, how the basic utility function explained in \citet[][]{CharyparNagel_Transportation_2005} has been extended by monetary and distance costs and mode-specific travel parameters including constants. Please be aware, that the MATSim code base and in particular the scoring functionality has changed a lot in recent years, e.g., the scoring is now based on events rather than on plans \ah{...}. Thus, the historical development is accompanied by various conceptual and technical modifications leading to the current utility function described above. This also means, that the reported parameter settings are an indication not a direct recommendation.
+The following paragraphs describe, how the basic utility function explained in \citet[][]{CharyparNagel_Transportation_2005} has been extended by monetary and distance costs and mode-specific travel parameters including constants. Please be aware, that the MATSim code base and in particular the scoring functionality has changed a lot in recent years, e.g.,\,the scoring is now based on events rather than on plans as it was the case in the beginning of MATSim. Thus, the historical development is accompanied by various conceptual and technical modifications leading to the current utility function described above. This also means, that the reported parameter settings are an indication not a direct recommendation.
 
 % ======================================================================================================================
-\paragraph{Project Westumfahrung Zürich:}
-Project Westumfahrung \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009} used the Zürich scenario version 1 \citep[][]{HorniEtAl_TechRep_IVT_2011_a}. Only car traffic was simulated with $\beta_{perf,q}=6.0\ utils/h$ and $\beta_{trav,q}=-6.0\  utils/h$. No further penalties were applied. Typical activity durations were provided with the config with half-hour resolution and empirically derived from the Swiss microcensus.
+%\paragraph{Project Westumfahrung Zürich:}
+%Project Westumfahrung \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009} used the Zürich scenario version 1 \citep[][]{HorniEtAl_TechRep_IVT_2011_a}. Only car traffic was simulated with $\beta_{perf,q}=6.0\ utils/h$ and $\beta_{trav,q}=-6.0\  utils/h$. No further penalties were applied. Typical activity durations were provided with the config with half-hour resolution and empirically derived from the Swiss microcensus.
 
 % ======================================================================================================================
 \paragraph{Kickhöfer:}
 \citet[][]{Kickhoefer_MastersThesis_2009} added monetary variables and income to the MATSim utility function and performed a mode-specific estimation based on the survey by \citet[][]{VrticEtAl_ResRep_SVI_2007}. The utility function extended by monetary factors was linear, both in the variables and the parameters. Estimated parameters are given in Table 3 of \citet[][]{Kickhoefer_MastersThesis_2009}. The income-dependent utility function was based on \citet[][]{Franklin_PhDThesis_2006}.
 
-% ======================================================================================================================
-\paragraph{Project Location-Based Services:}
-\citet[][]{BalmerEtAl_ResRep_datapuls_2010} was simulated on the Swiss scenario version 2 \citep[][]{HorniEtAl_TechRep_IVT_2011_a}. Innovations related to the utility function are agent-specific typical activity durations and facility-specific opening hours. Summation of activity duration for activities of the same duration (denoted as $S_{cum}$) was added by \citet[][p.9 and p.28]{BalmerEtAl_ResRep_datapuls_2010}. Facility-loading penalties were included as detailed below. The parameters \citep[][Table 2 on p.31]{BalmerEtAl_ResRep_datapuls_2010} of the multi-modal utility function including monetary costs was heavily based on the estimates by Kickhöfer \citep[][]{Kickhoefer_MastersThesis_2009}. Egress and access times to and from public transport stops was included, public transport travel times were not simulated but imputed. Due to problems with spreading of many plans into the next day a penalty for too long day plans was added.
+\ah{Irgendwo oben kurz darauf eingehen? Bei den Params?}
 
 % ======================================================================================================================
-\paragraph{Project Herbie Mode Choice:}
-Project Herbie \citep[][]{VitinsEtAl_VW_2012} provided a thorough calibration of the multi-modal Zürich scenario extended by public transport simulation, cross-border and freight traffic, tolling, parking pricing, park \& ride and joint riding. The mode-share calibration targeting on distances and shares was based on the Swiss microcensus \citep[][p.18]{VitinsEtAl_VW_2012}.   
+%\paragraph{Project Location-Based Services:}
+%\citet[][]{BalmerEtAl_ResRep_datapuls_2010} was simulated on the Swiss scenario version 2 \citep[][]{HorniEtAl_TechRep_IVT_2011_a}. Innovations related to the utility function are agent-specific typical activity durations and facility-specific opening hours. Summation of activity duration for activities of the same duration (denoted as $S_{cum}$) was added by \citet[][p.9 and p.28]{BalmerEtAl_ResRep_datapuls_2010}. Facility-loading penalties were included as detailed below. The parameters \citep[][Table 2 on p.31]{BalmerEtAl_ResRep_datapuls_2010} of the multi-modal utility function including monetary costs was heavily based on the estimates by Kickhöfer \citep[][]{Kickhoefer_MastersThesis_2009}. Egress and access times to and from public transport stops was included, public transport travel times were not simulated but imputed. Due to problems with spreading of many plans into the next day a penalty for too long day plans was added.
+
+% ======================================================================================================================
+%\paragraph{Project Herbie Mode Choice:}
+%Project Herbie \citep[][]{VitinsEtAl_VW_2012} provided a thorough calibration of the multi-modal Zürich scenario extended by public transport simulation, cross-border and freight traffic, tolling, parking pricing, park \& ride and joint riding. The mode-share calibration targeting on distances and shares was based on the Swiss microcensus \citep[][p.18]{VitinsEtAl_VW_2012}.   
 
 % ======================================================================================================================
 \paragraph{Project Tel-Aviv:}
-\citet[][]{BekhorEtAl_TRB_2011, DoblerEtAl_TechRep_IVT_2014} combine MATSim with the Tel-Aviv activity-based model \citep[][]{CambrigeSystemsInc_ResRep_TelAviv_2008}. Its multi-nomial zone-based utility function is integrated into MATSim by disaggregating the zones into facilities.
+%\citet[][]{BekhorEtAl_TRB_2011, DoblerEtAl_TechRep_IVT_2014} combine MATSim with the Tel-Aviv activity-based model \citep[][]{CambrigeSystemsInc_ResRep_TelAviv_2008}. Its multi-nomial zone-based utility function is integrated into MATSim by disaggregating the zones into facilities.
+
+\ah{ins Tel-Aviv Chapter}
 
 % ======================================================================================================================
-\paragraph{Project MATSim 2030:}
-Switzerland. \ah{wait for working paper}
+%\paragraph{Project MATSim 2030:}
+%Switzerland. \ah{wait for working paper}
 
 % ======================================================================================================================
 \paragraph{Singapore:}
-In the Singapore scenario \citep[][]{ErathEtAl_IATBR_2012} the basic multi-modal Charypar-Nagel utility function is applied. Its parameters derived from the Singapore Land Transport Authority (LTA) model. The utility function is measured in SGD rather than utils.
+%In the Singapore scenario \citep[][]{ErathEtAl_IATBR_2012} the basic multi-modal Charypar-Nagel utility function is applied. Its parameters derived from the Singapore Land Transport Authority (LTA) model. The utility function is measured in SGD rather than utils.
+
+\ah{Im Singapore scenario angeben}
 
 % ======================================================================================================================
 \paragraph{Car Sharing:}
-\citet[][p.10]{CiariEtAl_TechRep_IVT_2014} used the following car sharing specific utility function terms: access and egress time costs for walking, monetary cost of distance, and rental costs (constant and time-dependent). Simulations were performed for the multi-modal Zürich scenario with the parameter set described in Table 1.
+%\citet[][p.10]{CiariEtAl_TechRep_IVT_2014} used the following car sharing specific utility function terms: access and egress time costs for walking, monetary cost of distance, and rental costs (constant and time-dependent). Simulations were performed for the multi-modal Zürich scenario with the parameter set described in Table 1.
+%
+\ah{Ist im Carsharing Kapitel drin.}
 
 % ======================================================================================================================
 \paragraph{Parking:}
-\citet[][]{WaraichAxhausen_TechRep_IVT_2012} extended the utility function by a parking term including walking to and from the parking lot (p.7) and parking costs (p.9). Simulations were run for the Zürich car traffic scenario. \citet{WaraichEtAl_unpub_TRB_2013} implemented a parking location choice model based on parameters estimated by \citet[][]{WeisEtAl_TechRep_TSMS_2013}.
+%\citet[][]{WaraichAxhausen_TechRep_IVT_2012} extended the utility function by a parking term including walking to and from the parking lot (p.7) and parking costs (p.9). Simulations were run for the Zürich car traffic scenario. \citet{WaraichEtAl_unpub_TRB_2013} implemented a parking location choice model based on parameters estimated by \citet[][]{WeisEtAl_TechRep_TSMS_2013}.
+
+\ah{Sollte ins Parkign Chapter rein}
 
 % ======================================================================================================================
 \paragraph{Road Pricing:}
-Road pricing is a MATSim extension. It can be added by an event listener to the controler. The utility function then gets money events, converts them, and accumulates them to the rest of the score which is given in utils.
+%Road pricing is a MATSim extension. It can be added by an event listener to the controler. The utility function then gets money events, converts them, and accumulates them to the rest of the score which is given in utils.
+
+\ah{Ins Roadpricing Chapter?}
 
 % ======================================================================================================================
 \paragraph{Social Contacts and Joint Trips:}
-There are two approaches modeling social contacts in MATSim, \citet[][]{Hackney_PhDThesis_2009} and the work performed by Thibaud Dubernet. Both modify scoring in a similar way; by increasing each individuals score if they coincidently perform an activity of the same type in the same facility. Both restricted the type to leisure to begin with. Dubernet also includes joint car rides in that calculation; but sometimes instead the marginal utility of travel is modified (Thubaud Dubernet, personal communication, March 2014). Linear and logarithmic functions have been tried by Dubernet, where recent experiments showed that, as expected, a logarithmic function increases the number of friend contacts, giving the microsimulation user another calibration parameter. 
+%There are two approaches modeling social contacts in MATSim, \citet[][]{Hackney_PhDThesis_2009} and the work performed by Thibaud Dubernet. Both modify scoring in a similar way; by increasing each individuals score if they coincidently perform an activity of the same type in the same facility. Both restricted the type to leisure to begin with. Dubernet also includes joint car rides in that calculation; but sometimes instead the marginal utility of travel is modified (Thibaud Dubernet, personal communication, March 2014). Linear and logarithmic functions have been tried by Dubernet, where recent experiments showed that, as expected, a logarithmic function increases the number of friend contacts, giving the microsimulation user another calibration parameter. 
+
+\ah{dito}
 
 % ======================================================================================================================
 \paragraph{Destination Choice:}
-Goal of the estimation described by \citet[][]{Horni_PhDThesis_2013} were first indications about quantitative relation of MATSim time parameters and further choice attributes. Focusing on destination choice, attributes used for estimation were \emph{store size} (in categories), \emph{price level} (in categories) and \emph{additional linear distance} to the store similar to the detour distance defined in \citet[][]{ArentzeTimmermans_TRR_2007}.
+%Goal of the estimation described by \citet[][]{Horni_PhDThesis_2013} were first indications about quantitative relation of MATSim time parameters and further choice attributes. Focusing on destination choice, attributes used for estimation were \emph{store size} (in categories), \emph{price level} (in categories) and \emph{additional linear distance} to the store similar to the detour distance defined in \citet[][]{ArentzeTimmermans_TRR_2007}.
+%
+%Clearly, for direct application in MATSim, travel times rather than distances would have been better, but this information was not available consistently. A minimal set of variables was chosen due to data availability and as the main goal was laying an instructive base for future MATSim utility function estimations and their application in the MATSim Zürich scenario. Alternative-specific constants were not assigned to destinations to prevent over-fitting \citep[][]{BierlaireEtAl_TransScience_1997}.
+%
+%Although the estimated parameters had to be enlarged to show significant effects, their relation was correct as experiments with this extended and adapted model showed a surprisingly substantial decrease of the relative error in count data.
+%
+%Non-linear estimated models containing travel time are scarce as travel time is an unreliable information in surveys. A way to approximately applying simple linear distance models to the non-linear time-based MATSim utility function is discussed in Section 5.5.1 of \citet[][]{Horni_PhDThesis_2013}.
 
-Clearly, for direct application in MATSim, travel times rather than distances would have been better, but this information was not available consistently. A minimal set of variables was chosen due to data availability and as the main goal was laying an instructive base for future MATSim utility function estimations and their application in the MATSim Zürich scenario. Alternative-specific constants were not assigned to destinations to prevent over-fitting \citep[][]{BierlaireEtAl_TransScience_1997}.
-
-Although the estimated parameters had to be enlarged to show significant effects, their relation was correct as experiments with this extended and adapted model showed a surprisingly substantial decrease of the relative error in count data.
-
-Non-linear estimated models containing travel time are scarce as travel time is an unreliable information in surveys. A way to approximately applying simple linear distance models to the non-linear time-based MATSim utility function is discussed in Section 5.5.1 of \citet[][]{Horni_PhDThesis_2013}.
+\ah{dito}
 
 % ======================================================================================================================
 \paragraph{Facility Load:}
@@ -262,6 +285,9 @@ This section summarizes the current implementation of the default \acrshort{mats
 
 \kai{Habe das jetzt mal geschrieben, damit es vollständig ist.  Natürlich wird es auf diesem Weg immer detaillierter und damit didaktisch immer ungünstiger.  Bessere Alternativen willkommen.}
 
+\ah{Ich würde das lieber ganz hochnehmen, so dass man den current state ganz zu Beginn des Kapitels mitkriegt. Dafür würde ich "Extensions and replacements of the \acrshort{matsim} scoring function" sehr stark abspecken (Habe das mal entsprechend auskommentiert). Im Wesentlichen: Auch hier wieder History rausschmeissen. Die Extensions der UTF sind hier eigentlich sowieso am falschen Ort Platz (gehörten in den nächsten Teil.) Unabhängig vom Platz, finde ich den Hinweis, dass eine S-shaped function, error terms, facility load und agent-specific terms schon mal implementiert wurden doch wertvoll. Vielleicht ein zusätzliches Kapitel unter "Modules" einfügen und da die Erweiterung/Schätzung der UTF besprechen. Oder hier generell einen ganz kurzen "Pointer"'-Absatz mache im Stil von "UTF for Tel-Aviv cna be found in Section~\ref{sec:scenario.telaviv} etc.). \\
+Ah, jetzt fällt mir gerade auch ein, dass Chef eine Zusammenstellung wie in obiger Section genau mal wollte.}
+
 \paragraph*{Zero utility duration}
 
 The duration at which the utility of an activity is exactly zero is computed by the somewhat cryptic expression
@@ -296,6 +322,9 @@ For an adaptive algorithm, such a penalty needs to guide the adaptation back int
 % ##################################################################################################################
 \section{Estimating a Utility Function}
 \label{sec:estimation}
+
+\ah{Research Avenues?}
+
 With the exception of \citet[][]{BalmerEtAl_ResRep_datapuls_2010}, the estimates by \citet[][]{Kickhoefer_MastersThesis_2009} have not been considered for the various calibrations and extensions mentioned above although it represents a valuable base for further estimations. Having such a base at hand is important as estimating and applying a MATSim utility function is non-trivial due to the following. 
 
 The agents optimize complete day plans \citep[see also][Section 6.3.1]{MATSim_Userguide_2014}. This means that the single choice dimension utility terms need to neatly fit into the complete function. It is not possible to apply functions estimated independently for only a single choice dimensions. If for example all alternatives for destination choice evaluated with an inappropriate utility function generate negative utility, then the complete activity is simply dropped. This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. The inseparability of choice dimensions means that in MATSim we can only consistently handle choices if we assume an absolute utility level rather than a relative level usually assumed for discrete choice models. 
@@ -309,9 +338,14 @@ A numerical problem, particularly relevant for activity choice, concerns the fun
 Estimating a utility function for MATSim is associated with another problem. The function is applied iteratively for a travel demand which is in the beginning of the relaxation process usually not very similar to the situation where the function was estimated. In other words, the function is used for a whole range of working points, where it has been estimated for only one  possibly completely different working point. The MATSim function thus must be also correct in the elasticities, to be able to efficiently drive the relaxation process toward the final relaxation point, where the estimated function is valid by construction. 
 
 % ##################################################################################################################
-\section{Discussion and TODOs}
+\section{Discussion}
 \label{sec:discussion_scoring}
 Will be commented, when chapter is finished. Make final results traceable.
+
+% =====================================================================================
+\subsection{Nutzenfunktion}
+\label{sec:utfd}
+
 
 \benjamin{noch was (relativ wichtiges):
 
@@ -349,6 +383,120 @@ schreiben, wobei $x_i$ weiterhin stochastische Attribute aus der mobsim sein kö
 }
 
 \ah{Gunnars Mail doch noch kapiert. So müsste es gehen.}
+
+% =====================================================================================
+\subsection{Score and Its Interpretation}
+\label{sec:scored}
+\kai{
+Die ursprüngliche Aussage war: 
+
+(1) Matsim produziert einen "score", analog einer "fitness" in evolutionary algorithms.  Notiert als "S".
+
+(2) Wie das dann interpretiert wird, ist ein zweiter Schritt. (Z.B. ob als U oder als V.)
+
+
+IVT argumentiert, dass sämtlicher Noise durch die Simulation erzeugt wird, und verwendet "SelectBest" bei choice.  Dann ist U = S.  (Also: Aller Nutzen des Agenten kommt aus dem Score.)
+
+VSP verwendet ein logit model bei choice ... und argumentiert damit letztendlich (aber bisher nicht absichtlich), dass beim choice \textbf{weiterer} (durch den scale parameter parametrisierter) noise hinzugefügt wird.  Dann ist U = S + epsilon .   (Wichtig: Es gibt Nutzen für den Agenten über den Score hinaus.)
+
+
+Für den zweiten Fall gilt Gunnars Theorie von conceptual meeting: "one can only convincingly claim that S = V when S is an expected value".
+
+Ich weiß gar nicht, was für den ersten Fall gilt.
+
+
+Kohärent aufschreiben kann man das m.E. nur, indem man konsistent bei "S" bleibt, und den Schritt der Interpretation separiert von dem, was MATSim tut.
+
+
+Wie jetzt weiter?
+
+
+(a) matsim output konsistent als "S" notieren statt "U" oder "V"?
+
+(Der Latex-Aufwand würde sich m.E. in Grenzen halten; es wäre m.E. die konsistenteste Lösung; fraglicher wäre die Lesbarkeit.)
+
+
+(b) bei "U" bleiben, aber Fußnoten dranmachen im Sinne von "matsim agent-based score is loosely interpreted as agent-based utility; for a discussion and relation to discrete choice see Chap XY and YZ".
+
+
+(c) weitere Vorschläge?
+
+
+Ich bin auf jeden Fall derzeit skeptisch, ob wir wirklich alle U nach V umwandeln sollen, und ich bin auch skeptisch, ob wir bereits im "using" Teil überhaupt von U = V + eps sprechen wollen.
+
+
+Kommentare?  Meinungen?
+
+}
+
+\gunnar{ich möchte meine Antwort hierauf gerne ein paar Stunden, max einen Tag, aufschieben und das "choice models in matsim" Kapitel entsprechend formulieren.}
+
+\ah{Bin nicht sicher, ob das hier am IVT tatsächlich alle machen, oder nur ich, wenn ich das Best-Response-Modul Destination Choice anwerfe. Ich jedenfalls nehme auch Logit, wenn ich keine Destination Choice mache.
+
+Bis zu Gunnars Kapitel bei "S" bleiben und dann erst den Link zu Discrete Choice machen, fände ich eine gute Lösung. Man müsste im Scoring-Kapitel (und Glossar) dann halt kurz erklären warum wir jetzt plötzlich nicht mehr wie alle die Jahre "U", sondern vorerst mal "S" schreiben. U=V+eps ist ja eigentlich in den ersten beiden Teilen nur für Zielwahl wirklich relevant, und das kriege ich dann schon auf Gunnars Kapitel angepasst.
+
+Verständnisfrage: Die Aussage gilt nur für Random-Mutation-Settings, oder? Für Route-Choice, z.B., wird bloss das Konvergenzverhalten beeinflusst, oder? }
+
+\kai{
+Leider keine einfache Sache, siehe auch unsere Kapitel über econ eval. 
+
+(A) Was macht matsim derzeit?
+
+(1) Ein choice model $\exp(V_i) / \sum_j \exp(V_j)$ impliziert einen echten Nutzen von U = V + eps .
+
+(2) Der erwartete (= mittlere) Nutzen ist dann der logsum term:  $E(U) = ln \sum_j \exp(V_j)$
+
+(3) Ordnen wir die Pläne so, dass der Plan mit dem höchsten Nutzen die Nummer 1 ist.  dann
+
+$ln \sum_j \exp(V_j) = ln ( \exp(V_1) * ( 1 + \sum_{j \ge 2} \exp(V_j - V_1) ) = V_1 + ln( 1 + ... )$
+
+Das ist offensichtlich größer als $V_1$; der mittlere Nutzen ist größer als der höchste Score!
+
+So geht das ganz generell: Die Hinzufügung weiterer Pläne, selbst wenn sie schlechter sind als der beste, erzeugen bei diesem Ansatz zusätzlichen mittleren Nutzen.
+
+Das gilt auch dann, wenn sich die zusätzlichen Pläne nur in der Route unterscheiden.
+
+
+(B) Ist das sinnvoll?
+
+Fraglich.  Oft hat matsim am Ende der Iterationen 5 identische Pläne; die erzeugen dann in der Rechnung $ln(5)$ an zusätzlichem Nutzen; das ist aber auch formal nicht richtig, weil vollständig korrelierte Optionen nicht zum Nutzen beitragen dürfen.  Gunnar wird vielleicht einwenden, dass man hier "path size logit" verwenden sollte ... 
+
+... ich selber würde inzwischen sagen, dass ich finde, dass das zu kompliziert wird.  Die Schönheit des agenten-basierten Ansatzes war doch, dass dass man auch ohne solche statistisch komplizierten Argumente auskommt.
+
+
+(C) Was tun?
+
+Mittelfristig ist das eine Forschungsfrage.  Ein erster Ansatz wäre u.E. eine Variante Deiner frozen epsilons auch für andere Situationen.  Jeder neue Plan kommt dann zusammen mit einem neuen frozen epsilon, wobei die Bandbreite sich eigentlich daran orientieren müsste, wie sehr sich dieser Plan von anderen Plänen unterscheidet.  Dann z.B.:
+
+* nur neue Route -- frozen epsilon wird übernommen
+
+* ...
+
+* neue location -- frozen epsilon stammt aus Horni-Ansatz
+
+Damit ist dann klar, dass der Agent einen $score > V_best$ erhalten kann; das geht ja bereits bei Deinem Paper so.  Aber alle epsilons ist dann bereits im "S" drin, und der Score, den matsim ausspuckt, ist dann einfach nur der tatächliche Nutzen, den der Agent erhält.
+
+(Leider weiß ich nicht, was das mit Cadyts macht, aber man könnte behaupten, dass Cadyts halt genau die frozen epsilons kalibriert.)
+
+
+Nun ja.  Wolltest Du es so genau wissen?  :-)
+
+}
+
+\kwaah{
+danke, soweit ich mich erinnere (siehe Ben-Akiva und Lerman) ist der log sum Term der maximale Nutzen ueber alle Alternativen, d.h. solange die Alternativen nicht identisch
+sind, erhoeht eine wahre zusaetzliche Alternative den Nutzen des Satzes der Alternativen. 
+
+Das ist auch das Argument hinter der Nutzung des log sum terms als Wohlfahrtsmass. 
+}
+
+\gunnar{
+Es gilt in beiden Fällen, so war es ja konstruiert. Kombiniere U = S (1. obiger Abschnitt) und S = V (3. Abschnitt); das liefert U = V. Da $V=E\{U\}$ per Definition, gilt das weiterhin nur, wenn U (also S im 1. Abschnitt) ein Erwartungswert ist.
+
+> bereits im "using" Teil überhaupt von U = V + eps sprechen:
+
+Nur S im "using" Teil, mit einem Verweis auf Teil 3.
+}
 
 % ##################################################################################################################
 

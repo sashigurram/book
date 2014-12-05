@@ -1,9 +1,283 @@
-\chapter{Discrete Choice Modeling Perspective on MATSim \who{Flötteröd}}
+%\chapter{Discrete Choice Modeling Perspective on MATSim \who{Flötteröd}}
+\chapter{Choice Models in MATSim}
 \label{ch:discretechoice}
 % ##################################################################################################################
 
-\hfill \textbf{Authors:} Gunnar Flötteröd
+\hfill \textbf{Author:} Gunnar Flötteröd
 
-\begin{center} \includegraphics[width=0.25\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
+\begin{center} \includegraphics[width=0.5\textwidth, angle=0]{understanding/figures/dc.png} \end{center}
+
+% ##################################################################################################################
+This chapter (i) attempts to reconcile MATSim's mechanisms of plan
+{}``mutation'', {}``selection'' and {}``execution'' with a mainstream
+discrete choice perspective and (ii) and sketches a solution to the
+plan choice set generation problem.
+
+Let $C$ be the universal set of all plans that may ever be considered
+by agent $n$, and denote by $C_{n}$ the concrete plan choice set
+of that agent. The choice set independent probability that agent $n$
+selects plan $i$ for execution can then be written as
+\begin{eqnarray}
+P_{n}(i\mid C) & = & \sum_{C_{n}\subset C}P_{n}(i\mid C_{n})\cdot P_{n}(C_{n}\mid C),\label{eq:unconditional-choice-proba}
+\end{eqnarray}
+which means the following. Selecting a plan requires a plan choice
+set. The term $P_{n}(C_{n}\mid C)$ represents the probability that
+this concrete choice set is $C_{n}$, which must be a subset of $C$.
+Technically, the plan innovation modules draw from this distribution.
+The term $P_{n}(i\mid C_{n})$ represents the probability that agent
+$n$ selects plan $i$ given that its concrete choice set is $C_{n}$.
+Technically, the plan selection modules draw from this distribution.
+The product of these terms hence represents the probability that both
+the choice set $C_{n}$ is given and that plan $i$ is chosen out
+of that set. The probability of selecting plan $i$ independently
+of the concrete choice set then results from adding the probabilities
+of selecting it in the presence of all possible choice sets $C_{n}\subset C$.
+
+One observes in \MyEqRef{eq:unconditional-choice-proba} that the
+behavior of an agent depends on both the choice model and the way
+in which the choice set is generated, both of which are addressed
+in the following.
+
+
+\section{\label{sec:Evaluating-choice-models}Evaluating choice models in
+a simulated environment}
+
+The discussion provided in this section focuses on the choice distribution
+$P_{n}(i\mid C_{n})$ for given choice sets. In MATSim, a plan is
+evaluated in terms of its score, and plan selection is based on the
+score as the sole property of the plan. This is only a technical specification;
+the scoring and selection protocols are responsible of representing
+adequate perceptional and behavioral mechanisms. The notions of {}``choice''
+and {}``selection'' are subsequently used interchangeably. \note{Parts of this had been suggested in an earlier Email. Not sure where else it may show up.}
+
+The usual selection protocol of MATSim resembles a multinomial logit
+choice model. Letting $S_{ni}$ be the score of plan $i$ of agent
+$n$, one has
+\begin{eqnarray}
+P_{n}(i\mid C_{n}) & = & \frac{e^{\mu S_{ni}}}{\sum_{j\in C_{n}}e^{\mu S_{nj}}}\label{eq:ExpBetaPlanSelector}
+\end{eqnarray}
+with $\mu$ controlling the preference for preference for higher scores.
+It is set to one in the remainder of this section. Only if the score
+of a plan represented its expected utility, then this would constitute
+a plain multinomial logit choice model with $\mu$ taking the role
+of a scale parameter. However, things are somewhat more complicated.
+
+Assume that the attributes $x_{ni}$ of the alternatives in \MyEqRef{eq:ExpBetaPlanSelector}
+are defined through (a transformation of) the network conditions observed
+during the last iteration(s). Assume further that the score is a linear
+function of these attributes:
+\begin{eqnarray}
+S_{ni} & = & \beta^{T}x_{ni}\\
+ & = & \beta^{T}(\text{E}\{x_{ni}\}+\eta_{ni})\label{eq:score}
+\end{eqnarray}
+where $\beta$ is a coefficient vector and $\eta_{ni}$ is a zero
+mean random vector. In the general case of $S_{ni}$ being a random
+variable and not just an expected value, one obtains a mixture-of-logit
+model with the choice distribution
+\begin{eqnarray}
+P_{n}(i\mid C_{n}) & = & \int\frac{\exp\left(\beta^{T}\text{E}\{x_{ni}\}+\beta^{T}\eta_{ni}\right)}{\sum_{j\in C_{n}}\exp\left(\beta^{T}\text{E}\{x_{nj}\}+\beta^{T}\eta_{nj}\right)}p(\eta_{ni})d\eta_{ni}\label{eq:mixture-of-logit}
+\end{eqnarray}
+where $p(\eta_{ni})$ is the probability density function of $\eta_{ni}$
+\citep{train-2003}. This formulation comprises most if not all MATSim
+configurations currently used. It represents the \texttt{ExpBetaPlanSelector}
+and the equivalent \texttt{ExpBetaPlanChanger}. It also comprises
+the \texttt{BestPlanSelector} because that is equivalent to the \texttt{ExpBetaPlanSelector}
+with a very large (infinite) $\mu$. Arbitrary score averaging schemes
+are also included; this only leads to different instances of $p(\eta_{ni})$.
+
+Mainstream applications of mixture-of-logit models attempt to combine
+the tractability of closed-form logit models with the generality of
+using a simulation-based representation of the $\eta$ error terms.
+The distribution of $\eta$ is often as simple as a multivariate normal
+because this already allows to introduce rich correlation structures
+into the underlying random utilities. In MATSim, however, the simulated
+error term $\eta$ is extremely complicated. Revisiting \MyEqRef{eq:score},
+it represents the variability of the score that results from the fact
+that the simulated network conditions are stochastic. The distribution
+from which these network conditions are drawn is defined implicitly
+through the mobility simulation. It is not available in closed form;
+one can only draw from it.
+
+Additional complexity results from the simulated network conditions
+being in turn the consequence of simulated travel behavior that is
+again defined through \MyEqRef{eq:mixture-of-logit}. This circular
+dependency is natural, given that MATSim is mainly a transport planning
+model, cf. Section~\note{Monte Carlo}. Indeed, just as a representation
+of the mutual demand/supply dependency is essential in transport planning,
+the circular definition of the $\eta$ terms adds realism to MATSim:
+\begin{enumerate}
+\item Assume one could somehow make the simulated network conditions more
+realistic. The result would be a more realistic distribution $p(\eta)$
+of the simulated error terms.
+\item All else equal, increasing the realism of $p(\eta)$ in \MyEqRef{eq:mixture-of-logit}
+would also increase the realism of the resulting choice distributions.
+\item This in turn would lead to the selection of more realistic travel
+plans, with the consequence that their execution would result in even
+more realistic network conditions.
+\end{enumerate}
+However, this positive feedback only applies to the extent to which
+the random error terms of the postulated behavioral model are indeed
+outputs of the mobility simulation. Simulated travel time (variability)
+is such a case. Unobserved preferences of the decision maker, however,
+are not an output of the mobility simulation and hence need to be
+captured otherwise. (The extreme case of a choice distribution that
+results from combining a stochastic mobility simulation with a best-response
+plan selection hence constitutes only a limited, so to say {}``mechanical''
+perspective on travel behavior.)
+
+How to insert the randomness of the simulated network conditions into
+$\eta$ is a delicate problem. The notion of {}``learning'' again
+enters the picture, and again it is not particularly helpful, cf.
+Chapter~\note{MC engine}: If the simulation iterations really represented
+simulated days, a model of real human learning would be needed in
+order to combine a sequence of past network conditions into an instantaneous
+$\eta$ realization. Without a sound instance of such a learning model,
+a behavioral justification of \MyEqRef{eq:mixture-of-logit} cannot
+be given.
+
+However, another perspective on this problem is possible, continuing
+the arguments of Chapter~\note{MC engine}. It is argued there that
+the sole purpose of MATSim's iterative mechanism is to attain a realistic
+stationary distribution. If so, then the sole purpose of the simulated
+$\eta$s is to yield a realistic stationary choice distribution. To
+illustrate this idea, consider the following moving-average score
+updating rule:
+\begin{eqnarray}
+\bar{S}_{ni}^{k+1} & = & \begin{cases}
+\alpha\bar{S}_{ni}^{k}+(1-\alpha)S_{ni}^{k} & \text{if }n\text{ chose plan }i\\
+\bar{S}_{ni}^{k} & \text{otherwise}
+\end{cases}
+\end{eqnarray}
+where $\bar{S}^{k}$ is the filtered score of iteration $k$ and $S^{k}$
+is the concrete score observed in that iteration. The $\alpha$ parameter
+controls how strongly the filtered score is smoothed out, and hence
+it controls the variability of $\eta$. MATSim enables this mechanism
+through \note{??-Class}. 
+
+Assuming for simplicity that upon convergence the stationary score
+$\bar{S}_{ni}^{\infty}$ fluctuates independently from iteration to
+iteration around its expected value, one can derive the following:
+\note{Put derivation in an appendix?} 
+\begin{eqnarray}
+\text{E}\{\bar{S}_{ni}^{\infty}\} & = & \text{E}\{S_{ni}\}\\
+\text{VAR}\{\bar{S}_{ni}^{\infty}\} & = & \frac{1-\alpha}{1+\alpha}\text{VAR}\{S_{ni}\}.
+\end{eqnarray}
+$\bar{S}$ is unbiased with respect to the underlying score process
+and its variance is in the interval from zero to $\text{VAR}\{S\}$,
+depending on the chosen $\alpha$. There is no need to justify this
+through a learning process. One simply has constructed a parametrization
+of the distribution $p(\eta)$. To justify the realism of the resulting
+mixture model \MyEqRef{eq:mixture-of-logit}, $\alpha$ should be
+estimated from real data, just as any other parameter of that model.
+
+
+\section{\label{sec:Evolution-of-choice}Evolution of choice sets in a simulated
+environment}
+
+\note{Again a recent idea; I would appreciate this being checked with care.}
+
+This section turns to the question what it means to insert a plan
+innovation mechanism into MATSim's iterated simulation logic. The
+modeling of a choice set is, even in the discrete choice community,
+quite controversial \citep{frejinger-2010}, and there is no reason
+to believe that {}``plan mutation'' or {}``plan innovation'' in
+MATSim are more realistic than anything proposed in that community.
+However, as said before, if the choice sets are {}``wrong'' (whatever
+this may precisely mean) then one can be fairly confident that the
+simulated behavior also turns out wrong. 
+
+MATSim performs in every iteration the following operations for each
+agent: (1) update of the choice set and (2) choice of a plan from
+the updated choice set, using the model \ref{eq:ExpBetaPlanSelector}.
+To make the simulated long-term (stationary) plan choice independent
+of the plan choice set generation, one may require the following stationary
+choice distribution:
+\begin{eqnarray}
+P_{n}(i\mid C) & = & \frac{e^{\mu S_{ni}}}{\sum_{j\in C}e^{\mu S_{nj}}}.\label{eq:global-choice-model}
+\end{eqnarray}
+Denoting further by $P(C_{n}\rightarrow C_{n}')$ the probability
+that plan mutation/innovation turns the choice set $C_{n}$ into $C_{n}'$,
+it is possible to enforce the long-term choice distribution \MyEqRef{eq:global-choice-model}
+through an application of the Metropolis-Hastings algorithm \citep{hastings-1970}.
+(See also \citet{floetteroed-2012b} for a related approach to a similar
+problem.)
+
+For this, the state space of the algorithm is defined as the tuple
+$(C_{n},\, i\in C_{n})$ consisting of choice set and resulting choice.
+During each iteration, one first draws a new choice set $C_{n}'$,
+then draws a new choice $i'\in C_{n}'$, and finally accepts the new
+state $(C_{n}',\, i')$ with probability
+\begin{eqnarray}
+\phi & = & \min\left\{ \frac{{\displaystyle P_{n}(i'\mid C)P(C_{n}'\rightarrow C_{n})P(i_{n}\mid C_{n})}}{{\displaystyle P_{n}(i\mid C)P(C_{n}\rightarrow C_{n}')P(i_{n}'\mid C_{n}')}},\,1\right\} \label{eq:accept-proba-1}
+\end{eqnarray}
+and rejects it otherwise (meaning that the original choice set $C_{n}$
+and choice $i\in C_{n}$ are maintained).
+
+To make this concrete, assume that the plan innovation yields exactly
+one new plan $i_{\text{in}}$ through a best-response against the
+last iteration. The corresponding plan innovation distribution is
+written as $e^{\mu_{\text{inno}}S_{ni}}/\sum_{j\in C}e^{\mu_{\text{inno}}S_{nj}}$,
+with a very large $\mu_{\text{inno}}$. Assuming further that $i_{\text{in}}$
+replaces exactly one uniformly selected plan $i_{\text{out}}$, which
+implies that the choice set size $J$ is constant, one obtains
+\begin{eqnarray}
+P(C_{n}\rightarrow C_{n}') & = & \frac{1}{J}\cdot\frac{e^{\mu_{\text{inno}}S_{ni_{\text{in}}}}}{\sum_{j\in C}e^{\mu_{\text{inno}}S_{nj}}}\\
+P(C_{n}'\rightarrow C_{n}) & = & \frac{1}{J}\cdot\frac{e^{\mu_{\text{inno}}S_{ni_{\text{out}}}}}{\sum_{j\in C}e^{\mu_{\text{inno}}S_{nj}}}.
+\end{eqnarray}
+Inserting this as well as \MyEqRef{eq:ExpBetaPlanSelector} and \MyEqRef{eq:global-choice-model}
+into \MyEqRef{eq:accept-proba-1}, one obtains
+\begin{eqnarray}
+\phi & = & \min\left\{ \frac{{\displaystyle e^{\mu S_{ni'}}e^{\mu_{\text{inno}}S_{ni_{\text{out}}}}\frac{e^{\mu S_{ni}}}{\sum_{j\in C_{n}}e^{\mu S_{nj}}}}}{{\displaystyle e^{\mu S_{ni}}e^{\mu_{\text{inno}}S_{ni_{\text{in}}}}\frac{e^{\mu S_{ni'}}}{\sum_{j\in C_{n}'}e^{\mu S_{nj}}}}},\,1\right\} \\
+ & = & \min\left\{ {\displaystyle e^{\mu_{\text{inno}}(S_{ni_{\text{out}}}-S_{ni_{\text{in}}})}}\frac{\sum_{j\in C_{n}'}e^{\mu S_{nj}}}{\sum_{j\in C_{n}}e^{\mu S_{nj}}},\,1\right\} 
+\end{eqnarray}
+and hence
+\begin{eqnarray}
+\lim_{\mu_{\text{inno}}\rightarrow\infty}\phi & = & \text{Pr}(S_{ni_{\text{out}}}\geq S_{ni_{\text{in}}}).
+\end{eqnarray}
+Some care is needed when evaluating this expression because it assumes
+$S_{ni_{\text{in}}}$ and $S_{ni_{\text{out}}}$ to be independent
+random variables, whereas $S_{ni_{\text{in}}}$ is (due to the best
+response) always maximal among all alternatives given the most recent
+iteration. One should hence evaluate this expression by computing
+both scores from the network conditions of two randomly selected stationary
+iterations.
+
+This allows to select plans according to (\ref{eq:global-choice-model})
+from an unconstrained choice set even though one enumerates only a
+small subset of the full choice set, which is updated through a computationally
+efficient best-response mechanism. In summary, one does the following
+for each agent in each iteration:
+\begin{enumerate}
+\item Randomly select a given plan for removal and compute a new best response
+plan against the last iteration.
+\item Is, based on network conditions from two randomly selected stationary
+iterations, the new plan better than the one selected for removal?
+
+\begin{itemize}
+\item Yes: Keep the previously selected plan and the previous choice set.
+\item No: Remove the randomly selected plan from the choice set, add the
+newly generated plan, and select a new plan from the new choice set.
+\end{itemize}
+\end{enumerate}
+This is intuitive: Best response creates new plans that are by chance
+better than any other plan in a given iteration. Best response is
+hence corrected for by accepting the new plan only if it is by chance
+worse than a randomly selected alternative plan, with both plans being
+evaluated in randomly selected stationary iterations.
+
+Note that the correctness of this approach depends on the ability
+of the best-response plan innovation to create plans that are sufficiently
+variable, in the sense that the plan choice set innovation process
+is irreducible \citep{ross-2006}.
+
+
+\section{\label{sec:Summary}Summary}
+
+This chapter attempted to phrase MATSim's mechanisms of plan scoring,
+innovation, mutation and selection in the somewhat more mainstream
+terminology of discrete choice modeling. The implications of evaluating
+stochastic scores when selecting a plan were explained. Further, a
+cure to the possibly detrimental effect of using best-response plan
+innovation modules was suggested.
 
 % ##################################################################################################################
