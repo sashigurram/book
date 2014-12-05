@@ -28,17 +28,43 @@ in the fields of transport planning and operations, spatial planning and spatial
 geography. Generally speaking, it should serve professionals who are interested in mobility
 and spatial analysis and understand the principles of transport modelling but do not have the
 expertise to operate an agent-based transport simulation directly. Currently, we envision the
-following stakeholders and some example questions for our decision-support system --- a non-exhaustive list that, we expect, will grow with time:
+following stakeholders and some example questions for a decision-support system --- a non-exhaustive list that, we expect, will grow with time:
+\paragraph{Transport planners}
+How many trips occur where, when and what is the activity purpose?
+What are the socio-demographic characteristics of the these persons?
+\paragraph{Urban planners}
+What are the temporal usage patterns of buildings and the surrounding neighbour-
+hood?
+What is the flow from public transport stops to surrounding buildings?
+\paragraph{Policy-makers}
+What are the costs and benefits of a new public transport service?
+Who are the winners and losers from constructing a new road?
+\paragraph{Public transport operators}
+What is the breakdown of the ridership of certain bus lines?
+\paragraph{Service industry}
+Which customers are in catchment areas, separated by mode?
 
+\subsection{Functional requirements}
 
-% ------------
-\createfigure%
-{Tableau visualization}%
-{Tableau visualization of public transport ridership from a MATSim simulation compared against actual smart card data records in Singapore}%
-{\label{fig:analyticsTableau}}%
-{\includegraphics[width=0.25\textwidth, angle=0]{extending/figures/businessanalytics/tableau.png}}%
-{}
-% ------------
+The decision support framework should facilitate classic transport
+appraisal methods such as cost/benefit analysis and evaluation of the spatial impact of transport
+infrastructure and policy measures. The framework should allow any sort of spatial analysis on the finest level of granularity
+provided by the transport model; usually individual buildings or parcels as well as public
+transport stops and selected links such as count stations or tolled road segments. However, these geographic features should be indexed against transport zones or other geographic areas of interest to allow aggregation of results.
+Furthermore, it should capture all temporal aspects of the simulation, as full temporal dynamics is a strong feature of the agent-based approach.
+
+\section{General framework for decision support}
+Figure~\ref{fig:analyticsFramework} shows the general framework as we envision it: data from various sources feed into a spatially-enabled database, with all geodata transformed to use the same spatial reference system (probably the same projection used for MATSim coordinates, allowing for simple distance calculations). Simple Java programs using the MATSim API and JDBC (Java Database Connectivity standard) produce XML input data for MATSim scenarios, and events from these scenarios are fed back into the database for comparison and validation. Analysts query the database to produce 'data cubes', which are aggregations and queries across many tables in the database designed for specific purposes, such as calibration and validation, location analysis, winner/loser analysis or other application-specific purposes.
+
+\subsection{Entity relationship diagram (ERD) for general purpose analysis}
+
+In terms of entity relationships, we decided that a travel diary format is especially suitable for comparison against other data sources for validation. Most travel surveys take the form of a diary recording travel time, purpose, mode; as well as aspects of the journey such as number of stages, transfer walking and waiting time, and in-vehicle time. Routines can be developed to transform survey data  and public transport smart card records into the same format with consistent coding. Figure~\ref{fig:analyticsERD} shows the entity relationship diagram  we propose, along with the primary/foreign key relationships between tables that facilitate aggregation and joining of e.g. personal/household attributes such as income with travel time experienced in the simulation.
+
+\subsection{Interactive analysis using business analytics software}
+Modern business analytics software such as Tableau \citep{Tableau_Webpage_2013} provide interactive aggregation and graphing of data from relational databases. While basic analysis of individual tables in our proposed ERD could already provide valuable insight to MATSim simulations, much richer analysis is possible when the relationships betweendifferent tables in the database are Graphical query building software can be used to construct SQL scripts of data cube requiring very little or no knowledge of SQL by the analyst. these cubes are fed into Tableau, which is designed with a relatively technology-agnostic audience in mind. Relying on the familiar paradigm of drag-and-drop interaction in a simple, well-documented GUI, the user constructs 'dashboards' summarizing information and allowing interactive aggregation or drilling-down across multiple dimensions.
+
+Figure~\ref{fig:analyticsTableau} shows such a Tableau visualization comparing public transport ridership from a MATSim simulation against actual smart card data records (transformed into the travel diary format specified in the ERD). Figure~\ref{fig:analyticsJoin} shows the SQL query used to produce the data frame driving the Tableau analysis. The query exploits the primary/foreign key relationships in the database to perform rapid joins between the different tables.
+
 
 % ------------
 \createfigure%
@@ -60,9 +86,18 @@ following stakeholders and some example questions for our decision-support syste
 
 % ------------
 \createfigure%
+{Tableau visualization}%
+{Tableau visualization of public transport ridership from a MATSim simulation compared against actual smart card data records in Singapore}%
+{\label{fig:analyticsTableau}}%
+{\includegraphics[width=0.25\textwidth, angle=0]{extending/figures/businessanalytics/tableau.png}}%
+{}
+% ------------
+
+% ------------
+\createfigure%
 {Table joined in analytics software}%
 {A diagram showing how the tables from Figure \ref{fig:analyticsERD} are joined together for visualization in business analytics software, e.g. Tableau, as shown in Figure~\ref{fig:analyticsTableau}}%
-{\label{fig:analyticsFramework}}%
+{\label{fig:analyticsJoin}}%
 {\includegraphics[width=0.65\textwidth, angle=0]{extending/figures/businessanalytics/join}}%
 {}
 % ------------
@@ -71,7 +106,7 @@ following stakeholders and some example questions for our decision-support syste
 
 % ################################################################################################################
 \section{Diaries from Events}
-In the package \lstinline|playground.singapore.travelsummary| the reader may find a set of classes that will transform their MATSim simulation results into a set of travel diary tables, such as those discussed in the preceding section.
+In the package \lstinline|playground.singapore.travelsummary| the reader may find a set of classes that will transform their MATSim simulation results into a set of travel diary tables, such as those discussed in the preceding section. The package contains a simple GUI class that can be run to specify input data XML files, the location to save output comma separated value (CSV) files, and other information such as a subscript appended to the end of file names to identify different scenarios. These CSV files can be read into a relational database of choice, or directly queried in Tableau or other interactive analysis software.
 
 % ################################################################################################################
 
