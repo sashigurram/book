@@ -428,7 +428,12 @@ Similar to the vehicles module, the household module is not used by default in M
 
 \begin{compactitem}
 \item Invoking the module: Vehicles need to be enabled in the \lstinline|scenario| configuration file section.
-\item Configuration: At the moment vehicles are only used for public transport (Chapter \ref{ch:pt}), i.e., motorized individual traffic vehicles are not used in MATSim nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section. \ah{Klären, ob man diese kleine Inkonsistenz beheben möchte.}  \kai{Ist das nicht schon erledigt?}  This might change one day when the parking module will start to use vehicles. \citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households.
+\item Configuration: At the moment vehicles are only used for public transport (Chapter \ref{ch:pt}), i.e., motorized individual traffic vehicles are not used in MATSim nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section. 
+\ah{Klären, ob man diese kleine Inkonsistenz beheben möchte.}  
+\kai{Ist das nicht schon erledigt?}
+\ah{final String vehiclesFile = this.config.transit().getVehiclesFile();}
+%
+This might change one day when the parking module will start to use vehicles. \citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households.
 \item Code: \lstinline|org.matsim.vehicles|
 \end{compactitem}
 
@@ -573,38 +578,40 @@ The strategy modules are the basic innovation modules available in MATSim. All s
 
 Strategy modules are numbered, where each module is given a weight which determines the probability by which the course of action represented by the module is taken. In this example, each agent changes his leg mode with probability 0.1, its plan timing with probability 0.2. A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. In the example, the agent choses a plan from his set of plans according to a logit model with probability 0.7. The weights of the strategy modules are renormalized in case they do not sum to one.
 
-Combining different modules is not straight-forward in MATSim. This important topic urgently awaits future analysis. To begin with, here, the combination of the strategy modules with public transport is presented in Table \ref{tab:combination}.
+%Combining different modules is not straight-forward in MATSim. This important topic urgently awaits future analysis. To begin with, here, the combination of the strategy modules with public transport is presented in Table \ref{tab:combination}.
+%
+%% ----------------------------------
+%\createtable%
+%{Strategy Module Combination}%
+%{Strategy Module Combination}%
+%{\label{tab:combination}}%
+%{%
+  %\begin{tabular}[c]{|c|c|c|}
+   %\hline
+%\textbf{Innovation Dimension}	& \textbf{Default Strategy} & \textbf{Public Transport}\\
+%\hline
+%time innovation & TimeAllocationMutator &  TransitTimeAllocationMutator\\
+%\hline
+%route innovation & ReRoute & ReRoute \\
+%\hline
+%mode innovation & \multirow{2}{*}{ChangeLegMode} & \multirow{2}{*}{TransitChangeLegMode} \\
+%(all legs get same mode) &  &  \\
+%\hline
+%mode innovation & \multirow{2}{*}{ChangeSingleLegMode} & \multirow{2}{*}{TransitChangeSingleLegMode} \\
+%(each leg can have a different mode) &  &  \\
+%\hline
+%mode innovation & \multirow{2}{*}{SubtourModeChoice} & \multirow{2}{*}{TransitSubtourModeChoice} \\
+%(subtour-based) &  &  \\
+%\hline
+%destination innovation & LocationChoice & LocationChoice \\
+%\hline
+  %\end{tabular}
+%}%
+%{}
 
-% ----------------------------------
-\createtable%
-{Strategy Module Combination}%
-{Strategy Module Combination}%
-{\label{tab:combination}}%
-{%
-  \begin{tabular}[c]{|c|c|c|}
-   \hline
-\textbf{Innovation Dimension}	& \textbf{Default Strategy} & \textbf{Public Transport}\\
-\hline
-time innovation & TimeAllocationMutator &  TransitTimeAllocationMutator\\
-\hline
-route innovation & ReRoute & ReRoute \\
-\hline
-mode innovation & \multirow{2}{*}{ChangeLegMode} & \multirow{2}{*}{TransitChangeLegMode} \\
-(all legs get same mode) &  &  \\
-\hline
-mode innovation & \multirow{2}{*}{ChangeSingleLegMode} & \multirow{2}{*}{TransitChangeSingleLegMode} \\
-(each leg can have a different mode) &  &  \\
-\hline
-mode innovation & \multirow{2}{*}{SubtourModeChoice} & \multirow{2}{*}{TransitSubtourModeChoice} \\
-(subtour-based) &  &  \\
-\hline
-destination innovation & LocationChoice & LocationChoice \\
-\hline
-  \end{tabular}
-}%
-{}
+\kai{Ich meine, dass es diese Transit Sonderformen gar nicht merh gibt.  ????} 
 
-\kai{Ich meine, dass es diese Transit Sonderformen gar nicht merh gibt.  ????}
+\ah{Please note, that combining strategy modules that are contributions such as destination choice or public transport is not straight forward. Contact the mailing list, for further information.}
 
 % ===================================================================================
 \subsection{Time Innovation}
