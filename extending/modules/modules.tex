@@ -178,9 +178,9 @@ Also the standalone tools referencing MATSim as a library, such as the network e
 
 
 % ===================================================================================
-\subsection{Current Problems With Modules}
-
-\kai{Habe diesen ganzen Abschnitt mal probehalber auskommentiert.  Module können auf vielen Ebenen auftreten, dass sie das tun, ist kein Fehler.  Manche der Aspekte können wir immer noch in den spezifischen Kapiteln beschreiben (es gibt tatsächlich einen Grund, warum es die ganzen unterschiedlichen mode innovation modules gibt); manche können wir vielleicht noch vor Fertigstellung des Buches im Code aufräumen.}
+%\subsection{Current Problems With Modules}
+%
+%\kai{Habe diesen ganzen Abschnitt mal probehalber auskommentiert.  Module können auf vielen Ebenen auftreten, dass sie das tun, ist kein Fehler.  Manche der Aspekte können wir immer noch in den spezifischen Kapiteln beschreiben (es gibt tatsächlich einen Grund, warum es die ganzen unterschiedlichen mode innovation modules gibt); manche können wir vielleicht noch vor Fertigstellung des Buches im Code aufräumen.}
 
 %% The majority of the replanning modules have their own section in the configuration file, but some do not, such as the \lstinline|TripsToLegsModule|. 
 %% \kai{Aber warum ist das ein Problem?  Die sind halt nicht weiter konfigurierbar.}
@@ -190,13 +190,13 @@ Also the standalone tools referencing MATSim as a library, such as the network e
 
 %% To make things worse, there are cases where module names in the configuration file are not (yet) consistent with the naming in the code. Examples are ``\lstinline|strategy|'' in the configuration file and ``\lstinline|StrategyManager|'' in the code, or ``strategy module'' in the config file and ``\lstinline|PlanStrategy|'' in the code \ah{Nochmals nachsehen!}. Furthermore, modules are atomic. There is, for example, a module called ``\lstinline|ChangeSingleLegMod|'', a module ``\lstinline|ChangeLegMode|'' and a module ``\lstinline|SubtourModeChoic|'' instead of one single module called ``\lstinline|ModeChoice|''. This, on the one hand, has historical reasons; the three modules were developed temporally separated. On the other hand, the parameter set for a module is only minimal and unambiguous if provided for atomic modules as different parameters are required for the three modules.
 
-
+%\ah{Habs noch ganz auskommentiert.}
 
 % ##################################################################################################################
 \section{An Overview of Existing Modules}
 Figure~\ref{fig:matsimmodules} shows where in the MATSim loop, common MATSim modules can be plugged in. The technical details for their usage, in particular the parameter sets are described in \citep[][]{MATSim_Userguide_2014} and in the javadoc.
 
-For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be ``mode choice'' instead of the atomic categories, where we use terms ``functionality'' for the larger categories and ``module'' for the atomic components. \kai{adapt table structure to revised chapter structure}
+For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be ``mode choice'' instead of the atomic categories, where we use terms ``functionality'' for the larger categories and ``module'' for the atomic components. %\kai{adapt table structure to revised chapter structure} \ah{erledigt}
 
 Due to the distributed and project- and dissertation-driven MATSim contribution process (see Chapter \ref{ch:developmentprocess}) modules are usually implemented for a specific practical purpose leading to various limitations of the respective module, e.g., modules might only work for a specific mode or for a defined calling order. Before, an additional effort is undertaken to generalize the module toward its embedding in the complete framework, the combination of a specific module with other functionality remains a non-straight-forward task. This means, that the user is in charge of systematically testing a specific modules combination before productively applying it.
 
@@ -207,14 +207,51 @@ Due to the distributed and project- and dissertation-driven MATSim contribution 
 {\includegraphics[width=0.99\textwidth, angle=0]{extending/figures/modules.pdf}}%
 {}
 %
-The description of the modules in this and the following chapters is based on following categorization.
+The description of the modules in this and the following chapters is based on following categorization (Table~\ref{tab:modules})
 
-\kai{TODO: macros for section names to re-use for table entries}
+%\kai{TODO: macros for section names to re-use for table entries}
+%\ah{Mache das später. Denke die jetzige Korrektur hält eine Weile}
 
-\begin{table}
-\caption{Modules}
-\label{tab:modules}
-\begin{longtable}[c]{|l|l|}
+\begin{center}
+\begin{longtable}{|l|l|}
+\label{tab:modules} \\
+\caption{MATSim modules}\\
+\hline
+%\textbf{Module} & \textbf{Described in} \\
+%\hline
+\endfirsthead
+\multicolumn{2}{c}%
+{\tablename\ \thetable\ -- \textit{Continued from previous page}} \\
+\hline
+%\textbf{Module} & \textbf{Described in} \\
+%\hline
+\endhead
+\hline \multicolumn{2}{r}{\textit{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+	\textbf{MATSim Data Containers} & Section~\ref{sec:matsim-containers} \\
+	\hline
+	Scenario &  Section~\ref{sec:scenario} \\
+	Network  & Section~\ref{sec:network} \\
+	Counts  & Section~\ref{sec:counts} \\
+	Facilities & Section~\ref{sec:facilities} \\
+	Population &  Section~\ref{sec:population} \\
+	Households &  Section~\ref{sec:households} \\
+	Vehicles &  Section~\ref{sec:vehicles} \\
+	\hline
+	\textbf{Global Modules and Global Aspects} & Section~\ref{sec:globalmodules} \\
+	\hline
+	Controler &  Section~\ref{sec:controler} \\
+	Global &  Section~\ref{sec:global} \\
+	Parallel Computing &  Section~\ref{sec:parallelcomputing} \\
+	\hline
+	\textbf{Mobsims} & Section~\ref{sec:mobsims} \\
+	\hline
+	QSim &  Section~\ref{sec:qsim} \\
+	JDEQSim &  Section~\ref{sec:jdeqsim} \\
+	\hline
+	\textbf{Scoring} & Section~\ref{sec:scoring} \\
 	\hline
 	\textbf{Strategy Modules} & Section~\ref{sec:strategymodules} \\
 	\hline
@@ -224,28 +261,19 @@ The description of the modules in this and the following chapters is based on fo
 	Selectors & Section~\ref{sec:selectors} \\
 	Destination Innovation & Chapter~\ref{ch:destinationchoice} \\
 	\hline
+	\textbf{Further Innovation Modules} & \\
 	\hline
-	\textbf{Further Innovation Modules} & Section~\ref{sec:furtherchoicemodules} \\
-	\hline
+	Within-day Replanning & Chapter~\ref{ch:withinday} \\
 	Planomat & Section~\ref{sec:planomat} \\
 	Activity Innovation a.k.a. PlanomatX & Section~\ref{sec:activitychoice} \\
-	Within-day Replanning & Chapter~\ref{ch:withinday} \\
 	\hline
+	\textbf{Observational Modules} & Section~\ref{sec:observational} \\
 	\hline
-	\textbf{Supply-Side Modules} & Section~\ref{sec:supplysidemodules} \\
+	Travel Time Calculator & Section~\ref{sec:ttc} \\
+	Link Stats & Section~\ref{sec:linkStats} \\
 	\hline
-	Network & Section~\ref{sec:network} \\
-	Counts & Section~\ref{sec:counts} \\
-	Facilities & Section~\ref{sec:facilities} \\
-	Signals and Lanes & Chapter~\ref{ch:signalslanes} \\
+	\textbf{...} & \\
 	\hline
-	\hline
-	\textbf{Demand-Side Modules and Specific Transport Modes Modules} & Section~\ref{sec:dsm} \\
-	\hline
-	Population & Section~\ref{sec:population} \\
-	Households & Section~\ref{sec:households} \\
-	Vehicles & Section~\ref{sec:vehicles} \\
-%	Flight Traffic & Section~\ref{sec:flighttraffic} \\
 	Public Transport & Chapter~\ref{ch:pt} \\
 	Multi-Modal Simulation & Chapter~\ref{ch:multimodalsim} \\
 	Freight Traffic & Chapter~\ref{ch:freight} \\
@@ -255,58 +283,26 @@ The description of the modules in this and the following chapters is based on fo
 	Parking & Chapter~\ref{ch:parking} \\
 	Electric Vehicles & Chapter~\ref{ch:elvehicles} \\
 	Air Transport & Chapter~\ref{ch:air} \\
-	\hline
-	\hline
-	\textbf{Mobsims} & Section~\ref{sec:mobsims} \\
-	\hline
-	QSim & Section~\ref{sec:qsim} \\
-	JDEQSim & Section~\ref{sec:jdeqsim} \\
-	%%queueSimulation & Section~\ref{sec:queueSimulation} \\
-	DEQSim & Section~\ref{sec:deqsim} \\
-	\hline
-	%% \end{longtable}
-%% \end{table}
-%
-%% \createtable%
-%% {Modules continued}%
-%% {Modules continued}%
-%% {\label{tab:modulescontinued}}%
-%% {%
-%%   \begin{tabular}[c]{|l|l|}
-	\hline
-	\textbf{General Purpose Modules} & Section\ref{sec:generalpurposemodules} \\
-	\hline
-	Controler & Section~\ref{sec:controler} \\
-	Global & Section~\ref{sec:global} \\
-	Scenario & Section~\ref{sec:scenario} \\
-	\hline
-	\hline
-	\textbf{Scoring} & Section~\ref{sec:scoring} \\
-	\hline
-	\hline
-	\textbf{Special Purpose Modules, Tools and Functionalities} & Section~\ref{sec:specialpurpose} \\
-	\hline
-	Travel Time Calculator & Section~\ref{sec:ttc} \\
-	Link Stats & Section~\ref{sec:linkStats} \\
-	OTFVis Visualizer & Section~\ref{sec:OTFVis} \\
-	Senozon via Visualizer & Chapter~\ref{ch:via} \\
-	Cadyts & Chapter~\ref{ch:cadyts} \\
-	MATSim For UrbanSim & Chapter~\ref{ch:matsim4urbansim} \\
-	Parallel Computing & Section~\ref{sec:parallelcomputing} \\
-%	Extension of Simulation Horizon & Section~\ref{sec:longitudinalscenario} \\
-%	Warmstart & Section~\ref{sec:warmstart} \\
 	Roadpricing & Chapter~\ref{ch:roadpricing} \\
-	Emisssions & Chapter~\ref{ch:emissions} \\
+	Emissions & Chapter~\ref{ch:emissions} \\
 	Accessibility & Chapter~\ref{ch:accessibility} \\
 	Evacuation & Chapter~\ref{ch:evacuation}  \\
 	WagonSim & Chapter~\ref{ch:wagonSim} \\
+	Signals and Lanes & Chapter~\ref{ch:signalslanes} \\
+	\hline
+	\textbf{External Tools} & \\ % Out-Of-The-Loop Tools
+	\hline
+	Senozon via Visualizer & Chapter~\ref{ch:via} \\
+	OTFVis Visualizer & Chapter~\ref{ch:otfvis} \\
+	Cadyts & Chapter~\ref{ch:cadyts} \\
 	PSim & Chapter~\ref{ch:psim} \\
+	MATSim For UrbanSim & Chapter~\ref{ch:matsim4urbansim} \\	
 	Network Editors &  Chapter~\ref{ch:networkeditor} \\
 	Interactive Analysis and Decision Support & Chapter~\ref{ch:businessanalytics} \\
-	\hline
-	%% \end{tabular}
 \end{longtable}
-\end{table}
+\end{center}
+
+
 
 % ##################################################################################################################
 \section{\acrshort{matsim} data containers}
@@ -443,6 +439,7 @@ The vehicles package provides a file reader and a factory to create vehicles.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ===================================================================================
 \section{Global modules and global aspects}
+\label{sec:globalmodules}
 
 % ===================================================================================
 \subsection{Controler}
@@ -472,7 +469,7 @@ The controler is an indispensable module for running MATSim. The module, can be 
 The replanning modules get their information about number of threads from this module. \kai{nicht unter parallel computing?  Wäre meiner Erfahrung nach tatsächlich hilfreich, die paralellen Aspekte zusammenzufassen.}
 
 
-
+% ===================================================================================
 \subsection{Parallel Computing}
 \label{sec:parallelcomputing}
 \begin{compactitem}
@@ -481,13 +478,16 @@ The replanning modules get their information about number of threads from this m
 \item Code: mainly \lstinline|org.matsim.core.events.ParallelEventsManagerImpl| for parallel event handling. See qsim for parallel mobsim running.
 \end{compactitem}
 
-As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in MATSim simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. Clearly, the number of threads should correspond with available processor cores.  \kai{Meine Erfahrung ist eine andere, und je nach Maschine kann man das manchmal überauslasten und manchmal sollte man es eher unterauslasten.}  As mentioned above, the mobsim \emph{QSim} is running parallel by default.
+As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in MATSim simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. 
+% Clearly, the number of threads should correspond with available processor cores.  \kai{Meine Erfahrung ist eine andere, und je nach Maschine kann man das manchmal überauslasten und manchmal sollte man es eher unterauslasten.}  
+According to our experiences the optimal degree of capacity utilization (threads versus cores) is highly machine-dependent.
+As mentioned above, the mobsim \emph{QSim} is running parallel by default.
 
 Being able to speed-up scenarios migth become even more important than today, when additional innovation (choice) dimensions are added with large variability in the parameters rendering ensemble runs necessary (see Section~\ref{sec:variability}).
 
-\ah{auch Doblers Arbeiten einfügen!?}
-
-\ah{Marcel hatte mal Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.) geplant. Nachfragen, ob schon was vorhanden}
+%\ah{auch Doblers Arbeiten einfügen!?}
+%
+%\ah{Marcel hatte mal Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.) geplant. Nachfragen, ob schon was vorhanden}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -555,7 +555,7 @@ The parameters related to scoring described in Chapter \ref{ch:scoring}.
 \section{Strategy Modules}
 \label{sec:strategymodules}
 
-\kai{Habe ``strategy'' ans Ende gezogen, weil ein matsim run so auch tatsächlich losgeht: erst mobsim, dann scoring, dann replanning.  Gibt es Argumente für andere Reihenfolgen?}
+\kai{Habe ``strategy'' ans Ende gezogen, weil ein matsim run so auch tatsächlich losgeht: erst mobsim, dann scoring, dann replanning.  Gibt es Argumente für andere Reihenfolgen?} \ah{nein, super Punkt!}
 
 The strategy modules are the basic innovation modules available in MATSim. All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
 
@@ -721,7 +721,7 @@ Besides the selectors for plan modification and execution, in the near future al
 
 %##################################################################################################################
 \section{Observational modules}
-\label{sec:specialpurpose}
+\label{sec:observational}
 
 % ===================================================================================
 \subsection{Travel Time Calculator}
@@ -744,33 +744,6 @@ The routing module, as an example, needs travel time estimations for all links o
 \end{compactitem}
 
 Link stats allow to specify the output interval of simulation statistics of individual links. They are amongst other, used for the comparison with count values. It is configurable, if the simulated volumes should be written per iteration or averaged over multiple iterations.
-
-% ===================================================================================
-%\subsection{Extension of Simulation Horizon}
-%\label{sec:longitudinalscenario}
-%\begin{compactitem}
-%\item Invoking the module:
-%\item Configuration:
-%\item Code:
-%\end{compactitem}
-%
-%\who{Horni Surprice, Max/Fabian, Ordonez}
-%Longitudinal Scenario \who{Märki}
-%
-%\citep[e.g.,][]{HorniEtAl_TechRep_IVT_2012_a}.
-%
-%% ===================================================================================
-%\subsection{Warmstarting}
-%\label{sec:warmstart}
-%\begin{compactitem}
-%\item Invoking the module:
-%\item Configuration:
-%\item Code:
-%\end{compactitem}
-%
-%\who{Horni Surpice, Dobler}
-
-% ===================================================================================
 
 % ##################################################################################################################
 
