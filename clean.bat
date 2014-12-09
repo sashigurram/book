@@ -15,3 +15,6 @@ del *.idx
 del *.ilg
 del *.ind
 del *.ist
+del *.acn
+del *.acr
+del *.alg
