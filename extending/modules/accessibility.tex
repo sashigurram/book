@@ -9,6 +9,210 @@
 % ##################################################################################################################
 \ah{please delete everything, that you do not need anymore!}
 
+The term accessibility is widely used in the context of transport and
+infrastructure planning. The improvement of accessibility is often stated as a
+central goal of discussed transport or infrastructure schemes. In contrast to the
+ubiquitous use of the term accessibility, however, approaches to the quantitative analysis
+of accessibility are comparatively rare. This is striking since first such
+approaches appear to have been undertaken at the latest in the 1950s (cite Hansen).
+Likewise, it is notable that the development of gravity models, which have since
+then been the most prominent and widely-applied type of destination choice models,
+has originally been intertwined with quantitative approaches to accessibility
+analysis.
+
+Today, methods to assess the quality of accessibility (cite BBSR, TUHH, TUM,
+Curtis, ...) are mainly used in superordinate planning procedures like regional
+planning, where a central goal is to provide citizens with a certain quality of
+access to various services. Curtis et al. (cite Curtis...) also argue that
+accessibility-based analysis methods may be suitable to overcome the deficits that
+traditional transport analysis methods possess in terms of analyzing transport
+policies that are not construction-based, e.g. transport demand management schemes.
+
+Depending on the concrete definition of quantitative accessibility measures, the
+explanatory power of the result varies widely.
+%
+% following based on NicolaiNagel
+%
+As pointed out by Nicolai and Nagel (cite NicolaiNagel2013....) also see \citep[e.g.][]{GeursRitsema2001AccessibilityMeasures,Geurs2004AccessibilityReview}, quantitative indicators can rely on the following approaches:
+%
+\begin{enumerate}
+\item An \textbf{activity-based} or \textbf{land-use-based} approach focuses on
+the distribution of possible activity locations (land use). One can, for instance,
+base calculations on the number and spatial distribution of activity opportunities
+like shopping locations or workplaces within a certain distance.
+%
+\item An \textbf{in\-fra\-struc\-ture-based} or \textbf{transport-based} approach takes
+into account the effort to travel from a given origin to a given destination and 
+can be based on performance characteristics of the transport system, e.g. the
+average speed by mode at certain locations. If one considers, for instance, the
+number of shopping locations or workplaces under a defined travel time threshold,
+the activity-based and the infrastructure-based approaches can be combined.
+%
+\item A \textbf{temporal} component, which considers the availability of activities
+at different times-of-day, may be added.
+%
+\item An \textbf{individual} approach to accessibility computations can be
+obtained by that addressing different needs and opportunities of different socio-economic groups, e.g. different income groups.
+%
+\item A \textbf{utility-based} measurement of accessibility reflects the
+(economic) benefits, as the maximum expected utility, that someone gains
+from access to spatially distributed opportunities
+\citep{GeursRitsema2001AccessibilityMeasures,deJongEtAl2007LogsumTRA}. The
+typical example is the logsum term, which is discussed in ??????.
+\end{enumerate}
+%
+Established and frequently applied
+approaches to accessibility analyses often calculate travel times to
+the next facility that offers a certain type of service (e.g. travel time to the
+next airport or next hospital) and define this travel time as the accessibility. As
+such, accessibilities are oftentimes activity-specific.
+%, i.e. calculated with regard to a certain type of service.
+One can argue, however, that the activity-specific
+accessibility is in reality not only defined by the impedance to reach \texttt{the nearest}
+facility serving a particular need. Instead, the measure will become more
+insightful, if a certain number of facilities serving the same need is taken into
+account because different facilities of the same type may offer a given service in
+different qualities. Likewise, services offered may be complementary. For instance,
+a person wishing to make a holiday trip by airplane will likely take into account several airports in her/his vicinity when planning a journey instead
+of just looking at the flights offered from the nearest airport. Therefore, the
+accessibility to airports should be made dependent on the impedances to reach all of these airports
+instead of just the impedance to reach the nearest one. Similarly, the accessibility to
+medical services will in reality be perceived as better if several hospitals, potentially offering
+different kinds of medical treatments, are reachable from a given location. Therefore, all reachable
+hospitals should be considered when calculating accessibilities of medical
+facilities instead of just taking into account the closest hospital. The latter
+would only be sufficient in cases where it can be assumed that \texttt{any}
+hospital can provide a suitable treatment. In order to account for the multitude of facilities serving a
+given need, a (weighted) sum over the accessibilities of these facilities appears
+reasonable. The accessibility extension in MATSim is based on such weighted sums.
+
+Another question is the calculation of accessibilities from a given location to facilities of a ...
+
+
+
+congestion-effects
+
+free data
+
+\section{Invocation}
+
+\subsection{Minimal}
+
+...
+
+
+
+\subsection{Invocation as ``script in Java''}
+
+The above \lstinline$org.matsim.accessibility.run.Main$ class can also be used as a starting point for one's own ``script in Java'':
+\begin{lstlisting}
+public static void main(String[] args) {
+
+		if ( args.length==0 || args.length>1 ) {
+			throw new RuntimeException("useage: ...Main config.xml") ;
+		}
+		Config config = ConfigUtils.loadConfig( args[0] ) ;
+		
+		Scenario scenario = ScenarioUtils.loadScenario( config ) ;
+		
+		// the run method is extracted so that a test can operate on it.
+		run( scenario);
+		
+		
+	}
+
+	public static void run(Scenario scenario) {
+		
+		List<String> activityTypes = new ArrayList<String>() ;
+		ActivityFacilities homes = FacilitiesUtils.createActivityFacilities("homes") ;
+		for ( ActivityFacility fac : scenario.getActivityFacilities().getFacilities().values()  ) {
+			for ( ActivityOption option : fac.getActivityOptions().values() ) {
+				// figure out all activity types
+				if ( !activityTypes.contains(option.getType()) ) {
+					activityTypes.add( option.getType() ) ;
+				}
+				// figure out where the homes are
+				if ( option.getType().equals("h") ) {
+					homes.addActivityFacility(fac);
+				}
+			}
+		}
+		
+		log.warn( "found activity types: " + activityTypes ); 
+		
+		// yyyy there is some problem with activity types: in some algorithms, only the first letter is interpreted, in some other algorithms,
+		// the whole string.  BEWARE!  This is not good software design and should be changed.  kai, feb'14
+		
+		Map<String, ActivityFacilities> activityFacilitiesMap = new HashMap<String, ActivityFacilities>();
+		Controler controler = new Controler(scenario) ;
+		controler.setOverwriteFiles(true);
+
+		for ( String actType : activityTypes ) {
+			
+//			if ( !actType.equals("w") ) {
+//				log.error("skipping everything except work for debugging purposes; remove in production code. kai, feb'14") ;
+//				continue ;
+//			}
+			
+			ActivityFacilities opportunities = FacilitiesUtils.createActivityFacilities() ;
+			for ( ActivityFacility fac : scenario.getActivityFacilities().getFacilities().values()  ) {
+				for ( ActivityOption option : fac.getActivityOptions().values() ) {
+					if ( option.getType().equals(actType) ) {
+						opportunities.addActivityFacility(fac);
+					}
+				}
+			}
+			
+			GridBasedAccessibilityControlerListenerV3 listener = 
+				new GridBasedAccessibilityControlerListenerV3(opportunities, scenario.getConfig(), scenario.getNetwork());
+
+			// define the modes that will be considered
+			// the following modes are available (see AccessibilityControlerListenerImpl): freeSpeed, car, bike, walk, pt
+			listener.setComputingAccessibilityForMode(Modes4Accessibility.freeSpeed, true);
+
+			// this has to do with the additional population density column:
+			listener.addAdditionalFacilityData(homes) ;
+
+			listener.generateGridsAndMeasuringPointsByNetwork(100.);
+			// yy todo: meaningful error message if this is not set
+			// yy todo: make sure that cell size is taken from config.
+			
+			listener.writeToSubdirectoryWithName(actType);
+			
+			controler.addControlerListener(listener);
+		}
+					
+		controler.run();
+	}
+
+
+#######################################
+
+
+
+public static void main(String[] args) {
+	// load the config, telling it to "materialize" the road pricing section:
+	Config config = ConfigUtils.loadConfig(args[0], new RoadPricingConfigGroup());
+	
+	// load the scenario:
+	Scenario scenario = ScenarioUtils.loadScenario(config) ;
+
+	// instantiate the controler:
+	Controler controler = new Controler(scenario) ;
+
+	// instantiate road pricing and add it as controler listener:
+	RoadPricing roadPricing = new RoadPricing() ;
+	controler.addControlerListener( roadPricing ) ;
+
+	// run the controler:
+	controler.run() ;
+}
+\end{lstlisting}
+
+\subsection{More information}
+
+\url{http://ci.matsim.org:8080/job/MATSim_contrib_M2/org.matsim.contrib$accessibility/javadoc/?}
+
 \ah{
 -> Vortrag Wiepersdorf
 Modules in the config: 
