@@ -1,7 +1,10 @@
 pdflatex main
+bibtex main
+makeglossaries main
+pdflatex main
+bibtex main
 makeglossaries main
 makeindex main
-bibtex main
 pdflatex main
 pdflatex main
 
