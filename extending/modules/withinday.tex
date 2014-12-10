@@ -1,4 +1,4 @@
-\chapter{Within-Day Replanning \who{Dobler, Maciejewski, Nagel}}
+\chapter{Within-Day Replanning}
 \label{ch:withinday}
 % ##################################################################################################################
 
@@ -7,28 +7,16 @@
 \begin{center} \includegraphics[width=0.6\textwidth, angle=0]{extending/figures/WithinDayReplanning/WithinDayMATSimLoop} \end{center}
 
 % ##################################################################################################################
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 In recent years, in transport planning and traffic management the interest in scenarios where events occur which cannot or only partially be foreseen has increased. Typical examples for events which can only partially be foreseen are taxis and car sharing. An agent that has a taxi trip in its plan can for example not know in advance which taxi will be available when the agent needs one. When using car sharing, an agent might walk to the car sharing station and check whether a car is available or not. In case it is not, the agent could either decide to wait or adapt its plan and switch to another mode. Examples for events which cannot be foreseen at all are road accidents, terrorist attacks or disaster such as earthquakes.
 
 Traditional simulation approaches (as used in MATSim) optimize traffic demand using an iterative process. There, it is assumed that a typical situation is simulated where agents can rely on their experience from comparable situations, like previous iterations. Applying an iterative approach to a scenario with unexpected events results in problems like illogical agent behaviour, producing false results. In the next section, these problems, as well as an alternative simulation approach, are presented. On one hand, this approach---called within-day replanning---simulates only a single iteration, avoiding problems resulting from an iterative simulation process. On the other hand, this approach does require a more detailed behavioral model for the agents. Subsequently, using MATSim as a base, the iterative approach is discussed, followed by two different implementations of the within-day replanning approach into the framework including discussions of the technical implementations.
 
 
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ##################################################################################################################
 \section{Simulation Approaches} \label{sec:SimulationApproaches}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Iterative Simulation Approaches} \label{sec:IterativeSimulationApproaches}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% ============================================================================================
 The starting point of an iterative simulation approach, as it is used in agent-based traffic flow micro-simulations like DYNEMO \citep{Schwerdtfeger_VolmulerHamerslag_1984, NoekelSchmidt_NSE_2002}, MATSim \citep{Balmer_PhDThesis_2007, BalmerEtAl_HEUREKA_2008} or TRANSIMS \citep{SmithEtAl_NTRPAC_1995, NagelRickert_ParComp_2001},  is the generation of an initial plan for each agent (e.g.\ based on census and~/~or travel diary data). A plan contains an agent's intended schedule of activities and the trips that connect them. For each activity, its type (e.g.\ \emph{work}, \emph{leisure} or \emph{shopping}), its location and the expected start and end time are given. A transport mode and a route specify a trip. The iterative optimization process consists of three steps. First, a mobility simulation executes the plans which are then evaluated using a fitness function. Finally, agents must select plans to be executed in the next iteration. Each agent can keep several plans in its memory. Bad plans can be deleted and new plans created by cloning and adapting existing ones using information (e.g.\ travel times) from one or more previous iterations. The allowed adaption operations define the optimization search space (e.g.\ routes, location and start / end times of activities). This iterative optimization can be seen as a period-to-period replanning strategy. Since one day is a commonly used duration, it is often called day-to-day replanning strategy.
 
 An iterative day-to-day replanning approach is appropriate as long as the scenario describes a typical situation or day. For such scenarios, it is feasible to assume that agents are familiar with typically occurring events like traffic jams during peak hours. Therefore, they try to avoid driving during those times, or use alternative routes with less traffic. However, if the scenario contains unexpected events that the agents cannot foresee (e.g.\ accidents or heavy weather conditions), using an iterative approach is not the best choice. First, user equilibrium will not be reached in such a scenario because agents do not have enough information to choose optimal routes and daily activity plans. Another problem is the optimization process itself. Even if an agent chooses its routes randomly due to a lack of information, it will eventually find a good route if it tries enough different routes.
@@ -68,10 +56,8 @@ Figure \ref{fig:labelExceptionalEventExample} shows a simple example scenario wh
 
 An obvious solution to avoiding such problems is using an alternative simulation approach without an iterative optimization process. The next section discusses such an approach and the requirements that must be fulfilled.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ============================================================================================
 \subsection{Within-Day Replanning Approach}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 A within-day replanning approach uses a significantly different strategy from that of an iterative approach. Instead of multiple iterations, only a single one is simulated. Thus, it is now essential that agents can adapt their plans during this iteration without having information from previous iterations available. To do so, they have to continuously collect information and take into account their desires, beliefs and intentions when they decide how to (re)act.
 
 While iterative approaches can use best-response modules, a within-day approach has to use something that might be called a best-guess module. Travel times are an obvious example. In an iterative approach, travel times can be collected from the previous iteration or even be averaged over several past iterations. The nearer a stable system is to a relaxed state, the smaller the differences in travel times between two iterations. This is not possible in a within-day approach. Even if an agent has perfect knowledge, it can only assume how the traffic flows will evolve in the future. To do so, it can take different information into account to estimate travel times. It could, for example, take travel times from a typical day without exceptional events and combine them with information it gathers during the simulated day. Depending on the amount and the quality of this information, the agent might rely more or less on its experience.
@@ -94,20 +80,16 @@ Figure \ref{fig:labelWithinDayMATSimLoop} shows how within-day replanning can be
 {}%
 %---------------------------------------------------------------------
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ============================================================================================
 \subsection{Combined Approaches} \label{sec:CombinedApproaches}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 An alternative to iterative or within-day replanning only approaches, is to combine them. An obvious application is solving situations that cannot be planned exactly in advance, like parking or car sharing. An agent is, for example, able to plan a parking activity, but it cannot anticipate which parking spots will be available when the agent arrives. Thus, within-day replanning can be used when the agent starts its parking choice.
 
 Other agents might want to share their cars, so an actual meeting must be confirmed. This can be ensured using within-day replanning. If the driver arrives too early, a \emph{waiting} activity is added to its plan; otherwise the agent being picked up will perform a \emph{waiting} activity until the car arrives.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ##################################################################################################################
 \section{Implementation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsection{General thoughts}
+\subsection{General Thoughts}
 
 Within-day or en-route replanning means that travelers replan during the day or while they are on their route.  This means that the simulation needs to find some way to influence the agent while the mobility simulation (network loading) is running.  For the \acrshort{matsim} main network loading module, the so-called \lstinline$QSim$, this could be achieved by inserting an agent-loop, as follows:
 \begin{lstlisting}
@@ -173,7 +155,7 @@ If, on the other hand, an agent goes into the simulation mostly or entirely with
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Implementation alternative 1: Plan-based Implementation}
+\subsection{Implementation Alternative 1: Plan-Based Implementation}
 \label{sec:impl-plan-based}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -295,9 +277,12 @@ The current \acrshort{matsim} code differentiates between \lstinline$Person$ and
 
 This leads to the question if within-day adaptations to the \lstinline$Plan$ should be passed through to the \lstinline$Person$.  Let us call the actual trajectory through the system the ``executed plan''.  This can be different from the original plan, for example using a different route, different departure times, different modes, etc.  The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output.  In consequence, it is not possible to treat the executed plan together with the just obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
 
-In consequence, the code uses a copy of the original plan and modifies the copy.  The score, however, is given to the original plan.  The implementation is able to 
-\kai{``is able to''? (existiert das derzeit als Option? -Christoph: sollte da sein, sofern der Code nicht inzwischen zerschossen wurde. Ich hatte das für den Initial Routes Creation Abschnitt in meiner Diss verwendet. Ich wollte da auch nochmal genauer drauf schauen, was die produzierten Ergebnisse eigentlich bedeuten - habe ich dann aber irgendwie nie mehr Zeit dafür gefunden.} 
-\emph{also} memorize the executed plan and add it to the set of plans.
+In consequence, the code uses a copy of the original plan and modifies the copy. The score, however, is given to the original plan. The implementation is able to 
+\kai{``is able to''? (existiert das derzeit als Option?}
+%
+\dobi{Christoph: sollte da sein, sofern der Code nicht inzwischen zerschossen wurde. Ich hatte das für den Initial Routes Creation Abschnitt in meiner Diss verwendet. Ich wollte da auch nochmal genauer drauf schauen, was die produzierten Ergebnisse eigentlich bedeuten - habe ich dann aber irgendwie nie mehr Zeit dafür gefunden.}
+% 
+\emph{also} memorize the executed plan and add it to the set of plans. This functionality, however, is experimental.
 
 %% \mnote{lskdjf}
 
@@ -305,7 +290,9 @@ In consequence, the code uses a copy of the original plan and modifies the copy.
 
 \mnote{parking example: parking search route should not be added to plan}
 
-One example where setting the original to the executed plan clearly does not make sense is parking search \kai{citation? Christoph: keine. Eventuell könntem an den Absatz auch weglassen? Der Standard ist ja mittlerweile, dass man den Plan der Person nicht verändert. Andererseits wäre dann der Absatz unten (mit den initial Routes) eher interessant, weil der eben ein Beispiel dafür gibt, wo die Standardeinstellung nicht sinnvoll ist.}.
+One example where setting the original to the executed plan clearly does not make sense is parking search \kai{citation?}
+\dobi{Christoph: keine. Eventuell könntem an den Absatz auch weglassen? Der Standard ist ja mittlerweile, dass man den Plan der Person nicht verändert. Andererseits wäre dann der Absatz unten (mit den initial Routes) eher interessant, weil der eben ein Beispiel dafür gibt, wo die Standardeinstellung nicht sinnvoll ist.}.
+\ah{\citet[][]{WaraichEtAl_TechRep_IVT_2013_2, WaraichEtAl_TechRep_IVT_2012}. Komme weder an den einen noch an den anderen dran und kann die Frage deshalb nicht selber beantworten.}
 %In a first one, within-day replanning is used to simulate agents' parking search. 
 A person's plan contains as destination the location where a free parking space is expected. However, if the agent realizes in the mobility simulation that there is no free space left, it starts looking for a free parking spot. As a result, the agent's route is extended. This extension has to be local in the agent's route since it is only necessary in the current iteration
 but maybe not in another one where the initially selected parking spot is available.
@@ -404,7 +391,7 @@ class MyAgentSource implements AgentSource {
 \end{lstlisting}
 \lstinline$Guidance$ helps the agent with making decisions, see below.
 
-\subsubsection{Perception, decision, integration}
+\subsubsection{Perception, Decision, Integration}
 
 The agents somehow need to perceive their environment.  The simulation tells the agent where it is, via \lstinline$notifyMoveOverNode(Id<Link> nextLinkId)$.  In general, however, this will not be enough.  For example, the agent may want to be informed about congestion, or evacuation directions.
 
@@ -501,7 +488,7 @@ The guidance object can still be passed to the agent as before; it can now compu
 Code that compiles with the respective version of \acrshort{matsim} can be found in the package \lstinline$tutorial.programming.ownMobsimAgentUsingRouter$ (e.g.\ to be found under \url{http://matsim.org/doxygen}).
 
 
-
+% ##################################################################################################################
 % Local Variables:
 % mode: latex
 % mode: reftex
