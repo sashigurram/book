@@ -9,31 +9,13 @@
 % ##################################################################################################################
 \ah{please delete everything, that you do not need anymore!}
 
-The term accessibility is widely used in the context of transport and
-infrastructure planning. The improvement of accessibility is often stated as a
-central goal of discussed transport or infrastructure schemes. In contrast to the
-ubiquitous use of the term accessibility, however, approaches to the quantitative analysis
-of accessibility are comparatively rare. This is striking since first such
-approaches appear to have been undertaken at the latest in the 1950s (cite Hansen).
-Likewise, it is notable that the development of gravity models, which have since
-then been the most prominent and widely-applied type of destination choice models,
-has originally been intertwined with quantitative approaches to accessibility
-analysis.
+The term accessibility is widely used in the context of transport and infrastructure planning. The improvement of accessibility is often stated as a central goal of proposed transport or infrastructure schemes. In contrast to the ubiquitous use of the term accessibility, however, approaches to the quantitative analysis of accessibility are comparatively rare. This is striking since first such approaches appear to have been undertaken at the latest in the 1950s (cite Hansen ????????????). Likewise, it is notable that the development of gravity models, which have since then been the most prominent and widely-applied type of destination choice models, has originally been intertwined with quantitative approaches to accessibility analysis.
 
-Today, methods to assess the quality of accessibility (cite BBSR, TUHH, TUM,
-Curtis, ...) are mainly used in superordinate planning procedures like regional
-planning, where a central goal is to provide citizens with a certain quality of
-access to various services. Curtis et al. (cite Curtis...) also argue that
-accessibility-based analysis methods may be suitable to overcome the deficits that
-traditional transport analysis methods possess in terms of analyzing transport
-policies that are not construction-based, e.g. transport demand management schemes.
+Today, methods to assess the quality of accessibility (cite BBSR, TUHH, TUM, Curtis, ... ??????????) are mainly used in superordinate planning procedures like regional planning, where a central goal is to provide citizens with a certain quality of access to various services. Curtis et al. (cite Curtis... ??????) also argue that accessibility-based analysis methods may be suitable to overcome the deficits that traditional transport analysis methods possess in terms of analyzing transport policies that are not construction-based, e.g. transport demand management schemes.
 
-Depending on the concrete definition of quantitative accessibility measures, the
-explanatory power of the result varies widely.
+Depending on the concrete definition of quantitative accessibility measures, the explanatory power of the result varies widely.
 %
-% following based on NicolaiNagel
-%
-As pointed out by Nicolai and Nagel (cite NicolaiNagel2013....) also see \citep[e.g.][]{GeursRitsema2001AccessibilityMeasures,Geurs2004AccessibilityReview}, quantitative indicators can rely on the following approaches:
+As pointed out by \citet{NicolaiNagel2012HiResAccessibilityMethodInBook} (also see \citep[e.g.][]{GeursRitsema2001AccessibilityMeasures,Geurs2004AccessibilityReview}), quantitative indicators can rely on the following approaches:
 %
 \begin{enumerate}
 \item An \textbf{activity-based} or \textbf{land-use-based} approach focuses on
@@ -52,7 +34,7 @@ the activity-based and the infrastructure-based approaches can be combined.
 at different times-of-day, may be added.
 %
 \item An \textbf{individual} approach to accessibility computations can be
-obtained by that addressing different needs and opportunities of different socio-economic groups, e.g. different income groups.
+obtained by addressing different needs and opportunities of different socio-economic groups, e.g. different income groups.
 %
 \item A \textbf{utility-based} measurement of accessibility reflects the
 (economic) benefits, as the maximum expected utility, that someone gains
@@ -61,38 +43,48 @@ from access to spatially distributed opportunities
 typical example is the logsum term, which is discussed in ??????.
 \end{enumerate}
 %
-Established and frequently applied
-approaches to accessibility analyses often calculate travel times to
-the next facility that offers a certain type of service (e.g. travel time to the
-next airport or next hospital) and define this travel time as the accessibility. As
-such, accessibilities are oftentimes activity-specific.
-%, i.e. calculated with regard to a certain type of service.
-One can argue, however, that the activity-specific
-accessibility is in reality not only defined by the impedance to reach \texttt{the nearest}
-facility serving a particular need. Instead, the measure will become more
-insightful, if a certain number of facilities serving the same need is taken into
-account because different facilities of the same type may offer a given service in
-different qualities. Likewise, services offered may be complementary. For instance,
-a person wishing to make a holiday trip by airplane will likely take into account several airports in her/his vicinity when planning a journey instead
-of just looking at the flights offered from the nearest airport. Therefore, the
-accessibility to airports should be made dependent on the impedances to reach all of these airports
-instead of just the impedance to reach the nearest one. Similarly, the accessibility to
-medical services will in reality be perceived as better if several hospitals, potentially offering
-different kinds of medical treatments, are reachable from a given location. Therefore, all reachable
-hospitals should be considered when calculating accessibilities of medical
-facilities instead of just taking into account the closest hospital. The latter
-would only be sufficient in cases where it can be assumed that \texttt{any}
-hospital can provide a suitable treatment. In order to account for the multitude of facilities serving a
-given need, a (weighted) sum over the accessibilities of these facilities appears
-reasonable. The accessibility extension in MATSim is based on such weighted sums.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\mnote{Portfolio of opportunities}
+Established and frequently applied approaches to accessibility analyses often calculate travel times to the next facility that offers a certain type of service (e.g. travel time to the next airport or next hospital, e.g. BBSR ????????) and define this travel time as the accessibility (or: use this as a proxy for accessibility....????).
 
-Another question is the calculation of accessibilities from a given location to facilities of a ...
+While clearly giving useful insights into the supply of the population with certain services, one can argue, however, that such an approaches do not reflect the set of options, which a citizen can select from, very well. The measure will
+arguably become more insightful, if not only the impedance to reach \textit{the nearest} facility serving a particular need is taken into account, but instead a set of multiple reachable facilities serving the same need is considered. This is due to the fact, that different facilities of the same type may offer a given service in different qualities, also services may become more beneficent when combined with complementary services provided by another facility. For instance, a person wishing to make a holiday trip by airplane will likely take into account several airports in her/his vicinity when planning a journey instead of just looking at the flights offered from the nearest airport. Therefore, the accessibility to airports should be made dependent on the impedances to reach all of these airports instead of just the impedance to reach the nearest one. Facilities offering medical services may serve as another example. Only taking into account the nearest hospital may already be sufficient when looking at services like first aid, which can be assumed to be available at almost \textit{any} hospital. In most other cases, however, the the supply with medical services will be better represented by considering several hospitals as they are very likely to offer different kinds of medical treatment that complement each other and also services in different quality. Therefore, all reachable hospitals should be considered when calculating accessibilities of medical facilities instead of just taking into account the closest hospital. In order to account for the multitude of facilities serving a given need, a (weighted) sum over the accessibilities of several facilities of a given type appears reasonable. The (quantitative) accessibility measure in the MATSim accessibility extension is of the mathematical form
+\begin{equation}
+A_i = g\Big( \sum_j a_j \, f(c_{ij}) \Big) \ ,
+\label{eq:accessibility:basic}
+\end{equation}
+where the sum goes over all possible destinations (opportunities) $j$, $a_j$ is an indicator of the attractiveness of the opportunity, $c_{ij}$ is the generalized cost of travel to get from $i$ to $j$, $f(c)$ is an impedance function that typically decreases with increasing distance, and $g(.)$ is an arbitrary, but typically monotonically increasing, function.  That is, the accessibility at $i$ is computed from a weighted sum over all possible destinations, where the weight is the product of the destination's attractiveness and the ease to get there.
+
+\mnote{ingoing vs. outgoing}
 
 
 
-congestion-effects
 
+
+\mnote{congested}
+
+\mnote{spatial resolution, zones vs. points}
+In contrast to many other transport simulations, MATSim is not zone-based but based on coordinates (see section ?????). This enables the accessibility computation also to be applicable for coordinates, which circumvents several issues that may arise if accessibility computations are based on zones (see \citep[e.g.][]{NicolaiNagel2012HiResAccessibilityMethodInBook}). As opposed to the MATSim's accessibility extension, the majority of other quantitative accessibility computations appears to be zone-based (e.g. Curtis, BBSR, Liu and Zhu 2004, etc. ?????). Being coordinate-based, the outcome of the MATSim accessibility computation can be considered as an accessibility field,
+i.e.\ as a measure continuously varying in space, $A(x,y)$, where $x$ and $y$
+are the coordinates.  As is common in many areas of science, such
+fields can be visualized by calculating the values on regular grid
+points, and then using an averaging plotting routine.  
+
+zones
+
+issues
+
+field
+
+\mnote{data}
 free data
+
+\mnote{applicability, useability}
+
+
+
+
 
 \section{Invocation}
 
