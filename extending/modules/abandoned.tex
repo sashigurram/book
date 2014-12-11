@@ -1,75 +1,62 @@
-\chapter{Abandoned modules}
-\label{ch:abandoned}
+\chapter{Discontinued Modules}
+\label{ch:discontinued}
 % ##################################################################################################################
 
-\hfill \textbf{Author:} ??
-
-\begin{center} \includegraphics[width=0.25\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
+\hfill \textbf{Author:} Andreas Horni
 
 % ##################################################################################################################
-
-\kai{Weiß nicht, ob wir ein solches Kapitel wollen, und/oder ob es vielleicht einen besseren Namen gibt.  Namen?}
+This chapter lists modules, that have been important in the past, but whose development is discontinued.
 
 % ===================================================================================
-\subsection{DEQSim (deprecated)}
+\subsection{DEQSim}
 \label{sec:deqsim}
-\emph{DEQSim} was used for project \emph{Westumfahrung} \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009}. It is a is a queue-based, event-based parallel simulation written in C++ \citep[][]{CharyparEtAl_TRR_2007, Charypar_PhDThesis_2008}. This simulation includes handling of reduced capacities due to traffic lights in an aggregate manner \citep[][p.139 ff]{Charypar_PhDThesis_2008}. It further supports modeling of gap back propagation at junctions \citep[][p.98 ff]{Charypar_PhDThesis_2008}. Events handling is done via file input and output. This represents a major bottleneck in terms of framework performance. Development of this simulation has been stopped and been replaced by the JAVA mobsim \emph{JDEQSim}.
+\emph{DEQSim} was used for project \emph{Westumfahrung} \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009}. It was a queue-based, event-based parallel simulation written in C++ \citep[][]{CharyparEtAl_TRR_2007, Charypar_PhDThesis_2008}. This simulation included handling of reduced capacities due to traffic lights in an aggregate manner \citep[][p.139 ff]{Charypar_PhDThesis_2008}. It further supported modeling of gap back propagation at junctions \citep[][p.98 ff]{Charypar_PhDThesis_2008}. Events handling was done via file input and output. This represented a major bottleneck in terms of framework performance and thus it was replaced by a JAVA version, the \emph{JDEQSim} mobsim.
 
 % ===================================================================================
-\subsection{\color{lightgray}Planomat}
+\subsection{Planomat and PlanomatX}
 \label{sec:planomat}
+%\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus MATSim entfernt haben.}
+%\ah{Ist die Frage, ob man die Historie noch mitschleppen will oder nur den aktuellen Stand beschreiben will. Bin in diesem Fall etwas unschlüssig. Planomat war für zwei grosse Projekte hier ein wichtiges Teil, deshalb wird man gute Argumente hören dafür es drinzulassen. Für den aktuellen Stand ist es aber tatsächlich nicht mehr relevant.}
+%
+A special replanning module using a different logic than undirected trial-and-error was Planomat. Planomat did not evaluate just one random alternative per iteration but multiple alternatives within one single iteration to obtain a (at least locally) optimal solution. It used a genetic algorithm \citep[][]{MeisterEtAl_IATBR_2006, MeisterEtAl_STRC_2006, Meister_PhDThesis_2011} for this purpose. Planomat was successfully applied in the project \emph{KTI Frequencies} for time choice and mode choice for sub-tours \citep[][p.10]{BalmerEtAl_ResRep_datapuls_2010}. The Planomat module cannot be invoked directly anymore; it is not available in current releases anymore but can be downloaded from SVN history.
 
-\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus MATSim entfernt haben.}
-\ah{Ist die Frage, ob man die Historie noch mitschleppen will oder nur den aktuellen Stand beschreiben will. Bin in diesem Fall etwas unschlüssig. Planomat war für zwei grosse Projekte hier ein wichtiges Teil, deshalb wird man gute Argumente hören dafür es drinzulassen. Für den aktuellen Stand ist es aber tatsächlich nicht mehr relevant.}
-
-{\color{lightgray}\tiny
-
-\begin{compactitem}
-\item Invoking the module: The Planomat module cannot be invoked directly anymore; it is not available in current releases anymore but can be downloaded from SVN history. \ah{öhm, stimmt das?}\michaz{Japp.}
-\item Configuration: see above
-\item Code: see above
-\end{compactitem}
-
-A special replanning module using a different logic than undirected trial-and-error was Planomat. Planomat did not evaluate just one random alternative per iteration but multiple alternatives within one single iteration to obtain a (at least locally) optimal solution. It used a genetic algorithm \citep[][]{MeisterEtAl_IATBR_2006, MeisterEtAl_STRC_2006, Meister_PhDThesis_2011} for this purpose. Planomat was successfully applied in the project \emph{KTI Frequencies} for time choice and mode choice for sub-tours \citep[][p.10]{BalmerEtAl_ResRep_datapuls_2010}.
-}
+PlanomatX leaned on Planomat. It extended it by performing activity choice and adopting a Tabu Search approach \citep[][]{Feil_PhDThesis_2010}. To cope with curse of dimensionality due to the added choice dimension, PlanomatX introduced schedule recycling, which was basically a warmstart concept. Due to the problems with a logarithmic utility function for activity choice as reported in Section \ref{sec:utfextensions}, PlanomatX furthermore replaced to standard MATSim scoring function by an S-shaped function. Rough estimates for its parameters based on an multinomial logit model (MNL) exist. PlanomatX module cannot be invoked directly anymore; it is not available in current releases anymore but can be downloaded from SVN history.
 
 % ===================================================================================
-\subsection{{\color{lightgray}Activity Choice a.k.a. PlanomatX}}
-\label{sec:activitychoice}
+\subsection{queueSimulation}
+\label{sec:queueSimulation}
+The queueSimulation was another mobsim forked from QSim. It cannot be invoked directly anymore; it is not available in current releases anymore but can be downloaded from SVN history. The \lstinline|simulation| config file section, which you might come across in old config files, is deprecated as well. 
+%\ah{stimmt das so?}\michaz{Yes. IMO let's not even mention it. The fact that it was forked from QSim at all is a technicality which nobody wants to know.})
 
-\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus MATSim entfernt haben.}
-\ah{Ähnlich oben, nur dass ich hier die Argumente dann nicht so gut nachvollziehen kann.}
-
-\kai{Ich habe das wie folgt in Erinnerung: (1) PlanomatX war mit heißer Nagel gestrickt.  Es gab nie ein Bemühem um code re-use, weder im code von Feil selber noch in bezug auf Matsim Infrastruktur.  Jedes ``computational experiment'' wurde definiert durch eine weitgehenden Kopie der gesamten code base.  Wir sahen uns nicht dazu in der Lage, hier dasjenige Subset zu extrahieren, welches einer sinnvollen Funktionalität entsprach.  (2) Durch die vielen Kopien war der playground beim refactoring massiv im Weg.  Es ist schon ok, wenn man bestimmte code Zeilen pro playground ein- oder zweimal austauschen muss, aber 14x ist zu viel.  (3) Michael Balmer sagte, dass er den Resultaten, insbesondere denen in den hinteren Kapiteln der Diss, nicht trauen würde (sonst hätten wir vielleicht ein paar test cases drumherum gebaut und versucht, es zu retten).}
-
-\kai{Ich sehe das von daher gesehen interessanterweise eher umgekehrt wie Du: Meiner Intuition nach hätte eher der normale planomat bleiben können.  Hier kann ich mich nicht dran erinnern, dass ich eine eigene Meinung hatte.  Als wesentliches technisches Problem habe ich in Erinnerung, dass planomat die Tendenz hatte, immer die gleiche Lösung zu finden, völlig unabhängig von den Präferenzen des Agenten (z.B.\ value of time).}
-
-\kai{Wenn es wg.\ der Historie ist, würde ich es in einer separaten Section unterbringen.}
-
-\kai{Falls es Euch wirklich wichtig ist, dann kann man ein ``contrib'' Kapitel ``planomat'' einfügen, analog zu den anderen contribs (accessibility, roadpricing, emissions, locationchoice, ...).  Wenn alles gut gelaufen wäre, dann wären auch planomat/planomatX jetzt contribs.  Bei PlanomatX wurde, wie gesagt, von Feil nie genug geliefert, dass das Chancen gehabt hätte.  Bei Planomat ist mir, wie gesagt, der Prozess nicht ganz klar.}
-
-\kai{Vermutlich brauchen wir irgendwann eine oder mehrere Skype Bereinigungstreffen, oder? :-)}
-
-\ah{Da habe ich mich missverständlich ausgedrückt: Die Argumente es \textbf{zu behalten} kann ich für PlanomatX nur schwer nachvollziehen, was mir bei Planomat besser gelingt.
-
-kwa ist aber auch mehr für "Current State" denn für "History". Allerdings wird wohl Planomat(X) von Balac wieder reaktiviert werden (müssen). D.h., irgendwo eine kurze Section zu "`Former Important Modules"' wäre evtl. nicht schlecht.}
-
-{\color{lightgray}\tiny
-
-\begin{compactitem}
-\item Invoking the module: The PlanomatX module cannot be invoked directly anymore; it is not available in current releases anymore but can be downloaded from SVN history.
-\item Configuration: see above
-\item Code: see above
-\end{compactitem}
-
-PlanomatX performing activity choice and adopting a Tabu Search approach is described by \citet[][]{Feil_PhDThesis_2010}. To cope with curse of dimensionality due to the added choice dimension, PlanomatX introduced schedule recycling, which is basically a warmstart concept. Due to the problems with a logarithmic utility function for activity choice as reported in Section \ref{sec:utfextensions}, PlanomatX furthermore replaced to standard MATSim scoring function by an S-shaped one. Rough estimates for its parameters based on an multinomial logit model (MNL) exist.
-}
-
-% ===================================================================================
 
 % ################################################################################################################
+%\section{Discussions}
+%% ===================================================================================
+%\subsection{Planomat}
+%\label{sec:planomat}
+%\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus MATSim entfernt haben.}
+%\ah{Ist die Frage, ob man die Historie noch mitschleppen will oder nur den aktuellen Stand beschreiben will. Bin in diesem Fall etwas unschlüssig. Planomat war für zwei grosse Projekte hier ein wichtiges Teil, deshalb wird man gute Argumente hören dafür es drinzulassen. Für den aktuellen Stand ist es aber tatsächlich nicht mehr relevant.}
+%
+%% ===================================================================================
+%\subsection{PlanomatX ... Activity Choice}
+%\label{sec:activitychoice}
+%
+%\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus MATSim entfernt haben.}
+%\ah{Ähnlich oben, nur dass ich hier die Argumente dann nicht so gut nachvollziehen kann.}
+%
+%\kai{Ich habe das wie folgt in Erinnerung: (1) PlanomatX war mit heißer Nagel gestrickt.  Es gab nie ein Bemühem um code re-use, weder im code von Feil selber noch in bezug auf Matsim Infrastruktur.  Jedes "computational experiment" wurde definiert durch eine weitgehenden Kopie der gesamten code base.  Wir sahen uns nicht dazu in der Lage, hier dasjenige Subset zu extrahieren, welches einer sinnvollen Funktionalität entsprach.  (2) Durch die vielen Kopien war der playground beim refactoring massiv im Weg.  Es ist schon ok, wenn man bestimmte code Zeilen pro playground ein- oder zweimal austauschen muss, aber 14x ist zu viel.  (3) Michael Balmer sagte, dass er den Resultaten, insbesondere denen in den hinteren Kapiteln der Diss, nicht trauen würde (sonst hätten wir vielleicht ein paar test cases drumherum gebaut und versucht, es zu retten).}
+%
+%\kai{Ich sehe das von daher gesehen interessanterweise eher umgekehrt wie Du: Meiner Intuition nach hätte eher der normale planomat bleiben können.  Hier kann ich mich nicht dran erinnern, dass ich eine eigene Meinung hatte.  Als wesentliches technisches Problem habe ich in Erinnerung, dass planomat die Tendenz hatte, immer die gleiche Lösung zu finden, völlig unabhängig von den Präferenzen des Agenten (z.B.\ value of time).}
+%
+%\kai{Wenn es wg.\ der Historie ist, würde ich es in einer separaten Section unterbringen.}
+%
+%\kai{Falls es Euch wirklich wichtig ist, dann kann man ein ``contrib'' Kapitel ``planomat'' einfügen, analog zu den anderen contribs (accessibility, roadpricing, emissions, locationchoice, ...).  Wenn alles gut gelaufen wäre, dann wären auch planomat/planomatX jetzt contribs.  Bei PlanomatX wurde, wie gesagt, von Feil nie genug geliefert, dass das Chancen gehabt hätte.  Bei Planomat ist mir, wie gesagt, der Prozess nicht ganz klar.}
+%
+%\kai{Vermutlich brauchen wir irgendwann eine oder mehrere Skype Bereinigungstreffen, oder? :-)}
+%
+%\ah{Da habe ich mich missverständlich ausgedrückt: Die Argumente es \textbf{zu behalten} kann ich für PlanomatX nur schwer nachvollziehen, was mir bei Planomat besser gelingt.
+%
+%kwa ist aber auch mehr für "Current State" denn für "History". Allerdings wird wohl Planomat(X) von Balac wieder reaktiviert werden (müssen). D.h., irgendwo eine kurze Section zu "`Former Important Modules"' wäre evtl. nicht schlecht.}
 
-
-
-
-
+% ===================================================================================
+% ################################################################################################################
