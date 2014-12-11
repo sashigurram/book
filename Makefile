@@ -20,7 +20,8 @@ kai: kai.aux
 
 kai.aux:
 	pdflatex kai
-	pdflatex kai
+
+#	pdflatex kai
 
 kaibib:
 	pdflatex kai

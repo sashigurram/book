@@ -6,13 +6,16 @@
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{understanding/figures/fixedpoint.pdf} \end{center}
 
 % ##################################################################################################################
+
+\ah{temporarily re-added this chapter to make section numbering consistent with Kais Mail from 10.12. to be removed afterward}
+
 \section{Basic Procedure}
-The basic procedure of equilibrium-based microsimulations, such as MATSim or TRANSIMS is depicted in Figure \ref{fig:maxUtf}. A comprehensive (discrete) choice model is applied to a population for a specific choice situation. The choices are forwarded to a network load simulation (sometimes also called the physical simulation or mobility simulation). This network simulation can also contain other infrastructure elements than the road infrastructure, for example the facilities. It takes into account constraints, such as network capacities. Generalized travel costs, calculated based on the simulation, are fed back to the choice model. The choice model is also subject to constraints such as opening hours. The microsimulation is instantiated by census data for the population, travel surveys to estimate the models and infrastructure information to define the constraints. This instantiation or application is described for the MATSim Zürich scenario by  \citet[][]{HorniEtAl_TechRep_IVT_2011_a}. %In a very general sense, utility-based transport microsimulations do utility-maximization subject to constraints following the discrete choice methodology.
+The basic procedure of equilibrium-based microsimulations, such as MATSim or TRANSIMS, is depicted in Figure \ref{fig:maxUtf}. A comprehensive (discrete) choice model is applied to a population for a specific choice situation. The choices are forwarded to a network loading simulation (sometimes also called the physical simulation or mobility simulation). This network simulation can also contain other infrastructure elements than the road infrastructure, for example the facilities. It takes into account constraints, such as network capacities. Generalized travel costs, calculated based on the simulation, are fed back to the choice model. The choice model is also subject to constraints such as opening hours. The microsimulation is instantiated by census data for the population, travel surveys to estimate the models and infrastructure information to define the constraints. This instantiation or application is described for the MATSim Zürich scenario by  \citet[][]{HorniEtAl_TechRep_IVT_2011_a}. %In a very general sense, utility-based transport microsimulations do utility-maximization subject to constraints following the discrete choice methodology.
 
 % ----------
 \createfigure%
 {Basic procedure of transport microsimulations}%
-{Basic procedure of transport microsimulations}%
+{Basic procedure of transport microsimulations \kai{network loadING simulation}}%
 {\label{fig:maxUtf}}%
 {\includegraphics[width=0.99\textwidth, angle=0]{understanding/figures/maxUtf.pdf}}%
 {}
@@ -23,13 +26,15 @@ The cycle in the middle of Figure \ref{fig:maxUtf} represents a systematic relax
 
 To reveal similarities with known mathematical problems and their solution approaches a more abstract formulation can be established. 
 
+\mnote{choice model}
 The choice model draw is given as follows.
 \begin{equation}
 \label{eq:choiceModel}
 \theta = h_0(\beta, y, \epsilon, \psi),
 \end{equation}
-where $\theta$ are the choices, $h_0$ is the choice model function, $\beta$ are the choice model coefficients, $\psi$ are the generalized costs given by the infrastructure conditions (e.g., network conditions), $y$ are further parameters such as the age of the decision maker and $\epsilon$ denotes the random error terms. 
+where $\theta$ are the choices, $h_0$ is the choice model function, $\beta$ are the choice model coefficients, $\psi$ are the generalized costs given by the infrastructure conditions (e.g., network conditions), $y$ are further parameters such as the age of the decision maker and $\epsilon$ denotes the random error terms. \kai{Steht m.E.\ ähnlich in Chapter~\ref{ch:abta}, aber dort mit einer Notation, die den Verkehrsleuten mehr entspricht.}
 
+\mnote{circular formulation}
 Equilibrium-based transport microsimulations go beyond a single draw from a choice model. The parameters, such as the travel times, are an \emph{endogenous} component of these microsimulations. The circular relation between choices and the generalized costs can be written as a (usually non-linear) system of equations (see also Figure \ref{fig:fixedpoint}): 
 \begin{equation}
 \label{eq:initialSystem}
@@ -38,8 +43,9 @@ Equilibrium-based transport microsimulations go beyond a single draw from a choi
 \psi = h_1(\theta) 
 \end{cases}
 \end{equation}
-where $\theta$ are the choices, $\psi$ are the generalized costs and $h_0$ and $h_1$ are mathematical maps. In microsimulations $h_0$ is implemented by the choice models and $h_1$ is the network loading simulation plus the succeeding conversion of infrastructure conditions into generalized costs. 
+where $\theta$ are the choices, $\psi$ are the generalized costs and $h_0$ and $h_1$ are mathematical maps. In microsimulations $h_0$ is implemented by the choice models and $h_1$ is the network loading simulation plus the succeeding conversion of infrastructure conditions into generalized costs. \kai{Steht m.E.\ ähnlich in Chapter~\ref{ch:abta}, aber dort mit einer Notation, die den Verkehrsleuten mehr entspricht.}
 
+\mnote{fixed point formulation}
 This can be rewritten as
 \begin{equation}
 \theta = h_0(\beta, y, \epsilon, h_1(\theta))
@@ -54,18 +60,19 @@ or in a more general form:
 %
 %
 % ----------
-\createfigure%
+\createfigure[!t!]%
 {Fixed point problem}%
 {Fixed point problem}%
 {\label{fig:fixedpoint}}%
 {\includegraphics[width=0.4\textwidth, angle=0]{understanding/figures/fixedpoint.pdf}}%
-{}
+{}%
 %
 % ----------
 %
 This is a fixed point problem (see e.g., \citet[][p.6]{RamaduraiUkkusuri_TechRep_RPI_2008}, \citet[][]{BierlaireCrittin_TransScience_2006, KaufmanEtAl_TransResC_1998, RamaduraiUkkusuri_NSE_2010}). The fixed points are found by iteratively applying Equation \ref{eq:phi}. In the microsimulation context, \emph{iteratively}, the outcomes of the comprehensive choice model are directed to a network load simulation, whose outcomes (the infrastructure conditions) are in turn fed back to the choice model. But naively doing this most probably leads to very bad convergence behavior.
+\kai{Steht m.E.\ teilweise in Chapter~\ref{ch:abta}.  Citations?  fixed point iterations?}
 
-From numerics it is known that fixed point problems can be transformed such that convergence behavior is improved. This is explained with an example. In numerics root finding problems given as $f(x)=0$ are often transformed into fixed point problems as
+From numerics it is known that fixed point problems can be transformed such that convergence behavior is improved. This is explained with an example. In numerics root finding problems given as $f(x)=0$ are often transformed into fixed point problems of the type
 \begin{equation}
 \label{eq:fpf}
 x=g(x)
@@ -76,26 +83,52 @@ A very similar approach is maybe productive for transport modeling; $\varphi(.)$
 
 In first generation models, the fixed points are searched by implementing $\varphi(.)$ with iterative numerical algorithms such as the \emph{method of successive averages} (MSA) \citep[][p.342f]{OrtuzarWillumsen_2001} or the Frank-Wolfe algorithm \citep[][]{FrankWolfe_NRLQ_1956}, \citep[see also][p.4]{CorreaStier_Cochran_2010}. Every person searches its optimum subject to competition leading to an equilibrium state. This is achieved in the MSA by moving a certain share of the flow to the cheapest route, while taking it away from the remaining routes per OD-relation. For first generation models, much is known about existence, stability, uniqueness and computation of fixed points. Thus, by continuing the lines of the first generation models, one can hope to produce something reasonable also for second generation models, but this has to be investigated further. As shown in Section \ref{sec:co-ev}, a possible implementation of $\varphi(.)$ for MATSim is a co-evolutionary algorithm, which, in practice, has shown to efficiently lead to behaviorally sound fixed points.
 
+\kai{Kommentar: Man kann das so machen, aber m.E.\ muss man an irgendeiner Stelle mal sagen, dass MATSim stochastisch ist.  Dann kann man aus der deterministischen Analyse zwar lernen, aber es ist, soweit ich die Mathe verstehe, nicht identisch.  Z.B. gibt es steady state densities, Markov-Prozess, die immer dorthin konvergieren (Innovation abgeschalget!), aber möglicherweise sehr große escape times aus subspaces.}
+
 % ##################################################################################################################
 \section{System Characteristics}
 % ##################################################################################################################
 \subsection{Aggregate Traffic Flow Characteristics}
-MATSim's aggregate traffic flow characteristics were analyzed in the common form of the macroscopic fundamental diagram. Some investigations additionally derived MATSim's (implicit) the volume-delay function \citep[][]{HorniMontini_STRC_2013}.
+MATSim's aggregate traffic flow characteristics were analyzed in the common form of the macroscopic fundamental diagram. Some investigations additionally derived MATSim's (implicit) volume-delay function \citep[][]{HorniMontini_STRC_2013}.
 
-Some simulation investigations had problems to reproduce the complete MFD (project NetCap, personal communication, 2014), in particular, the high density region. They used mobism versions without the backward moving gaps feature. Other studies, based on DEQSim and JDEQSim respectively, which both \emph{do} include \emph{back moving gaps}, were able to generate realistic MFDs. 
+Some simulation investigations had problems to reproduce the complete MFD (project NetCap, personal communication, 2014), in particular, the high density region. They used mobsim versions without the backward moving gaps feature. Other studies, based on DEQSim and JDEQSim respectively, which both \emph{do} include \emph{back moving gaps}, were able to generate realistic MFDs. \kai{Das ist natürlich kein Wunder.}
 
-\citet[p.81ff][]{Simoni_MastersThesis_2013} investigate MATSim's ability to model macroscopic characteristics with a four link ring scenario. He found considerable influence of the backward moving gaps speed on the form of the MFD. \citet[][]{CharyparEtAl_TRB_2009} also use a circular toy scenario. They also found the typical trapezoidal form for a broad range of network resolutions.
+\citet[p.81ff][]{Simoni_MastersThesis_2013} investigates MATSim's ability to model macroscopic characteristics with a four link ring scenario. He found considerable influence of the backward moving gaps speed on the form of the MFD. \citet[][]{CharyparEtAl_TRB_2009} also use a circular toy scenario. They also found the typical trapezoidal form for a broad range of network resolutions.
 
-Natural conclusion here is, that back moving gaps are essential for generating a realistic MFD, in other words to realistically model to complete range of traffic conditions. Backward moving gaps are re-included in the default MATSim mobsim (qsim). 
+Natural conclusion here is, that back moving gaps are essential for generating a realistic MFD \kai{bis hier hin stimme ich zu}, in other words to realistically model the complete range of traffic conditions \kai{hier eigentlich nicht wirklich.}. Backward moving gaps are re-included in the default MATSim mobsim (qsim). 
 
 % ##################################################################################################################
 \subsection{Results Variability}
 \label{sec:variability}
-Microsimulation system design as well as concrete microsimulation studies require specification of the measures of interest \footnote{
+Microsimulation system design as well as concrete microsimulation studies require specification of the measures \kai{quantities?} of interest.\footnote{%
 Formal system specification (and verification) is discussed e.g., in \citet[][]{FisherWooldridge_IJCIS_1997, BourahlaBenmohamed_ENTCS_2005}. 
 }. For microsimulation design, they need to be general and broadly available, count data are an example. For specific experiments and purposes other measures might be added; \citet[][]{Kitamura_TMIP_1996}, for example, lists measures relevant for emissions modeling. Considering their scale is important for model development, but a certain lack of research exists in this regard. \citet[][Section 2.2]{NagelAxhausen_TechRep_IVT_2001}, for example, say: ``Another question regarding scales is which scale is necessary to answer which question. There is wide-spread intuition but currently little hard knowledge. Rules-of-thumb, such as to include one level of resolution below the level of interest, are just rule-of-thumb.'' 
 
 Scale of the measures of interest is also relevant for results production, as different scales or resolution levels usually lead to different levels of \emph{variability} and, thus, to different study costs in terms of required computation effort. Transport microsimulations are usually stochastic. Randomness is, for example, introduced by the error terms of discrete choice models, a common component in utility-based microsimulations. This leads to random variability in results. Parameters or population statistics, such as averages, thus, need to be estimated by random sampling. Microsimulations are thus essentially a sampling tool \citep[][]{WolfDA_CSP_2001}, where one run represents one sample unit (in statistical terms one \emph{realization of a random variable}). This makes clear, that the whole toolbox used for other statistical methods, must be applied also here. As a first step, required sample size---here, the number of runs---to ensure a given confidence in the calculated averages needs to be calculated. In this context, variability is often seen as something tedious, because higher variability leads to larger minimal sample sizes, with usually relatively high costs per sample point. But, this view falls short. Clearly, unobserved variability---modeled as random variability---should be replaced to the extent possible (by explaining it). However, when looking at the very large proportion of temporal variability actually present in reality (Figure \ref{fig:counts}), a substantial part of this variability is---even if it was actually explicable---much more efficiently handled by including randomness, as model complexity would be prohibitively large otherwise. In this sense, microsimulations are a tool to capture these real-world fluctuations \citep[][p.11]{NewmanMEJBarkema_1999}, \citep[][p.704]{EsserNagel_Hensher_2001}. This means also that the focus should not only be on averages, but also on variance incorporated in the calculations of statistical confidence. The following sections broaden the microsimulation variability analysis.
+
+\createfigure[!t!]%
+{Measured volumes}%
+{Measured volumes}%
+{\label{fig:counts}}%
+{%
+	\createsubfigure%
+  {Daily Volumes}%
+
+{\includegraphics[width=0.8\textwidth]{understanding/figures/var/countsDaily.pdf}}%
+	{\label{fig:countsDaily}}%
+  {}%
+  \createsubfigure%
+  {11:00-12:00}%
+	{\includegraphics[width=0.8\textwidth]{understanding/figures/var/counts11-12.pdf}}%
+	{\label{fig:H1112}}%
+  {}%
+ 	\createsubfigure%
+  {17:00-18:00}%
+	{\includegraphics[width=0.8\textwidth]{understanding/figures/var/counts17-18.pdf}}%
+	{\label{fig:H1718}}%
+  {}%
+}%
+{}
 
 Multiple possibilities to categorize microsimulations variability exist; some categories are described by \citet[][]{HorniEtAl_TechRep_IVT_2011_b}. Often a distinction between endogenous (model) variability and exogenous (input) variability is made. Equally suitable one can distinguish systematic and random variability. The experiments reported below mainly focus on \emph{random, endogenous} model variability. Random variability stems from inherently random choices and from actually systematic choices not recognized as systematic by the modeler.
 
@@ -133,28 +166,6 @@ Further MATSim investigations are reported by \citet[][]{Hackney_PhDThesis_2009,
 }%
 {} 
 
-\createfigure%
-{Measured volumes}%
-{Measured volumes}%
-{\label{fig:counts}}%
-{%
-	\createsubfigure%
-  {Daily Volumes}%
-	{\includegraphics[width=0.8\textwidth]{understanding/figures/var/countsDaily.pdf}}%
-	{\label{fig:countsDaily}}%
-  {}%
-  \createsubfigure%
-  {11:00-12:00}%
-	{\includegraphics[width=0.8\textwidth]{understanding/figures/var/counts11-12.pdf}}%
-	{\label{fig:H1112}}%
-  {}%
- 	\createsubfigure%
-  {17:00-18:00}%
-	{\includegraphics[width=0.8\textwidth]{understanding/figures/var/counts17-18.pdf}}%
-	{\label{fig:H1718}}%
-  {}%
-}%
-{}
 
 % ##################################################################################################################
 \subsection{Equilibrium}
@@ -187,7 +198,7 @@ Clearly, for most models not the complete range of choice dimensions can be hand
 % ----------
 \createfigure%
 {Model Scope}%
-{Model Scope}%
+{Model Scope \kai{Benjamin and I are very strongly for ``macroeconomics'' instead of ``economics'', since economics in general pertains also to route choice, demand generation and land use.}}%
 {\label{fig:scope}}%
 {\includegraphics[width=0.99\textwidth, angle=0]{understanding/figures/scope.pdf}}%
 {}
@@ -207,3 +218,12 @@ Clearly, for most models not the complete range of choice dimensions can be hand
 %RandomizedRouter (Gauteng) -> siehe Mail von A. Neumann
 
 % ##################################################################################################################
+
+% Local Variables:
+% mode: latex
+% mode: reftex
+% mode: visual-line
+% TeX-master: "../main"
+% comment-padding: 1
+% fill-column: 9999
+% End: 
