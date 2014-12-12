@@ -137,10 +137,47 @@ VTTS(t_{dur,q} = t_{typ,q}) = \frac{mUTTS}{\beta_{c}} = \frac{\beta_{trav} - \be
 \]
 This is important for calibration of the utility function.
 
-The extensions made over time to the original utility function are described in the next section~\ref{sec:appsExtensions}. Clearly, only a few extensions made it into the default current utility function. \kai{I added a section ``Current version ...'' so wie can summarize which of the extensions actually made it into the default.}
+%The extensions made over time to the original utility function are described in the next section~\ref{sec:appsExtensions}. Clearly, only a few extensions made it into the default current utility function. \kai{I added a section ``Current version ...'' so wie can summarize which of the extensions actually made it into the default.}
 
-% ======================================================================================================================
-\subsection{Parameters}
+% ##################################################################################################################
+\section{Implementation of the MATSim Default Scoring Function}
+\label{sec:scoring-current}
+This section summarizes the current implementation of the default \acrshort{matsim} scoring function.  The section can be skipped as long as it is kept in mind that what has been said before is not the full story.
+
+%\kai{Habe das jetzt mal geschrieben, damit es vollständig ist.  Natürlich wird es auf diesem Weg immer detaillierter und damit didaktisch immer ungünstiger.  Bessere Alternativen willkommen.}
+%
+%\ah{Ich würde das lieber ganz hochnehmen, so dass man den current state ganz zu Beginn des Kapitels mitkriegt. Dafür würde ich "Extensions and replacements of the \acrshort{matsim} scoring function" sehr stark abspecken auf ein paar Sätze mit Pointern in die enstprechenden Kapitel e.g., "UTF for Tel-Aviv can be found in Section~\ref{sec:scenario.telaviv} etc.).}
+
+% -------------------------------------------------------------------------------------
+\paragraph*{Zero utility duration}
+
+The duration at which the utility of an activity is exactly zero is computed by the somewhat cryptic expression
+\[
+t_{0,q} := t_{typ,q} \cdot \exp\left( - \frac{10}{(t_{typ,q}/1\,h) \cdot prio} \right) \ ,
+\]
+where $prio$ is a configurable parameter.  This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \cite{CharyparNagel2005ga4acts}.  Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the ``home'' activity gets dropped first, which is clearly not plausible.  See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives.  In the meantime, the recommendations are:
+\begin{compactitem}
+\item Do not set the \lstinline$priority$ value in the config away from its default value.
+\item Recognize that the current \acrshort{matsim} default scoring/utility function is not suitable for activity dropping.
+\end{compactitem}
+
+% -------------------------------------------------------------------------------------
+\paragraph*{Negative durations}
+
+In \acrshort{matsim}, somewhat curiously it is possible to have activities with negative durations.  This can happen because of the ``wrap around'' mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored.  Note that scoring the two activities separately would lead to a different result, because of the nonlinear (logarithmic) form of the utility of performing. \kai{Dies müsste eigentlich weiter oben stehen.}
+
+\kai{make picture}
+
+\kai{Der Ansatz, dass man alle Aktivitäten des selben Typs erst aufsummiert, würde dies hier natürlich auch lösen.}
+
+In that situation \kai{und auch wenn wir es anders machen würden!!}, it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration.  However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration at zero cost would lead to more time elsewhere which could be used to accumulate score.  This is a bit similar to the question of a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
+
+For an adaptive algorithm, such a penalty needs to guide the adaptation back into the feasible region.  From this, it follows that the penalty needs to become larger with increasing negativity.  It also needs to be larger, i.e.\ more strongly negative, than any score value for a positive activity duration -- which is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above.  The current approach is to take the slope of when the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ crosses zero, and extend this towards minus infinity.
+
+\kai{make picture}
+
+% ##################################################################################################################
+\section{Parameters}
 To frequently applied starting points for utility function calibration are the parameter set proposed by \citet[][]{CharyparNagel_Transportation_2005} and the estimates by \citet[][]{Kickhoefer_MastersThesis_2009}.
 
 \citet[][p.393]{CharyparNagel_Transportation_2005} comes up with 
@@ -153,7 +190,6 @@ To frequently applied starting points for utility function calibration are the p
 \item $\beta_{early.dp,q}=-18\ utils/h$.
 \end{compactitem}
 Parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}.
-
 
 %\citet[][p.164, p.173]{ArnottEtAl_TAER_1993} defines 
 %$\alpha=5.00\ \$/h$ the shadow cost of travel time,
@@ -169,8 +205,8 @@ Parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting
 
 Note, that nowadays the utility function measures in the unit $utils$, where an earlier interpretation was based on monetary terms (e.g.,\,$\EUR$).
 
-% ======================================================================================================================
-\subsection{Applications and Extensions}
+% ##################################################################################################################
+\section{Applications and Extensions}
 \label{sec:appsExtensions}
 The default scoring function has been applied and extended for various purposes. Please be aware, that the MATSim code base and in particular the scoring functionality has changed a lot in recent years, e.g.,\,the scoring is now based on events rather than on plans as it was the case in the beginning of MATSim. Thus, the historical development is accompanied by various conceptual and technical modifications leading to the current utility function described above. This also means, that the reported parameter settings in the literature are an indication not a direct recommendation.
 
@@ -179,44 +215,6 @@ Important applications for large scenarios are described in Chapter~\ref{ch:scen
 Special utility functions have been developed for car sharing (see Chapter~\ref{ch:carsharing}), social contacts and joints trips (see Chapter~\ref{ch:jointtrips}), parking (see Chapter~\ref{ch:parking}), road pricing (see Chapter~\ref{ch:roadpricing}), and destination choice (see Chapter~\ref{ch:destinationchoice}), also describing facility loading scoring and inclusion of random error terms. 
  
 Future topics, available in an experimental manner, are a full-blown utility function estimation (Section~\ref{sec:estimation}), inclusion of agent-specific preferences (Section~\ref{sec:agent-specific-prefs}), application of an S-shaped rather than logarithm-shaped utility function (Section~\ref{sec:s-shaped-function}).
-
-% ##################################################################################################################
-\section{Current Version of the \acrshort{matsim} Default Scoring Function}
-\label{sec:scoring-current}
-
-This section summarizes the current implementation of the default \acrshort{matsim} scoring function.  The section can be skipped as long as it is kept in mind that what has been said before is not the full story.
-
-\kai{Habe das jetzt mal geschrieben, damit es vollständig ist.  Natürlich wird es auf diesem Weg immer detaillierter und damit didaktisch immer ungünstiger.  Bessere Alternativen willkommen.}
-
-\ah{Ich würde das lieber ganz hochnehmen, so dass man den current state ganz zu Beginn des Kapitels mitkriegt. Dafür würde ich "Extensions and replacements of the \acrshort{matsim} scoring function" sehr stark abspecken auf ein paar Sätze mit Pointern in die enstprechenden Kapitel e.g., "UTF for Tel-Aviv can be found in Section~\ref{sec:scenario.telaviv} etc.).}
-
-\paragraph*{Zero utility duration}
-
-The duration at which the utility of an activity is exactly zero is computed by the somewhat cryptic expression
-\[
-t_{0,q} := t_{typ,q} \cdot \exp\left( - \frac{10}{(t_{typ,q}/1\,h) \cdot prio} \right) \ ,
-\]
-where $prio$ is a configurable parameter.  This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \cite{CharyparNagel2005ga4acts}.  Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the ``home'' activity gets dropped first, which is clearly not plausible.  See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives.  In the meantime, the recommendations are:
-\begin{compactitem}
-\item Do not set the \lstinline$priority$ value in the config away from its default value.
-\item Recognize that the current \acrshort{matsim} default scoring/utility function is not suitable for activity dropping.
-\end{compactitem}
-
-
-\paragraph*{Negative durations}
-
-In \acrshort{matsim}, somewhat curiously it is possible to have activities with negative durations.  This can happen because of the ``wrap around'' mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored.  Note that scoring the two activities separately would lead to a different result, because of the nonlinear (logarithmic) form of the utility of performing. \kai{Dies müsste eigentlich weiter oben stehen.}
-
-\kai{make picture}
-
-\kai{Der Ansatz, dass man alle Aktivitäten des selben Typs erst aufsummiert, würde dies hier natürlich auch lösen.}
-
-In that situation \kai{und auch wenn wir es anders machen würden!!}, it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration.  However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration at zero cost would lead to more time elsewhere which could be used to accumulate score.  This is a bit similar to the question of a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
-
-For an adaptive algorithm, such a penalty needs to guide the adaptation back into the feasible region.  From this, it follows that the penalty needs to become larger with increasing negativity.  It also needs to be larger, i.e.\ more strongly negative, than any score value for a positive activity duration -- which is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above.  The current approach is to take the slope of when the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ crosses zero, and extend this towards minus infinity.
-
-\kai{make picture}
-
 
 % ##################################################################################################################
 %\section{Discussion}
