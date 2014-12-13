@@ -10,6 +10,7 @@
 \section{Modeling PT with MATSim \who{Rieser}}
 \hfill \textbf{Author:} Marcel Rieser
 
+\ah{ to be deleted:
 Allgemeiner Teil: Funktionalitäten und Besonderheiten
 
 Modules in the config: 
@@ -25,6 +26,7 @@ Usage:
 Literature: \citet[][]{RieserNagel_IATBR_2009, Rieser_PhDThesis_2010}
 
 http://matsim.org/docs/tutorials/transit
+}
 
 % ============================================================================================
 \subsection{Standard Use-Case Berlin}
@@ -42,39 +44,39 @@ http://matsim.org/docs/tutorials/transit
 \hfill \textbf{Author:} Sergio Arturo Ordóñez
 
 % ============================================================================================
-\subsection{Semi-Automatic Tool for Bus Route Map Matching}\label{sec:SemiTool}
-\citet[][]{Ordonez_HKSTS_2011}
+\subsection{Semi-Automatic Tool for Bus Route Map Matching}
+\label{sec:SemiTool}
 Current public transport assignment models adapt network assignment models to work with public transport traffic. Many commercial software products like EMME/2, VISUM and OMNITRANS offer sophisticated procedures that include timetable-based route search. However, these models do not include interaction between public transport services and private transport. As mentioned above, the MATSim implementation handles private car traffic and public transport traffic in an integrated way, but it needs the accurate routing of public transport lines on the transport network. Whereas this is usually straightforward for rail based public transport modes, the routing problem for buses requires more attention as experience shows that the assumption of shortest-path between two consecutive stops leads to unsatisfactory results. To overcome this shortcoming, one can either rely on expert knowledge and facilitate the routing manually or employ map-matching algorithms that depend on tracking data. Since the first is rather burdensome and due to the increasing availability of GPS tracking data, map-matching is becoming more and more relevant. However, common map matching algorithms are usually not designed to account for peculiarities of public transport routing. Besides, the procedure is very sensible to errors in the network coding, to inaccuracies in the bus stop locations, and to simplified shapes of the links in the model.
 
-This section presents a semi-automatic procedure which combines public bus routes information (sequences of consecutive stop locations and sequences of geo-referenced points) with a high resolution network. The objective is to obtain a sequence of links for every route of every line, and to relate each bus stop with one single link in the network. The procedure was designed to prepare the public transport extension of the Singapore scenario, but the developed tools can be used to set up any other scenario with similar initial data (time table and high resolution network).
+This section presents a semi-automatic procedure which combines public bus routes information (sequences of consecutive stop locations and sequences of geo-referenced points) with a high resolution network \citep[][]{Ordonez_HKSTS_2011}. The objective is to obtain a sequence of links for every route of every line, and to relate each bus stop with one single link in the network. The procedure was designed to prepare the public transport extension of the Singapore scenario, but the developed tools can be used to set up any other scenario with similar initial data (time table and high resolution network).
 
-\subsubsection{Problem definition}
-
+% -----------------------------------------------------------------------------------
+\subsubsection{Problem Definition}
 In the most general way, the problem of interest can be defined as follows. Given:
-
-\begin{itemize}
+%
+\begin{compactitem}
 \item A set of stop locations (bi-dimensional point)
 \item A set of route profiles (sequence of consecutive stops)
 \item A set of GPS points sequences (sequence of bi-dimensional points)
 \item A high resolution navigation network (bi-dimensional directed graph)
-\end{itemize}
-
+\end{compactitem}
+%
 The task is to relate each stop to a network link, and relate each route to a network path (connected sequence of links). Figure \ref{fig:Problem} illustrates the problem by providing an example of the available input information and correct output.
-
+%
 \createfigure
-{}
+{Input data and expected solution of the map-matching problem}
 {Input data and expected solution of the map-matching problem}
 {\label{fig:Problem}}
 {\includegraphics[width=1.0\textwidth]{extending/figures/semiAuto/Problem.png}}
 {}
 
-\paragraph{Input information}
+\paragraph{Input Information}
 
-The General Transit Feed Specification (GTFS) is a recent but already widely used format for specifying public transport systems and was created by Google for feeding its geographic information applications. As of April 2011, the Singapore public transport system features 4584 bus stops, 355 bus lines whereby each line has several routes, e.g.\ different outward and return routes due to one-way streets and different coverage of serviced bus stops for weekdays and weekend. For each bus stop, GTFS provides a name and a location. A name is given for every line, and for each route is known the line it belongs to, the sequence of stops, and its shape (sequence of GPS points) as additional information.
+The General Transit Feed Specification (GTFS) is a recent but already widely used format for specifying public transport systems and was created by Google for feeding its geographic information applications. As of April 2011, the Singapore public transport system features 4\,584 bus stops, 355\,bus lines whereby each line has several routes, e.g.,\,different outward and return routes due to one-way streets and different coverage of serviced bus stops for weekdays and weekend. For each bus stop, GTFS provides a name and a location. A name is given for every line, and for each route is known the line it belongs to, the sequence of stops, and its shape (sequence of GPS points) as additional information.
 
-On the other hand, the high resolution navigation network of Singapore is provided by NAVTEQ. It is essentially a directed graph and it is intended to represent each street of the Singapore city as a link. For each one origin and destination nodes, street name, number of lanes, length, flow, free speed, and capacity is provided. A bi-dimensional position is given for each node. This network has a total of 79835 links and 43118 nodes.
+On the other hand, the high resolution navigation network of Singapore is provided by NAVTEQ. It is essentially a directed graph and it is intended to represent each street of the Singapore city as a link. For each one origin and destination nodes, street name, number of lanes, length, flow, free speed, and capacity is provided. A bi-dimensional position is given for each node. This network has a total of 79\,835 links and 43\,118 nodes.
 
-\paragraph{Special restrictions}
+\paragraph{Special Restrictions}
 
 There are some intrinsic characteristics of the public transport systems that should be considered as hard restrictions to this problem. Firstly, when a certain stop is assigned to a link in the network, this link should belong to all paths related to routes to which this stop belongs. In other words, the resolved stop-link relationships are fixed for resolving the missing routes; these relationships must be taken as other input, and if it is needed to change one stop for a particular route, all other routes involving that stop must be resolved again. Hence, the order in which the routes are resolved is important.
 
@@ -82,14 +84,14 @@ Secondly, in Singapore's case, although many lines are serviced in two direction
 
 However, some routes of the same line have an inclusion relationship: In peak hours, parts of bus routes facing high demand are enforced by additional bus services running on only partial routes to fulfill the demand. In these cases if a full route is resolved, the solution(s) of its partial route(s) is(are) included in its solution.
 
-\subsubsection{Solution approach}
+\subsubsection{Solution Approach}
 
-Analyzing the quality of the given GPS points in terms of the resolution (temporal resolution unknown, distance between consecutive points of about 65 meters) it is not possible to apply standard methods to automatically map-match this points with the network. this usually needs at least 10 GPS points for each link (average length of the links is 91 meters). Furthermore, the fact that not all the routes have GPS points inhibits using a full automatic solution (there are 38 bus routes without GPS points).
+Analyzing the quality of the given GPS points in terms of the resolution (temporal resolution unknown, distance between consecutive points of about 65\,meters) it is not possible to apply standard methods to automatically map-match this points with the network. this usually needs at least 10 GPS points for each link (average length of the links is 91\,meters). Furthermore, the fact that not all the routes have GPS points inhibits using a full automatic solution (there are 38 bus routes without GPS points).
 
-Hence, the strategy for resolving each route consists of a semi-automatic procedure. Figure \ref{fig:Process} illustrates the process. First, a simple map-matching algorithm is applied if the route is not part of a bigger route already solved (inclusion relationship described above). In this case, only a partition of a previous solution is needed for obtaining a first solution. Then, an automatic verification described below is performed. If the verification ends with a positive outcome, one can decide to finish the route and save the solution or to continue editing. If one decides, or is forced, to modify the solution there are two ways: changing parameters and running the automatic algorithm again, or editing the solution interactively with a graphical interface editing tool. In both cases the automatic verification must be executed again. If previously saved stop-link relationships are modified, prior routing solutions which contain one of the involved stops are erased.
+Hence, the strategy for resolving each route consists of a semi-automatic procedure. Figure~\ref{fig:Process} illustrates the process. First, a simple map-matching algorithm is applied if the route is not part of a bigger route already solved (inclusion relationship described above). In this case, only a partition of a previous solution is needed for obtaining a first solution. Then, an automatic verification described below is performed. If the verification ends with a positive outcome, one can decide to finish the route and save the solution or to continue editing. If one decides, or is forced, to modify the solution there are two ways: changing parameters and running the automatic algorithm again, or editing the solution interactively with a graphical interface editing tool. In both cases the automatic verification must be executed again. If previously saved stop-link relationships are modified, prior routing solutions which contain one of the involved stops are erased.
 
 \createfigure
-{}
+{Semi-automatic process for one route}
 {Semi-automatic process for one route}
 {\label{fig:Process}}
 {\includegraphics[width=1.0\textwidth]{extending/figures/semiAuto/Process.png}}
@@ -98,20 +100,19 @@ Hence, the strategy for resolving each route consists of a semi-automatic proced
 As long as more solutions are obtained, it becomes easier and faster to solve further routes (like a learning process). This happens for two reasons, first for the inclusion relationships that omit the algorithm, and second because the increasing number of fixed stop-link relationships relaxes the algorithm. This is going to be explained in the next section.
 
 \subsubsection{Map-matching automatic algorithm}
-
 The objective of this algorithm is to generate a solution (path or sequence of connected links of the network, and a set of stop-link relationships) for one route, knowing its profile, a sequence of GPS points, and a set of stop-link relationships. The algorithm is designed to deal with:
-
-\begin{itemize}
+%
+\begin{compactitem}
 \item	Low resolution of GPS points
 \item	Sporadic low network spatial resolution
 \item	Long distances between two stops in the case of express routes
 \item	The fact that not always the nearest link to a stop point is the correct one.
-\end{itemize}
+\end{compactitem}
 
-The route map-matching process is illustrated in Figure \ref{fig:Algorithm}. Except for the first stop, the algorithm solves for each stop in the route profile, a portion of the links sequence (from the previous to the current one) and if this stop has no fixed link, a set of link candidates are pooled from which one link is selected.
+The route map-matching process is illustrated in Figure~\ref{fig:Algorithm}. Except for the first stop, the algorithm solves for each stop in the route profile, a portion of the links sequence (from the previous to the current one) and if this stop has no fixed link, a set of link candidates are pooled from which one link is selected.
 
 \createfigure
-{}
+{Map-matching algorithm}
 {Map-matching algorithm}
 {\label{fig:Algorithm}}
 {\includegraphics[width=1.0\textwidth]{extending/figures/semiAuto/Algorithm.png}}
@@ -129,8 +130,7 @@ where $L_{link}$ is its length, $S_{link}$ is its free speed, $D_{GPS}$ is its d
 
 If the current stop had a stop-link relationship, only the shortest path to this stop defines the solution. Thus, the process continues with the next stop in the route profile. If the first stop of the profile has no fixed link, a similar algorithm between the first and the second stop is performed. The definition of candidates procedure is applied to the first and the second stops. Then, the candidates' selection procedure consists of obtaining the shortest path of all the combinations between the two sets of candidates, and select the shortest one. This path defines links for both stops.
 
-\subsubsection{Automatic verification}
-
+\subsubsection{Automatic Verification}
 In this step, the correctness of the routing solution is automatically checked by performing the following, ordered verification:
 
 \begin{enumerate}
@@ -146,8 +146,7 @@ In this step, the correctness of the routing solution is automatically checked b
 
 Verifications (2), (3) and (7) are not mandatory and can be deactivated through the user interface. User interaction is necessary to (i) cover possible errors, and (ii) include actual route characteristics: some bus routes indeed present U turns, some repeat exactly the same street in the same direction during their travel, and the geometric restriction presented in (7) is not always valid in big stop facilities like bus interchanges.
 
-\subsubsection{Manual editing functionalities and implemented software}
-
+\subsubsection{Manual Editing Functionalities and Implemented Software}
 The objective of the edit functions is to allow the user to modify the automatically generated routing solution. Even if the automatic algorithm generates a correct solution based in the input data, problems as recent changes in routes, differences in the release date between GPS points and network data, erroneous GPS points, or lack of network elements, need manual changes. Although one also could modify and correct the input data or the generated solution with direct data modifications, bi-dimensional visualization and keyboard-mouse user interaction are two quality attributes which help to reduce time and effort. Developed functional requirements and quality attributes are described as follows:
 
 \begin{enumerate}
