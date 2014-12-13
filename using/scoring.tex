@@ -149,30 +149,30 @@ This section summarizes the current implementation of the default \acrshort{mats
 %\ah{Ich würde das lieber ganz hochnehmen, so dass man den current state ganz zu Beginn des Kapitels mitkriegt. Dafür würde ich "Extensions and replacements of the \acrshort{matsim} scoring function" sehr stark abspecken auf ein paar Sätze mit Pointern in die enstprechenden Kapitel e.g., "UTF for Tel-Aviv can be found in Section~\ref{sec:scenario.telaviv} etc.).}
 
 % -------------------------------------------------------------------------------------
-\paragraph*{Zero utility duration}
+\paragraph*{Zero Utility Duration}
 
 The duration at which the utility of an activity is exactly zero is computed by the somewhat cryptic expression
 \[
 t_{0,q} := t_{typ,q} \cdot \exp\left( - \frac{10}{(t_{typ,q}/1\,h) \cdot prio} \right) \ ,
 \]
-where $prio$ is a configurable parameter.  This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \cite{CharyparNagel2005ga4acts}.  Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the ``home'' activity gets dropped first, which is clearly not plausible.  See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives.  In the meantime, the recommendations are:
+where $prio$ is a configurable parameter.  This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \cite{CharyparNagel2005ga4acts}.  Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the "home" activity gets dropped first, which is clearly not plausible.  See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives.  In the meantime, the recommendations are:
 \begin{compactitem}
 \item Do not set the \lstinline$priority$ value in the config away from its default value.
 \item Recognize that the current \acrshort{matsim} default scoring/utility function is not suitable for activity dropping.
 \end{compactitem}
 
 % -------------------------------------------------------------------------------------
-\paragraph*{Negative durations}
+\paragraph*{Negative Durations}
 
-In \acrshort{matsim}, somewhat curiously it is possible to have activities with negative durations.  This can happen because of the ``wrap around'' mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored.  Note that scoring the two activities separately would lead to a different result, because of the nonlinear (logarithmic) form of the utility of performing. \kai{Dies müsste eigentlich weiter oben stehen.}
+In \acrshort{matsim}, somewhat curiously it is possible to have activities with negative durations.  This can happen because of the "wrap around" mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored.  Note that scoring the two activities separately would lead to a different result, because of the nonlinear (logarithmic) form of the utility of performing. \kai{Dies müsste eigentlich weiter oben stehen.}
 
 \kai{make picture}
 
 \kai{Der Ansatz, dass man alle Aktivitäten des selben Typs erst aufsummiert, würde dies hier natürlich auch lösen.}
 
-In that situation \kai{und auch wenn wir es anders machen würden!!}, it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration.  However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration at zero cost would lead to more time elsewhere which could be used to accumulate score.  This is a bit similar to the question of a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
+In that situation \kai{und auch wenn wir es anders machen würden!!}, it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration.  However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration at zero cost would lead to more time elsewhere which could be used to accumulate score. This is a bit similar to the question of a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
 
-For an adaptive algorithm, such a penalty needs to guide the adaptation back into the feasible region.  From this, it follows that the penalty needs to become larger with increasing negativity.  It also needs to be larger, i.e.\ more strongly negative, than any score value for a positive activity duration -- which is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above.  The current approach is to take the slope of when the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ crosses zero, and extend this towards minus infinity.
+For an adaptive algorithm, such a penalty needs to guide the adaptation back into the feasible region. From this, it follows that the penalty needs to become larger with increasing negativity.  It also needs to be larger, i.e.\ more strongly negative, than any score value for a positive activity duration -- which is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above.  The current approach is to take the slope of when the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ crosses zero, and extend this towards minus infinity.
 
 \kai{make picture}
 
@@ -182,12 +182,12 @@ To frequently applied starting points for utility function calibration are the p
 
 \citet[][p.393]{CharyparNagel_Transportation_2005} comes up with 
 \begin{compactitem}
-\item $\beta_{dur}= 6\ utils/h$,
-\item $\beta_{trav, mode, q}= -6\ utils/h$,
-\item $S_{wait,q}=0\ utils/h$,
-\item $\beta_{short.dur,q} = 0\ utils/h$
-\item $\beta_{late.ar,q}=-18\ utils/h$,
-\item $\beta_{early.dp,q}=-18\ utils/h$.
+\item $\beta_{dur}= 6\, utils/h$,
+\item $\beta_{trav, mode, q}= -6\, utils/h$,
+\item $S_{wait,q}=0\, utils/h$,
+\item $\beta_{short.dur,q} = 0\, utils/h$
+\item $\beta_{late.ar,q}=-18\, utils/h$,
+\item $\beta_{early.dp,q}=-18\, utils/h$.
 \end{compactitem}
 Parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}.
 
