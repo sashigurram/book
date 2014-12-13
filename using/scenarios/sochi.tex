@@ -1,14 +1,14 @@
 % ##################################################################################################################
 \section{Sochi}
-\label{ch:scenarios:sochi}
+\label{sec:sochi}
 \hfill \textbf{Author:} Marcel Rieser
 
-
+% ##################################################################################################################
 Major sport events often attract a huge crowd of spectators and media
-reporterts, they need many official helpers in various locations to guide and
+reporters, they need many official helpers in various locations to guide and
 support attendants, and---naturally---require all athletes to be in
-the right place at the right time.  For large, international contests like
-olympic games or soccer championships, accommodations are rarely close to the
+the right place at the right time. For large, international contests like
+Olympic games or soccer championships, accommodations are rarely close to the
 event facilities, making it necessary to transport spectators, media, helpers
 and athletes efficiently over large distances. As such events typically run for
 multiple days or even weeks, with ever-changing combinations of locations and
@@ -29,19 +29,17 @@ Senozon was responsible to integrate MATSim with ITSOS and add ITSOS-specific
 functionality to MATSim. Together, a test scenario was created, depicting the
 olympic winter games 2014 in Sochi.
 
-
-
+% ========================================================================================
 \subsection{System Overview}
-
 ITSOS uses ESRI ArcGIS for storing and editing infrastructure data like road
-and train networks and event facilities. In addition, a custom plugin provides a
+and train networks and event facilities. In addition, a custom plug-in provides a
 graphical user interface inside ArcGIS to specify transit routes and schedules,
 vehicle types and their assignments to lines and departures, as well as methods
 to describe the expected travel demand. Transport planners can create and manage
 scenarios and scenario-variants directly from the custom user interface
 available inside ArcGIS.
 
-After the successfull modelling of a scenario in ArcGIS, a planner can export
+After the successful modeling of a scenario in ArcGIS, a planner can export
 the network and transit schedule in MATSim's XML format directly from ITSOS to a
 local directory. The travel demand information, consisting of activity-chains
 with with zone- or facility-references and the number of persons having such a
@@ -53,9 +51,8 @@ on Windows. After the simulation has ended, the events are preprocessed and
 imported into a database, from which they can be queried and used within ArcGIS
 for analysis and visualization purposes.
 
-
+% ========================================================================================
 \subsection{Extensions to MATSim}
-
 At major sport events, several person groups exists that partially need to be
 handled differently: Besides athlets, there are media reporters, officials,
 helpers, caterers, and naturally a lot of spectators. Persons from different
@@ -67,7 +64,6 @@ Also, different transit offerings were defined for the different agent groups,
 as the mass transport of spectators usually should not mix with the
 transportation of athletes and officials.
 
-
 In order to facilitate the work of transport planners, transit lines in
 ITSOS can be defined to have an adaptive schedule: given a base headway,
 additional departures will be scheduled between iterations if high
@@ -75,7 +71,7 @@ occupancy occurs on a line during a time of day. This adjustment occurs based
 on a rule set that ensures a minimum duration for the shorter headway, as well
 as a minimum duration for the base headway between the shorter headways.
 Figure~\ref{fig:sochi:adaptiveSchedule} shows the graphical schedule of an
-adaptive transit line after 80 iterations.
+adaptive transit line after 80\,iterations.
 
 \createfigure%
 {Bus schedule with automatically adapted headways}%
@@ -86,7 +82,7 @@ bus line from Sochi (Central Bus Hub) to Krasnaya Polyana (Hub)}%
 {}
 
 In addition to private car traffic and schedule-based public transport, special
-transportation offerings typically exist for athlethes, media and officials:
+transportation offerings typically exist for athletes, media and officials:
 shuttle buses or even limousine services that operate on demand only between two
 or more fixed locations. Termed ``transit on demand'' in ITSOS, transit lines
 with stops along a route were defined, but without any scheduled departures. 
@@ -102,7 +98,7 @@ At sport events, a large number of spectators have to share a few common entries
 to event facilities, and share common access paths to those facilities. This
 makes it necessary to simulate pedestrian flows at least in certain places in
 more detail than just the default teleportation approach typically used by
-MATSim. For olympic games, this was even more a requirement due to the fact
+MATSim. For Olympic games, this was even more a requirement due to the fact
 that in several locations security checks existed that created additional
 bottlenecks. This requirement was solved by implementing a special router for
 the walk mode, along with a custom departure handler. The router tries to find a
@@ -115,52 +111,45 @@ on a walk link in the network. Walk links are regular queue-based network links
 with capacity and free-speed set according to the simplified physics of
 directed pedestrians flows. This approach made it possible to model the
 bottleneck effects of security screening gates easily, as well as consider the
-available walk paths available where necessary by modelling them, leaving them
+available walk paths available where necessary by modeling them, leaving them
 out in other places where it doesn't matter. Figure~\ref{fig:sochi:pedestrians}
 shows an example of the simulated pedestrian movements at Krasnaya Polyana, the
 area in the mountains near Sochi where a lot of events took place.  
 %
 \createfigure%
-{Simulated Pedestrians at Krasnaya Polyana Hub}%
-{Simulated Pedestrians (red circles) at Krasnaya Polyana Hub. Transit vehicles
-(incl. cable cars) shown as green boxes, Transit stops as blue circles.}%
+{Simulated pedestrians at Krasnaya Polyana Hub}%
+{Simulated pedestrians (red circles) at Krasnaya Polyana Hub. Transit vehicles
+(incl. cable cars) shown as green boxes, transit stops as blue circles.}%
 {\label{fig:sochi:pedestrians}}%
 {\includegraphics[width=1.\textwidth,angle=0]{./using/figures/sochi_pedestrians.pdf}}%
 {}
 %
 
+% ========================================================================================
 \subsection{Simulation of Sochi}
-
 To test the applicability of ITSOS for transportation planning for major events,
-a model of the olympic winter games in Sochi (Russia) 2014 was built. Data was
+a model of the Olympic winter games in Sochi (Russia) 2014 was built. Data was
 either collected by workers of Masterconcept or cooperating companies, or
 received from Russian governmental institutions.
 
-The road and train network was modelled in ArcGIS using the ITSOS extensions.
-The transit schedule included 55 transit lines, a mix of bus lines, train lines,
+The road and train network was modeled in ArcGIS using the ITSOS extensions.
+The transit schedule included 55\,transit lines, a mix of bus lines, train lines,
 and cable cars going up into the mountain areas. 24 of those lines were
-defined to be adaptive, 19 lines operated on-demand as shuttle services.
+defined to be adaptive, 19\,lines operated on-demand as shuttle services.
 
-Travel demand was
-defined for each day of the games, based on the actual schedule of the games,
+Travel demand was defined for each day of the games, based on the actual schedule of the games,
 making assumptions about how many spectators visit each of the different
 competitions during the day. While the size of event facilities can be used as a
 upper limit for the number of spectators, a lot of expert knowledge available at
 Masterconcept was used to define the actual numbers of expected people at each
 event.
 
-While events often start and end at different times
-of day, due to the fact that many event locations share at least partially a
-common route to reach them, an important aspect was to simulate if the offered
-transport services are able to cope with the combined travel demand generated
-by multiple, separate events.
+While events often start and end at different times of day, due to the fact that many event locations share at least partially a
+common route to reach them, an important aspect was to simulate if the offered transport services are able to cope with the combined travel demand generated by multiple, separate events.
 
-A typical simulation run of Sochi included about 150~000 agents. To speed up
-simulations, parallel events handling and parallel qsim was used. The simulation
-generated around 15 million events per iteration.
+A typical simulation run of Sochi included about 150\,000 agents. To speed up simulations, parallel events handling and parallel qsim was used. The simulation generated around 15\,million events per iteration.
 
-Figure~\ref{fig:sochi:model} shows a screenshot of the Sochi scenario,
-visualized in Via.
+Figure~\ref{fig:sochi:model} shows a screenshot of the Sochi scenario, visualized in Via.
 %
 \createfigure%
 {Overview of the Sochi model}%
@@ -170,17 +159,13 @@ visualized in Via.
 {}
 %
 
+% ========================================================================================
 \subsection{Outlook}
-
-Besides the test case of the olympic winter games in Sochi in 2014, ITSOS/MATSim
+Besides the test case of the Olympic winter games in Sochi in 2014, ITSOS/MATSim
 was also used to simulate traffic in St. Johann (Pongau, Austria) with a strong
 emphasis on pupils which often need to take a combination of buses and trains to
 get to school.
 
-A new company, Masterconcept Mobility GmbH, was split off Masterconcept
-Consulting GmbH in 2014 which offers transportation planning services for major
-events as well as regional planning services based on the combination of ITSOS
-and MATSim.
-
+A new company, Masterconcept Mobility GmbH, was split off Masterconcept Consulting GmbH in 2014 which offers transportation planning services for major events as well as regional planning services based on the combination of ITSOS and MATSim.
 
 % ##################################################################################################################
