@@ -7,8 +7,8 @@
 \begin{center} \includegraphics[width=0.25\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
 
 % ##################################################################################################################
-\section{Modeling PT with MATSim \who{Rieser}}
-\hfill \textbf{Author:} Marcel Rieser
+\section{Modeling Public Transport with MATSim \who{Rieser}}
+%\hfill \textbf{Author:} Marcel Rieser
 
 \ah{ to be deleted:
 Allgemeiner Teil: Funktionalitäten und Besonderheiten
@@ -21,28 +21,56 @@ Modules in the config:
 	\item \lstinline|ptCounts|
 \end{itemize}
 
-Usage:
-
 Literature: \citet[][]{RieserNagel_IATBR_2009, Rieser_PhDThesis_2010}
 
 http://matsim.org/docs/tutorials/transit
+
+Standard Use-Case Berlin
 }
 
-% ============================================================================================
-\subsection{Standard Use-Case Berlin}
-
-% ============================================================================================
-
 % ##################################################################################################################
-\input{./extending/modules/paratransit/paratransit.tex}
+%\input{./extending/modules/paratransit/paratransit.tex}
+\section{Paratransit}
+\label{sec:paratransit}
+%\hfill \textbf{Author:} Andreas Neumann, Johann W. Joubert
+%
+Paratransit is an informal, market-oriented, and self-organizing public transport system. Despite the great importance of this transport mode it is mainly unsubsidized and only relies on the collected fares. 
+Paratransit systems can be categorized by route pattern and function, by organization of drivers, kind of stops, and fare type. Most case studies covered by the thesis of \citet[][]{Neumann_PhDThesis_2014} indicate that paratransit services are mainly organized as route associations operating 8-15\,seater vans on fixed routes. Most of the services run in direct competition to a
+public transport system of a public transit authority. Such a service---minibuses with fixed routes but without fixed schedule---is often called a jitney service.
+The minibus module of MATSim is based on those most common characteristics with the understanding that the jitney/minibus
+service is one out of many possible paratransit services.
+
+The minibus model is integrated in the multi-modal multi-agent simulation of MATSim. In the model, competing minibus operators start exploring the public transport market offering their services. With more successful operators expanding and less successful operators going bankrupt, a sustainable network of minibus services evolves. In \citet[][]{Neumann_PhDThesis_2014}, the model is verified through multiple illustrative scenarios that analyze the model's sensitivity towards different demand patterns, transfers, and the interactions of minibuses and a formal operator's fixed train~line.
+
+The minibus model can be applied to two different fields of transport planning. First, there is the simulation of real paratransit that aims to help understand the implications that lie within the relationship of the different paratransit stakeholders. The model is able to create "close-to-reality" minibus networks in a South African context. \citet[][]{NeumannEtAl2014MinibusRSA} give an in-depth presentation of the application of the module and paratransit in South Africa in general. Given the informal and emergent nature of minibus paratransit in developing countries, routes, schedules and fares are usually not published and is only captured in the tacit knowledge of operators and frequent users. Applying the minibus model has proven valuable in getting a better understanding of how routes evolve. Instead of imposing routes and schedules \emph{on} the MATSim model, as is appropriately the case for formal transit, the modeler can observe and get the paratransit routes as an output \emph{from} the model. As each operator aims to maximize their profit, the resulting network often favors the business objectives of the operators, and not necessarily the connectivity and mobility of the mode's users. This feature of the model accurately captures route forming behavior in the South African case where commuters are often required to take multiple, longer trips instead of direct trips.
+
+Second, the same model provides a demand-driven approach to solve the network design problem of a formal transit authority. Thus, it can be used as a planning tool for the optimization of single transit lines or networks. For more details on the second form of application see Section~\ref{sec:paratransit_application}.
+
+For further reading: \citet[][]{Neumann_PhDThesis_2014} provides an understanding of the underlying principles of paratransit services, namely minibus services, its stakeholders, fares, route functions, and patterns. Furthermore, it contains an in-depth description of the minibus model, its theoretical background, and its application to illustrative scenarios as well as real world examples. The website of MATSim also hosts the documentation of the latest implementation at \url{http://matsim.org/doxygen}.
 
 % ============================================================================================
-\input{./extending/modules/paratransit/abstract_en_application.tex}
+%\input{./extending/modules/paratransit/abstract_en_application.tex}
+\section{Network Planning or Solving the Transit Network Design Problem with MATSim}
+\label{sec:paratransit_application}
+%\ah{Hilft da wagonSim oder dass was die IVT.Weidmann-Gruppe gerade macht?}\an{Braucht's eigentlich nicht aber man kann die beiden Koppeln und entsprechend auch Gueterfluesse optimieren.}
+%
+The success of a public transport system highly depends on its network design. When transport companies try to optimize a line with respect to running costs there is also the demand to be taken into consideration. The best cost structure will not be sustainable if potential customers leave the system and opt for alternatives like private cars. The basic problem to solve is to find sustainable transit lines which offer the best service possible for the customer.
+
+More specifically,
+\begin{compactitem}
+\item The demand side of the customers asks for direct hassle-free connections.
+\item The supply side of the operators asks for profitable lines to operate.
+\end{compactitem}
+Examples of a market-oriented and moreover self-organizing public transport system are informal public transit systems around the world. These services are often referred to as paratransit. For an in-depth coverage of paratransit the reader is referred to Section~\ref{sec:paratransit} and the references therein. Despite the great importance of this transport mode it is mainly unsubsidized and only relies on the collected fares. Thus, the knowledge on paratransit and its ability to identify and fill market niches with self-supporting transit services provides an interesting approach to solve the network design problem of a formal public transit company.
+
+\noindent
+Accordingly, the minibus module of MATSim (Section~\ref{sec:paratransit}) provides a demand-driven approach to solve the network design problem of a formal transit authority. Thus, it can be used as a planning tool for the optimization of single transit lines or networks. In the thesis of \citet[][]{Neumann_PhDThesis_2014}, the model is applied to two different planning problems of the public transit authority of Berlin, BVG. In the first scenario, the model constructs a transit system from scratch for the district of Steglitz-Zehlendorf. The second scenario analyzes the impact of the closure of Tegel airport on BVG's bus network. Apart from Tegel itself, the rest of the bus network is found to be unaffected by the closure of the airport. The resulting transit system of the minibus model resembles the changes BVG had scheduled for the closure of Tegel.
+
+In conclusion, the minibus model developed in the thesis automatically adapts the supply to the demand. The model does not only grow networks from scratch but can also test for an existing transit line's sustainability and can further optimize the line regarding its frequency, its time of operation, its length, and its route. Again, the optimization process is fully integrated into the behavior-rich environment of the multi-agent simulation of MATSim reflecting the reactions from the passengers as well as from competing transit services and other road users. Thus, the minibus model can be used along with more complex scenarios like city-wide tolls or pollution analyses.
 
 % ##################################################################################################################
 \section{Public Transport in Singapore}
-\hfill \textbf{Author:} Sergio Arturo Ordóñez
-
+%\hfill \textbf{Author:} Sergio Arturo Ordóñez
 % ============================================================================================
 \subsection{Semi-Automatic Tool for Bus Route Map Matching}
 \label{sec:SemiTool}
@@ -61,7 +89,7 @@ In the most general way, the problem of interest can be defined as follows. Give
 \item A high resolution navigation network (bi-dimensional directed graph)
 \end{compactitem}
 %
-The task is to relate each stop to a network link, and relate each route to a network path (connected sequence of links). Figure \ref{fig:Problem} illustrates the problem by providing an example of the available input information and correct output.
+The task is to relate each stop to a network link, and relate each route to a network path (connected sequence of links). Figure~\ref{fig:Problem} illustrates the problem by providing an example of the available input information and correct output.
 %
 \createfigure
 {Input data and expected solution of the map-matching problem}
@@ -99,7 +127,7 @@ Hence, the strategy for resolving each route consists of a semi-automatic proced
 
 As long as more solutions are obtained, it becomes easier and faster to solve further routes (like a learning process). This happens for two reasons, first for the inclusion relationships that omit the algorithm, and second because the increasing number of fixed stop-link relationships relaxes the algorithm. This is going to be explained in the next section.
 
-\subsubsection{Map-matching automatic algorithm}
+\subsubsection{Map-Matching Automatic Algorithm}
 The objective of this algorithm is to generate a solution (path or sequence of connected links of the network, and a set of stop-link relationships) for one route, knowing its profile, a sequence of GPS points, and a set of stop-link relationships. The algorithm is designed to deal with:
 %
 \begin{compactitem}
@@ -121,18 +149,19 @@ The route map-matching process is illustrated in Figure~\ref{fig:Algorithm}. Exc
 Definition of link candidates is performed as follows: the $NL$ closest links to the stop point, within a distance $D_{max}$, define a set of candidates. Each set's element could be subjected to more restrictions: the nearest point between the stop point and the infinite line defined by the link, must be inside its line segment, and the angle between the link direction and the nearest GPS points sequence direction must be lower than $\alpha_{max}$.
 
 The link's selection is performed as follows: from the previous stop link to each defined candidate, an A star search algorithm is applied for finding the shortest path. For running this algorithm, each link cost depends on the link's travel time and the distance from the link to the GPS points. A product with flexible exponents was proposed a first model:
-
-\begin{equation}\label{eq:LinkCost}
+%
+\begin{equation}
+\label{eq:LinkCost}
 	C_{link} = \exp{\frac{L_{link}}{S_{link}}}{w_{1}}\exp{D_{GPS}}{w_{2}}
 \end{equation}
-
+%
 where $L_{link}$ is its length, $S_{link}$ is its free speed, $D_{GPS}$ is its distance to the GPS points sequence, and $w_{1}$ and $w_{2}$ are positive weights with a standard value of 1, but modifiable by the user according to the existence or quality of the GPS points sequence. The definition of $D_{GPS}$ can be modified, in the simplest approach it is the minimum distance between the link and all the GPS points (point-segment distance). From all the calculated paths the shortest one is selected and added to the general solution of the route. The corresponding link candidate is also related to the stop. 
 
 If the current stop had a stop-link relationship, only the shortest path to this stop defines the solution. Thus, the process continues with the next stop in the route profile. If the first stop of the profile has no fixed link, a similar algorithm between the first and the second stop is performed. The definition of candidates procedure is applied to the first and the second stops. Then, the candidates' selection procedure consists of obtaining the shortest path of all the combinations between the two sets of candidates, and select the shortest one. This path defines links for both stops.
 
 \subsubsection{Automatic Verification}
 In this step, the correctness of the routing solution is automatically checked by performing the following, ordered verification:
-
+%
 \begin{enumerate}
 \item Is the path joined?
 \item Is the path without U turns?
@@ -159,7 +188,7 @@ The objective of the edit functions is to allow the user to modify the automatic
 These functions were implemented in a software developed from scratch in java and using java2D library for graphics. It reproduces the described solution approach, looking for non-solved routes, and running the map-matching algorithm and the automatic verification for each one. Figure \ref{fig:Application} shows the user interface and a demo video can be accessed at http://www.vimeo.com/27137889.
 
 \createfigure
-{}
+{User interface of the application to edit automatic solutions}
 {User interface of the application to edit automatic solutions}
 {\label{fig:Application}}
 {\includegraphics[width=1.0\textwidth]{extending/figures/semiAuto/Application.png}}
@@ -172,36 +201,32 @@ The semi-automatic procedure designed for map-matching bus lines with a high res
 As GTFS is becoming so popular for defining public transport systems and the code, in which this process is implemented, is open source, it can be used for matching routes with high resolution networks of any GTFS-specified place. The tools are available as one of the MATSim contrib projects (GTFSToTransitSchedule). For generating MATSim simulation scenarios the presented procedures has been used by a research team in the province of Gauteng, South Africa, the Toronto scenario and a different public transport simulation model developed by SMART-MIT in Singapore.
 
 % ============================================================================================
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New Dynamic Events-Based Public Transport Router}
-\citet[][]{OrdonezErath_TechRep_FCL_2013}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In public transport route choice, the decisions and actions of a particular user depend not only on their own preferences (value of time, crowd avoidance, willingness to pay). They also depend on the decisions and actions of many other public transport users, operators and authorities. Even the decisions of private transport users are also involved, as everybody shares the same infrastructure.
 
 The current implementation of MATSim implements a schedule-based public transport router (SBR) as mentioned above. It means, when an agent needs a route for a given start time, origin and destination, the SBR finds the shortest path in a schedule-based network assuming public transport vehicles are always on time and always have space. Within the mobility simulation a given vehicle can arrive early or late and/or it can be full, thus not allowing additional passengers to board. Hence, when a bad experience happens, the agent obtains a bad score and it is possible this plan will get replace with a more favorable one during the iterative learning process. The problem is that if the agent tries to find a new route for the same start time, origin and destination, the shortest path in the public transport scheduled network is going to be the same, and agents can not improve their experiences by changing the route.
 
-To address this shortcoming, a new events-based public transport router (EBR) is proposed, modeled, implemented and tested. It takes the given schedule as a base for the first iteration, but updated information on travel times, occupancy of the public transport vehicles, and waiting times is propagated between subsequent iterations. Thus, when executions of the same day are performed, new routes can be generated for the same start time, origin and destination, because the system is remembering delayed bus services (longer travel times), or train services where the vehicle arrives full (longer waiting times). However, the network within agents are routed needs a new topology to account for such variables. This approach allows then to account for  emergent phenomena: in situations where overcrowded vehicles prohibit boarding, it makes sense for some agents to travel for a few stops in the outbound direction to transfer to a vehicle with sufficient capacity heading inbound to be able to board. Although more memory is needed, similar or even better computation times are achieved when shortest path calculations are performed due to the simpler network topology. Furthermore, to achieve user equilibrium requires a significantly fewer number of iterations.
+To address this shortcoming, a new events-based public transport router (EBR) is proposed \citep[][]{OrdonezErath_TechRep_FCL_2013}, modeled, implemented and tested. It takes the given schedule as a base for the first iteration, but updated information on travel times, occupancy of the public transport vehicles, and waiting times is propagated between subsequent iterations. Thus, when executions of the same day are performed, new routes can be generated for the same start time, origin and destination, because the system is remembering delayed bus services (longer travel times), or train services where the vehicle arrives full (longer waiting times). However, the network within agents are routed needs a new topology to account for such variables. This approach allows then to account for  emergent phenomena: in situations where overcrowded vehicles prohibit boarding, it makes sense for some agents to travel for a few stops in the outbound direction to transfer to a vehicle with sufficient capacity heading inbound to be able to board. Although more memory is needed, similar or even better computation times are achieved when shortest path calculations are performed due to the simpler network topology. Furthermore, to achieve user equilibrium requires a significantly fewer number of iterations.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Events-based public transport router} \label{sec:RouterStructure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% ============================================================================================
+\subsubsection{Events-Based Public Transport Router} 
+\label{sec:RouterStructure}
 A new public transport router (EBR) was developed for MATSim with the objective of modeling more realistic public transport route choice, where agents learn over time that the transit vehicles are not always on time, do not always have sufficient space to allow for boarding a vehicle and trips with more comfort can be preferred.
 
-\paragraph{Network topology}
+\paragraph{Network Topology}
 
-Figure \ref{fig:Networks}(b) shows the structure of the proposed public transport network compared with the original structure (\ref{fig:Networks}(a)). Inspired by the network designed by \citet{SpiessFlorian_TransResB_1989} this implementation has two types of nodes. The first type represents a stop facility (green-black squares) as point in space while the second type (yellow-red dots)represents stop-route relation which can be seen as a physical or virtual platform for each line which passes a particular stop facility. For example different platforms in a metro system need to be modeled as different stop facilities because different services arrive at each platform and walking paths are needed to change from one platform to another. For bus stop facilities, they represent virtual platforms as in reality buses of different lines serving the same bus stop will normally use the same physical infrastructure e.g.\ a bus bay. To connect those nodes, there are four types of links. The in-vehicle links join two consecutive stop-route nodes in the direction of the correspondent route. The boarding links connect a stop node with each corresponding stop-route node. The alighting links are the opposite, so they connect the stop-route nodes with their corresponding stop node. Finally walking links connect a stop node with all the other stop nodes located within a walkable distance.
+Figure~\ref{fig:Networks}(b) shows the structure of the proposed public transport network compared with the original structure (\ref{fig:Networks}(a)). Inspired by the network designed by \citet{SpiessFlorian_TransResB_1989} this implementation has two types of nodes. The first type represents a stop facility (green-black squares) as point in space while the second type (yellow-red dots)represents stop-route relation which can be seen as a physical or virtual platform for each line which passes a particular stop facility. For example different platforms in a metro system need to be modeled as different stop facilities because different services arrive at each platform and walking paths are needed to change from one platform to another. For bus stop facilities, they represent virtual platforms as in reality buses of different lines serving the same bus stop will normally use the same physical infrastructure e.g.\ a bus bay. To connect those nodes, there are four types of links. The in-vehicle links join two consecutive stop-route nodes in the direction of the correspondent route. The boarding links connect a stop node with each corresponding stop-route node. The alighting links are the opposite, so they connect the stop-route nodes with their corresponding stop node. Finally walking links connect a stop node with all the other stop nodes located within a walkable distance.
 
 \createfigure
-{}
+{Comparison of the network topologies}
 {Comparison of the network topologies of the schedule-based transit router (a) and the new events-based transit router (b).}
 {\label{fig:Networks}}
 {\includegraphics[width=1.0\textwidth]{extending/figures/ebr/Networks.png}}
 {}
 
-\paragraph{Link costs}
+\paragraph{Link Costs}
 
-Each link in this network has a related time-dependent disutility function. Different costs are saved for different times in the day for a given time bin (currently 15 minutes). In-vehicle link disutilities depend on the vehicle travel time, the travel distance, the level of occupancy and a fare rate if this system is distance-based. Boarding links disutilities depend on waiting times, a transfer cost, and a fixed fare if this system is entry-based; thus it is possible to relate specific stop-route waiting times to these links. As the first waiting link is not a transfer, this cost has to be subtracted from the whole path cost, but this detail does not affect the shortest path calculation. Alighting links don't have any cost associated, but it is possible to relate a fare to them. Finally, walking links depend on the walking travel time and distance. Equation \ref{eq:CostFunction} shows linear versions of these functions used in this model assuming a distance-based fare system.
+Each link in this network has a related time-dependent disutility function. Different costs are saved for different times in the day for a given time bin (currently 15\,minutes). In-vehicle link disutilities depend on the vehicle travel time, the travel distance, the level of occupancy and a fare rate if this system is distance-based. Boarding links disutilities depend on waiting times, a transfer cost, and a fixed fare if this system is entry-based; thus it is possible to relate specific stop-route waiting times to these links. As the first waiting link is not a transfer, this cost has to be subtracted from the whole path cost, but this detail does not affect the shortest path calculation. Alighting links don't have any cost associated, but it is possible to relate a fare to them. Finally, walking links depend on the walking travel time and distance. Equation~\ref{eq:CostFunction} shows linear versions of these functions used in this model assuming a distance-based fare system.
 \begin{equation}\label{eq:CostFunction}
 	\begin{array}{l}
 		C_{iv}(t) = (\beta_{iv}*t_{iv}(t))(1+g(p_{oc}(t))) + \beta_{vd}*l_{iv} + f_{iv}*l_{iv}\\
@@ -264,13 +289,14 @@ $r_{sta}, b_{sta}$: Parameters of percentage increase in discomfort from standin
 
 $b_{full}$: Maximum percentage increase when the vehicle is full.
 
-\paragraph{Shortest path algorithm}
+\paragraph{Shortest Path Algorithm}
 
 To find a public transport route between an origin and a destination for a given time in the day the applied method is the same as currently implemented in MATSim: first, the algorithm looks for the stop-nodes within a walkable distance from the origin and from the destination. An initial cost is associated with each of these stop-nodes according to access and egress walking times. Then, starting from all the origin-stop-nodes with a given access cost, a multi-node time dependent Dijkstra algorithm finds the shortest path, to the destination-stop-nodes with related egress costs. Thus, the path determines the best origin-destination combination as well. The algorithm is time-dependent because it takes into account that time is advancing while it proceeds through the path; thus, different costs are obtained from the links while time is advancing. The total disutility of this path is compared with the cost of a full walking trip. If the cost is less, the path is converted to a sequence of stages: in-vehicle stages for each in-vehicle link in the path and walking stages for each walking link. Boarding and alighting links are ignored for this conversion.
 
-\paragraph{Structures to save travel times, waiting times and vehicle occupancy} \label{subsec:Structures}
+\paragraph{Structures to Save Travel Times, Waiting Times and Vehicle Occupancy} 
+\label{subsec:Structures}
 
-The mobility simulator of MATSim generates atomic units of information called `events', which describe state changes for each person e.g.\ boarding and each vehicle e.g.\ entering and leaving a link during the course of the simulation. Event handlers can be added to the simulation engine to process events and obtain statistics of the simulation. The objective of this work is to save information of the public transport experience in one simulation to find better public transport routes for the agents in the next iteration. This feedback mechanism is already implemented in MATSim for private transport. The car router uses time-dependent travel times of each link saved in a previous iteration to calculate better routes in the road network, by changing the costs of the links. To allow the EBR to learn from the previous iteration, information about a)stop-stop travel times, b)stop-route waiting times and c)route-stop-stop vehicle occupancy, is required.
+The mobility simulator of MATSim generates atomic units of information called `events', which describe state changes for each person e.g.,\,boarding and each vehicle e.g.,\,entering and leaving a link during the course of the simulation. Event handlers can be added to the simulation engine to process events and obtain statistics of the simulation. The objective of this work is to save information of the public transport experience in one simulation to find better public transport routes for the agents in the next iteration. This feedback mechanism is already implemented in MATSim for private transport. The car router uses time-dependent travel times of each link saved in a previous iteration to calculate better routes in the road network, by changing the costs of the links. To allow the EBR to learn from the previous iteration, information about a)stop-stop travel times, b)stop-route waiting times and c)route-stop-stop vehicle occupancy, is required.
 
 \begin{itemize}
 
@@ -279,66 +305,62 @@ The mobility simulator of MATSim generates atomic units of information called `e
 \item Stop-route waiting times: Waiting times are a fundamental aspect in public transport route choice. Waiting times can be long due to vehicle delays (i.e.\ due to the stop location), or when public transport vehicles of one or several consecutive services are full (i.e.\ due to the route demand and stop position within the route). For that reason waiting times are saved for each stop-route relation. Similarly, the structure averages all the agent waiting times in a certain stop for a certain route during a certain time bin in the day. More specifically each value comprises the time since the agent arrives to the public transport stop until it enters the vehicle, denoted in the simulation by consecutive `AgentArrivesToFacility' and `PersonEnterVehicle' events. These waiting times are the principal component of the boarding link disutilities. If no observations are found for a certain stop-route-time the model saves a half of the corresponding headway, specified by the transit schedule.
 
 \item Route-stop occupancy: To account for the occupancy level allows to model routing decisions where people take in terms of travel times longer routes in order to feel more comfortable in emptier vehicles e.g.\ valuing a higher chance to travel seating. Occupancy depends on the demand of a certain route and the position of the stop within the route. The occupancy is assumed constant between two consecutive stops. When a vehicle departs from a certain stop (denoted in the simulation as `VehicleDepartsFromFacility' event) this structure averages the occupancy level with the other vehicles of the same route that departed from the same stop during the same time bin. As there are few vehicles for each time bin it is very likely not to find observations for a certain time bin. In this case the structure returns the value of the next time bin where at least one observation is found of the corresponding stop and route.
-
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Functional results}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\paragraph{Relaxation process}
+% ============================================================================================
+\subsubsection{Functional Results}
+\paragraph{Relaxation Process}
 
 As it was mentioned before, MATSim uses an evolutionary algorithm to improve agents' experience until the simulation reaches user equilibrium. The number of iterations needed to reach this state is a critical variable and many efforts have been performed to reduce it (\citep{MeisterEtAl_STRC_2006}, \citep{FourieEtAl_TRB_2013}).
 
-The EBR effectively reduces the number of iterations public transport users need to reach equilibrium. Using a 25\% of the Singapore scenario, figure \ref{fig:Relaxation} shows the evolution of average scores of the plans of 355,207 agents trough 100 iterations. These 100 iterations were executed four different times to use both routers for two different replanning strategies. Agents are saving five plans in memory. At iteration 0, both EBR and SBR start with routes as described in the schedule; however, the EBR returns routes which perform better in this first simulation. This occurs because for each pair consecutive stops the EBR uses the average between all the scheduled times of the routes which contain this pair as the first estimate. On the other hand, the SBR uses the specific scheduled time of the corresponding route. According to the results the average stop-stop time seems to be a more reliable estimate for this first iteration.
+The EBR effectively reduces the number of iterations public transport users need to reach equilibrium. Using a 25\,\% of the Singapore scenario, Figure~\ref{fig:Relaxation} shows the evolution of average scores of the plans of 355\,207 agents trough 100\,iterations. These 100\,iterations were executed four different times to use both routers for two different replanning strategies. Agents are saving five plans in memory. At iteration 0, both EBR and SBR start with routes as described in the schedule; however, the EBR returns routes which perform better in this first simulation. This occurs because for each pair consecutive stops the EBR uses the average between all the scheduled times of the routes which contain this pair as the first estimate. On the other hand, the SBR uses the specific scheduled time of the corresponding route. According to the results the average stop-stop time seems to be a more reliable estimate for this first iteration.
 \createfigure
-{}
-{Comparison of score evolution: a) 30\% Re-route, b) 20\% Re-route and 10\% Time allocation}
+{Comparison of score evolution}
+{Comparison of score evolution: a) 30\,\% Re-route, b) 20\,\% Re-route and 10\,\% Time allocation}
 {\label{fig:Relaxation}}
 {\includegraphics[width=1.0\textwidth]{extending/figures/ebr/Relaxation.png}}
 {}
 
-Now, for the rest of the iterations, the Figure \ref{fig:Relaxation} shows how the scores evolve. The first replanning strategy stipulates that 30\% of the agents are re-routed at each iteration. This evolution is shown in the first graph of the figure. Using SBR, agents receive the same route over and over again as the start time origin and destination do not change between iterations. Small variations in scores occur because of the stochastic nature of the simulation explained above. Although scores start in the same range, using EBR caused that better performing routes are found within a very small number of iterations.
+Now, for the rest of the iterations, the Figure~\ref{fig:Relaxation} shows how the scores evolve. The first replanning strategy stipulates that 30\,\% of the agents are re-routed at each iteration. This evolution is shown in the first graph of the figure. Using SBR, agents receive the same route over and over again as the start time origin and destination do not change between iterations. Small variations in scores occur because of the stochastic nature of the simulation explained above. Although scores start in the same range, using EBR caused that better performing routes are found within a very small number of iterations.
 
-For a more realistic comparison a second replanning strategy is tested, where just 20\% of the agents are re-routed and the activity start times are modified randomly within a half an hour for 10\% of them. The second graph of the figure shows how both routers manage to improve agents' plan scores. But with the EBR the number of iterations needed to achieve the average executed score achieved after 100 iterations for the SBR (120) was just 5. The marginal score (as a measurement of relaxation advance) after 200 iterations with the SBR (0.1 utility point per iteration) is achieved after 77 iterations with the EBR. This means an improvement by a factor of 2.6.
+For a more realistic comparison a second replanning strategy is tested, where just 20\,\% of the agents are re-routed and the activity start times are modified randomly within a half an hour for 10\,\% of them. The second graph of the figure shows how both routers manage to improve agents' plan scores. But with the EBR the number of iterations needed to achieve the average executed score achieved after 100\,iterations for the SBR (120) was just 5. The marginal score (as a measurement of relaxation advance) after 200\,iterations with the SBR (0.1\,utility point per iteration) is achieved after 77\,iterations with the EBR. This means an improvement by a factor of 2.6.
 
-\paragraph{Modeling advantages}
+\paragraph{Modeling Advantages}
 
-As the disutility function of the links in the proposed network account for aspects like waiting times or occupancy levels, and as MATSim allows to model heterogeneity among agents, the router results in a very powerful tool to model emergent behavior in public transport route choice as observed in the reality. In Singapore, as many other crowded cities in the world, some people decide to travel backwards for a few stops and transfer to a train in the opposite direction to find a seat or space in a public transport vehicle \cite{ChakirovErath_HKSTS_2011}. With the SBR such type of least cost path can not be found, but with the new proposal this is possible. Although proportions don't match with actual observations as the Singapore scenario lacks of appropriate and calibrated utility parameters for traveling and waiting time under crowed conditions, Figure \ref{fig:Backwards} shows totals of people traveling backwards from different stops in the island after 100 iterations (see Figure \ref{fig:Relaxation} (a)).
+As the disutility function of the links in the proposed network account for aspects like waiting times or occupancy levels, and as MATSim allows to model heterogeneity among agents, the router results in a very powerful tool to model emergent behavior in public transport route choice as observed in the reality. In Singapore, as many other crowded cities in the world, some people decide to travel backwards for a few stops and transfer to a train in the opposite direction to find a seat or space in a public transport vehicle \cite{ChakirovErath_HKSTS_2011}. With the SBR such type of least cost path can not be found, but with the new proposal this is possible. Although proportions don't match with actual observations as the Singapore scenario lacks of appropriate and calibrated utility parameters for traveling and waiting time under crowed conditions, Figure~\ref{fig:Backwards} shows totals of people traveling backwards from different stops in the island after 100\,iterations (see Figure~\ref{fig:Relaxation} (a)).
 
 \createfigure
-{}
-{Number of agents travelling backwards at each MRT station of the Singaporean rail system}
+{Number of agents traveling backwards at each MRT station of the Singaporean rail system}
+{Number of agents traveling backwards at each MRT station of the Singaporean rail system}
 {\label{fig:Backwards}}
 {\includegraphics[width=1.0\textwidth]{extending/figures/ebr/Backwards.png}}
 {}
 
-\subsubsection{Comparing quality attributes with the current implementation}
+\subsubsection{Comparing Quality Attributes With the Current Implementation}
 
-\paragraph{Computation time}
+\paragraph{Computation Time}
 
-The tests described next were executed using 12 computational nodes, accessing 70GB of shared memory, and using the Singapore scenario described in the previous section. Before the first iteration, if plans are not routed, MATSim prepares every agent with an initial route. As it was mentioned before, the stop-stop travel times and stop-route waiting times are initially taken from the schedule. Because of its simpler network structure the EBR takes 01:17:35 to initially route the 355,207 users compared with 01:28:55 needed by the SBR which equals to a gain of about 12.7\% for this scenario. When running MATSim iterations with the EBR, computation times principally change in two processes: mobility simulation (mobsim) and replanning. Figure \ref{fig:CompTimes} shows computation times measured for the first 20 iterations of the process. Although the EBR needs more time in mobsim, it continues to require considerably less time for re-routing during the replanning due to a simpler network topology. The longer mobsim time is due to the saving of information in the mentioned new structures during the course of the simulation. However, in average the EBR outperforms SBR per iteration by about 3 minutes or 11\%. As mentioned above 2.6 times more iterations are needed for the SBR to achieve a specific point in the relaxation process. For 77 iterations with the EBR, the computation amounts 35:25:43, and for 200 iterations with the SBR the computation amounts 99:10:51; that is an improvement by a factor of 2.8 in our experimental setting.
+The tests described next were executed using 12\,computational nodes, accessing 70\,GB of shared memory, and using the Singapore scenario described in the previous section. Before the first iteration, if plans are not routed, MATSim prepares every agent with an initial route. As it was mentioned before, the stop-stop travel times and stop-route waiting times are initially taken from the schedule. Because of its simpler network structure the EBR takes 01:17:35 to initially route the 355\,207 users compared with 01:28:55 needed by the SBR which equals to a gain of about 12.7\,\% for this scenario. When running MATSim iterations with the EBR, computation times principally change in two processes: mobility simulation (mobsim) and replanning. Figure \ref{fig:CompTimes} shows computation times measured for the first 20\,iterations of the process. Although the EBR needs more time in mobsim, it continues to require considerably less time for re-routing during the replanning due to a simpler network topology. The longer mobsim time is due to the saving of information in the mentioned new structures during the course of the simulation. However, in average the EBR outperforms SBR per iteration by about 3\,minutes or 11\,\%. As mentioned above 2.6\,times more iterations are needed for the SBR to achieve a specific point in the relaxation process. For 77\,iterations with the EBR, the computation amounts 35:25:43, and for 200\,iterations with the SBR the computation amounts 99:10:51; that is an improvement by a factor of 2.8 in our experimental setting.
 
 \createfigure
-{}
-{Comparison of computation times for 20 iterations}
+{Comparison of computation times for 20\,iterations}
+{Comparison of computation times for 20\,iterations}
 {\label{fig:CompTimes}}
 {\includegraphics[width=1.0\textwidth]{extending/figures/ebr/ComputationTimes.pdf}}
 {}
 
-\paragraph{Memory consumption}
+\paragraph{Memory Consumption}
 
-The EBR needs more memory than the SBR because the ERB manages more information. The necessary extra memory is allocated to the three structures described before. Given the conditions described for the Singapore scenario the extra memory is calculated as follows. One numeric value needs 8 Bytes, and with a time bin of 15 minutes, 120 bins are needed for 30 hours. The Stop-stop travel times structure saves two values (average and number of observations) per each time bin per each pair of consecutive stops. The number of pairs for the Singaporean public transport system is 6,602. Thus, this structure approximately needs 12.7 MB. Similarly, The stop-route waiting time structure saves two values (average and number of observations) per each time bin per each pair of stop route combinations. The number of stop-route relations for the Singaporean public transport system is 27,156. Thus, this structure needs approximately 52.1 MB. Finally, the vehicle occupancy structure saves the average and the number of observations for 26,353 Route-stop relations for each of the 120 time bins. Hence it requires approximately 50.7 MB. In total less than 120 MB are needed for the three structures.
+The EBR needs more memory than the SBR because the ERB manages more information. The necessary extra memory is allocated to the three structures described before. Given the conditions described for the Singapore scenario the extra memory is calculated as follows. One numeric value needs 8 Bytes, and with a time bin of 15\,minutes, 120\,bins are needed for 30\,hours. The Stop-stop travel times structure saves two values (average and number of observations) per each time bin per each pair of consecutive stops. The number of pairs for the Singaporean public transport system is 6\,602. Thus, this structure approximately needs 12.7\,MB. Similarly, The stop-route waiting time structure saves two values (average and number of observations) per each time bin per each pair of stop route combinations. The number of stop-route relations for the Singaporean public transport system is 27\,156. Thus, this structure needs approximately 52.1\,MB. Finally, the vehicle occupancy structure saves the average and the number of observations for 26\,353\,route-stop relations for each of the 120\,time bins. Hence it requires approximately 50.7\,MB. In total less than 120\,MB are needed for the three structures.
 
-On the other hand the size of the network where public transport routes are calculated is smaller for the EBR. Although, in the case of Singapore, it creates 31,939 nodes compared with 27,156 of the SBR (4,783 new stop-nodes) the number of links is dramatically smaller. The SBR creates 424,070 walking links and 26,353 travel links (450,423 in total). The EBR creates the same 26,353 travel links, plus 27,156 boarding links, plus 27,156 alighting links and just 4,390 walking links (85,055 links in total); less than a fifth in total. As a node needs 48 Bytes and a link 128 Bytes approximately the SBR needs 46.8 MB more memory for links and just 229.6 KB less for nodes. The EBR saves 46.5 MB for the network, concluding that in total the SBR needs 70 MB less memory. This quantity in neglectable compared with the total memory needed for the whole process (more than 40GB).
+On the other hand the size of the network where public transport routes are calculated is smaller for the EBR. Although, in the case of Singapore, it creates 31\,939\,nodes compared with 27\,156 of the SBR (4\,783 new stop-nodes) the number of links is dramatically smaller. The SBR creates 424\,070\,walking links and 26\,353\,travel links (450\,423 in total). The EBR creates the same 26\,353\,travel links, plus 27\,156\,boarding links, plus 27\,156\,alighting links and just 4\,390\,walking links (85\,055\,links in total); less than a fifth in total. As a node needs 48\,bytes and a link 128\,bytes approximately the SBR needs 46.8\,MB more memory for links and just 229.6\,KB less for nodes. The EBR saves 46.5\,MB for the network, concluding that in total the SBR needs 70\,MB less memory. This quantity in neglectable compared with the total memory needed for the whole process (more than 40\,GB).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Conclusion and future work} \label{sec:ConclusionsAndOutlook}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% ============================================================================================
+\subsubsection{Conclusion and Future Work} 
+\label{sec:ConclusionsAndOutlook}
 In this work a new public transport router for MATSim was designed, implemented and tested. It allows to obtain more diverse routes in large scale scenarios taking into account many complexities of urban public transport systems. On the supply side, the system simulates congestion, occupancy levels of public transport vehicles, queues in public transport stops, bay sizes, and bus or train bunching. On the demand side, in addition to the commonly used factors such as in-vehicle time, number of transfers and walking time, the presented new router takes into account disutility of additional waiting time due to congestion or overcrowded vehicles, comfort level inside public transport vehicles and preference heterogeneity among agents for all mentioned factors.
 
-The usability of the new approach was tested in a large scale scenario of Singapore. Using a simplified public transport only simulation, 100 iterations of a 25\% scenario (355,207 agents) with 30\% of the agents re-routing each iteration took just 45 hours approximately, or about 27 minutes per iteration, using 12 cores and 70 GB of memory. The computation was improved compared to the standard MATSim in 11\% less. If just 20\% of the plans are re-routed and using 35 cores accessing 85GB of memory, the time per iteration is reduced to less than 13 minutes, achieving 100 iterations in less than one day. But in terms of computation time gains most importantly, we showed that the proposed events-based router is able to reach a steady in a much smaller number of iterations.
+The usability of the new approach was tested in a large scale scenario of Singapore. Using a simplified public transport only simulation, 100\,iterations of a 25\,\% scenario (355\,207 agents) with 30\,\% of the agents re-routing each iteration took just 45\,hours approximately, or about 27\,minutes per iteration, using 12\,cores and 70\,GB of memory. The computation was improved compared to the standard MATSim in 11\,\% less. If just 20\,\% of the plans are re-routed and using 35\,cores accessing 85\,GB of memory, the time per iteration is reduced to less than 13\,minutes, achieving 100\,iterations in less than one day. But in terms of computation time gains most importantly, we showed that the proposed events-based router is able to reach a steady in a much smaller number of iterations.
 
 If the proposed router works better than the original one, is it worth to change it? Well, the current scheduled-based router of MATSim would still be relevant if the topology of its network is changed for the proposed one. It also should be applied to scenarios where the public transport system operates at a very reliable time table, with little situations of overcrowding. In that case routing calculations would be as fast as the events-based router (with the new network structure), and the mobility simulation would be faster as no information (in-vehicle time, wait time and occupancy) would be needed. In other words, it can be applied to models of cities where public transport users can plan their trips using just a time table.
 
