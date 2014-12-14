@@ -7,5 +7,8 @@ kaibib:
 pdf:
 	cd ../.. ; ${MAKE} pdf
 
+quick:
+	cd ../.. ; ${MAKE} quick
+
 clean:
 	cd ../.. ; ${MAKE} clean
