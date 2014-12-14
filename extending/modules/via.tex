@@ -7,11 +7,9 @@
 \begin{center} \includegraphics[width=1.\textwidth, angle=0]{extending/figures/via/title.png} \end{center}
 
 % ##################################################################################################################
-
 \def\Via{\emph{Via}}
 
 \section{Introduction}
-
 \Via{} is an application to visualize and analyze MATSim simulation results.
 Unlike MATSim, \Via{} is not open source. 
 Instead, it is developed as a proprietary commercial software
@@ -49,16 +47,15 @@ or OpenStreetMap as background, aggregation analyses or movie recording.
 
 \Via{} allows to customize its window. The following descriptions refer to
 elements as they are placed in the default layout. The default configuration can
-be re-created by choosing ``Reset Window State'' from the Window menu in \Via{}.
+be re-created by choosing \lstinline|Reset Window State| from the Window menu in \Via{}.
 
-
+% ##################################################################################################################
 \section{Simple Usage}
-
 \Via{} differentiates between data sets, and how the data is visualized. It
-does so by managing data sources (typically MATSim files like {\tt network.xml}
-or {\tt events.xml}), and layers (e.g. displaying the network, vehicles,
+does so by managing data sources (typically MATSim files like \lstinline|network.xml|
+or \lstinline|events.xml|), and layers (e.g.,\,displaying the network, vehicles,
 activity locations). A layer can use more than one data source for its
-visualization purposes (e.g. a network and some data from the events), and a
+visualization purposes (e.g.,\,a network and some data from the events), and a
 data source can be used by multiple layers (e.g. events can be used by many
 different layers to visualize different things like vehicles, activities, link
 volumes, etc).
@@ -70,15 +67,13 @@ volumes, etc).
 {\includegraphics[width=1.\textwidth,angle=0]{./extending/figures/via/window.png}}%
 {}
 
-
-By default, \Via{}'s window looks similar to the one shown in
-Figure~\ref{fig:via:window}.
+By default, \Via{}'s window looks similar to the one shown in Figure~\ref{fig:via:window}.
 To add a file as a data source, the file can either be drag-and-dropped onto the layers
-list left of the black visualization area, or by choosing ``Add Data\ldots''
-from the File menu. To add a layer, the little plus icon in the lower left of
-the window can be pressed, or by choosing ``Add Layer\ldots'' from the File
+list left of the black visualization area, or by choosing \lstinline|Add Data...|
+from the \lstinline|File| menu. To add a layer, the little plus icon in the lower left of
+the window can be pressed, or by choosing \lstinline|Add Layer...| from the File
 menu. To get started, it's usually the best to add a network and (small) events
-file from MATSim to Via, and create a Network layer and a Vehicles layer.
+file from MATSim to Via, and create a Network layer and a \lstinline|Vehicles| layer.
 
 Elements shown in the visualization area like the network or vehicles can
 be queried. Queries are usually provided by layers, made available with buttons
@@ -99,22 +94,19 @@ given a link, Select Facility Analysis given a facility, List Transit Lines that
 use a given link, or List Passengers if a transit vehicles was queried in the
 first place.
 
-
-
+% ##################################################################################################################
 \section{Use Cases and Examples}
-
+% ===================================================================================
 \subsection{Agent Visualization}
-
 The animated visualization of agents moving around in the modeled area was one
 of the main features \Via{} was originally developed for. To do this, \Via{}
-only needs the {\tt network.xml} and {\tt events.xml} files from a MATSim run
+only needs the \lstinline|network.xml| and \lstinline|events.xml| files from a MATSim run
 as data sources. For the visualization, a Network layer, Vehicles layer and
 Activities layer must be created. With this setup, vehicles will move around in
 the visualization area when the time progresses, and agents performing
 activities will be represented as colorful dots.
 
-The visualization can be further customized: With the addition of a {\tt
-population.xml} file, more detailed activity coordinates can be loaded to have a
+The visualization can be further customized: With the addition of a \lstinline|population.xml| file, more detailed activity coordinates can be loaded to have a
 better distribution of the activity locations (MATSim's events file does not
 contain coordinates for activities, only the assigned link id. So by default,
 all activities taking place on a link are first shown at the location of
@@ -126,27 +118,23 @@ can be displayed with a triangular shape with colors representing their
 absolute speed or their speed relative to the allowed maximum speed on the link
 they're on (see Figure~\ref{fig:via:vehicles}). As mentioned above, arbitrary
 groups of vehicles can be styled differently, which is useful to highlight
-special agents, e.g. when simulating a fleet of electric vehicles, a car sharing
+special agents, e.g.,\,when simulating a fleet of electric vehicles, a car sharing
 fleet, or agents simulated with special routing guidance.
 
 It is possible to load arbitrary attributes for agents and use those attributes
-as well for visualization purposes, e.g. having different colors for vehicles
+as well for visualization purposes, e.g.,\,having different colors for vehicles
 driven by agents that are employed, have a high income or are within a certain
 age range.
 
-
 \createfigure%
 {Vehicles in Via}%
-{Vehicles in Via: green triangular symbols represent private cars, pink
-rectangular symbols public transport vehicles }%
+{Vehicles in Via: green triangular symbols represent private cars, pink rectangular symbols public transport vehicles }%
 {\label{fig:via:vehicles}}%
 {\includegraphics[width=1.\textwidth,angle=0]{./extending/figures/via/vehicles}}%
 {}
 
-
-
+% ===================================================================================
 \subsection{Facility Analysis}
-
 Activity facilities allow for very detailed modeling in MATSim, especially
 considering the functionality provided by the destination choice module
 (Section~\ref{ch:destinationchoice}). \Via{} provides several unique ways to
@@ -165,7 +153,6 @@ at a facility, showing from which regions agents visit a specific facility and
 what routes they use for this. Figure~\ref{fig:via:selectFacilityAnalysis} shows
 such an example.
 
-
 \createfigure%
 {Select Facility Analysis}%
 {Select Facility Analysis: Links used to travel to and from a facility are highlighted}%
@@ -173,9 +160,9 @@ such an example.
 {\includegraphics[width=1.\textwidth,angle=0]{./extending/figures/via/selectFacilityAnalysis}}%
 {}
 
+% ===================================================================================
 \subsection{Public Transport Analysis}
-
-The Public Transport plugin provides many different functionality for analyzing
+The public transport plugin provides many different functionality for analyzing
 public transport simulations. It starts with providing the specified vehicle
 types as agent attributes, so the vehicles can be visualized differently based
 on the vehicle type they represent. Also, the absolute or relative
@@ -184,7 +171,7 @@ vehicles to be visualized accordingly. For stop locations, the number of
 passengers waiting for a bus or train can be plotted over the time of day, and
 the occupancy along a bus or train route can be visualized.
 
-A special, but very useful visualization is the ``Route Flow'' analysis. This
+A special, but very useful visualization is the "Route Flow" analysis. This
 shows in a visually appealing way the number of passengers that travel between
 two stops along a route---for all possible stop combinations.
 Figure~\ref{fig:via:ptrouteflow} shows an example of such a route flow with the
@@ -201,24 +188,20 @@ route. This could indicate that it might make sense to split the line in two.
 {\includegraphics[width=1.\textwidth,angle=0]{./extending/figures/via/ptrouteflows}}%
 {}
 
-
+% ===================================================================================
 \subsection{Scenario comparisons}
-
 A typical use case of MATSim is to simulate a base case and then one or more
 case studies. Comparing scenarios then becomes an important step in the analysis
 of the different case studies. \Via{} allows to compare the link volumes of two
 scenarios visually by coloring the network with the absolute or relative
 difference of the link volumes between two models. In the future, other
 differences like average speeds will supported too. The differences are
-time-dependent, aggregated over time bins of down to 15~minutes.
+time-dependent, aggregated over time bins of down to 15\,minutes.
 
-
-
-
+% ===================================================================================
 \subsection{Aggregating data}
-
 While MATSim requires and produces a lot of disaggregated data, it still often
-is necessary to aggregate data to make statements or predications about a
+is necessary to aggregate data to make statements or predictions about a
 simulated scenario. \Via{} provides a powerful mechanism to easily build
 arbitrary aggregations of available data. Such data can either be point data
 (like activity locations, trip start locations, GPS points or any other spatial
@@ -237,32 +220,31 @@ in each region, or build the sum, the minimum or maximum or average of an
 attribute of the data points.
 
 With the activity locations provided by an
-Activities Layer, the following (and more) aggregations are possible:
+\lstinline|Activities Layer|, the following (and more) aggregations are possible:
 \begin{compactitem}
   \item Show the number of performed activities per region
   \item Show the number of performed work activities per region
-  \item Show the number of work activities starting after 10~AM per region
-  \item Show the average duration of work activities starting after 10~AM per
+  \item Show the number of work activities starting after 10\,AM per region
+  \item Show the average duration of work activities starting after 10\,AM per
   region
 \end{compactitem}
 Similarly, with the trips data provided by a Vehicles Layer, the following
 exemplary aggregations are possible:
 \begin{compactitem}
   \item Show the number of trip starts per region
-  \item Show the number of trip starts with mode ``car'' per region
-  \item Show the percental share of trips starting with mode ``car'' in a
+  \item Show the number of trip starts with mode "car" per region
+  \item Show the percental share of trips starting with mode "car" in a
   region, compared to all trips starting in that region
-  \item Show the average duration of trips starting with mode ``pt'' in a region
-  after 11~AM
+  \item Show the average duration of trips starting with mode "pt" in a region
+  after 11\,AM
 \end{compactitem}
 
-By the use of custom data tables, e.g. containing more information about trips
+By the use of custom data tables, e.g.,\,containing more information about trips
 like the from and to activity types they connect, the number of line switches if
 it is a public transport trip (this requires the aggregation of MATSim's legs
 to trips for analysis purposes), many more complex analyses are just a few
 clicks away in \Via{}, like showing the average duration of car-trips starting
-between 6~AM and 8~AM, going from ``home'' to ``work''.
-
+between 6\,AM and 8\,AM, going from "home" to "work".
 
 \createfigure%
 {Aggregation analysis}%
