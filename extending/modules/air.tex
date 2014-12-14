@@ -4,7 +4,7 @@
 
 \hfill \textbf{Author:} Dominik Grether
 
-\begin{center} \includegraphics[width=0.25\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
+\begin{center} \includegraphics[width=0.25\textwidth, angle=0]{extending/figures/air/air_network_europe_osm} \end{center}
 
 % ##################################################################################################################
 %\section{Mid-Distance Transport}
@@ -23,13 +23,11 @@ Their choice of transport mode, routes, and departure time is restricted by the 
 The modeling of rail transport is based on teleportation. 
 With appropriate data the modeling approach for air transport could also be applied to rail transport~\citep{Quick2012BARailTraffic}.  
 
-The modeling of technology and demand is sketched in Sec.~\ref{sec:air_rail_scenario}. 
-Based on simulation results for a pure air transport model, effects of mode choice are presented (Sec.~\ref{sec:air_rail_results}). 
-Sec.~\ref{sec:air_rail_discussion} then interprets simulation results and highlights some modeling aspects that require further studies. 
-Especially the choice set generation and plans removal algorithm of MATSim is discussed, that is also subject of Sec.~\ref{sec:future-of-scoring-function}. 
+The modeling of technology and demand is sketched in Section~\ref{sec:air_rail_scenario}. 
+Based on simulation results for a pure air transport model, effects of mode choice are presented (Section~\ref{sec:air_rail_results}). 
+Section~\ref{sec:air_rail_discussion} then interprets simulation results and highlights some modeling aspects that require further studies. 
+Especially the choice set generation and plans removal algorithm of MATSim is discussed, that is also subject of Section~\ref{sec:future-of-scoring-function}. 
 Modeling, results, and studies of this chapter present the highlights of \citet[][Chapter~6, pp.~119]{Grether2014PhD} where further details can be found in case of interest.   
-
-
 
 %\mnote{Rail \& Air Transport}
 %In Italy, a private company started providing $2.5 \, h$ non-stop train rides between Milano and Rome\footnote{\url{http://www.italotreno.it} last access 19.12.2012}. 
@@ -96,7 +94,7 @@ Modeling, results, and studies of this chapter present the highlights of \citet[
 %For the technology side of air transport systems, the approach is quite similar to the approach chosen in MEANS---MIT~\citep{ClarkeEtAl2007AirNetworkSim}. 
 %It is, however, more detailed in respect to the passenger model.  
 
-
+% ##################################################################################################################
 \section{Air Transport Scenario}
 \label{sec:air_rail_scenario}
 
@@ -120,7 +118,7 @@ The air traffic technology model takes advantage of data provided by OAG Aviatio
 %%An OAG snapshot of worldwide direct flights in September 2009 is available for schedule generation. 
 %%All flights with IATA\footnote{see \url{www.iata.org}, last access 17.11.2013} airport codes, flight times, flight numbers and designators, aircraft types, available seats, and distance between airport are gathered from the database and processed. Codeshares, multi-stop flights, buses and trains with flight numbers, and cargo flights are filtered out of the schedule during the generation process.
 Relevant data for schedule and network generation is excerpted from the September 2009 OAG data using all flights departing on a Tuesday, taking each specific flight number into account only once.
-This may not always result in complete flight cycles, e.g., when the outbound and inbound flight operate on different days of the week. 
+This may not always result in complete flight cycles, e.g.,\,when the outbound and inbound flight operate on different days of the week. 
 Compared to using all flights of an entire week, the network may be incomplete, as certain destinations are only served on specific days.
 
 %\mnote{Airport Capacity}
@@ -164,9 +162,9 @@ Compared to using all flights of an entire week, the network may be incomplete, 
 \end{figure}
 
 %\mnote{Network}
-The modelling of the air network aims at a simulation by MATSim. %the queue model reviewed and explained in Sec.~\ref{sec:gawron_extension}. 
+The modeling of the air network aims at a simulation by MATSim. %the queue model reviewed and explained in Sec.~\ref{sec:gawron_extension}. 
 The network consists of airports, each showing an identical layout, and point-to-point connections in between. 
-Every runway is solely used either for inbound or outbound flights with taxiways connecting the runways to the apron. The latter accommodates a transit stop, i.e., the terminal, where flight movements originate and terminate (Fig.~\ref{fig:matsim_airport}). 
+Every runway is solely used either for inbound or outbound flights with taxiways connecting the runways to the apron. The latter accommodates a transit stop, i.e., the terminal, where flight movements originate and terminate (Figure~\ref{fig:matsim_airport}). 
 %\mnote{Runways}
 %The two runways of each airport possess a restriction of flow capacity ($c_{flow}$) that is varied in the subsequent simulation runs. 
 %Furthermore, not more than one aircraft (unit [$veh$]) can be simultaneously on a runway.
@@ -177,14 +175,14 @@ Every runway is solely used either for inbound or outbound flights with taxiways
 %As both values flow and storage capacity shall be set, the speed limit is varied according to the chosen value for flow capacity.
 %E.g., for an outbound runway of an airport with an outbound flow capacity of $60 \, veh/h$ on a $1500 \, m$ runway with a storage capacity constraint of $1 \, veh$, the speed limit is set to $\frac{1500 \, m \cdot 60 \, veh/h}{1 \, veh} = 90 \, km/h$.
 %\mnote{Airways}
-Each airport pair is directly connected by airway links, one for each flight and direction of travel (Fig.~\ref{fig:matsim_network_model}). 
+Each airport pair is directly connected by airway links, one for each flight and direction of travel (Figure~\ref{fig:matsim_network_model}). 
 The maximum speed on any of these links is calculated based on the distance and flight duration provided by OAG. 
-Times for taxi, take-off, and landing are also taken into account, i.e., the flight duration is reduced by the time needed from push-back to airborne before the maximum speed for an airway link is calculated.
+Times for taxi, take-off, and landing are also taken into account, i.e.,\,the flight duration is reduced by the time needed from push-back to airborne before the maximum speed for an airway link is calculated.
 %\mnote{Routing}
 %To simplify matters, ATS (Air Traffic Services) routes are not implemented. 
 %Further, despite data could be gathered, no permission for use is retrieved so far.  %currently not available in a desirable format. 
 Each flight has an individual link that could be interpreted as route, each possessing individual characteristics. 
-Fig.~\ref{fig:matsim_air_network_eu} shows parts of the network of European air traffic.
+Figure~\ref{fig:matsim_air_network_eu} shows parts of the network of European air traffic.
 
 \begin{figure}[t]
 \begin{center}
@@ -233,7 +231,7 @@ Mutual interferences of aircrafts en-route are not included in the studies prese
 %\mnote{Vehicles}
 To represent individual aircraft in the simulation, transit vehicles are created on the basis of OAG data. 
 IATA aircraft codes, operating airlines, and seating capacities are reflected in the respective aircraft representation for every flight. 
-Information about boarding times, i.e., passenger flow per door over time, is not available, but could be set for each aircraft type. 
+Information about boarding times, i.e.,\,passenger flow per door over time, is not available, but could be set for each aircraft type. 
 One aircraft per flight is generated, thus delays resulting from a delayed incoming aircraft are not modeled.
 Accordingly, no aircraft rotations and vehicle trip chains are implemented for the time being. 
 The maximum velocity of each aircraft is set to twofold sonic speed, since speed limitations are set for each airway link of the network. 
@@ -246,21 +244,20 @@ The maximum velocity of each aircraft is set to twofold sonic speed, since speed
 
 \subsection{Passenger Demand}
 
-
 %\mnote{Passengers, Synthetic Population}
 As soon as you have modeled the technology side of air transport, you can start to simulate a passenger demand. 
 The passenger demand for trips in Germany created and used for the results of this section is based on O-D data of DESTATIS 
 \footnote{\url{destatis.de}, Fachserie 8 Reihe 6, last access 10.09.2012}. 
 Then, for each O-D pair and trip a virtual person is created.
 Each virtual person performs two activities, one at the origin and the other at the destination airport. 
-Both activities are of same type, thus time spent performing both activities is accumulated before it is evaluated by the utility function according to Sec.~\ref{sec:charyparnagel}. %equation (\ref{eq:utility_v_perf}). 
+Both activities are of same type, thus time spent performing both activities is accumulated before it is evaluated by the utility function according to Section~\ref{sec:charyparnagel}. %equation (\ref{eq:utility_v_perf}). 
 A typical duration, $t_{typ,q}$, of $21 \, h$ is set for this activity type. 
 The time virtual persons arrive at the origin airport and start waiting for a connection is drawn randomly from a uniform distribution in 04:00 to 18:00, UTC. 
 This reflects estimated typical opening hours of airports in Europe.
 No other time constraints are set, thus the only incentive for virtual persons is to reduce overall travel time and maximize time spent at the activity. 
 In between the two activities a flight leg is scheduled, connecting origin and destination.
 As is common, the demand does not specify if a direct flight from O to D is chosen or the virtual person is on a route containing one or more transfers.
-The synthetic population contains $51832$~virtual persons, $1550$~trips from the original data are neglected as origin and destination are equal. 
+The synthetic population contains 51\,832\,virtual persons, 1\,550\,trips from the original data are neglected as origin and destination are equal. 
 %
 
 %DESTATIS provides data for passenger movements within Germany in two different representations (referred as data sets 5.1.1 and 5.1.2).
@@ -278,6 +275,7 @@ The synthetic population contains $51832$~virtual persons, $1550$~trips from the
 %The time virtual persons arrive at the origin airport and start waiting for a connection is drawn randomly from a uniform distribution in 04:00 to 18:00, UTC. 
 %This reflects estimated typical opening hours of airports in Europe.
 
+% ##################################################################################################################
 \section{Simulation Results}
 \label{sec:air_rail_results}
 
@@ -289,7 +287,7 @@ Together with the synthetic population it serves as input for the simulation.
 %model with no delays and no effective runway capacity restrictions 
 %from 
 %\technologyCite~is used.
-The assignment of concrete flights to the desired O-D connection, i.e., the passenger routing, is calculated by the default public transit routing module of MATSim.
+The assignment of concrete flights to the desired O-D connection, i.e.,\,the passenger routing, is calculated by the default public transit routing module of MATSim.
 
 %The routing basically looks for a least cost path in terms of travel time. 
 %The graph used for routing is constructed from the information contained in the transit schedule. 
@@ -300,13 +298,13 @@ The assignment of concrete flights to the desired O-D connection, i.e., the pass
 %The simulation is run several times using different values of the $c_{line switch}$ parameter, i.e., $c_{line switch} \in \{ 0, -6, -12, -18, -24, -30\}/transfer$\footnote{Note, that $c_{line switch}$ cannot be set to values $> 0$ as a standard least cost path calculator cannot handle positive costs for edges.}.  
 
 %\mnote{Simulation Runs}
-Each simulation is run for $600$~iterations.
-In each iteration, $10$~\% of the virtual persons may shift their departure time randomly within a $2 \, h$ interval.
-Another $10$~\% may seek a new route, i.e., a connection between origin and destination. 
+Each simulation is run for 600\,iterations.
+In each iteration, 10\,\% of the virtual persons may shift their departure time randomly within a 2\,hour interval.
+Another 10\,\% may seek a new route, i.e.,\,a connection between origin and destination. 
 Each passenger choses out of a set of $5$ plans using the multinomial logit model. %(Sec.~\ref{sec:matsim_overview_algo}). 
 %The amount of shift is drawn from a uniform distribution.
-The outcome is stable after 500 iterations, thus departure time choice and routing are switched off. 
-For another 100~iterations only the logit model is used by the passengers to select a plan. 
+The outcome is stable after 500\,iterations, thus departure time choice and routing are switched off. 
+For another 100\,iterations only the logit model is used by the passengers to select a plan. 
 %Empirically, fixing the choice set for the last 100~iterations reduces the noise of learning and eases analysis and intepretation of results. 
 
 %\mnote{Computation Time}
@@ -401,11 +399,11 @@ For another 100~iterations only the logit model is used by the passengers to sel
 \end{figure}
 
 Results are then taken from the output of the 600th iteration. 
-Filtered by flights in Germany, Fig.~\ref{fig:2009_passengers_seats} depicts passengers in aircraft and seats therein over time of day. 
+Filtered by flights in Germany, Figure~\ref{fig:2009_passengers_seats} depicts passengers in aircraft and seats therein over time of day. 
 Some passengers fail to reach their destination, they get stuck.   
 This is considered unrealistic, as only trips within Germany are modeled, which are usually completed within a few hours without any requirement for an overnight stay at an airport. 
 %Tab.~\ref{tab:2009_results_line_switch} shows the results for these calculations. 
-320 passengers get stuck at the end of the day. %, but fewer than in the 0th iteration.
+320\,passengers get stuck at the end of the day. %, but fewer than in the 0th iteration.
 Getting stuck is not a consequence of a general lack of seats: at any time of day, there are more seats than demand.  
 %
 There are many reasons why stuck passengers can arise in such a situation.
@@ -413,13 +411,13 @@ There are many reasons why stuck passengers can arise in such a situation.
 Further analysis of the simulation results leads to the following insights for the $c_{lineswitch} = 0$ scenario:
 \begin{itemize}
 
-\item 92~passengers are stuck because there is no seat, and there is no other flight by the same airline later during the day to which they would be shifted otherwise.
+\item 92\,passengers are stuck because there is no seat, and there is no other flight by the same airline later during the day to which they would be shifted otherwise.
 
-\item 228~passengers are stuck at an airport because there is no connection after their departure time 
+\item 228\,passengers are stuck at an airport because there is no connection after their departure time 
 	between that airport and their destination airport. 
 \end{itemize}
 
-Fig.~\ref{fig:2009_passengers_seats} further reveals the tendency of passengers to depart early. 
+Figure~\ref{fig:2009_passengers_seats} further reveals the tendency of passengers to depart early. 
 Neither getting stuck nor departing early are behavioral aspects explicitly modeled.  
 
 %\begin{figure}[t]
@@ -456,20 +454,20 @@ A second option for mode choice is added.
 Each virtual person can now choose between the micro-simulated air transport options and an alternative mode. 
 The alternative mode has no capacity restrictions. 
 Furthermore, passengers that travel with the alternative mode can start directly at their randomly selected departure time. 
-The travel time, $tt$, is computed by the microsimulation with an estimation of the beeline distance between the O-D pair $d$ and a velocity $v$, i.e., $tt = d / v$.  
-This velocity is varied in several simulation runs, i.e., $v \in \{100, 150, 200, 250, 300 \} [km/h]$. 
+The travel time, $tt$, is computed by the microsimulation with an estimation of the beeline distance between the O-D pair $d$ and a velocity $v$, i.e.,\,$tt = d / v$.  
+This velocity is varied in several simulation runs, i.e.,\,$v \in \{100, 150, 200, 250, 300 \} [km/h]$. 
 If the alternative mode is chosen, the (dis-)utilities for traveling in the scoring are calculated accordingly.  
 
 %Each person in the synthetic population obtains a second plan that uses the alternative mode. 
-With this population the simulation is again run for $600$~iterations. 
-Like in the previous simulations $10$~\% of the virtual persons may shift their departure times while another $10$~\% seek a different route between origin and destination in the air transport network. 
-Additionally, further $10$~\% of virtual persons may change mode, i.e., they can switch between the air traffic mode and the alternative mode. 
-After $500$~iterations all choice modules are switched off, thus for the last $100$ iterations the logit model is used by passengers to select one of their plans. 
+With this population the simulation is again run for 600\,iterations. 
+Like in the previous simulations 10\,\% of the virtual persons may shift their departure times while another 10\,\% seek a different route between origin and destination in the air transport network. 
+Additionally, further 10\,\% of virtual persons may change mode, i.e.,\,they can switch between the air traffic mode and the alternative mode. 
+After 500\,iterations all choice modules are switched off, thus for the last 100\,iterations the logit model is used by passengers to select one of their plans. 
 
 Simulation results for the 600th iteration show that the 
 %, the same numbers as for the previous simulation runs are calculated (Tab.~\ref{tab:2009_results_alternative_mode}). 
 increasing speed of the alternative mode affects the modal split. % (Tab.~\ref{tab:2009_results_train_modal_split}).  
-While for a $v = 100 \, km/h$ the alternative mode is chosen by $1.2$~\% of the passengers, a mode alternative with a speed of $300 \, km/h$ attracts $15.69$~\% of travelers. 
+While for a $v = 100 \, km/h$ the alternative mode is chosen by 1.2\,\% of the passengers, a mode alternative with a speed of $300 \, km/h$ attracts 15.69\,\% of travelers. 
 The number of stuck passengers for the alternative mode with $v = 100 \, km/h$ is remarkably reduced from approx.~$320$ to $67$. 
 Higher speeds of the alternative mode further reduce the number of stuck passengers. 
 Slow speeds of the alternative mode implicate a dominance of the air transport mode. 
@@ -624,14 +622,13 @@ Further, it is an open issue of the implemented algorithm: If the number of plan
 	\label{tab:2009_results_train_modal_split_psl}
 \end{table}
 
-
-Instead this deterministic removal of plans a probabilistic algorithm can be implemented, e.g.~plans for removal can be selected based on a path size logit model. 
+Instead this deterministic removal of plans a probabilistic algorithm can be implemented, e.g.,\,plans for removal can be selected based on a path size logit model. 
 With this modification the simulation runs are repeated. 
 %with the same setup as for the runs that includes the alternative mode. 
-Fig.~\ref{fig:2009_leg_histogram_modes_psl} shows the resulting travel patterns over time for alternative modes at speed $100 \, km/h$ and $300 \, km/h$.  
+Figure~\ref{fig:2009_leg_histogram_modes_psl} shows the resulting travel patterns over time for alternative modes at speed 100\,km/h and 300\,km/h.  
 The distribution of travelers on the alternative mode over time of day is quite homogeneously. 
 The speed increase of the alternative mode attracts more passengers. 
-This is reflected by the modal splits in Tab.~\ref{tab:2009_results_train_modal_split_psl}. 
+This is reflected by the modal splits in Table~\ref{tab:2009_results_train_modal_split_psl}. 
 Only one passenger gets stuck at the end of day. 
 
 \begin{table}[t]
@@ -671,7 +668,7 @@ $
 $
 }
 
-Tab.~\ref{tab:2009_results_alternative_mode_psl} shows the outcome of these calculations. 
+Table~\ref{tab:2009_results_alternative_mode_psl} shows the outcome of these calculations. 
 The first line contains the comparison of two sets of input data from DESTATIS\footnote{In the calculation, $sim_{direct}$ is replaced by $od_{transfers}$.}. 
 This serves as reference as it would assume that all demand is served by direct flights.
 All simulation runs explain the data better than that reference.
@@ -725,7 +722,7 @@ This would resolve some of the presented problems concerning departure time choi
 %\subsection{Air Transport Only}
 %
 %\mnote{Stuck}
-Passengers getting stuck are considered as not desired artefact of the simulation. 
+Passengers getting stuck are considered as not desired artifact of the simulation. 
 Without the alternative mode, the only available transport mode is a capacity restricted flight connection that is served in discrete, irregular time intervals. 
 The number of stuck passengers is higher than for the simulation runs with the alternative mode. 
 Passengers get more likely stuck on O-D pairs where the demand excesses seat capacity. 
@@ -746,11 +743,11 @@ Assuming that the number of available seats is increased accordingly, the simula
 As result, the number of passengers that had not reached their destination but got stuck was much higher. 
 %These results can be found in Appendix~\ref{app:chpt:air_2011}. 
 With the availability of 09-2009 DESTATIS data, the overall quality of results increased.  
-The replacement of the 2011 data by 2009 data reduced the number of stuck passenger significantly, from around $1500$ to $350$ travelers. 
+The replacement of the 2011 data by 2009 data reduced the number of stuck passenger significantly, from around 1500 to 350\,travelers. 
 
 Data is provided on a monthly basis, while the time horizon of the simulation model is one day. 
 The number of trips per day is retrieved on the assumption that trips are uniformly distributed over all days of a month.  
-The remaining $350$ stuck passengers might be resolved by a more accurate distribution. 
+The remaining 350\,stuck passengers might be resolved by a more accurate distribution. 
 Otherwise, a longer time horizon could be simulated\footnote{Note, that this requires some changes in the source code that may not be resolved by sole customizations of MATSim. Please ask the developers before running MATSim for a longer time horizon.}. 
 This would also include flights that are not departing on a Tuesday. 
 Possibly, travelers no longer get stuck. 
@@ -760,7 +757,7 @@ The problem of stuck passenger can be model-intrinsic.
 The algorithm that removes plans is apparently the pivotal point to avoid stuck passengers. 
 Replacement of the deterministic by a probabilistic formulation resolves most of the stuck passengers. 
 The applied path size logit modeling approach seems to be feasible, but requires further studies for parametrization and interpretation. 
-In general, it allows the generation of more heterogeneous choice sets, see also Sec.~\ref{sec:choicesets}. 
+In general, it allows the generation of more heterogeneous choice sets, see also Section~\ref{sec:choicesets}. 
 With the deterministic plan removal plans with a high score but similar structure dominate all other generated plans.In combination with capacity restrictions the lack of alternatives results in stuck passengers.  
 All other approaches to simulate more heterogeneity discussed on the following should consider these effects.  
 
