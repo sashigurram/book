@@ -6,31 +6,22 @@
 % ##################################################################################################################
 \section{Introduction}
 \label{sec:ownmodules-intro}
-
-
-As explained in Section~\ref{sec:co-ev}, \acrshort{matsim} at its core is a co-evolutionary cycle consisting of the three elements \lstinline$Mobsim$, \lstinline$Scoring$, and replanning.  All three elements operate on what is essentially an in-memory object-oriented data base of \lstinline$Person$ objects \citep{RaneyNagel2006traf-framework}.  
+As explained in Section~\ref{sec:co-ev}, MATSim at its core is a co-evolutionary cycle consisting of the three elements \lstinline$Mobsim$, \lstinline$Scoring$, and replanning. All three elements operate on what is essentially an in-memory object-oriented data base of \lstinline$Person$ objects \citep{RaneyNagel2006traf-framework}.  
 %
 On a conceptual level, each \lstinline$Person$ object is a Q-learning agent \citep[][Chapter~21]{RusselNorvig2010ArtificialIntelligence} whose action consists of selecting a \lstinline$Plan$.  The plan is then executed in the \lstinline$Mobsim$; the executed plan obtains a score; plans are possibly mutated and finally selected.
 
 In consequence, it is these three elements which can be reconfigured:
 \begin{compactitem}
-
 \item The \lstinline$Mobsim$ can be replaced, either by an internally available alternative, or by a fully external \lstinline$Mobsim$.
-
 %% In addition, one can insert additional instructions into the program flow of \lstinline$QSim$, which is the default implementation of the \lstinline$Mobsim$.  This is achieved by so-called \lstinline$MobstimListener$s.
-
 \item The scoring can be replaced, by possibly giving each individual agent a different recipe to compute its score.
-
 \item Arbitrary implementations of type \lstinline$PlanStrategy$ can be added to the replanning -- these either generate new plans from scratch or by mutating existing ones, or they select between plans.
-
 \end{compactitem}
-It is also possible to insert additional material between these elements.  This is achieved by so-called \lstinline$ControlerListener$s.
+It is also possible to insert additional material between these elements. This is achieved by so-called \lstinline$ControlerListener$s.
 
-The \lstinline$Mobsim$ generates a stream of \lstinline$Event$s.  These are primarily used in two places:
+The \lstinline$Mobsim$ generates a stream of \lstinline$Event$s. These are primarily used in two places:
 \begin{compactitem}
-
 \item The scoring uses them to track each agent's success at executing its plan, and compute the scoring value based on this.
-
 \item \lstinline$PlanStrategy$ modules use them to build approximate models of the world in which they operate.  For example, the router obtains time-dependent expected link travel times from a \lstinline$TravelTime$ object, which in turn listens to link enter and link exit events.
   
 \end{compactitem}
@@ -39,7 +30,6 @@ Additionally, one can write nearly arbitrary event handlers for analysis.
 %% : If one 
 %% wanted to and if the corresponding information is in the data, then one could extract the average age of all drivers using roads with speed limits 30 or less.
 Such analysis is either possible during the iterations, or after a run by re-playing the events file.
-
 
 
 Some modules are so large that fully replacing them in order to adapt the simulation system to one's need is too much work.  These are, in particular,
@@ -55,16 +45,15 @@ The router, in contrast, is most importantly configured by replacing the definit
 \section{Extension Points}
 This section describes what could be called the service provider interface (SPI) of MATSim.
 Historically, the main entry-point for writing a MATSim extension has been to literally extend (in the Java sense)
-the Controler class.  Essentially, one would override the methods calling the mobsim, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. This is now discouraged. While this pattern worked when a each member of the team
+the \lstinline|Controler| class.  Essentially, one would override the methods calling the mobsim, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. This is now discouraged. While this pattern worked when a each member of the team
 was working on extending the MATSim core by a different aspect, it fails when it comes to
-integrating those aspects to a single product: There is nothing one can do with a PublicTransportControler, an EmissionsControler, a RoadPricingControler and an OTFVisControler,
-if one wants to combine them to visualize the emissions of buses on toll roads.
+integrating those aspects to a single product: There is nothing one can do with a \lstinline|PublicTransportControler|, an \lstinline|EmissionsControler|, a \lstinline|RoadPricingControler| and an \lstinline|OTFVisControler|, if one wants to combine them to visualize the emissions of buses on toll roads.
 
 % =========================================================================================
 \subsection{Config Group}
 \label{sec:config}
 The configuration of a MATSim run is a grouped list of key-value pairs, stored in XML
-format, often in a file named \lstinline$config.xml$ (see section \ref{sec:config}).
+format, often in a file named \lstinline$config.xml$ (see Section~\ref{sec:config}).
 Recall that it is grouped and looks, for example, like this:
 
 \begin{lstlisting}
@@ -84,34 +73,29 @@ Recall that it is grouped and looks, for example, like this:
 
 At runtime, the entire configuration is stored in an instance of \lstinline$Config$, from which instances of \lstinline$Module$ can be accessed by their name.
 The author of an extension can subclass the \lstinline$Module$ class to provide named accessors for the parameters.
-There is even a utility class \lstinline$ReflectiveModule$ which you can use if you want to define the mapping of named parameters to accessors
-using Java annotations.
+There is even a utility class \lstinline$ReflectiveModule$ which you can use if you want to define the mapping of named parameters to accessors using Java annotations.
 
 % =========================================================================================
 \subsection{ScenarioElement}
-
 The object-oriented in-memory database which holds the \lstinline$Person$ objects with their plan memories is accessible via the
 \lstinline$Population$ interface. The \lstinline$Network$ interface gives access to the traffic network graph, consisting of links and nodes.
-There is a \lstinline$TransitSchedule$ interface which represents the public transit schedule. Your own modelling tasks may need an additional data container
-like these. We call them scenario elements. The freight carrier population of the freight extension described in section \ref{sec:carriers} is a typical example. 
+There is a \lstinline$TransitSchedule$ interface which represents the public transit schedule. Your own modeling tasks may need an additional data container
+like these. We call them scenario elements. The freight carrier population of the freight extension described in Section~\ref{sec:carriers} is a typical example. 
 
 \lstinline$Scenario$ is the interface which ties all scenario elements together. You can add your own named scenario element
 to the \lstinline$Scenario$ at startup, for example in a \lstinline$StartupListener$. All standard scenario elements are populated
 from XML files at startup, but your own scenario elements could just as well be interfaces to an external relational database.
 
-
 % =========================================================================================
 \subsection{ControlerListener}
 \label{sec:controlerListener-extension-point}
 \label{sec:controlerextension}
-Controler remains the main user-facing class of MATSim, but please do not subclass it. Rather,
-use its setter methods to plug in your own code.
-ControlerListeners are called at the transitions of the washing-machine diagram, in undefined order.
-Thus, AControlerListener may only rely on the computation of BControlerListener if BControlerListener
- makes that computation in an earlier transition. For instance, if BControlerListener is a StartupListener
- and loads data into a Map on start-up, AControlerListener can be an IterationStartsListener and use that Map.
- But do not write two IterationStartsListeners where the first puts some data into a Map and the second expects
- to find it there - they may be called in any order.
+\lstinline|Controler| remains the main user-facing class of MATSim, but please do not subclass it. Rather, use its setter methods to plug in your own code.
+\lstinline|ControlerListeners| are called at the transitions of the washing-machine diagram, in undefined order.
+Thus, \lstinline|AControlerListener| may only rely on the computation of \lstinline|BControlerListener| if \lstinline|BControlerListener|
+ makes that computation in an earlier transition. For instance, if \lstinline|BControlerListener| is a \lstinline|StartupListener|
+ and loads data into a \lstinline|Map| on start-up, \lstinline|AControlerListener| can be an \lstinline|IterationStartsListener| and use that \lstinline|Map|.
+ But do not write two \lstinline|IterationStartsListeners|, where the first puts some data into a Map and the second expects to find it there - they may be called in any order.
 
 % =========================================================================================
 \subsection{Events}
@@ -126,7 +110,7 @@ The mobility simulation moves the agents around in the virtual world according t
 \item     An agent arrives at a location
 \item     An agent starts an activity
 \end{compactitem}
-
+%
 Each event has a timestamp, a type, and additional attributes required to describe the action like a vehicle id, a link id, an activity type or other data. In theory, it should be possible to replay the mobility simulation just by the information stored in the events. While a plan 
 describes an agent's intention, the stream of events describes how the simulated day actually was.
 
@@ -134,18 +118,12 @@ As the events are so basic, the number of events generated by a mobility simulat
 
 The scoring of the executed plans makes use of events to find out how much time agents spent at activities or for traveling. Some replanning modules might make use of events as well: The router for example can use the information contained in events to figure out what links are jammed at certain times and route agents around that jam when creating new plans.
 
+% -----------------------------------------------------------------------------
 \subsubsection{Handling Events}
-MATSim extensions can watch the mobility simulation by interpreting the stream of Events. This is done
-by implementing the \lstinline$EventHandler$ interface and registering the implementation with the framework. The lifecycle of
-an \lstinline$EventHandler$ can be chosen by the developer. Normally, an \lstinline$EventHandler$ lives as long as the simulation run.
-It is notified before the beginning of each new iteration so that its state can be reset to listen to a new
-iteration. This pattern can be used to collect information over all iterations. But if the purpose of
-an \lstinline$EventHandler$ is to make a calculation based on one single iteration, it may be more natural
-to create a new \lstinline$EventHandler$ instance for each iteration, query it for its result and discard it
-after the iteration finishes. This can be done in a \lstinline$ControlerListener$.
-% =========================================================================================
+MATSim extensions can watch the mobility simulation by interpreting the stream of Events. This is done by implementing the \lstinline$EventHandler$ interface and registering the implementation with the framework. The lifecycle of an \lstinline$EventHandler$ can be chosen by the developer. Normally, an \lstinline$EventHandler$ lives as long as the simulation run.
+It is notified before the beginning of each new iteration so that its state can be reset to listen to a new iteration. This pattern can be used to collect information over all iterations. But if the purpose of an \lstinline$EventHandler$ is to make a calculation based on one single iteration, it may be more natural to create a new \lstinline$EventHandler$ instance for each iteration, query it for its result and discard it after the iteration finishes. This can be done in a \lstinline$ControlerListener$.
 
-
+% -----------------------------------------------------------------------------
 \subsubsection{Producing Events}
 You can extend the MATSim event model by extending the \lstinline$Event$ class to define your own event types.
 Events can be produced from all places in code which are executed during the running mobility simulation,
@@ -171,6 +149,7 @@ the methods of an \lstinline$EventHandler$ instance are called sequentially, but
 may run on different threads of execution. Access to shared data must be synchronized externally. Whenever
 possible, different \lstinline$EventHandler$ instances should only communicate through events.
 
+% =========================================================================================
 \subsection{Mobsim}
 Besides adding \lstinline$MobsimListener$ implementations to enrich the standard \lstinline$Mobsim$, it is also possible to replace
 the entire \lstinline$Mobsim$ by a custom implementation. A \lstinline$Mobsim$ is basically
@@ -180,9 +159,9 @@ This allows you to use the co-evolutionary framework of MATSim while replacing t
 Your implementation need not be written in Java. The framework includes a helper class to call an arbitrary
 executable which is then expected to write its \lstinline$Event$ stream into a file. 
 
+% =========================================================================================
 \subsection{PlanStrategy}
 \label{sec:replanning-extension-point}
-
 Replanning in MATSim is specified by defining a set of weighted strategies. In each
 iteration, each agent makes a draw from this set and executes the selected strategy. The
 strategy specifies how the agent changes its behavior. Most generally, it is an operation on the plan memory
@@ -203,11 +182,10 @@ and to zero, one or more implementations of \lstinline$PlanStrategyModule$, whic
 
 The maximum size of the plan memory per agent is a configurable parameter of MATSim. Independent
  of what the selected \lstinline$PlanStrategy$ does, the framework will remove plans in excess
- of the maximum from the plan memory. The algorithm by which this is done is another implentation
+ of the maximum from the plan memory. The algorithm by which this is done is another implementation
  of \lstinline$PlanSelector$ and can be configured. 
 
 The four most commonly used strategies shipped with MATSim are:
-
 \begin{compactitem}
 \item Select from the existing plans at random, which are weighted by their current score.
 \item Mutate a random existing plan by re-routing all trips.
@@ -227,21 +205,11 @@ sub-destination, finding a scheduled connection between them, and finding pedest
 activity locations and the stations. With the \lstinline$TripRouter$ interface, the framework includes high-level 
 support for assembling complex modes of transport from building blocks provided by other modules or the core. 
   
-
 % =========================================================================================
 \subsection{Scoring}
 \label{sec:scoring-extension-point}
-
-By default, MATSim uses the so-called Charypar-Nagel utility formulation to score plans. Its parameters
-are configurable.
-The code which maps a stream of mobility simulation events to a score for each agent is placed behind a factory
- interface and replaceable. However, replacing it means replacing the entire utility formulation. There is
- currently no mechanism for composing a utility formulation from contributions by different modules.
-For instance, a module which simulates weather conditions would probably calculate penalties for pedestrians
-  walking in heavy rain, and the Cadyts calibration scheme already uses utility offsets in its formulation. A modeller
-  who wishes to compose a scoring function from the Charypar-Nagel utility, the rain penalty and the calibration offset
-  needs to do this manually, in code, accessing the code of all three modules contributing to the score and (for instance) summing
-  up their contributions. As of the writing of this chapter, this makes scoring in a way the least modular part of MATSim: It has to 
+By default, MATSim uses the so-called Charypar-Nagel utility formulation to score plans. Its parameters are configurable.
+The code which maps a stream of mobility simulation events to a score for each agent is placed behind a factory interface and replaceable. However, replacing it means replacing the entire utility formulation. There is currently no mechanism for composing a utility formulation from contributions by different modules. For instance, a module which simulates weather conditions would probably calculate penalties for pedestrians walking in heavy rain, and the Cadyts (Section~\ref{ch:cadyts}) calibration scheme already uses utility offsets in its formulation. A modeler, who wishes to compose a scoring function from the Charypar-Nagel utility, the rain penalty and the calibration offset needs to do this manually, in code, accessing the code of all three modules contributing to the score and (for instance) summing up their contributions. As of the writing of this chapter, this makes scoring in a way the least modular part of MATSim: It has to 
 be re-defined, in code, for every combination of modules which contribute to the utility.
 
 Keep in mind that scoring and replanning are not inherently coupled or automatically consistent with each other. 
@@ -253,7 +221,6 @@ solution where routes are distributed according to this scoring function. The re
  contain routes which have in one iteration been a fastest route. The behavior of the router is, in this case, inconsistent with the utility
  formulation.
    
-
 % =========================================================================================
 % ##################################################################################################################
 
