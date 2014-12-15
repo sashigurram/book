@@ -1,8 +1,4 @@
-rm *.aux
-rm *.log
-rm *.aux
-rm *.bbl
-rm *.blg
+rm *.aux rm *.log rm *.aux rm *.bbl rm *.blg
 rm *.lof
 rm *.lot
 rm *.out
