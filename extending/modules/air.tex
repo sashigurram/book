@@ -6,9 +6,10 @@
 
 \begin{center} \includegraphics[width=0.6\textwidth, angle=0]{extending/figures/air/air_network_europe_osm} \end{center}
 
+\createStandardInformation{todo}{todo}{todo}{todo}
+
 % ##################################################################################################################
 %\section{Mid-Distance Transport}
-
 Options for the simulation of air- and rail-transport technology and passengers using MATSim are subject of this chapter. 
 Overall travel times are often not that different between middle range rail and air transportation. 
 Airports and railway stations are affected by capacity and opening time constraints. 
@@ -21,7 +22,7 @@ Airports and aircraft are microscopically modeled the same way as bus stops and 
 Passengers are represented microscopically as multi-agent demand for air transportation. 
 Their choice of transport mode, routes, and departure time is restricted by the capacity provided by the simulation model for air transport technology. 
 The modeling of rail transport is based on teleportation. 
-With appropriate data the modeling approach for air transport could also be applied to rail transport~\citep{Quick2012BARailTraffic}.  
+With appropriate data the modeling approach for air transport could also be applied to rail transport \citep{Quick2012BARailTraffic}.  
 
 The modeling of technology and demand is sketched in Section~\ref{sec:air_rail_scenario}. 
 On the basis of simulation results for a pure air transport model, rail transport is added and effects of mode choice are presented (Section~\ref{sec:air_rail_results}). 
@@ -32,7 +33,7 @@ Modeling, results, and studies of this chapter present the highlights of \citet[
 % ##################################################################################################################
 \section{Air Transport Scenario}
 \label{sec:air_rail_scenario}
-
+% ===========================================================================================
 \subsection{Modeling \& Simulation of Air Transport Technology}
 \label{sec:modeling-of-technology}
 
@@ -68,7 +69,7 @@ Modeling, results, and studies of this chapter present the highlights of \citet[
 %\mnote{OAG}
 The air traffic technology model takes advantage of data provided by OAG Aviation\footnote{\url{www.oagaviation.com}, last access 08.08.2012}. 
 Relevant data for schedule and network generation is excerpted from the September 2009 OAG data using all flights departing on a Tuesday, taking each specific flight number into account only once.
-This may not always result in complete flight cycles, e.g., when the outbound and inbound flight operate on different days of the week. 
+This may not always result in complete flight cycles, e.g.,\,when the outbound and inbound flight operate on different days of the week. 
 Compared to using all flights of an entire week, the network may be incomplete, as certain destinations are only served on specific days.
 
 
@@ -76,22 +77,9 @@ Compared to using all flights of an entire week, the network may be incomplete, 
 The modeling of the air network aims at a simulation with MATSim.  
 The network consists of airports, each showing an identical layout, and point-to-point connections in between. 
 Every runway is solely used either for inbound or outbound flights with taxiways connecting the runways to the apron. The latter accommodates a transit stop, i.e., the terminal, where flight movements originate and terminate (Figure~\ref{fig:matsim_airport}). 
-%\mnote{Runways}
-%The two runways of each airport possess a restriction of flow capacity ($c_{flow}$) that is varied in the subsequent simulation runs. 
-%Furthermore, not more than one aircraft (unit [$veh$]) can be simultaneously on a runway.
-%This is modeled by setting the $c_{storage}$ parameter of the queue model accordingly.
-%If the flow capacity restriction ($c_{flow}$) should have any influence on the model the storage capacity restriction should be at least as equal to \nolinebreak$l / v_{fs} \cdot c_{flow}$, whereby $l$ denotes the length of the runway and $v_{fs}$ the speed limit. 
-%%I.e., the time needed to traverse the runway in free flow conditions times the maximal permitted flow on the runway. 
-%If the storage capacity restriction is smaller, flow constraints would not have any effect.
-%As both values flow and storage capacity shall be set, the speed limit is varied according to the chosen value for flow capacity.
-%E.g., for an outbound runway of an airport with an outbound flow capacity of $60 \, veh/h$ on a $1500 \, m$ runway with a storage capacity constraint of $1 \, veh$, the speed limit is set to $\frac{1500 \, m \cdot 60 \, veh/h}{1 \, veh} = 90 \, km/h$.
-%\mnote{Airways}
 Each airport pair is directly connected by airway links, one for each flight and direction of travel (Figure~\ref{fig:matsim_network_model}). 
 The maximum speed on any of these links is calculated based on the distance and flight duration provided by OAG. 
 Times for taxi, take-off, and landing are also taken into account, i.e.,\,the flight duration is reduced by the time needed from push-back to airborne before the maximum speed for an airway link is calculated.
-%\mnote{Routing}
-%To simplify matters, ATS (Air Traffic Services) routes are not implemented. 
-%Further, despite data could be gathered, no permission for use is retrieved so far.  %currently not available in a desirable format. 
 Each flight has an individual link that could be interpreted as route, each possessing individual characteristics. 
 Figure~\ref{fig:matsim_air_network_eu} shows parts of the network for European air traffic.
 
@@ -111,7 +99,6 @@ A transit route, which represents the route on the air traffic network, is creat
 Mutual interferences of aircrafts en-route are not included in the studies presented in this chapter.
 %Tab.~\ref{tab:number_of_flights} lists the number of (not included) airports, direct origin-destination (O-D) connections and flight movements for three different area pairs.
 
-
 %\mnote{Vehicles}
 To represent individual aircraft in the simulation, transit vehicles are created on the basis of OAG data. 
 IATA aircraft codes, operating airlines, and seating capacities are reflected in the respective aircraft representation for every flight. 
@@ -120,10 +107,8 @@ One aircraft per flight is generated, thus delays resulting from a delayed incom
 Accordingly, no aircraft rotations and vehicle trip chains are implemented for the time being. 
 The maximum velocity of each aircraft is set to twofold sonic speed, since speed limitations are set for each airway link of the network. 
 
-
+% ===========================================================================================
 \subsection{Passenger Demand}
-
-
 %\mnote{Passengers, Synthetic Population}
 As soon as you have modeled the technology side of air transport, you can start to simulate a passenger demand. 
 The passenger demand for trips in Germany created and used for the results of this section is based on O-D data of DESTATIS 
@@ -131,7 +116,7 @@ The passenger demand for trips in Germany created and used for the results of th
 For each O-D pair and trip a virtual person is created.
 Each virtual person performs two activities, one at the origin and the other at the destination airport. 
 Both activities are of same type, thus time spent performing both activities is accumulated before it is evaluated by the utility function according to Section~\ref{sec:charyparnagel}. %equation (\ref{eq:utility_v_perf}). 
-A typical duration, $t_{typ,q}$, of $21 \, h$ is set for this activity type. 
+A typical duration, $t_{typ,q}$, of 21\,hours is set for this activity type. 
 The time virtual persons arrive at the origin airport and start waiting for a connection is drawn randomly from a uniform distribution in 04:00 to 18:00, UTC. 
 This reflects estimated typical opening hours of airports in Europe.
 No other time constraints are set, thus the only incentive for virtual persons is to reduce overall travel time and maximize time spent at the activity. 
@@ -158,9 +143,8 @@ The synthetic population contains 51\,832\,virtual persons, 1\,550\,trips from t
 % ##################################################################################################################
 \section{Simulation Results}
 \label{sec:air_rail_results}
-
+% ===========================================================================================
 \subsection{Air Transport}
-
 %\mnote{Parameters}
 As scenario for air transport technology, a model with Europe to world wide coverage is used. 
 Together with the synthetic population it serves as input for the simulation.
@@ -207,17 +191,15 @@ There are many reasons why stuck passengers can arise in such a situation.
 %
 Further analysis of the simulation results leads to the following insights for the $c_{lineswitch} = 0$ scenario:
 \begin{itemize}
-
 \item 92\,passengers are stuck because there is no seat, and there is no other flight by the same airline later during the day to which they would be shifted otherwise.
-
 \item 228\,passengers are stuck at an airport because there is no connection after their departure time 
 	between that airport and their destination airport. 
 \end{itemize}
 
 Neither departing early nor getting stuck are behavioral aspects explicitly modeled.  
 
+% ===========================================================================================
 \subsection{Adding an Alternative Mode}
-
 %\mnote{Simulation Setup}
 To gain further insights, in the following a slightly different simulation setup is applied. 
 %The additional cost for each transfer is fixed to $c_{lineswitch} = 0$ and has no influence on the model. 
@@ -267,7 +249,6 @@ Further, it is an open issue of the implemented algorithm: If the number of plan
 	\caption{Results with random selector for plan removal, iteration 600. Modal split for different speeds of the alternative mode}
 	\label{tab:2009_results_train_modal_split_psl}
 \end{table}
-
 
 Instead this deterministic removal of plans a probabilistic algorithm can be implemented, e.g.,\,plans for removal can be selected based on a path size logit model. 
 With this modification the simulation runs are repeated. 
@@ -327,9 +308,6 @@ This is plausible as the demand only covers air transport trips.
 % ##################################################################################################################
 \section{Interpretation \& Discussion}
 \label{sec:air_rail_discussion}
-%\subsection{Alternative Mode}
-
-%\mnote{Interpretation}
 The alternative mode can be interpreted as mixture between train, bus, or car connection availability. 
 Clearly, the results hinge at the assumption that the alternative mode is always available and not capacity restricted.  
 All passengers on the alternative mode face the same travel speed. 
@@ -346,7 +324,6 @@ The data for the demand provides O-D pairs for air transport, but not for car, t
 %This is reflected by the presented results. 
 For more plausible interpretations, further data for demand on other modes is required. 
 %Alternatively, the 2011 data could be used. 
-
 
 %\subsection{Overall Approach}
 
@@ -438,9 +415,6 @@ After this more general problem is solved, a more diverse routing should be reco
 Overall, the results show that a microscopic, agent-based simulation of passenger demand for air transport is feasible. 
 Most passengers are able to learn the constraints of air transport technology and arrive at their desired destination.
 
-%Despite the lack of detail, some relevant aspects of congestion and delays can be captured by a queue model for traffic flow.
-%The queue model is computationally relatively cheap so large scenarios can be simulated.
-%As proof of example results for the Europe to world air transport are presented.
 The modeling of technology is similar to the approach by~\citet{ClarkeEtAl2007AirNetworkSim}, the level of detail is, however, coarser. 
 In the same way as~\citet{ClarkeEtAl2007AirNetworkSim}, further models for, e.g.,\,gates, taxiing, weather or airline operations can be added to the presented approach. 
 As the open source code of MATSim comes with options for extension, more detailed models of the technology side hinge on the availability of data. 
@@ -450,9 +424,10 @@ The chapter discusses some open issues, that are considered more general and not
 The advice to the interested user is to support the MATSim team in solving these more general questions first.  
 Then, the model may help to get a more detailed picture of mid-distance travel patterns.
 
-%\mnote{Potential Applications}
 Clearly, potential applications of the proposed model depend on type and detail of included information. 
 In general, application for policy planning allows a more detailed evaluation of the effects from mid-distance travel policies that includes consideration of mode alternatives. 
 The approach could also be useful for private companies, planning flight-schedules and capacities on their connections. 
 The impacts of these changes on customers can be assessed on a high level of detail. 
+
+% ##################################################################################################################
 
