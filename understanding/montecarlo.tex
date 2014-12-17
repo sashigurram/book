@@ -61,13 +61,13 @@ from a certain travel behavior are statistically equal to the network
 conditions that caused this behavior.
 
 Simulation addresses the question of how to identify this state of
-mutual demand/supply consistency, i.e. it solves the model. The model
+mutual demand/supply consistency, i.e.\ it solves the model. The model
 system shown in Figure~\ref{fig:Demand/supply-perspective-on} is
 complicated -- it nonlinear, stochastic, and extremely high-dimensional.
 The only known technique to solve it exploits an additional modeling
 assumption that justifies the real occurrence of demand/supply consistency:
 Travelers adjust their behavior for their own benefit, and they only
-stop doing that only when further improvement is insubstantial. Demand/supply
+stop doing that when further improvement is insubstantial. Demand/supply
 consistency characterizes the outcome of this process jointly for
 all travelers.
 
@@ -110,11 +110,9 @@ that the there is more than a superficial resemblance between the
 processes of real humans. If the notion of {}``learning'' has to
 be used at all when interpreting Algorithm~\ref{alg:Iterative-scheme-to},
 it should be understood as {}``moving a MATSim model closer to its
-solution point''. 
+solution point''.  Also see Sec.~\ref{sec:transients-vs-learning} \kai{Gunnar, I hope that this is ok.}.
 
-The remainder of this chapter phrases these statements more technically
-and explains its implications for the interpretation of MATSim outputs.
-This presentation is in parts a more technical reformulation of Chapter~\note{Agent-based DTA}.
+The remainder of this chapter phrases these statements more technically and explains its implications for the interpretation of MATSim outputs.  This presentation is in parts a more technical reformulation of Chapter~\ref{ch:abta}.
 
 
 \section{\label{sec:Relaxation-as-a}Relaxation as a Stochastic Process}
@@ -141,7 +139,7 @@ all agents. Similarly, the variable $S$ represents the network conditions
 for an entire day and for the entire physical system. Given MATSim's
 high level of detail, one hence may think of $D$, $S$ and $Z$ as
 simple placeholders for arbitrarily large data and complex structures.
-\note{Refer to corresponding data containers in MATSim?}
+\note{Refer to corresponding data containers in MATSim?}\kai{done, see next.}  Under standard conditions, $D$ corresponds to the set of selected plans, $S$ corresponds to the collection of all events, and $Z$ corresponds to the full plans file including the scores.
 
 Step~\ref{enu:Every-traveler-chooses} evaluates the (stochastic)
 travel behavior model of each agent. Technically, this comprises (i)
@@ -174,9 +172,9 @@ of the current network conditions $S^{k}$ but may also be based on
 the previously available information $Z^{k-1}$.
 
 The conditional distributions \MyEqRef{eq:choice-model}-\MyEqRef{eq:learning-model}
-are detailed elsewhere in this book: Chapter~\note{Choice models in MATSim}
+are detailed elsewhere in this book: Chapter~\ref{ch:discretechoice} 
 describes the plan selection mechanisms leading to $P(D\mid S^{k-1})$,
-Chapter~\note{Kinematic waves} explains the physical processes underlying
+Chapter~\ref{ch:kinematicwaves} explains the physical processes underlying
 $P(S\mid D^{k})$, and Chapter~\note{REF?} specifies the information
 update logic behind $P(Z\mid S^{k})$. A greater level of detail is,
 however, not needed for the purposes of the present chapter.
@@ -254,7 +252,7 @@ many different such sequences through which one can start out at $y$
 and end up at $x$.
 
 This completes the representation of MATSim in terms of a Markov chain.
-The next section gives gives some examples of how this representation
+The next section gives some examples of how this representation
 can be put to practical use.
 
 
@@ -306,9 +304,22 @@ its initial state.
 \item It is feasible to compute statistics of the stationary distribution
 from a single simulation run, meaning that it is not necessary to
 run replications.
+\label{it:self-averaging}
 \end{enumerate}
 MATSim in its {}``standard configuration'' is likely to be have
-these properties -- if the plan choice sets of all agents are a priori
+these properties \kai{gunnar, pls chk next paragraphs}:
+\begin{itemize}
+
+\item Periodicity is easily broken by stochasticity.  Given the many sources of stochasticity in MATSim, it is improbable that deterministic cycles exist.
+
+\item The reducible state of Figure~\ref{fig:Example-of-(ir)reducibility}~left will eventually become irreducible when the system moves from high traffic to gridlock, since then it cannot go back.  One can therefore argue that reducibility is related to transients, and the problem is that one does not know when the transients are over. 
+
+The MATSim property that causes problems here are the changes to the set of possible plans per agent: Every time a new plan is added somewhere, the previous subspace of the state space where the plan was not available \emph{cannot} be reached any more until that plan is removed; similarly, every time a plan is removed, the previous subspace of the state space where the plan was available cannot be reached any more until the plan is re-created again.  
+
+Even if plans creation and removal could be modelled according to these specifications, the dynamics of this process would be so slow that it would be impractial to sample over the resulting iterations.  Thus, although the above item~\ref{it:self-averaging} would be formally correct, one would never have enough iterations to put it to practical use.
+
+\end{itemize}
+ -- if the plan choice sets of all agents are a priori
 defined, meaning technically that all {}``plan innovation'' modules
 are switched off and that only {}``plan selection'' modules are
 used. This is only {}``likely'' because there notion of a {}``standard
@@ -323,7 +334,7 @@ MATSim with variable plan choice sets, is unlikely to have these properties,
 at least if the currently used {}``plan innovation'' modules are
 used. The reason for this is that plan innovation is at least in parts
 based on best response behavior, which may limit behavioral variability
-to the extent that irreducibility is destroyed. (Section~\note{Choice models in MATSim}
+to the extent that irreducibility is destroyed. (Chapter~\ref{ch:discretechoice}
 discusses this in greater detail and also suggests a cure to this
 problem.) This means, that MATSim with plan innovation turned on (i)
 may yield different simulation results depending on how the simulation
@@ -337,7 +348,7 @@ MATSim run.
 
 \subsection{Avoiding Network Breakdowns}
 
-\note{Please scrutinize this! The idea is just a few hours hold.}
+\note{Please scrutinize this! The idea is just a few hours hold.}\kai{Frage mich, ob wir es dann nicht nach ``research avenues'' packen sollten.  }
 
 Chapter~\note{Agent-based DTA} presents the \texttt{ExpBetaPlanChanger}
 as a cure to the network breakdowns that often impair simulation convergence
@@ -581,7 +592,7 @@ that in practice $\text{E}\{y\}$ needs to be replaced by its estimator.)
 \text{Pr}(y\geq\theta) & \approx & \frac{1}{R}\sum_{r=1}^{R}\mathbf{1}(y_{r}\geq\theta)
 \end{eqnarray}
 This divides the number of times the threshold was exceeded by the
-total number of experiments, i.e. it yields the frequency of the event
+total number of experiments, i.e.\ it yields the frequency of the event
 of interest.
 \item ...
 \end{itemize}
@@ -623,3 +634,11 @@ stochasticity where it constitutes a truthful representation of uncertainty
 one should access adequate statistical techniques to make sense of
 it. 
 
+% Local Variables:
+% mode: latex
+% mode: reftex
+% mode: visual-line
+% TeX-master: "../main"
+% comment-padding: 1
+% fill-column: 9999
+% End: 
