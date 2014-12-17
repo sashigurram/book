@@ -106,7 +106,8 @@ The easiest way to run a single iteration of \lstinline$QSim$ is as follows:
 %
 Depending on the needs, the above procedure can be extended with additional steps, such as adding non-default engines or departure handlers to the \lstinline$QSim$.
 
-\subsection{Example}
+\subsection{RandomDynAgent Example}
+\mm{combine this section with previous}
 
 The \lstinline$org.matsim.contrib.dynagent.examples.random$ package contains a basic illustration of how to create and run a scenario with \lstinline$DynAgent$s. To highlight the contrast to the plan-based agents, in this example, 100 dynamic agents travel randomly (\lstinline$RandomDynLeg$) and perform activities of random duration (\lstinline$RandomDynActivity$).
 
@@ -249,11 +250,38 @@ Last but not least, there are two ways of responding to the incoming events. The
 
 % ##################################################################################################################
 
-\section{Configuring and running...}
+\section{Configuring and running a DVRP simulation}
+
+Like in within-day replanning (see Section~\ref{ch:withinday}), dynamic transport services are typically run with the DVRP extension as a single-iteration simulation.
+
+\mm{combine this section and OneTaxi example}
+
+\begin{itemize}
+	\item Initialize a \lstinline$Scenario$ that holds MATSim's domain data (see: \lstinline$VrpLauncherUtils.initScenario$ methods)
+	
+	\item Create a \lstinline$$initVrpData that holds VRP's domain data (see: \lstinline$VrpLauncherUtils.initVrpData$)
+	
+	\lstinline$MatsimVrpContext$ object that holds references to a \lstinline$VrpData$ (VRP's domain data), \lstinline$Scenario$ (MATSim's domain data) and \lstinline$MobsimTimer$ (\lstinline$QSim$'s timer)
+	
+	\item Create a \lstinline$VrpData$ to store all VRP-based data 
+	
+	\item Create a \lstinline$VrpPathCalculator$ or other router, such as \lstinline$LeastCostPathTree$, 
+	
+	\item Instantiate \lstinline$VrpOptimizer$
+	
+	\item \lstinline$QSim$
+	
+	\item \lstinline$PassengerEngine$
+	
+	\item \lstinline$DynActionCreator$
+	
+	\item \lstinline$EventsManager$
+	
+\end{itemize}
 
 % ##################################################################################################################
 
-\section{One taxi example}
+\section{OneTaxi example}
 
 There are ten taxi customers and one taxi driver, who serves all requests in the FIFO order. Each customer dials a taxi at some time to get from work to home. The example is made up of 6 quite simple classes:
 %
