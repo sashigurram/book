@@ -2,24 +2,23 @@
 \label{ch:emissions}
 % ##################################################################################################################
 
-\hfill \textbf{Author:} Benjamin Kickh\"ofer
+\hfill \textbf{Author:} Benjamin Kickhöfer
 
-% add a meaningful figure here.
 \begin{center} \includegraphics[width=0.4\textwidth, angle=0]{extending/figures/emissionToolOverview_pdfa.pdf} \end{center}
 
 \createStandardInformation{emissions}{\lstinline{RunEmissionToolOnlineExample} class, \lstinline{RunEmissionToolOfflineExample} class}{emissions}%
 {\citet{...}}
 
 % ##################################################################################################################
-This chapter aims at presenting the emission modeling tool that has been developed and tested by \citet{HuelsmannEtAl_LAS_2011} and further improved by \citet{KickhoeferEtAl_VanoutriveVerhetsel_2013}. The text in this chapter is an slighted updated version of the description of the emission modeling tool in \citet{Kickhoefer_PhDThesis_2014}.
+This chapter aims at presenting the emission modeling tool that has been developed and tested by \citet{HuelsmannEtAl_LAS_2011} and further improved by \citet{KickhoeferEtAl_VanoutriveVerhetsel_2013}. The text in this chapter is a slighted, updated version of the description of the emission modeling tool in \citet{Kickhoefer_PhDThesis_2014}.
 %
-The tool essentially calculates warm and cold-start exhaust emissions for private cars and freight vehicles by linking \gls{matsim} simulation output to the detailed database of the \gls{hbefa}, which is available for many European countries.
+The tool essentially calculates warm and cold-start exhaust emissions for private cars and freight vehicles by linking MATSim simulation output to the detailed database of the \gls{hbefa}, which is available for many European countries.
 
 The chapter is structured as follows:
 %
-Section ~\ref{ch:emissions:relatedWork} reviews other attempts in the literature to model transport related emissions. Section~\ref{ch:emissions:overview} presents an overview of the \gls{emt} and Section ~\ref{ch:emissions:structure} shows how the tool is embedded in the software structure of \gls{matsim}.
+Section ~\ref{ch:emissions:relatedWork} reviews other attempts in the literature to model transport related emissions. Section~\ref{ch:emissions:overview} presents an overview of the \gls{emt} and Section ~\ref{ch:emissions:structure} shows how the tool is embedded in MATSim's software structure.
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ##################################################################################################################
 \section{Integrated Approaches for Modeling Transport and Emissions}
 \label{ch:emissions:relatedWork}
 %
@@ -43,7 +42,7 @@ two studies are on a very different level of aggregation than the \gls{emt} in
 this thesis, and a comparison does not seem very useful.
 
 \citet{BeckxEtAl_EnvPlannB_2009} use a sophisticated 
-activity-based model to simulate activity schedules for roughly 30\% of all 
+activity-based model to simulate activity schedules for roughly 30\,\% of all 
 households in the Netherlands. Traffic assignment for passenger cars is 
 performed by using an aggregated `all-or-nothing' assignment approach, 
 resulting in hourly aggregated traffic flows on the network. Based on the 
@@ -51,8 +50,7 @@ average speed for a trip, the macroscopic emission model \acrshort{mimosa} then
 calculates emission and fuel consumption rates, possibly dependent on vehicle 
 category. The idea of using an activity-based model to simulate 
 time-dependent emissions is similar to the \gls{emt}. In contrast to the 
-latter, the 
-underlying transport in \citet{BeckxEtAl_EnvPlannB_2009} 
+latter, the underlying transport in \citet{BeckxEtAl_EnvPlannB_2009} 
 does not account for congestion effects and different traffic states. 
 Additionally, similar macroscopic emission models are typically unable to 
 capture some of the microscopic behavior accurately 
@@ -77,7 +75,7 @@ suitable for large-scale scenarios due to the computational complexity of
 In \citet{Kraschl-HirschmannEtAl_FISTS_2011}, the same authors attempt to 
 develop a parametrization of fuel consumption based on average speeds of 
 vehicles. Such parametrization could in the future be helpful to replace 
-time-consuming lookups in large databases (e.g.\ \gls{hbefa}). However, the 
+time-consuming lookups in large databases (e.g.\,\gls{hbefa}). However, the 
 model would need to allow for more input variables (e.g.\ vehicle category, 
 traffic state, etc.) and to provide more differentiated outputs such as 
 different emission types.
@@ -107,19 +105,19 @@ the exhaust emission model \acrshort{artemis}. Large differences in air
 pollutant emissions are found, and hotspot locations differ.
 
 \citet{HatzopoulouMiller_TransResD_2010} develop a methodology for 
-calculating exhaust emissions, using \gls{matsim} as mesoscopic transport 
+calculating exhaust emissions, using MATSim as mesoscopic transport 
 model. The approach is therefore fairly similar to the \gls{emt} of this thesis.
 %
 In contrast to that study, the \gls{emt} does not assume fixed exhaust 
 emissions per time unit. It uses a more detailed calculation of emissions based 
-on the two different traffic states `free flow' and `stop\&go'. It is, thus, 
+on the two different traffic states "free flow" and "stop\&go". It is, thus, 
 able to capture congestion effects that emerge additionally to the time spent 
 in traffic jam. 
 Furthermore, the \gls{emt} calculates exhaust emissions for passenger cars 
 \emph{and} for trucks. Finally, since the methodology is based on \gls{hbefa}, 
-it can be transfered to any scenario in Europe.
+it can be transferred to any scenario in Europe.
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ##################################################################################################################
 \section{Emission Calculation}
 \label{ch:emissions:overview}
 %
@@ -133,7 +131,7 @@ Warm emissions differ with respect to \emph{driving speed}, acceleration/deceler
 %
 Cold emissions differ with respect to \emph{driving speed}, \emph{distance traveled}, \emph{parking time}, ambient temperature, and \emph{vehicle characteristics} \citep{WeilenmannEtAl_Atmos_2009}.
 
-As of now, the emissions contribution to MATSim considers all differentiations from above which are marked in \emph{italic}. Road gradient and ambient temperature are not considered. The gradient is always assumed to be 0\%, and ambient temperatures are assumed to be \gls{hbefa} average.
+As of now, the emissions contribution to MATSim considers all differentiations from above which are marked in \emph{italic}. Road gradient and ambient temperature are not considered. The gradient is always assumed to be 0\,\%, and ambient temperatures are assumed to be \gls{hbefa} average.
 %
 Additionally to warm and cold-start emissions, evaporation and air conditioning emissions also result from road traffic. As of now, the latter are not considered in the emission modeling tool, because of the small contribution to the overall emission level.
 
@@ -147,15 +145,15 @@ The calculation of warm emissions is composed of two steps:
 %
 In the first step, driving speed as well as stop duration (and possibly an 
 approximation of acceleration/deceleration patterns) is captured by a 
-mapping of \gls{matsim}'s dynamic traffic flows to \gls{hbefa} traffic states. 
-These traffic states, namely `free flow', `heavy', `saturated', and `stop\&go', 
-have been derived from typical driving cycles, i.e.\ time-velocity profiles. 
+mapping of MATSim's dynamic traffic flows to \gls{hbefa} traffic states. 
+These traffic states, namely "free flow", "heavy", "saturated", and "stop\&go", 
+have been derived from typical driving cycles, i.e.,\,time-velocity profiles. 
 A parametrization of these profiles led to the definition of these traffic 
 states, which depend on speed limit, average speed, and road type. Thus, 
 typical emission factors for a certain traffic state on a certain road segment 
 can be looked up in the \gls{hbefa} database.
 %
-In \gls{matsim}, neither the location on a road segment nor the exact driving behavior of an agent is known (see Section \ref{sec:trafficflowmodel}).
+In MATSim, neither the location on a road segment nor the exact driving behavior of an agent is known (see Section~\ref{sec:trafficflowmodel}).
 %
 %\benjamin{Some pointer to the MATSim traffic flow model. Andi, can you do that?}
 %
@@ -177,28 +175,28 @@ stop\&go are roughly twice as high.
 %
 Each road segment is divided into two parts representing these two 
 traffic states. The distance $l_s$ that a car is driving in stop\&go traffic 
-state  is determined by the following equation:
+state is determined by the following equation:
 %
 \begin{equation}
 l_s = \frac{l \ v_s  (v_f-v)}{v (v_f - v_s)} \ ,
 \label{ch:emissions:eq:linkLengthStopGo}
 \end{equation}
 %
-where $l$ is the link length in $km$ from the network, $v_s$ is the stop\&go speed in $km/h$ for the \gls{hbefa} road type, $v_f$ is the free flow speed in $km/h$ from the network, and $v=\frac{l}{t}$ is the average speed on the link for the vehicle, $t$ being the link travel time of the vehicle in the simulation. For the derivation of Eq.~\ref{ch:emissions:eq:linkLengthStopGo}, please refer to \citet{Kickhoefer_PhDThesis_2014}. The distance that the car is driving in free flow traffic state is then simply the remaining link length $l_f = l - l_s$.
+where $l$ is the link length in $km$ from the network, $v_s$ is the stop\&go speed in $km/h$ for the \gls{hbefa} road type, $v_f$ is the free flow speed in $km/h$ from the network, and $v=\frac{l}{t}$ is the average speed on the link for the vehicle, $t$ being the link travel time of the vehicle in the simulation. For the derivation of Equation~\ref{ch:emissions:eq:linkLengthStopGo}, please refer to \citet{Kickhoefer_PhDThesis_2014}. The distance that the car is driving in free flow traffic state is then simply the remaining link length $l_f = l - l_s$.
 %
 The interpretation of this approach is the following:
 %
-Cars drive in free flow until they have to wait in a queue. Only in the queue, stop\&go traffic state applies. According to the \gls{matsim} queue model presented in Section~\ref{sec:trafficflowmodel}
+Cars drive in free flow until they have to wait in a queue. Only in the queue, stop\&go traffic state applies. According to the MATSim queue model presented in Section~\ref{sec:trafficflowmodel}
 %
 %\benjamin{Some pointer to the MATSim traffic flow model. Andi, can you do that?}
 %
-, a queue emerges if demand exceeds capacity of a road segment which can also result in spillback effects on upstream road segments. The length of the queue is, thus, approximated by Eq.~\ref{ch:emissions:eq:linkLengthStopGo}, where the average speed $v$ on a link is the only exogenous variable.
+, a queue emerges if demand exceeds capacity of a road segment which can also result in spillback effects on upstream road segments. The length of the queue is, thus, approximated by Equation~\ref{ch:emissions:eq:linkLengthStopGo}, where the average speed $v$ on a link is the only exogenous variable.
 
 For the second step, agent-specific vehicle attributes are needed. They are 
 usually obtained from survey data during the initial population 
 synthesis. The vehicle attributes typically comprise vehicle type, age, cubic 
 capacity 
-and fuel type. As \gls{matsim} keeps socio-demographic information throughout 
+and fuel type. As MATSim keeps socio-demographic information throughout 
 the 
 simulation process, it can be used at any time for the necessary lookup in the 
 detailed \gls{hbefa} database. Additionally, the emission modeling tool 
@@ -228,12 +226,12 @@ cold-start emissions are produced. It is calculated by subtracting an
 activity's start time from the same activity's end time and by checking if the 
 trip to and from the activity is performed by car. Emission factors in 
 \gls{hbefa} 
-are differentiated by parking duration in one hour time steps from $1~h$ to 
-$12~h$. After $12~h$, the vehicle is assumed to have fully cooled down.
+are differentiated by parking duration in one hour time steps from 1\,hour to 
+12\,hours. After 12\,hours, the vehicle is assumed to have fully cooled down.
 %
 The accumulated distance refers to the distance a vehicle travels \emph{after} 
 a cold start. According to \gls{hbefa}, there are different cold-start 
-emissions for short trips ($<1~km$), and for longer trips ($\geq 1~km$).
+emissions for short trips smaller than 1\,kilometer and and for longer trips grater or equal than 1\,kilometer.
 %
 In reality, cold-start emissions are emitted along the route after a cold start;
 as of now, the emission modeling tool maps the emissions of the short trip to the road
@@ -247,16 +245,16 @@ emissions.
 
 In order to further process the warm and cold-start emissions, so-called 
 \emph{emission events} are generated during the simulation in a separate 
-events stream. The definition of emission events follows the \gls{matsim} 
+events stream. The definition of emission events follows the MATSim 
 framework that uses events for storing disaggregated information in 
 \acrshort{xml} format. The following section will now provide more information 
 on the software structure of the emission tool.
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ##################################################################################################################
 \section{Software Structure}
 \label{ch:emissions:structure}
 The information in this section refers to code that can be found in the 
-\gls{matsim} repository.%
+MATSim repository.%
 %
 \footnote{
 %
@@ -266,16 +264,16 @@ The exact location at the time of writing is
 }
 In the following, the software structure of the \gls{emt} at 
 revision 30058 is described. For information on how to use the tool, please 
-refer to \texttt{package-info.java} in the corresponding package.%
+refer to \lstinline|package-info.java| in the corresponding package.%
 %
 \footnote{
 %
-This information can also be accessed via the Javadoc page for the emissions contribution; see \url{http://matsim.org/javadoc}.
+This information can also be accessed via the javadoc page for the emissions contribution; see \url{http://matsim.org/javadoc}.
 %
 }
 %
 
-Fig.~\ref{ch:emissions:fig:emissionTool} shows the simplified software structure of the emission modeling tool. The core of the tool is the \texttt{EmissionModule} which needs to be created before the simulation starts. Additionally, there are two public methods that need to be called: \texttt{createLookupTables()} and \texttt{createEmissionHandler()}.
+Fig.~\ref{ch:emissions:fig:emissionTool} shows the simplified software structure of the emission modeling tool. The core of the tool is the \lstinline|EmissionModule| which needs to be created before the simulation starts. Additionally, there are two public methods that need to be called: \lstinline|createLookupTables()| and \lstinline|createEmissionHandler()|.
 %
 % ------------
 \createfigure%
@@ -286,25 +284,23 @@ Fig.~\ref{ch:emissions:fig:emissionTool} shows the simplified software structure
 {}
 
 % ------------
-The former creates lookup tables from input data that has to be exported from the \gls{hbefa} database. The path to these input files can be configured in the \texttt{EmissionsConfigGroup}. Mandatory input are files for the creation of \texttt{roadTypeMapping}, \texttt{emissionVehicles}, \texttt{avgHbefaWarmTable}, and \texttt{avgHbefa\-Cold\-Table}.
+The former creates lookup tables from input data that has to be exported from the \gls{hbefa} database. The path to these input files can be configured in the \lstinline|EmissionsConfigGroup}. Mandatory input are files for the creation of \lstinline|roadTypeMapping|, \lstinline|emissionVehicles|, \lstinline|avgHbefaWarmTable|, and \lstinline|avgHbefa-Cold-Table|.
 %
-The first lookup table maps road types from the \gls{matsim} network to \gls{hbefa} road types. For this mapping, it is necessary to classify the network road types into \gls{hbefa} categories; this requires some transport engineering knowledge.
+The first lookup table maps road types from the MATSim network to \gls{hbefa} road types. For this mapping, it is necessary to classify the network road types into \gls{hbefa} categories; this requires some transport engineering knowledge.
 %
-The second lookup table defines the vehicle attributes of every person in the population. It should therefore be generated during the population synthesis process. If no detailed information is available, the vehicle lookup table still needs to specify whether the vehicle is a car or a truck. The current implementation uses the \gls{matsim} vehicle interface 
-\texttt{Vehicles} as container for storing the relevant data in \texttt{VehicleType}.%
+The second lookup table defines the vehicle attributes of every person in the population. It should therefore be generated during the population synthesis process. If no detailed information is available, the vehicle lookup table still needs to specify whether the vehicle is a car or a truck. The current implementation uses the MATSim vehicle interface 
+\lstinline|Vehicles| as container for storing the relevant data in \lstinline|VehicleType|.%
 %
 \footnote{
 %
-Please note that vehicle information provided to the \texttt{EmissionModule} is \emph{only} used for storing data on individual vehicle characteristics and other information will be omitted by the simulation.
+Please note that vehicle information provided to the \lstinline|EmissionModule| is \emph{only} used for storing data on individual vehicle characteristics and other information will be omitted by the simulation.
 %
 }
 %
-The last two mandatory lookup tables (\texttt{avgHbefaWarmTable} and \texttt{avgHbefaColdTable}) provide warm and cold emission factors in $g/km$, respectively. The data is stored using a unique key. For the construction of this key, information from \texttt{roadTypeMapping} and \texttt{emissionVehicles} is needed as well as information derived from the simulation as described in Section~\ref{ch:emissions:overview}.
+The last two mandatory lookup tables (\lstinline|avgHbefaWarmTable| and \lstinline|avgHbefaColdTable|) provide warm and cold emission factors in $g/km$, respectively. The data is stored using a unique key. For the construction of this key, information from \lstinline|roadTypeMapping| and \lstinline|emissionVehicles| is needed as well as information derived from the simulation as described in Section~\ref{ch:emissions:overview}.
 %
-The latter information is depicted in Fig.~\ref{ch:emissions:fig:emissionTool} as variables of the two classes \texttt{WarmEmissionHandler} and \texttt{ColdEmissionHandler}. These two handlers implement several \gls{matsim} \texttt{EventHandler} interfaces in order to extract the necessary information from the simulation. After gathering this information, the \texttt{WarmEmissionHandler} asks its \texttt{WarmEmissionAnalysisModule} to reconstruct the key and look up the emission factors in the respective table. Similarly, the \texttt{ColdEmissionHandler} asks the \texttt{ColdEmissionAnalysisModule}. These analysis modules then create \texttt{Warm/ColdEmissionEvents} which follow the \gls{matsim} \texttt{Event} interface definition. Finally, the resulting events stream is written in a 
-joint emission events file by a separate \texttt{EventsManager}.
+The latter information is depicted in Figure~\ref{ch:emissions:fig:emissionTool} as variables of the two classes \lstinline|WarmEmissionHandler}|and \lstinline|ColdEmissionHandler|. These two handlers implement several MATSim \lstinline|EventHandler| interfaces in order to extract the necessary information from the simulation. After gathering this information, the \lstinline|WarmEmissionHandler| asks its \lstinline|WarmEmissionAnalysisModule| to reconstruct the key and look up the emission factors in the respective table. Similarly, the \lstinline|ColdEmissionHandler| asks the \lstinline|ColdEmissionAnalysisModule|. These analysis modules then create \lstinline|Warm/ColdEmissionEvents| which follow the MATSim \lstinline|Event} interface definition. Finally, the resulting events stream is written in a joint emission events file by a separate \lstinline|EventsManager|.
 
-For the calculation of emissions that depend on agent-specific vehicle characteristics, \texttt{emissionVehicles} must contain that specific information, the corresponding flag in the \texttt{EmissionsConfigGroup} needs to be switched on, and detailed emission factor tables additionally need to be exported from \gls{hbefa} and provided to the \texttt{EmissionModule} with two additional input files: \texttt{detailed\-HbefaWarmTable} and \texttt{detailedHbefaColdTable}.
-
+For the calculation of emissions that depend on agent-specific vehicle characteristics, \lstinline|emissionVehicles| must contain that specific information, the corresponding flag in the \lstinline|EmissionsConfigGroup| needs to be switched on, and detailed emission factor tables additionally need to be exported from \gls{hbefa} and provided to the \lstinline|EmissionModule| with two additional input files: \lstinline|detailed\-HbefaWarmTable| and \lstinline|detailedHbefaColdTable|.
 
 % ##################################################################################################################
