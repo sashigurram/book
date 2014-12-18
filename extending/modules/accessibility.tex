@@ -129,7 +129,7 @@ free data
 
 \subsection{Invocation as ``script in Java''}
 
-The above \lstinline$org.matsim.accessibility.run.Main$ class can also be used as a starting point for one's own ``script in Java'':
+The above \lstinline$org.matsim.accessibility.run.RunAccessibilityExample$ class can also be used as a starting point for one's own ``script in Java'':
 \begin{lstlisting}
 public static void main(String[] args) {
 
@@ -142,10 +142,9 @@ public static void main(String[] args) {
 		
 		// the run method is extracted so that a test can operate on it.
 		run( scenario);
-		
-		
 	}
 
+	
 	public static void run(Scenario scenario) {
 		
 		List<String> activityTypes = new ArrayList<String>() ;
@@ -163,22 +162,15 @@ public static void main(String[] args) {
 			}
 		}
 		
-		log.warn( "found activity types: " + activityTypes ); 
+		log.warn( "found the following activity types: " + activityTypes ); 
 		
 		// yyyy there is some problem with activity types: in some algorithms, only the first letter is interpreted, in some other algorithms,
 		// the whole string.  BEWARE!  This is not good software design and should be changed.  kai, feb'14
 		
-		Map<String, ActivityFacilities> activityFacilitiesMap = new HashMap<String, ActivityFacilities>();
 		Controler controler = new Controler(scenario) ;
 		controler.setOverwriteFiles(true);
 
 		for ( String actType : activityTypes ) {
-			
-//			if ( !actType.equals("w") ) {
-//				log.error("skipping everything except work for debugging purposes; remove in production code. kai, feb'14") ;
-//				continue ;
-//			}
-			
 			ActivityFacilities opportunities = FacilitiesUtils.createActivityFacilities() ;
 			for ( ActivityFacility fac : scenario.getActivityFacilities().getFacilities().values()  ) {
 				for ( ActivityOption option : fac.getActivityOptions().values() ) {
@@ -192,16 +184,18 @@ public static void main(String[] args) {
 				new GridBasedAccessibilityControlerListenerV3(opportunities, scenario.getConfig(), scenario.getNetwork());
 
 			// define the modes that will be considered
-			// the following modes are available (see AccessibilityControlerListenerImpl): freeSpeed, car, bike, walk, pt
+			// here, the accessibility computation is only done for freespeed
 			listener.setComputingAccessibilityForMode(Modes4Accessibility.freeSpeed, true);
 
-			// this has to do with the additional population density column:
+			// add additional facility data to an additional column in the output
+			// here, an additional population density column is used
 			listener.addAdditionalFacilityData(homes) ;
-
-			listener.generateGridsAndMeasuringPointsByNetwork(100.);
-			// yy todo: meaningful error message if this is not set
-			// yy todo: make sure that cell size is taken from config.
 			
+			Double cellSizeForCellBasedAccessibility = 
+					Double.parseDouble(scenario.getConfig().getModule("accessibility").getValue("cellSizeForCellBasedAccessibility"));
+
+			listener.generateGridsAndMeasuringPointsByNetwork(cellSizeForCellBasedAccessibility);
+						
 			listener.writeToSubdirectoryWithName(actType);
 			
 			controler.addControlerListener(listener);
