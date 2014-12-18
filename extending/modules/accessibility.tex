@@ -93,15 +93,36 @@ $Const$ is an integration constant, which can be dropped as it is the same for a
 The concrete calculation of the accessibility $A_i$ of a given origin location $i$ to opportunity locations $k$ works as follows: The origin location $i$ and opportunity locations $k$ are assigned to a congested road network with time dependent travel times as it is simulated in MATSim. For every $i$ a so-called ``least cost path tree'' computation runs through the network and determines the best route, and thus the least negative travel utility $V_{ik}$, to each opportunity location $k$ by using Dijkstra's shortest path algorithm \citep{Dijkstra1959ShortestPath}. The best route from $i$ to $k$ depends on the given generalized cost such as link travel times or distances. Once the least cost path tree has explored all nodes, the resulting disutilities $V_{ik}$ for all opportunities are queried and the accessibility is calculated as stated in Eq.~(\ref{eq:accessibility:logsum0}).
 
 
+USAGE: controlerListener in MATSim; if various activities and various modes are considered, one such contoler listener is added for each combination
+
+
+\mnote{computational aspects}
 TODO: say something about computation characteristics
 
+runtime optimization
+
+\mnote{resolution}
+resolution can in principal be increased infinitely. Because of the runtime optimization, computation time increases sub-linearly with resolution.
+
+studies showed that no significant further insights can be gained increasing the resolution beyond 100 meters.
+
+\mnote{other}
+ADD: different modes, activities
+
+ADD: transport/land-use interaction
+
+automatic
+
+microscopic
 
 \mnote{data}
 free data
 
+the accessibility computation does not rely on specific local data, that need to be collected, prepared and processed. Instead, it relies on data form OpenStreetMap (include link...?) which is openly and freely for every region in the world, and also has the same data format world-wide
+
 \mnote{applicability, useability}
 
-\mnote{more}
+
 
 
 %Aufgabe des Staates: Grundversorgung der Bevölkerung
@@ -143,10 +164,8 @@ public static void main(String[] args) {
 		// the run method is extracted so that a test can operate on it.
 		run( scenario);
 	}
-
 	
 	public static void run(Scenario scenario) {
-		
 		List<String> activityTypes = new ArrayList<String>() ;
 		ActivityFacilities homes = FacilitiesUtils.createActivityFacilities("homes") ;
 		for ( ActivityFacility fac : scenario.getActivityFacilities().getFacilities().values()  ) {
