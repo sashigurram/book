@@ -9,14 +9,14 @@
 \createStandardInformation{todo}{todo}{todo}{todo}
 
 % ##################################################################################################################
-Options for the simulation of air- and rail-transport technology and passengers using \glsentrytext{matsim} are subject of this chapter. 
+Options for the simulation of air- and rail-transport technology and passengers using \gls{matsim} are subject of this chapter. 
 Overall travel times are often not that different between middle range rail and air transportation. 
 Airports and railway stations are affected by capacity and opening time constraints. 
 For passengers and goods, their geospatial location is an important property. 
 Both modes, but especially air transport, are faced with hard capacity restrictions at fixed departure times. 
 
-This chapter presents an approach, how \glsentrytext{matsim} can be applied to capture these constraints and how the interaction between a passenger demand and the constraints on the technology supply can be modeled. 
-The public transit model of \glsentrytext{matsim} (Chapter~\ref{ch:pt}) is applied. %public transit vehicles and stops. 
+This chapter presents an approach, how \gls{matsim} can be applied to capture these constraints and how the interaction between a passenger demand and the constraints on the technology supply can be modeled. 
+The public transit model of \gls{matsim} (Chapter~\ref{ch:pt}) is applied. %public transit vehicles and stops. 
 Airports and aircraft are microscopically modeled the same way as bus stops and buses. 
 Passengers are represented microscopically as multi-agent demand for air transportation. 
 Their choice of transport mode, routes, and departure time is restricted by the capacity provided by the simulation model for air transport technology. 
@@ -26,7 +26,7 @@ With appropriate data the modeling approach for air transport could also be appl
 The modeling of technology and demand is sketched in Section~\ref{sec:air_rail_scenario}. 
 On the basis of simulation results for a pure air transport model, rail transport is added and effects of mode choice are presented (Section~\ref{sec:air_rail_results}). 
 Section~\ref{sec:air_rail_discussion} then interprets simulation results and highlights some modeling aspects that require further studies. 
-Especially the choice set generation and plans removal algorithm of \glsentrytext{matsim} is discussed, that is also subject of Section~\ref{sec:future-of-scoring-function}. 
+Especially the choice set generation and plans removal algorithm of \gls{matsim} is discussed, that is also subject of Section~\ref{sec:future-of-scoring-function}. 
 Modeling, results, and studies of this chapter present the highlights of \citet[][Chapter~6, pp.~119]{Grether2014PhD} where further details can be found in case of interest.   
 
 % ##################################################################################################################
@@ -105,7 +105,7 @@ This may not always result in complete flight cycles, e.g.,\,when the outbound a
 Compared to using all flights of an entire week, the network may be incomplete, as certain destinations are only served on specific days.
 
 %\mnote{Network}
-The modeling of the air network aims at a simulation with \glsentrytext{matsim}.  
+The modeling of the air network aims at a simulation with \gls{matsim}.  
 The network consists of airports, each showing an identical layout, and point-to-point connections in between. 
 Every runway is solely used either for inbound or outbound flights with taxiways connecting the runways to the apron. The latter accommodates a transit stop, i.e.,\,the terminal, where flight movements originate and terminate (Figure~\ref{fig:matsim_airport}). 
 Each airport pair is directly connected by airway links, one for each flight and direction of travel (Figure~\ref{fig:matsim_network_model}). 
@@ -125,7 +125,7 @@ Figure~\ref{fig:matsim_air_network_eu} shows parts of the network for European a
 % ------------
 
 %\mnote{Flight Schedule}
-The flight schedule is taken from the OAG data and translated to a \glsentrytext{matsim} transit schedule containing information about each line, route, and departure. 
+The flight schedule is taken from the OAG data and translated to a \gls{matsim} transit schedule containing information about each line, route, and departure. 
 For each airline that offers a connection between two airports, a transit line is generated. 
 A transit route, which represents the route on the air traffic network, is created for each flight offered by this airline. 
 %The route contains the links belonging to the airport representation plus the specific link for this flight connecting the airports' out- and inbound runway. 
@@ -144,10 +144,10 @@ The maximum velocity of each aircraft is set to twofold sonic speed, since speed
 \subsection{Passenger Demand}
 %\mnote{Passengers, Synthetic Population}
 As soon as you have modeled the technology side of air transport, you can start to simulate a passenger demand. 
-The passenger demand for trips in Germany created and used for the results of this section is based on \glsentrytext{od} data of DESTATIS 
+The passenger demand for trips in Germany created and used for the results of this section is based on \gls{od} data of DESTATIS 
 \footnote{\url{destatis.de}, Fachserie 8 Reihe 6, last access 10.09.2012}.
 % 
-For each \glsentrytext{od} pair and trip a virtual person is created.
+For each \gls{od} pair and trip a virtual person is created.
 Each virtual person performs two activities, one at the origin and the other at the destination airport. 
 Both activities are of same type, thus time spent performing both activities is accumulated before it is evaluated by the utility function according to Section~\ref{sec:charyparnagel}. %equation (\ref{eq:utility_v_perf}). 
 A typical duration, $t_{typ,q}$, of 21\,hours is set for this activity type. 
@@ -170,15 +170,15 @@ Together with the synthetic population it serves as input for the simulation.
 %model with no delays and no effective runway capacity restrictions 
 %from 
 %\technologyCite~is used.
-The assignment of concrete flights to the desired \glsentrytext{od} connection, i.e.,\,the passenger routing, is calculated by the default public transit routing module of \glsentrytext{matsim}.
+The assignment of concrete flights to the desired \gls{od} connection, i.e.,\,the passenger routing, is calculated by the default public transit routing module of \gls{matsim}.
 
 %\mnote{Simulation Runs}
 Each simulation is run for 600\,iterations.
 In each iteration, 10\,\% of the virtual persons may shift their departure time randomly within a 2\,hours interval.
 Another 10\,\% may seek a new route, i.e.,\,a connection between origin and destination. 
-Each passenger chooses out of a set of 5\,plans using an \glsentrytext{mnl}.
+Each passenger chooses out of a set of 5\,plans using an \gls{mnl}.
 The outcome is stable after 500\,iterations, thus departure time choice and routing are switched off. 
-For another 100\,iterations only the \glsentrytext{mnl} is used by the passengers to select a plan. 
+For another 100\,iterations only the \gls{mnl} is used by the passengers to select a plan. 
 %
 % ------------
 \createfigure%
@@ -219,7 +219,7 @@ A second option for mode choice is added.
 Each virtual person can now choose between the micro-simulated air transport options and an alternative mode. 
 The alternative mode has no capacity restrictions. 
 Furthermore, passengers that travel with the alternative mode can start directly at their randomly selected departure time. 
-The travel time, $tt$, is computed by the microsimulation with an estimation of the beeline distance between the \glsentrytext{od} pair $d$ and a velocity $v$, i.e.,\,$tt = d / v$.  
+The travel time, $tt$, is computed by the microsimulation with an estimation of the beeline distance between the \gls{od} pair $d$ and a velocity $v$, i.e.,\,$tt = d / v$.  
 This velocity is varied in several simulation runs, i.e.,\,$v \in \{100, 150, 200, 250, 300 \} [km/h]$. 
 If the alternative mode is chosen, the (dis-)utilities for traveling in the scoring are calculated accordingly.  
 
@@ -294,15 +294,15 @@ At most one passenger gets stuck at the end of day.
 {}
 
 The simulation results are further compared with the data of DESTATIS that serves as basis for the virtual population.  
-The synthetic population is generated based on \glsentrytext{od} pairs that may contain transfers ($od_{transfers}$), 
+The synthetic population is generated based on \gls{od} pairs that may contain transfers ($od_{transfers}$), 
 while other DESTATIS data directly counts the number of passengers on actual direct flights ($od_{direct}$). % (2.2.1).
 The latter is used to evaluate the accuracy of the model.
-For comparison, the number of passengers on direct flights is calculated for each \glsentrytext{od} pair ($sim_{direct}$) from the simulation results.
+For comparison, the number of passengers on direct flights is calculated for each \gls{od} pair ($sim_{direct}$) from the simulation results.
 Based on these data sets, the mean square error and the mean relative error are calculated\footnote{
 The mean square error $\sigma^2$ is computed as
 	$\sigma^2 = \frac{\sum_{i \in OD} (sim_{direct}(i) - od_{direct}(i))^2}{|OD|} \, , $
-whereby $|OD|$ denotes the number of \glsentrytext{od} pairs, $sim_{direct}(i)$ the simulated passengers on a direct flight between the \glsentrytext{od} pair $i$, and $od_{direct}(i)$ the same, but retrieved from data.  
-With the same values, the (unsigned) mean relative error for each \glsentrytext{od} relation is calculated as
+whereby $|OD|$ denotes the number of \gls{od} pairs, $sim_{direct}(i)$ the simulated passengers on a direct flight between the \gls{od} pair $i$, and $od_{direct}(i)$ the same, but retrieved from data.  
+With the same values, the (unsigned) mean relative error for each \gls{od} relation is calculated as
 $
 \mbox{mean rel error} = \frac{\sum_{i \in OD} |(sim_{direct}(i) - od_{direct}(i))|/ od_{direct}(i)}{|OD|}.
 $
@@ -322,13 +322,13 @@ The alternative mode can be interpreted as mixture between train, bus, or car co
 Clearly, the results hinge at the assumption that the alternative mode is always available and not capacity restricted.  
 All passengers on the alternative mode face the same travel speed. 
 This assumption is too coarse for the presented scenario. 
-E.g., average speed and temporal availability of train connections depends on the \glsentrytext{od} pair. 
-In principle, the alternative mode could be refined by inclusion of \glsentrytext{od} pair dependent average speed data. 
+E.g., average speed and temporal availability of train connections depends on the \gls{od} pair. 
+In principle, the alternative mode could be refined by inclusion of \gls{od} pair dependent average speed data. 
 Alternatively, train, bus, and car can be simulated explicitly, featuring capacity restrictions and mutual interactions. 
 For illustration of the overall modeling approach, however, a homogeneous velocity for the alternative mode seems to be more appropriate. 
 %\mnote{Effects}
 The effects evoked by the availability of the alternative mode are illustrative. 
-The data for the demand provides \glsentrytext{od} pairs for air transport, but not for car, train or bus trips.  
+The data for the demand provides \gls{od} pairs for air transport, but not for car, train or bus trips.  
 For more plausible interpretations, further data for demand on other modes is required. 
 
 %\mnote{Extent}
@@ -349,7 +349,7 @@ This would resolve some of the presented problems concerning departure time choi
 Passengers getting stuck are considered as not desired artifact of the simulation. 
 Without the alternative mode, the only available transport mode is a capacity restricted flight connection that is served in discrete, irregular time intervals. 
 The number of stuck passengers is higher than for the simulation runs with the alternative mode. 
-Passengers get more likely stuck on \glsentrytext{od} pairs where the demand excesses seat capacity. 
+Passengers get more likely stuck on \gls{od} pairs where the demand excesses seat capacity. 
 This may have model extrinsic and intrinsic reasons. 
 
 %\mnote{Extrinsic Stuck}
@@ -357,7 +357,7 @@ The quality of the simulation model's outcome hinges at the data available.
 For older studies of the air transport passenger demand, DESTATIS data for 09-2011 were used 
 The air transport technology model, however, was created on a 09-2009 flight schedule.  
 The number of starts of flights within Germany increased slightly between 2009 and 2011~\citep[][p.~23]{DLR2011Luftverkehrsbericht}. 
-Assuming that the number of available seats is increased accordingly, the simulation model provided too little capacity, at least on certain \glsentrytext{od} pairs. 
+Assuming that the number of available seats is increased accordingly, the simulation model provided too little capacity, at least on certain \gls{od} pairs. 
 As result, the number of passengers that had not reached their destination but got stuck was much higher.  
 With the availability of 09-2009 DESTATIS data, the overall quality of results increased.  
 The replacement of the 2011 data by 2009 data reduced the number of stuck passenger significantly, from around 1500 to 350\,travelers. 
@@ -365,7 +365,7 @@ The replacement of the 2011 data by 2009 data reduced the number of stuck passen
 Data is provided on a monthly basis, while the time horizon of the simulation model is one day. 
 The number of trips per day is retrieved on the assumption that trips are uniformly distributed over all days of a month.  
 The remaining 350\,stuck passengers might be resolved by a more accurate distribution. 
-Otherwise, a longer time horizon could be simulated\footnote{Note, that this requires some changes in the source code that may not be resolved by sole customizations of \glsentrytext{matsim}. Please ask the developers before running \glsentrytext{matsim} for a longer time horizon.}. 
+Otherwise, a longer time horizon could be simulated\footnote{Note, that this requires some changes in the source code that may not be resolved by sole customizations of \gls{matsim}. Please ask the developers before running \gls{matsim} for a longer time horizon.}. 
 This would also include flights that are not departing on a Tuesday. 
 Possibly, travelers no longer get stuck. 
 
@@ -391,8 +391,8 @@ The current approach would not find such a solution, since passengers do not tak
 The real-world solution presumably would be to raise prices on congested seats until one or the other passenger re-routes. 
 Currently, all passengers have homogeneous values of time.   
 For a more meaningful price modeling, more heterogeneous attributes of passengers can be included. 
-As the present model is based on sole \glsentrytext{od} data, it does not include such a process. 
-In principle, other data, as e.g.,\,Lorenz curves and median incomes, can be merged with the \glsentrytext{od} data~\citep{KickhoeferEtAl2011PolicyEvaluationIncome}.  
+As the present model is based on sole \gls{od} data, it does not include such a process. 
+In principle, other data, as e.g.,\,Lorenz curves and median incomes, can be merged with the \gls{od} data~\citep{KickhoeferEtAl2011PolicyEvaluationIncome}.  
 
 %\mnote{Diversity Routing}
 An alternative approach to improve heterogeneity is a router that generates a larger diversity of routes even for the same departure time.  
@@ -410,11 +410,11 @@ Most passengers are able to learn the constraints of air transport technology an
 
 The modeling of technology is similar to the approach by~\citet{ClarkeEtAl2007AirNetworkSim}, the level of detail is, however, coarser. 
 In the same way as~\citet{ClarkeEtAl2007AirNetworkSim}, further models for, e.g.,\,gates, taxiing, weather or airline operations can be added to the presented approach. 
-As the open source code of \glsentrytext{matsim} comes with options for extension, more detailed models of the technology side hinge on the availability of data. 
+As the open source code of \gls{matsim} comes with options for extension, more detailed models of the technology side hinge on the availability of data. 
 In contrast, and going beyond~\citet{ClarkeEtAl2007AirNetworkSim}, passengers are captured at all stages of their trip. 
 Further, passengers traveling on alternative transport modes can be simulated. 
 The chapter discusses some open issues, that are considered more general and not specific to air transport systems. 
-The advice to the interested user is to support the \glsentrytext{matsim} team in solving these more general questions first.  
+The advice to the interested user is to support the \gls{matsim} team in solving these more general questions first.  
 Then, the model may help to get a more detailed picture of mid-distance travel patterns.
 
 Clearly, potential applications of the proposed model depend on type and detail of included information. 
