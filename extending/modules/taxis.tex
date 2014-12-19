@@ -95,21 +95,21 @@ Incidentally, the behavior of MATSim's default plan-based agent, \lstinline$Pers
 The easiest way to run a single iteration of \lstinline$QSim$ is as follows:
 %
 \begin{enumerate}
+	\item Create and initialize a \lstinline$Scenario$
 
 	\item Call \lstinline$DynAgentLauncherUtils$' \lstinline$initQSim(Scenario scenario)$ method to create and initialize a \lstinline$QSim$; this includes creating a series of objects, such as an \lstinline$EventsManager$, \lstinline$DynActivityEngine$, or \lstinline$TeleportationEngine$
 
 	\item Add \lstinline$AgentSource$s of \lstinline$DynAgent$s and other agents to the \lstinline$QSim$
 	
-	\item Run simulation by calling \lstinline$QSim$'s \lstinline$run()$ method
+	\item Run the \lstinline$QSim$ simulation
 	
-	\item Finalize processing events by calling \lstinline$EventsManager$'s \lstinline$finishProcessing()$ method
+	\item Finalize processing events by the \lstinline$EventsManager$
 	
 \end{enumerate}
 %
 Depending on the needs, the above procedure can be extended with additional steps, such as adding non-default engines or departure handlers to the \lstinline$QSim$.
 
 \subsection{RandomDynAgent Example}
-\mm{combine this section with previous}
 
 The \lstinline$org.matsim.contrib.dynagent.examples.random$ package contains a basic illustration of how to create and run a scenario with \lstinline$DynAgent$s. To highlight the contrast to the plan-based agents, in this example, 100 dynamic agents travel randomly (\lstinline$RandomDynLeg$) and perform activities of random duration (\lstinline$RandomDynActivity$).
 
@@ -213,7 +213,7 @@ A driver is modeled as a \lstinline$DynAgent$ whose behavior is controlled by a 
 \footnote{
 Package \lstinline$org.matsim.contrib.dvrp.vrpagent$.
 }
-that makes the agent follow the dynamically changing \lstinline$Schedule$. As a result, all changes made to the schedule are visible to and obeyed by the driver. Whenever a new task is started, the driver logic converts it to the corresponding dynamic action. Specifically, a \lstinline$DriveTask$ is executed as a \lstinline$VrpLeg$, whereas a \lstinline$StayTask$ is simulated as a \lstinline$VrpActivity$. Both \lstinline$VrpLeg$ and \lstinline$VrpActivity$ are implemented in such a way that any change to the referenced task is automatically visible to them. At the same time, any progress made while carrying them out, is instantly reported to the referenced task's tracker.
+that makes the agent follow the dynamically changing \lstinline$Schedule$. As a result, all changes made to the schedule are visible to and obeyed by the driver. Whenever a new task is started, the driver logic (using a \lstinline$DynActionCreator$) translates it to the corresponding dynamic action. Specifically, a \lstinline$DriveTask$ is executed as a \lstinline$VrpLeg$, whereas a \lstinline$StayTask$ is simulated as a \lstinline$VrpActivity$. Both \lstinline$VrpLeg$ and \lstinline$VrpActivity$ are implemented in such a way that any change to the referenced task is automatically visible to them. At the same time, any progress made while carrying them out, is instantly reported to the referenced task's tracker.
 
 \subsection{Passengers}
 \label{sec:VRP-passengers}
@@ -254,66 +254,49 @@ Last but not least, there are two ways of responding to the incoming events. The
 
 \section{Configuring and running a DVRP simulation}
 
-Like in within-day replanning (see Section~\ref{ch:withinday}), dynamic transport services are typically run with the DVRP extension as a single-iteration simulation.
+Like in within-day replanning (see Section~\ref{ch:withinday}), dynamic transport services are typically run with the DVRP extension as a single-iteration simulation. Running such a simulation is carried out as follows:
+%
+\begin{enumerate}
+	\item Create a \lstinline$Scenario$ (MATSim's domain data) and \lstinline$VrpData$ (VRP's domain data)
+	
+	\item Create a \lstinline$VrpOptimizer$; this includes instantiation of a least-cost path/tree calculator, e.g., \lstinline$VrpPathCalculator$.
+	
+	\item Call \lstinline$DynAgentLauncherUtils$' \lstinline$initQSim(Scenario scenario)$ method to create and initialize a \lstinline$QSim$; this includes creating a series of objects, such as an \lstinline$EventsManager$, \lstinline$DynActivityEngine$, or \lstinline$TeleportationEngine$
+	
+	\item When simulating passenger services, add a \lstinline$PassengerEngine$ to the \lstinline$QSim$; this includes instantiation of a \lstinline$PassengerRequestCreator$ that converts calls/orders into \lstinline$PassengerRequest$s; otherwise, add an appropriate source of requests to the \lstinline$QSim$, either as a \lstinline$MobsimEngine$ or \lstinline$MobsimListener$
+	
+	\item Add \lstinline$AgentSource$s to the \lstinline$QSim$; for the \lstinline$DynAgent$-based drivers, one may use a specialized source, \lstinline$org.matsim.contrib.dvrp.vrpagent.VrpAgentSource$
+	
+	\item Run the \lstinline$QSim$ simulation
+	
+	\item Finalize processing events by the \lstinline$EventsManager$
+\end{enumerate}
 
-\mm{combine this section and OneTaxi example}
+The \lstinline$org.matsim.contrib.dvrp.run$ package contains \lstinline$VrpLauncherUtils$ and other utility classes that simplify the above scheme, sometimes reducing one step down to a single method call. To facilitate access to the data representing the current state of the simulated dynamic transport service, \lstinline$MatsimVrpContext$ provides the \lstinline$Scenario$ and \lstinline$VrpData$ objects and the current time (based on the \lstinline$QSim$'s timer).
 
-\begin{itemize}
-	\item Initialize a \lstinline$Scenario$ that holds MATSim's domain data (see: \lstinline$VrpLauncherUtils.initScenario$ methods)
-	
-	\item Create a \lstinline$$initVrpData that holds VRP's domain data (see: \lstinline$VrpLauncherUtils.initVrpData$)
-	
-	\lstinline$MatsimVrpContext$ object that holds references to a \lstinline$VrpData$ (VRP's domain data), \lstinline$Scenario$ (MATSim's domain data) and \lstinline$MobsimTimer$ (\lstinline$QSim$'s timer)
-	
-	\item Create a \lstinline$VrpData$ to store all VRP-based data 
-	
-	\item Create a \lstinline$VrpPathCalculator$ or other router, such as \lstinline$LeastCostPathTree$, 
-	
-	\item Instantiate \lstinline$VrpOptimizer$
-	
-	\item \lstinline$QSim$
-	
-	\item \lstinline$PassengerEngine$
-	
-	\item \lstinline$DynActionCreator$
-	
-	\item \lstinline$EventsManager$
-	
-\end{itemize}
+The \lstinline$VrpOptimizer$'s performance may be assessed either by analyzing the resultant schedules, or by processing events that has arrived during the simulation.
 
 % ##################################################################################################################
 
 \section{OneTaxi example}
 
-There are ten taxi customers and one taxi driver, who serves all requests in the FIFO order. Each customer dials a taxi at some time to get from work to home. The example is made up of 6 quite simple classes:
+The \lstinline$org.matsim.contrib.dvrp.examples.onetaxi$ package contains a simple example of how to simulate on-line taxi dispatching the DVRP extension. There are ten taxi customers and one taxi driver, who serves all requests in the FIFO order. Each customer dials a taxi at some time to get from work to home. The example is made up of six classes:
 %
 \begin{itemize}
 	\item \lstinline$OneTaxiRequest$ -- represents taxi requests
 	
 	\item \lstinline$OneTaxiRequestCreator$ -- converts taxi calls into requests that are submitted to the optimizer
 	
-	\item \lstinline$OneTaxiOptimizer$ -- builds/updates the taxi driver's schedule
+	\item \lstinline$OneTaxiOptimizer$ -- creates and updates the taxi driver's schedule
 	
 	\item \lstinline$OneTaxiServeTask$ -- represents stay tasks related to serving customers (i.e. picking up and dropping off)
 	
-	\item \lstinline$OneTaxiActionCreator$ -- converts schedule elements (tasks) into dynamic actions (i.e. dynamic activities or legs)
+	\item \lstinline$OneTaxiActionCreator$ -- translates tasks into dynamic activities and legs
 	
 	\item \lstinline$OneTaxiLauncher$ -- sets up and runs the whole scenario
 \end{itemize}
 
-The example is located in the \lstinline$org.matsim.contrib.dvrp.examples.onetaxi$ package. All data is stored in the \lstinline$/contrib/dvrp/src/main/resources/one_taxi$ directory.
-
-
-
-
-
-
-
-\mm{assesing the performance}
-Either by analysing Schedules: playground.michalm.taxi.optimizer.TaxiStatsCalculator, or listening to events: playground.jbischoff.taxi.evaluation.TravelDistanceTimeEvaluator or playground.jbischoff.taxi.evaluation.TaxiCustomerWaitTimeAnalyser 
-Both ways should give same results.
-
-Subclassing/extending Requests and Tasks is helpful (e.g. OneTaxiServeTask).
+All data necessary to run the OneTaxi example is located in the \lstinline$/contrib/dvrp/src/main/resources/one_taxi$ directory.
 
 % ##################################################################################################################
 

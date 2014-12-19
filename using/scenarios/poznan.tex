@@ -3,4 +3,20 @@
 \label{sec:poznan}
 \hfill \textbf{Author:} Michal Maciejewski
 
+Poznan, with its population of over 550,000, is the 5th largest city in Poland, and together with the neighboring suburban area, it makes up an agglomeration inhabited by nearly 1 million people. The development of the MATSim scenario for the Poznan agglomeration began in 2012, since then, the model has been continuously extended and improved. Currently, it is a 24-hour microscopic model of private transport. The goal is to create a 24-hour multi-agent activity-based simulation of the Poznan agglomeration, combining both private and public transport.
+
+The road network model was extracted from OpenStreetMap (OSM), and includes the eight main road classes and five additional ones (such as entrances or exits from motorways). The final result is a high-detail road network model that consists of 17026 nodes and 40129 one-way links. This model was calibrated in order to determine traffic flow parameters for links (e.g., flow capacity, storage capacity, free-flow speed) for each of the 13 modeled road classes. \mm{ref to the OSM paper by BP and MM}
+
+The travel demand was derived from the official 4-stage model created in PTV VISUM and used by the planning department of the city of Poznan; this model dates back to 2000 but since then has been frequently updated. Since the official model was originally designed for the the morning and afternoon peak hours, it had to be extended to model the travel demand for each of 24 hours. As a result, the demand for private transport is represented by 24 sets of hourly OD matrices, each set consisting of 9 different matrices, one for each of 9 travel motivations (from home to work, education, shopping or other; from work, education, shopping or other to home; and not related to home) this totals up to 216 OD matrices. \mm{ref to English paper by MM, BP, WW and AS; and to Przeglad Komunikacyjny??}
+
+The official model divides the agglomeration into 417 zones\mm{Wal, ile bylo faktycznie zon, a ile to zony zewnetrzne?}, which is not sufficient for the activity locations to be accurately modeled at the microscopic level. To increase the accuracy, a land use model was used. Based on the OSM data, each zone has been divided into homogenous \emph{subzones} of 6 types of land use, namely residential, industrial, green, commercial, schools and unclassified (i.e., none of the previous). As a result, home activities, for example, are located in residential subzones, education activities at schools, or shopping in residential or commercial subzones. Figure~\ref{} illustrates the distribution of \emph{home} locations when land use is taken into account. \mm{ref to the GIS paper by BP and MM}
+
+\mm{Fig.2. Distribution of home activities based on land use}
+
+Having calculated the OD matrices for private transport and subdivided the area into homogenous subzones, the next step was to generate the synthetic population of agents. In the first attempt, an assumption was made that each agent performs only one trip, so the number of agents equals the sum of all the trips from the OD matrices, that is almost 840,000. Departure times were randomly distributed (uniform distribution) over the whole hour, and therefore, the only choice made by an agent during the re-planning phase concerned the route covered between the selected pair of locations. The whole simulaion takes 120 iterations, but the relaxed state is usually achieved after 60 iterations. Figure~\ref{} shows the state of traffic at 7:00 am.
+
+\mm{Fig.2 goes here}
+
+Currently, the model is being updated according to the Comprehensive Travel Study carried out in 2014. At the same time, the public transport system is being added, thus allowing for simulating both private and public transport. The Poznan model has been used for simulation of real-time electric taxi dispatching, which is done by means of the DVRP extension \mm{ref to some taxi papers?}.
+
 % ##################################################################################################################

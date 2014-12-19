@@ -9,33 +9,33 @@
 \createStandardInformation{todo}{todo}{todo}{todo}
 
 % ##################################################################################################################
-This chapter presents an integrated approach for performing evacuation simulations with MATSim using the GRIPS extension. GRIPS stands for GIS-based Risk-Analysis-, Information-, and Planning-System for Regional Evacuation. 
-The approach comprises all steps of the workflow for performing an evacuation analysis, i.e.,\,selecting the evacuation area and defining the population, specifying the behavioral parameters (i.e.,\,the pre-movement time distribution and the mode of evacuation---car or pedestrian), and analyzing the simulation output. These steps can all be performed within one graphical user interface. Additionally, two extensions of MATSim for simulating public transport and for changing the network during the simulation (i.e.,\,network change events) are accessible from the GUI. In this chapter, the steps for performing such an integrated analysis are described and illustrated based on the example of Hamburg-Wilhelmsburg. A detailed case study based on this scenario is given in Chapter~\ref{ch:sc:hhw} as well in \cite{DurstAtAl2012PEDGRIPSAppl,Hugenbusch2012Bachelor}.
+This chapter presents an integrated approach for performing evacuation simulations with \gls{matsim} using the \gls{grips} extension. %GRIPS stands for GIS-based Risk-Analysis-, Information-, and Planning-System for Regional Evacuation. 
+The approach comprises all steps of the workflow for performing an evacuation analysis, i.e.,\,selecting the evacuation area and defining the population, specifying the behavioral parameters (i.e.,\,the pre-movement time distribution and the mode of evacuation---car or pedestrian), and analyzing the simulation output. These steps can all be performed within one graphical user interface. Additionally, two extensions of \gls{matsim} for simulating public transport and for changing the network during the simulation (i.e.,\,network change events) are accessible from the \gls{gui}. In this chapter, the steps for performing such an integrated analysis are described and illustrated based on the example of Hamburg-Wilhelmsburg. A detailed case study based on this scenario is given in Chapter~\ref{ch:sc:hhw} as well in \citet{DurstAtAl2012PEDGRIPSAppl,Hugenbusch2012Bachelor}.
 
 % ##################################################################################################################
 \section{Related Work}
-The simulation of evacuation processes has gained much attention in recent decades. One reason is the increase in frequency and severity of natural hazards affecting human societies and (social) disasters~\citep{Rodr2006HBoDisasterResearch}. Another reason is the availability of large-scale and fast simulation models and tools. \citet{Laemmel_PhDThesis_2011} discusses such a model that is implemented as an extension to MATSim. Basically, this model implements the same iterative learning approach as it is applied to "regular" transport scenarios. In the first instance, the cost function comprise travel times only, albeit a combination of travel time and travel distance as a cost function has been investigated as well~\citep{LaemmelKluepfelNagel2009EvacPadangAtBookTimmermanns}. 
+The simulation of evacuation processes has gained much attention in recent decades. One reason is the increase in frequency and severity of natural hazards affecting human societies and (social) disasters~\citep{Rodr2006HBoDisasterResearch}. Another reason is the availability of large-scale and fast simulation models and tools. \citet{Laemmel_PhDThesis_2011} discusses such a model that is implemented as an extension to \gls{matsim}. Basically, this model implements the same iterative learning approach as it is applied to "regular" transport scenarios. In the first instance, the cost function comprise travel times only, albeit a combination of travel time and travel distance as a cost function has been investigated as well~\citep{LaemmelKluepfelNagel2009EvacPadangAtBookTimmermanns}. 
 Artificial agents representing evacuees trying to improve their evacuation plans from iteration to iteration by creating new evacuation plans that are best responses to the experienced situation. 
 In a typical run, the simulation comprises 500-1000\,iterations. 
 %If after any iteration the best response dynamic produces the same evacuation plans as those that have been just performed the system has reached a steady state. This steady state would be a pure strategy Nash equilibrium regarding the cost function. There is, however, no guaranty that the system ever converges to a steady state. For that reason~\citet{Laemmel_PhDThesis_2011} refers to as Nash equilibrium approach.
 %\ah{explained elsewhere}
-The model is applied to a tsunami related evacuation of the city of Padang, Indonesia (see, e.g.\,\citep{TaubenboeckEtAl2012ConcludingLastMilePaperNatHazards,GosebergEtAl2012LastLastMile}, some details about the scenario are discussed in Chapter~\ref{sec:padang}). 
+The model is applied to a tsunami related evacuation of the city of Padang, Indonesia \citep[e.g.,][]{TaubenboeckEtAl2012ConcludingLastMilePaperNatHazards,GosebergEtAl2012LastLastMile}, some details about the scenario are discussed in Chapter~\ref{sec:padang}. 
 
-Additional work related to evacuation simulations in MATSim is presented by \citet{Dobler_PhDThesis_2013}. The main difference to the approach presented in this chapter is that agents are allowed to adapt their plans on-the-fly using MATSim's within-day replanning framework \citep{DoblerEtAl_TRR_2012} (Chapter~\ref{ch:withinday}}). 
+Additional work related to evacuation simulations in \gls{matsim} is presented by \citet{Dobler_PhDThesis_2013}. The main difference to the approach presented in this chapter is that agents are allowed to adapt their plans on-the-fly using \gls{matsim}'s within-day replanning framework \citep{DoblerEtAl_TRR_2012} (Chapter~\ref{ch:withinday}). 
 Based on a behavioral model, agents coordinate their actions on household level. If a household is e.g.,\,not complete when the evacuation starts, each member estimates the time to return home as well as the time to leave the evacuation area directly. Then, the household decides whether meeting at home and leaving together is preferred over every member leaving on its own.
 Since the behavioral model is implemented on agent, respectively household level, individual attributes such as presence of children in the household or availability of a car can be taken into account.
-In contrast to regular MATSim simulations, only a single iteration is performed. Since the agents can optimize their plans continuously using real time information, no further replanning is necessary. As a result, it is guaranteed that agents do not foresee future events such as traffic jams caused by people leaving the threatened area.
+In contrast to regular \gls{matsim} simulations, only a single iteration is performed. Since the agents can optimize their plans continuously using real time information, no further replanning is necessary. As a result, it is guaranteed that agents do not foresee future events such as traffic jams caused by people leaving the threatened area.
 
-The remainder of this chapter is organized as follows: Section~\ref{grips:install} gives a brief description on how to setup and run GRIPS. 
-A short quick start guide for GRIPS is presented in Section~\ref{evac:section:fifteenminute}. How to obtain the required input data is discussed in Section~\ref{grips:input}. Detailed instructions on how to use GRIPS's \lstinline|ScenarioManager|, running simulations, and analyzing them afterward is given in Section~\ref{grips:scm}. This Chapter concludes with a brief outlook in Section~\ref{grips:outlook}.
+The remainder of this chapter is organized as follows: Section~\ref{grips:install} gives a brief description on how to setup and run \gls{grips}. 
+A short quick start guide for \gls{grips} is presented in Section~\ref{evac:section:fifteenminute}. How to obtain the required input data is discussed in Section~\ref{grips:input}. Detailed instructions on how to use \gls{grips}'s \lstinline|ScenarioManager|, running simulations, and analyzing them afterward is given in Section~\ref{grips:scm}. This Chapter concludes with a brief outlook in Section~\ref{grips:outlook}.
 
 % ##################################################################################################################
-\section{Download MATSim and Grips}}
+\section{Download MATSim and GRIPS}
 \label{grips:install}
-Even though it is referred here to the MATSim version \lstinline|0.6.0-SNAPSHOT| the package should also work with later versions of MATSim.
+Even though it is referred here to the \gls{matsim} version \lstinline|0.6.0-SNAPSHOT| the package should also work with later versions of \gls{matsim}.
 \begin{enumerate}
 \item 
-Download the current nightly build of MATSim and Grips from
+Download the current nightly build of \gls{matsim} and \gls{grips} from
 \url{http://matsim.org/files/builds/}
 \item 
 Unzip the \lstinline|Matsim_rxxxxx.zip|, \lstinline|Matsim_libs.zip| and\\
@@ -54,18 +54,18 @@ You can test your configuration by invoking\\
 \label{evac:section:fifteenminute}
 If you just want to get a quick impression, then the following steps can be performed within a few minutes:
 \begin{description}
-\item[OSM] Go to \url{www.openstreetmap.org} search for your favorite place and download a (small) OpenStreetMap file. Please choose a small area, e.g.,\,100\,meters by 100\,meters. This is sufficient for the beginning and the size of the exported area is limited. For larger areas, a direct download from sites like \url{www.geofabrik.de} is preferable (see next section).
+\item[OSM] Go to \url{www.openstreetmap.org} search for your favorite place and download a (small) \gls{osm} file. Please choose a small area, e.g.,\,100\,meters by 100\,meters. This is sufficient for the beginning and the size of the exported area is limited. For larger areas, a direct download from sites like \url{www.geofabrik.de} is preferable (see next section).
 \item[Run] the \lstinline|ScenarioManager| as described in the previous section.
 \item[Create] a scenario by clicking the leftmost button first and then \lstinline|New|. Go to the directory where you would like to save your project and name the project file (e.g.,\,\lstinline|london.xml| or \lstinline|scenario.xml|).
-\item[Specify] The path of the OpenStreetMap file (by clicking \lstinline|Set| next to network) and the output directory. Leave area and population file as it is, GRIPS will handle this.
+\item[Specify] The path of the \gls{osm} file (by clicking \lstinline|Set| next to network) and the output directory. Leave area and population file as it is, \gls{grips} will handle this.
 \textbf{This step has to be done only once. After the scenario-file has been saved, you can just open it in the \lstinline|ScenarioManager|.}
 \item[Sample size] Set the sample size to 0.1 (you can use the mouse or the cursor buttons of your keyboard).
-\item[Departure] Specify the departure time distribution. Plausible values could be: normal distribution, $\mu$ and $\sigma$ 600\,seconds (10\,minutes), earliest 300\,seconds, latest 1200\,seconds (20\,minutes).
+\item[Departure] Specify the departure time distribution. Plausible values are: normal distribution, $\mu$ and $\sigma$ 600\,seconds (10\,minutes), earliest 300\,seconds, latest 1200\,seconds (20\,minutes).
 \item[Save] your scenario file.
 \item[Area] Switch to the area tab. You can define the circular evacuation area by keeping the left mouse button pressed and defining the center and radius. Do not forget to save your changes.
 \item[Population] Switch to the population tab and define the population (handling is similar to area). Do not forget to save your changes.
-\item[Convert] Switch to the next tab and convert the scenario to MATSim input files by clicking the \lstinline|run| button. The MATSim files will be stored in the output directory specified in the beginning.
-\item[Run] the MATSim simulation by skipping the next two tabs/buttons (road closures and buses) and switching to the simulation tab (with the little "M" for MATSim on the computer screen). Click \lstinline|run|. This will take a while.
+\item[Convert] Switch to the next tab and convert the scenario to \gls{matsim} input files by clicking the \lstinline|run| button. The \gls{matsim} files will be stored in the output directory specified in the beginning.
+\item[Run] the \gls{matsim} simulation by skipping the next two tabs/buttons (road closures and buses) and switching to the simulation tab (with the little "M" for \gls{matsim} on the computer screen). Click \lstinline|run|. This will take a while.
 \textbf{If there already exists an output directory (e.g.,\,from a previous run) it will be renamed.}
 \item[Analyze] your simulation results by switching to the final tab after the simulation is finished.
 
@@ -74,33 +74,30 @@ If you just want to get a quick impression, then the following steps can be perf
 % ##################################################################################################################
 \section{Input Data (any Place and any Size)}
 \label{grips:input}
-The only external input that is necessary for performing an evacuation analysis with \lstinline|org.matsim.contrib.grips| is an OpenStreetMap file.
-You can download OpenStreetMap files from \lstinline|download.geofabrik.de|.
-For the sake of this tutorial, we will use the file for Hamburg, Germany. 
-Please go to \url{http://download.geofabrik.de/europe/germany/hamburg.html} and download the \lstinline|hamburg-latest.osm.bz2| file. This is all the initial preparation you need. Everything else can 
-be done with the \lstinline|ScenarioManager| of the GUI.
+The only external input that is necessary for performing an evacuation analysis with \lstinline|org.matsim.contrib.grips| is an \gls{osm} file.
+You can download \gls{osm}.
+For the sake of this tutorial, we will use the file for Hamburg, Germany. Please go to \url{http://download.geofabrik.de/europe/germany/hamburg.html} and download the \lstinline|hamburg-latest.osm.bz2| file. This is all the initial preparation you need. Everything else can be done with the \lstinline|ScenarioManager| of the \gls{gui}.
 
 % ##################################################################################################################
 \section{Scenario Manager}
 \label{grips:scm}
-The scenario setup, evacuation simulation, and analysis are handled by the \lstinline|ScenarioManager| from the MATSim contribution package \lstinline|org.matsim.contrib.grips|, 
-
+The scenario setup, evacuation simulation, and analysis are handled by the \lstinline|ScenarioManager| from the \gls{matsim} contribution package \lstinline|org.matsim.contrib.grips|, 
 % =====================================================================================================
 \subsection{Scenario Configuration}
-At start-up the \lstinline|ScenarioManager| offers the option to either defining a new scenario configuration or opening an existing one from a XML file, which then subsequently can be modified. Figure~\ref{chap:evac:fig:sc_man} shows a screenshot of a scenario configuration in the \lstinline|ScenarioManager| and the corresponding XML file respective.
+At start-up the \lstinline|ScenarioManager| offers the option to either defining a new scenario configuration or opening an existing one from a \gls{xml} file, which then subsequently can be modified. Figure~\ref{chap:evac:fig:sc_man} shows a screenshot of a scenario configuration in the \lstinline|ScenarioManager| and the corresponding \gls{xml} file respective.
 
 \createfigure%
-{Illustration of a configuration opened in the \lstinline|ScenarioManager| (left) and as XML file (right).}%
-{Illustration of a configuration opened in the \lstinline|ScenarioManager| (left) and as XML file (right).}%
+{Illustration of a configuration}%
+{Illustration of a configuration opened in the \lstinline|ScenarioManager| and as XML file}%
 {\label{chap:evac:fig:sc_man}}%
 {%
   \createsubfigure%
-  {}%
+  {\lstinline|ScenarioManager|}%
 {\includegraphics[width=.475\linewidth]{extending/figures/Evacuation/grips_config}}
   {}%
   {}%
   \createsubfigure%
-  {}%
+  {XML file}%
 {\includegraphics[width=.475\linewidth]{extending/figures/Evacuation/grips_config_xml}}
   {}%
   {}% 
@@ -108,17 +105,18 @@ At start-up the \lstinline|ScenarioManager| offers the option to either defining
   {}%
 
 The evacuation scenario is specified by the following parameters:
-\begin{itemize}
-\item The path to the network file covering the evacuation area. Currently, OpenStreetMap XML files are supported (\lstinline|*.osm|).
-\item The main traffic type for the simulation. This can either be \lstinline|VEHICULAR| or \lstinline|PEDESTRIAN|. Depending on the choice a vehicular specific (the MATSim default) or a pedestrian specific (as discussed in~\citet{LaemmelKluepfelNagel2009EvacPadangAtBookTimmermanns,Laemmel_PhDThesis_2011}) simulation network will be generated by setting free speed, number of lanes, and flow capacity for the links in the network accordingly.
-\item The path to an ESRI-Shape file describing the extend of the evacuation area by a simple polygon. This file does not need to be exist right from the beginning but can be produced manually by the \lstinline|ScenarioManager| itself as discussed later.
-\item The path to an ESRI-Shape file giving the size and distribution of the affected population. This file comprise a set of simple polygons with each polygon has an additional attribute for the number of persons residing at a location inside that polygon. As for the evacuation area this file can be produced with help of the \lstinline|ScenarioManager|.
-\item The path to the output directory where the simulation output and MATSim scenario files will be stored.
-\item The sample size for the MATSim simulation. A smaller sample size increases the simulation performance, while a larger size might increase accuracy of the results. Typical values are 1.0, 0.1, or 0.01 depending on the scenario and the available computing resources.
+\begin{compactitem}
+\item The path to the network file covering the evacuation area. Currently, \gls{osm} \gls{xml} files are supported (\lstinline|*.osm|).
+\item The main traffic type for the simulation. This can either be \lstinline|VEHICULAR| or \lstinline|PEDESTRIAN|. Depending on the choice a vehicular specific (the \gls{matsim} default) or a pedestrian specific (as discussed in~\citet{LaemmelKluepfelNagel2009EvacPadangAtBookTimmermanns,Laemmel_PhDThesis_2011}) simulation network will be generated by setting free speed, number of lanes, and flow capacity for the links in the network accordingly.
+\item The path to an \gls{esri} shape file describing the extend of the evacuation area by a simple polygon. This file does not need to be exist right from the beginning but can be produced manually by the \lstinline|ScenarioManager| itself as discussed later.
+\item The path to an \gls{esri} shape file giving the size and distribution of the affected population. This file comprise a set of simple polygons with each polygon has an additional attribute for the number of persons residing at a location inside that polygon. As for the evacuation area this file can be produced with help of the \lstinline|ScenarioManager|.
+\item The path to the output directory where the simulation output and \gls{matsim} scenario files will be stored.
+\item The sample size for the \gls{matsim} simulation. A smaller sample size increases the simulation performance, while a larger size might increase accuracy of the results. Typical values are 1.0, 0.1, or 0.01 depending on the scenario and the available computing resources.
 \item The departure time distribution defines the distribution from which the departure times for the simulation will be drawn. The intention behind this is that in real evacuation situations it is not expected that all people start simultaneously with their evacuation. 
 People tent to perform pre-evacuation activities before they start. Those activities include picking up relatives, to pack food, cloths, or valuable belongings, and other things. 
 Since number and duration of those activities differs on the individual level the departure times of the population is an unknown quantity. The \lstinline|ScenarioManager| supports three different distributions (Dirac-delta, normal, and log-normal). If the user chooses the Dirac-delta distribution then all evacuees will start at once, which might be the worst case~\citep{LaemmelKluepfel2012InfluenceOfDepartureTimeDistribution}. By choosing the normal distribution the departure times for the individuals are drawn from a normal distribution with mean $\mu$ and standard deviation $\sigma$, where the parameters $\mu$ and $\sigma$ are of unit [second]. As an example, setting $\mu = 1800$ and $\sigma =  900$ will result in a departure time distribution where on average after 30\,min 50\,\% of the population has departed and 68.3\,\% of the population departs in the time interval of 30\,minutes $\pm$ 15\,minutes. If the user decides to choose log-normal as the distribution then the departure times are drawn from a log-normal distribution, where $\mu$ and $\sigma$ are the parameters of the associated normal distribution (a discussion on this matter is given below). The parameters \emph{earliest} and \emph{latest} determine the earliest and latest possible departure time. The normal and log-normal departure time distribution are truncated accordingly.
-\end{itemize}
+\end{compactitem}
+%
 The departure time distribution is maybe the most unclear parameter to set. The authors are not aware of any holistic research into this matter. 
 In general, it seems to be reasonable to assume that a lot of people starting the evacuation at the same time or soon after the evacuation order has been issued and as the the time proceeds fewer and fewer people still have to depart. 
 This calls for a departure time distribution that has a probability density function with a steep positive gradient at the beginning and after a peak it levels out slowly. The probability density function of a log-normal distribution produces this kind of curve. log-normal and normal distributions are closely related. If the random variable $Y$ is normal distributed, then $X = \text{exp}(Y)$ is log-normal distributed. The expected value $E[X]$  and the variance $Var[X]$ are
@@ -141,39 +139,39 @@ If the users wishes to generate a population with departure times that follow a 
 
 % =====================================================================================================
 \subsection{Evacuation Area}% and population}
-The \lstinline|ScenarioManager| integrate a modules for the definition of the evacuation area and the distribution of the affected population. The so called evacuation area selection module allows the user to define the evacuation area by drawing either a simple polygon or a circle on map. The application can make use of either a WMS-provider or a tile map provider (e.g.,\,OpenStreetMap) as background map renderer. Zooming and panning is restricted to the bounding box of the OpenStreetMap network file provided in the scenario configuration. An illustration of the evacuation area selector is given in Figure~\ref{chap:evac:fig:area_pop}. Besides defining a new evacuation area a pre-existing one can also be loaded into the \lstinline|ScenarioManager|. The requirements for a pre-existing evacuation area file are:
-\begin{itemize}
-\item It has to be provided as a ESRI shape file.
+The \lstinline|ScenarioManager| integrates modules for the definition of the evacuation area and the distribution of the affected population. The so called evacuation area selection module allows the user to define the evacuation area by drawing either a simple polygon or a circle on map. The application can make use of either a WMS-provider or a tile map provider (e.g.,\,\gls{osm}) as background map renderer. Zooming and panning is restricted to the bounding box of the \gls{osm} network file provided in the scenario configuration. An illustration of the evacuation area selector is given in Figure~\ref{chap:evac:fig:area_pop}. Besides defining a new evacuation area a pre-existing one can also be loaded into the \lstinline|ScenarioManager|. The requirements for a pre-existing evacuation area file are:
+\begin{compactitem}
+\item It has to be provided as a \gls{esri} shape file.
 \item The evacuation area must be defined as a simple polygon or a multi-polygon that contains one and only one simple polygon.
-\item The coordinate reference system for polygon in the ESRI shape file has to be set correctly. 
-\end{itemize}
+\item The coordinate reference system for polygon in the \gls{esri} shape file has to be set correctly. 
+\end{compactitem}
 Due to the error-proneness this approach is recommended for experienced users only.
 
-Later in the process the \lstinline|ScenarioManager| takes the evacuation area to cut out an evacuation network. However, after cutting out the evacuation net there is no particular node as a target for the route calculation, as the evacuees have more than one safe place to evacuate to. Instead, in the underlying domain every node outside the evacuation area is a possible destination for an evacuee that is looking for an escape route. Thus, the evacuation problem is in general a multi-destination problem. To resolve this, the standard approach (e.g.,\,\citet{FordFulkerson1962FlowsInNetworks,LuGeorgeEtAl2005CapacityConstrainedRouting}) is to extend the network in the following way: All exit links (i.e.,\,links that are originating inside the evacuation area and terminating outside the evacuation area) are connected, using virtual links with infinite flow capacity and zero length, to a super-node, and all evacuation routes are routed to the super-node. This way, the problem is reduced to a multi-source single-destination problem. And thus, finding the shortest path from any node inside the evacuation area to this super-node and, in consequence, to safety can efficiently be solved. For technical reasons, a super-link is added to the super-node and the evacuees are routed to that link (compare the image at the at the beginning of this chapter).
+Later in the process, the \lstinline|ScenarioManager| takes the evacuation area to cut out an evacuation network. However, after cutting out the evacuation net there is no particular node as a target for the route calculation, as the evacuees have more than one safe place to evacuate to. Instead, in the underlying domain every node outside the evacuation area is a possible destination for an evacuee that is looking for an escape route. Thus, the evacuation problem is in general a multi-destination problem. To resolve this, the standard approach \citep[e.g.,][]{FordFulkerson1962FlowsInNetworks,LuGeorgeEtAl2005CapacityConstrainedRouting} is to extend the network in the following way: All exit links (i.e.,\,links that are originating inside the evacuation area and terminating outside the evacuation area) are connected, using virtual links with infinite flow capacity and zero length, to a super-node, and all evacuation routes are routed to the super-node. This way, the problem is reduced to a multi-source single-destination problem. And thus, finding the shortest path from any node inside the evacuation area to this super-node and, in consequence, to safety can efficiently be solved. For technical reasons, a super-link is added to the super-node and the evacuees are routed to that link (compare the image at the at the beginning of this chapter).
 
 % =====================================================================================================
 \subsection{Evacuation Demand}
 The process of defining the population distribution is similar to that of the evacuation area. The difference is that the population is distributed over circles drawn on the map. The user can draw an arbitrary number of those circles and define for each circle the population figures individually. Figure~\ref{chap:evac:fig:area_pop} illustrates the population editor. 
-
+%
 \createfigure%
-{The evacuation area (left) and the population distribution (right) can be defined with an integrated GIS application.}%
-{The evacuation area (left) and the population distribution (right) can be defined with an integrated GIS application.}%
+{The evacuation area and the population distribution can be defined with an integrated GIS application}%
+{The evacuation area and the population distribution can be defined with an integrated GIS application}%
 {\label{chap:evac:fig:area_pop}}%
 {%
   \createsubfigure%
-  {}%
+  {Evacuation area}%
 {\includegraphics[width=.475\linewidth]{extending/figures/Evacuation/evac_area_sel}}
   {}%
   {}%
   \createsubfigure%
-  {}%
+  {Population distribution}%
 {\includegraphics[width=.475\linewidth]{extending/figures/Evacuation/pop_sel}}
   {}%
   {}% 
 }%
   {}%
 %
-The population editor only offers basic functionality to define a population distribution. For every circular area the \lstinline|ScenarioManager| produces as many agents as requested and assigns for each agent a random coordinate inside the circular area. However, in MATSim agents depart on links so the \lstinline|ScenarioManager| calls the \lstinline|getNearestLink()| method defined in \lstinline|NetworkImpl|. Thus, agents will depart on links inside and possibly nearby the circular areas. 
+The population editor only offers basic functionality to define a population distribution. For every circular area the \lstinline|ScenarioManager| produces as many agents as requested and assigns for each agent a random coordinate inside the circular area. However, in \gls{matsim} agents depart on links so the \lstinline|ScenarioManager| calls the \lstinline|getNearestLink()| method defined in \lstinline|NetworkImpl|. Thus, agents will depart on links inside and possibly nearby the circular areas. 
 
 In the current version, it is not possible to use a predefined demand for the simulation. Extending the simulation package in this way would be straightforward but is out of scope of this work.
 
@@ -189,29 +187,29 @@ In real situations it is often the case that not all exiting roads are available
 The actual planning of road closures can be a complex undertaking and not all attributes of such a planning can be integrated in a simple tool for rapid evacuation planning. Nevertheless, the \lstinline|ScenarioManager| offers a tool to create time-dependent road closures. An illustration of the road closures editor is given in Figure~\ref{fig:evac_editor}.
 
 \createfigure%
-{Left: Road closures can be edited by an integrated GIS application. For every link the direction and the time of closure can be defined. Right: Tool that let the user define bus stop locations and schedules.}%
-{Left: Road closures can be edited by an integrated GIS application. For every link the direction and the time of closure can be defined. Right: Tool that let the user define bus stop locations and schedules.}%
+{Road closures can be edited by an integrated GIS application. For every link the direction and the time of closure can be defined. Tool that let the user define bus stop locations and schedules}%
+{Road closures can be edited by an integrated GIS application. For every link the direction and the time of closure can be defined. Tool that let the user define bus stop locations and schedules}%
 {\label{fig:evac_editor}}%
 {%
   \createsubfigure%
-  {}%
+  {Road closures}%
 {\includegraphics[width=.475\linewidth]{extending/figures/Evacuation/rd_closure_detail}}
   {}%
   {}%
   \createsubfigure%
-  {}%
+  {Bus stop locations and schedules}%
 {\includegraphics[width=.475\linewidth]{extending/figures/Evacuation/bus_stops}}
   {}%
   {}% 
 }%
   {}%
 
-Road closures are stored as \lstinline|NetworkChangeEvents| and handled as time-dependent network attributes in MATSim~\cite{LaemmelEtAl_TransResC_2010}.
+Road closures are stored as \lstinline|NetworkChangeEvents| and handled as time-dependent network attributes in \gls{matsim}~\citep{LaemmelEtAl_TransResC_2010}.
 
 % =====================================================================================================
 \subsection{Bus Stop Editor}
-Usually not all people have access to a private car. In the event of an evacuation, those people often rely on public transport. What is more, in region that are prone for natural disasters the local authorities normally have detailed evacuation plans in place. Those plans might include the evacuation by public transport. Consequently, it is of great interest to have a tool available that helps with the integration of public transport into to the simulation framework. The \lstinline|ScenarioManger| offers this possibility by defining bus stops and bus schedules in the interactive GUI. Figure~\ref{chap:evac:fig:rd_closures_bus_stops} gives an example of the bus stop editor. Besides the location the user can define when the first bus will serve a bus stop, how many buses overall will serve this particular bus stop, and of what capacity those buses are. 
-The \lstinline|ScenarioManager| transforms the inputs made in the GUI into a MATSim compatible transport schedule. This means it enriches the scenario while using the same simulation model as before. Details about public transport simulations with MATSim are given in Chapter~\ref{ch:pt}. A tutorial can be found on the MATSim webpage (\lstinline|http://matsim.org/docs/tutorials/transit|).
+Usually not all people have access to a private car. In the event of an evacuation, those people often rely on public transport. What is more, in region that are prone for natural disasters the local authorities normally have detailed evacuation plans in place. Those plans might include the evacuation by public transport. Consequently, it is of great interest to have a tool available that helps with the integration of public transport into to the simulation framework. The \lstinline|ScenarioManger| offers this possibility by defining bus stops and bus schedules in the interactive \gls{gui}. Figure~\ref{chap:evac:fig:rd_closures_bus_stops} gives an example of the bus stop editor. Besides the location the user can define when the first bus will serve a bus stop, how many buses overall will serve this particular bus stop, and of what capacity those buses are. 
+The \lstinline|ScenarioManager| transforms the inputs made in the \gls{gui} into a \gls{matsim} compatible transport schedule. This means it enriches the scenario while using the same simulation model as before. Details about public transport simulations with \gls{matsim} are given in Chapter~\ref{ch:pt}. A tutorial can be found on the \gls{matsim} webpage (\lstinline|http://matsim.org/docs/tutorials/transit|).
 
 Limitations of the public transport evacuation approach in this project are:
 \begin{compactitem}
@@ -221,7 +219,7 @@ Limitations of the public transport evacuation approach in this project are:
 
 % =====================================================================================================
 \subsection{Running the Scenario}
-The \lstinline|ScenarioManager| runs the evacuation simulation in a similar way as it is done in other transport simulation studies with MATSim. 
+The \lstinline|ScenarioManager| runs the evacuation simulation in a similar way as it is done in other transport simulation studies with \gls{matsim}. 
 At the beginning an evacuation plan is assigned to each evacuee. 
 An evacuation plan describes the way how the evacuee intents to reach the safe area.
 In case the evacuee evacuates by car or foot then such a plan essentially comprise a route (typically the shortest route) from home to the safe area. For evacuees who are evacuating by public transport such a plan can be much more complex. All those evacuation plans will be executed in the mobility simulation. After the mobility simulation terminates all plans are scored regarding their resulting travel time. 
@@ -232,17 +230,17 @@ Since people who know their  environment would likely avoid roads that obviously
 % =====================================================================================================
 \subsection{Analysis}
 After the last iteration has finished the \lstinline|ScenrioManager| enables the analysis module. The analysis model evaluates the performed simulation run by a number of different methods. 
-\begin{itemize}
+\begin{compactitem}
 \item The cumulative arrival curve tells the user the number of evacuated persons over time. From this curve the user can for example read at what time 50\,\% of the population are in safety.
-\item The GIS based evacuation time analysis draws a grid over the evacuation area and computes for every grid cell the average evacuation time. The evacuation times are indicated be different colors. Therefore, the analysis modules runs a quantiles-based clustering analysis for each cell. The size of the cells can be varied  by the user.
-\item The GIS based clearance time analysis is performed in the same way as the evacuation time  analysis. The clearance time of a cell is the time when the last evacuee leaves that cell. This evacuee is not necessary one who also started her evacuation inside the corresponding cell but might also be one who crosses that cell some when during the evacuation.
+\item The \gls{gis} based evacuation time analysis draws a grid over the evacuation area and computes for every grid cell the average evacuation time. The evacuation times are indicated be different colors. Therefore, the analysis modules runs a quantiles-based clustering analysis for each cell. The size of the cells can be varied  by the user.
+\item The \gls{gis} based clearance time analysis is performed in the same way as the evacuation time  analysis. The clearance time of a cell is the time when the last evacuee leaves that cell. This evacuee is not necessary one who also started her evacuation inside the corresponding cell but might also be one who crosses that cell some when during the evacuation.
 \item A similar quantiles-based clustering approach is used for the link utilization analysis. The link utilization analysis results help the user to identify the roads with the highest utilization during the evacuation.
-\end{itemize}
-The analyses can be run for every single iteration for which the MATSim controller has dumped an events file (every 10th iteration by default). An overview of the analysis module is given in Figure~\ref{chap:evac:fig:analysis}
+\end{compactitem}
+The analyses can be run for every single iteration for which the \gls{matsim} \lstinline|Controler| has dumped an events file (every 10th iteration by default). An overview of the analysis module is given in Figure~\ref{chap:evac:fig:analysis}
 
 \createfigure%
-{Screenshot of the analysis module showing GIS based evacuation time analysis and the evacuation curve.}%
-{Screenshot of the analysis module showing GIS based evacuation time analysis and the evacuation curve.}%
+{Screenshot of the analysis module showing GIS-based evacuation time analysis and the evacuation curve}%
+{Screenshot of the analysis module showing GIS-based evacuation time analysis and the evacuation curve}%
 {\label{chap:evac:fig:analysis}}%
 {\includegraphics[width=1\textwidth]{extending/figures/Evacuation/it50_evac_time}}
 {}
@@ -250,7 +248,7 @@ The analyses can be run for every single iteration for which the MATSim controll
 % ##################################################################################################################
 \section{Conclusion}
 \label{grips:outlook}
-This chapter demonstrates how rapid evacuation planning can be performed with help of the GRIPS extension. The GRIPS extension provides an interactive GUI to perform this task.
-The only required external input is a network file extracted from OpenStreeMap, thus a simple scenario can be setup, simulated, and analyst in well bellow one hour. Obviously, for an in-depth evacuation analysis of a certain area a lot expert knowledge is needed that can not be replaced by a simple GUI. Still, for a rapid appraisal and for demonstration purposes GRIPS offers a powerful and easy to use tool. In future, it is planed to integrate a more advanced public transport planning tool that will be based on~\cite{Neumann_PhDThesis_2014}. Currently, there is also ongoing work to develop a more sophisticated pedestrians simulation model based on the theoretical framework given in~\cite{FloetteroedLaemmel2014BiPedFnd}.
+This chapter demonstrates how rapid evacuation planning can be performed with help of the \gls{grips} extension. The \gls{grips} extension provides an interactive \gls{gui} to perform this task.
+The only required external input is a network file extracted from \gls{osm}, thus a simple scenario can be setup, simulated, and analyst in well bellow one hour. Obviously, for an in-depth evacuation analysis of a certain area a lot expert knowledge is needed that can not be replaced by a simple \gls{gui}. Still, for a rapid appraisal and for demonstration purposes \gls{grips} offers a powerful and easy to use tool. In future, it is planed to integrate a more advanced public transport planning tool that will be based on~\citet{Neumann_PhDThesis_2014}. Currently, there is also ongoing work to develop a more sophisticated pedestrians simulation model based on the theoretical framework given in~\citet{FloetteroedLaemmel2014BiPedFnd}.
 
 % ##################################################################################################################
