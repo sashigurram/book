@@ -9,8 +9,9 @@
 
 % ##################################################################################################################
 This chapter (i) attempts to reconcile MATSim's mechanisms of plan
-{}``mutation'', {}``selection'' and {}``execution'' with a mainstream
-discrete choice perspective and (ii) and sketches a solution to the
+{}``mutation'', {}``selection'' and {}``execution'', borrowed from evolutionary computation \kai{ok?}, with a 
+%mainstream
+discrete choice perspective, and (ii) and sketches a solution to the
 plan choice set generation problem.
 
 Let $C$ be the universal set of all plans that may ever be considered
@@ -152,7 +153,8 @@ where $\bar{S}^{k}$ is the filtered score of iteration $k$ and $S^{k}$
 is the concrete score observed in that iteration. The $\alpha$ parameter
 controls how strongly the filtered score is smoothed out, and hence
 it controls the variability of $\eta$. MATSim enables this mechanism
-through \note{??-Class}. 
+through the \lstinline{learningRate} parameter.
+%\note{??-Class}. 
 
 Assuming for simplicity that upon convergence the stationary score
 $\bar{S}_{ni}^{\infty}$ fluctuates independently from iteration to
@@ -186,9 +188,13 @@ However, as said before, if the choice sets are {}``wrong'' (whatever
 this may precisely mean) then one can be fairly confident that the
 simulated behavior also turns out wrong. 
 
+\kai{Ich würde das so nicht unterschreiben.  Irgendwie brauchen wir aber einen Weg, wie wir das in diesem Buch zur Konvergenz bringen.  EINE Möglichkeit wäre, dass wir an mehreren Stellen so etwas wie ``Also see Sec.??? for a discussion.'', und versuchen dann, dort auf Formulierungen zu kommen, auf die wir uns einigen können.  Das wäre dann ``research avenues'', was es dann logischerweise ist.}
+
+\kai{Inhaltlich: Wenn ich mir so etwas wie das Buch von Norvig/Russel anschaue, dann kann man m.E.\ nicht behaupten, dass im Umfeld von ``artificial intelligence'' (AI) nichts passiert ist.   Mein Eindruck ist eher, dass Fortschritt vor allem dann passiert, wenn die ``intuitiveren'' Methoden aus AI sich mit den ökonometrischen Methoden irgendwie einigen.  Deshalb will ich auch keine Gegnerschaft zwischen ``MATSim'' und sogenannten ``more mainstream methods''.  Selbst wenn Dinge wie ``genetic algorithms'', ``simulated annealing'', ``neuronale Netze'' bereits bekannte statistische Methoden neu erfinden, so ist es dennoch so, dass sie vielleicht ein gutes ``Bild'' finden, was die Methode viel zugänglicher macht.  Und schlussendlich wollen wir mit MATSim kein perfektes ökonometrisches Modell, sondern etwas, was in der Praxis gut funktioniert.  Und bisher hat es tatsächlich recht gut funktioniert, das choice set einfach heuristisch zusammenzusetzen, und dann mit starker Betonung der guten Lösungen auszuwählen.  Es spricht nichts dagegen, zu \emph{untersuchen}, ob man es besser machen kann.  Aber ohne  klaren Nachweis, dass man mit einer stärker ökonometrischen Methode wirklich für die Praxis brauchbarer wird, möchte ich die (für Nicht-Ökonometriker) besser verständliche Variante gerne auch behalten.  --  Der deutsche BVWP macht übrigens Routenwahl \emph{nur} basierend auf ``fastest route'', und hat noch nicht einmal ein konvergierendes Verfahren.}
+
 MATSim performs in every iteration the following operations for each
 agent: (1) update of the choice set and (2) choice of a plan from
-the updated choice set, using the model \ref{eq:ExpBetaPlanSelector}.
+the updated choice set, using the model (\ref{eq:ExpBetaPlanSelector}).
 To make the simulated long-term (stationary) plan choice independent
 of the plan choice set generation, one may require the following stationary
 choice distribution:
@@ -212,6 +218,13 @@ state $(C_{n}',\, i')$ with probability
 \end{eqnarray}
 and rejects it otherwise (meaning that the original choice set $C_{n}$
 and choice $i\in C_{n}$ are maintained).
+
+\kai{Kann es sein, dass da der $n$-Index verrutscht ist:
+\begin{eqnarray}
+\phi & = & \min\left\{ \frac{{\displaystyle P_{n}(i'\mid C)P(C_{n}'\rightarrow C_{n})P_n(i\mid C_{n})}}{{\displaystyle P_{n}(i\mid C)P(C_{n}\rightarrow C_{n}')P_n(i'\mid C_{n}')}},\,1\right\} \label{eq:accept-proba-1}
+\end{eqnarray}
+?? --  Ich finde das mit dem $C$ ohne $n$-Index schwer zu lesen; vielleicht doch $\tilde C_n$?}
+
 
 To make this concrete, assume that the plan innovation yields exactly
 one new plan $i_{\text{in}}$ through a best-response against the
@@ -259,7 +272,7 @@ iterations, the new plan better than the one selected for removal?
 newly generated plan, and select a new plan from the new choice set.
 \end{itemize}
 \end{enumerate}
-This is intuitive: Best response creates new plans that are by chance
+This at first glance counter-intuitive behavior can be motivated as follows:\kai{previous sentence changed; pls check} Best response creates new plans that are by chance
 better than any other plan in a given iteration. Best response is
 hence corrected for by accepting the new plan only if it is by chance
 worse than a randomly selected alternative plan, with both plans being

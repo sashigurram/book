@@ -23,10 +23,11 @@
 % ##################################################################################################################
 \section{Introduction}
 
-{}``Agents'' that {}``learn'' in a {}``synthetic reality'' do
+{}``Agents'' that {}``learn'' in a {}``synthetic reality'' is common language in Artificial Intelligence \citep{RusselNorvig2010ArtificialIntelligence} and/or Multi-Agent simulation~\citep{FerberBook}, but does
 not belong to the standard terminology of transport modeling. This
-chapter phrases the functioning of MATSim in terms of more standard
+chapter phrases the functioning of MATSim in terms of more established
 and well-understood modeling and simulation concepts.
+\kai{Gunnar, habe an obigem Satz ein wenig gebastelt.  Wir haben uns diese Sprache ja nicht selbst ausgedacht; sie war immer nur eine Reaktion auf Dinge, die wir anderswo gelesen haben, und die u.E.\ besser passten als die etabliertere Terminologie.}
 
 It is important to distinguish between a \gls{model} and a \gls{simulation}. A
 model describes certain aspects of a \gls{system}. A simulation evaluates
@@ -339,22 +340,38 @@ discusses this in greater detail and also suggests a cure to this
 problem.) This means, that MATSim with plan innovation turned on (i)
 may yield different simulation results depending on how the simulation
 process is initialized (empirical evidence for this is indicated in
-Chapter~\note{REF: Kai mentioned this in the past; is it documented somewhere?})
+Chapter~\note{REF: Kai mentioned this in the past; is it documented somewhere?} \kai{Nein, eigentlich hatten wir das nie.  Effekte, an die ich mich erinnern kann (nicht notwendigerweise verbunden mit obiger Aussage), sind:
+\begin{itemize}
+%
+\item Wenn man den scale parameter zu groß macht (also stark deterministische best response Reaktion) \emph{und} TimeMutation verwendet, dann kann es Periodizitäten geben \citep{RaneyNagel2006traf-framework}. -- Ich habe immer spekuliert, dass das reine route assignment problem auch bei uns die Stabilitätseigenschaften von static asssignment irgendwie erbt.
+%
+\item Network breakdowns \emph{in aufeinanderfolgenden Iterationen} kommen vor allem aus der (best reply) innovation. Wenn man Innovation abschaltet, verschwinden sie ganz; wenn man die Mobsim mit immer den gleichen Plänen startet, verschwinden sie \emph{nicht}, sind aber nicht mehr über die Iterationen korreliert (was ja auch kein Wunder ist).  Siehe \citep{RieserNagel2008NetworkBreakdown}. -- Leider sagt das Paper nicht genau, ob es mit \lstinline{ChangeExpBeta} oder mit \lstinline{SelectExpBeta} gerechnet wurde. :--(
+%
+\item Die network breakdowns verschwinden auch, wenn man die storage capacity auf den Kanten hochdreht.  Das kam mal von David Charypar, aber der hat das leider nie aufgeschrieben.  Hat was damit zu tun, dass bei hoher storage capacity die queue, die nötig ist, um eine schnelle Kante mit einer langsameren zu balancieren, dann in die Kante selber reinpasst, damit keinen spill-back mehr bildet, und damit keinen network breakdown mehr auslöst.
+\end{itemize}
+%
+})
 and that (ii) statistics of interest cannot be obtained from a single
 MATSim run.
 
 \note{Mention broken ergodicity?}
 
 
-\subsection{Avoiding Network Breakdowns}
+\subsection{Reducing variability \textcolor{gray}{Avoiding Network Breakdowns}}
 
-\note{Please scrutinize this! The idea is just a few hours hold.}\kai{Frage mich, ob wir es dann nicht nach ``research avenues'' packen sollten.  }
+\note{Please scrutinize this! The idea is just a few hours hold.}
 
-Chapter~\note{Agent-based DTA} presents the \texttt{ExpBetaPlanChanger}
+\kai{Vermeidet nicht network breakdown (siehe Zusammenfassung oben) ... bzw.\ es ist zumindestens unklar.  Meiner Erinnerung nach hatte ich \lstinline{ChangeExpBeta} eingeführt, weil das equil net scenario sehr schlecht konvergierte.  Und das ist ja auch klar: Wenn $N$ Agenten die selben zwei gleich gute Optionen haben, dann ist die Amplitude der Fluktuationen auf einer Option $\sim \sqrt{N}$.  -- Ob das allerdings so funktioniert wie gedacht, weiß ich nicht.  Wenn man die scores zum Konvergieren bringt, kann es ja keinen Unterschied mehr machen.  Also muss es, wenn überhaupt, etwas damit zu tun haben, dass die scores nur die letzte Planausführung reflektieren. -- Aber da das mit der switching proba auch einfacher und eleganter ist, bin ich dabei geblieben. } 
+
+\kai{Ich habe hier irgendwie kein gutes Gefühl bei.  ERSTENS ist unklar, ob es wirklich mit dem network breakdown etwas zu tun hat.  Da kannst Du jetzt schimpfen, dass wir das unsauber aufgeschrieben haben, aber es hilft nichts.  ZWEITENS kann es ja nicht sein, dass wir die gleiche stationäre Verteilung bekommen, aber eine geringere breakdown proba.  Ich denke auch, dass wir dann doch eine andere Verteilung der $Z$ bekommen.  Aber ich habe keine Intuition, was das bzgl.\ breakdown tut ... z.B.\ könnte das System auch einfach mehr Iterationen brauchen, um sich an den kritischen Zustand heranzutasten, und dann dauert die ``Lawine'' auch länger, um davon wieder wegzukommen.  (Dann würde sich wohl das $Z^{crit}$ verändern.)}
+
+\kai{Irgendwie müssen wir dringend mal einen Antrag schreiben, der diese Dynamiken untersucht, und dafür jemanden einstellen, den das interessiert.  Derzeit habe ich die Situation, dass das sogar aus Anträgen immer wieder rausfliegt, weil keiner außer mir die entsprechenden work packages schreiben kann.}
+
+Section~\ref{sec:ag-based-assignment-selection}presents the \texttt{ExpBetaPlanChanger}
 as a cure to the network breakdowns that often impair simulation convergence
-when using the \texttt{ExpBetaPlanSelector}. However, if the \texttt{ExpBetaPlanChanger}
+when using the \texttt{ExpBetaPlanSelector} \kai{nein, s.o.}. However, if the \texttt{ExpBetaPlanChanger}
 implements by design the same stationary choice model as the \texttt{ExpBetaPlanSelector},
- how can it then avoid network breakdowns?
+ how can it then avoid network breakdowns? \kai{Kann es (natürlich) nur, wenn es eben doch nicht das gleiche stationäre Modell ist.}
 
 To keep the presentation tractable, it is assumed that a network breakdown
 occurs if and only if a sufficiently large number of agents selects
@@ -365,14 +382,15 @@ a path is instantaneously reflected by the system being in a {}``critical
 state''. Formally, the probability of a breakdown given that the
 system is in a critical state can be written as
 \begin{eqnarray}
-P(\text{breakdown}\mid Z^{\text{crit}}) & = & P\left(\frac{1}{N}\sum_{n=1}^{N}\mathbf{1}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\geq\phi^{\text{crit}}\right)
+P(\text{breakdown}\mid Z^{\text{crit}}) & = & P\left(\left[\frac{1}{N}\sum_{n=1}^{N}\mathbf{1}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\right]\geq\phi^{\text{crit}}\right)
 \end{eqnarray}
+\kai{habe da noch eine weitere Klammer reingebaut}
 where $Z^{\text{crit}}$ is the event of the system being in a critical
 state, $C_{n}^{\text{crit}}$ is the set of critical plans of agent
 $n$ and $\mathbf{1}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})$
 indicates if agent $n$ selects a critical plan $i_{n}$ given that
 the system is currently in a critical state. Letting $N$ be the total
-number of agents, $\frac{1}{N}\sum_{n=1}^{N}\mathbf{1}(\cdot)$ represents
+number of agents, then $\frac{1}{N}\sum_{n=1}^{N}\mathbf{1}(\cdot)$ represents
 the fraction of agents selecting a critical plan. The breakdown probability
 is then given by the probability that this fraction is larger than
 a critical value $\phi^{\text{crit}}$. As $N$ gets larger, the variance
@@ -458,6 +476,8 @@ by the different ways in which agent behavior can be synchronized.
 \section{\label{sec:Statistical-analysis-of}Analyzing Simulation Outputs}
 
 \note{I don't know how useful this is. Perhaps move it to an earlier chapter with a more practical focus?}
+
+\kai{Würde es erstmal hier lassen.  Man kann ja drauf verweisen.  Wir können es ggf.\ immer noch später umstellen.}
 
 Many of the models used in MATSim are stochastic, for instance random
 utility models for plan choice or the randomized selection of the
