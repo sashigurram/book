@@ -7,23 +7,22 @@
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{using/figures/utf.png} \end{center}
 
 % ##################################################################################################################
-MATSim scoring is a central element of MATSim. The user has the possibility to configure numerous parameters to calibrate the choice behavior. When users are ready to extend MATSim in the next book part, they will also be able to plug in their own customized utility function.
+\gls{matsim} scoring is a central element of \gls{matsim}. The user has the possibility to configure numerous parameters to calibrate the choice behavior. When users are ready to extend \gls{matsim} in the next book part, they will also be able to plug in their own customized utility function.
 
-MATSim is based on utility-maximization. Thus, estimated discrete choice models can be applied in MATSim. However, because of MATSim's iterative structure, and because it is based on complete day plans, the application of models for parts of day plans only (for example mode choice) is not straight forward as detailed in Section~\ref{sec:estimation}.
+\gls{matsim} is based on \gls{utility}-maximization. Thus, estimated discrete choice models can be applied in \gls{matsim}. However, because of \gls{matsim}'s iterative structure, and because it is based on complete day plans, the application of models for parts of day plans only (for example mode choice) is not straight forward, as detailed in Section~\ref{sec:estimation}.
 
 % "due to" vs "because of" see http://web.ku.edu/~edit/because.html
 
-Because of the absence of complete-day-utility functions in the literature, MATSim has been started with the so-called Charypar-Nagel utility function (Section~\ref{sec:charyparnagel}) and extended for some purposes (Section~\ref{sec:appsExtensions}). Readily applicable estimates for a full-day utility function are not yet available as discussed in Section~\ref{sec:estimation}.
+Because of the absence of complete-day-utility functions in the literature, \gls{matsim} has been started with the so-called Charypar-Nagel \gls{utility} function (Section~\ref{sec:charyparnagel}) and extended for some purposes (Section~\ref{sec:appsExtensions}). Readily applicable estimates for a full-day utility function are not yet available as discussed in Section~\ref{sec:estimation}.
 
 % ##################################################################################################################
 \section{The Current Charypar-Nagel Utility Function}
 \label{sec:charyparnagel}
-
+% ============================================================================================
 \subsection{Mathematical form}
-
-The first and still basic MATSim \gls{utility} function was formulated by \citet[][]{CharyparNagel_Transportation_2005} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far indicated that the MATSim function is also appropriate for modeling the further choice dimensions.
+The first and still basic \gls{matsim} \gls{utility} function was formulated by \citet[][]{CharyparNagel_Transportation_2005} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far indicated that the \gls{matsim} function is also appropriate for modeling the further choice dimensions.
 %
-It is, however, almost certainly not appropriate for activity dropping (see Section~\ref{sec:scoring-current}).
+It is, however, almost certainly not appropriate for activity dropping and addition (see Section~\ref{sec:scoring-current}).
 
 %% As in the discrete choice modeling framework (see Chapter~\ref{ch:discretechoice}), the utility $S_{}$ is composed of a deterministic part $V$ and a random error term $\varepsilon$, i.e., $S_{} = V_{} + \varepsilon$. Except for destination choice the error term is not explicitly generated but stems from the random noise produced by the co-evolutionary process.  \kai{(*)}  Randomness is added in various ways in the process, an example is the order in which agents undergo the replanning (e.g., in which iteration choices are modified). \ah{Hier Diskussion Section~\ref{sec:discussion_scoring} noch weiter vertiefen}.
 
@@ -31,7 +30,8 @@ It is, however, almost certainly not appropriate for activity dropping (see Sect
 
 %% \kai{Noch besser wäre es vermutlich, Deinen Ansatz mit den ``frozen epsilons'' breiter anzuwenden.}
 
-\paragraph{Basic function}
+% -------------------------------------------------------------------------------------
+\paragraph{Basic Function}
 
 For the basic function, the utility of a plan $S_{plan}$ is computed as the sum of all activity utilities $S_{act,q}$ plus the sum of all travel (dis)utilities $S_{trav,mode, q}$:
 %
@@ -41,12 +41,13 @@ S_{plan}=\sum^{N-1}_{q=0} S_{act,q} + \sum^{N-1}_{q=0} S_{trav, mode, q}
 \end{equation}
 with $N$ as the number of activities. Trip $q$ is the trip that follows activity $q$. The last activity is for scoring merged with the first activity, thus there is an equal number of trips and activities.
 %does not have an associated trip, thus the sum goes only up to $N-1$.  
-\kai{Andreas, Macht Ihr das so?  Die Standard-Variante, die auch am VSP verwendet wird, ``näht'' die erste und die letzte Aktivität zusammen.  Damit haben wir genauso viele Aktivitäten wie Trips.}
-\ah{dann lag ich hier wohl falsch. korrigiert.}
+%\kai{Andreas, Macht Ihr das so?  Die Standard-Variante, die auch am VSP verwendet wird, "näht" die erste und die letzte Aktivität zusammen.  Damit haben wir genauso viele Aktivitäten wie Trips.}
+%\ah{dann lag ich hier wohl falsch. korrigiert.}
 
+% -------------------------------------------------------------------------------------
 \paragraph{Activities}
 
-The utility of an activity $q$ is defined as follows (see also \citet[][p.377ff]{CharyparNagel_Transportation_2005}):
+The utility of an activity $q$ is defined as follows \citep[see also][p.377ff]{CharyparNagel_Transportation_2005}:
 \begin{equation}
 S_{act,q} = S_{dur,q} + S_{wait,q} + S_{late.ar,q} + S_{early.dp, q} + S_{short.dur, q},
 \label{eq:matsimUTFact}
@@ -54,39 +55,39 @@ S_{act,q} = S_{dur,q} + S_{wait,q} + S_{late.ar,q} + S_{early.dp, q} + S_{short.
 where:
 \begin{itemize}
 \item $S_{dur,q}= \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q})$ 
-
+%
 is the utility of performing activity $q$, where opening times of activity locations are taken into account. $t_{dur,q}$ is performed activity duration, $\beta_{dur}$ is marginal utility of activity duration (the same for all activities),
 % for its typical duration $t_{typ,q}$, 
 and $t_{0,q}$ is minimal duration, or in other words, the duration for which utility starts to be positive. 
-
+%
 \kai{Andreas, betaPerf gibt es (absichtlich) nur einmal, und nicht pro Aktivitätentyp.  Unterschiedlicher Zeitdruck kann sich immer noch ergeben, weil EQ~(\ref{eq:mUTTSfull}) für Akvitiäten innerhalb eines bestimmten Zeitfensters höher sein kann (weil dann für diese Aktivitäten $t_{dur,q}$, wg.\ Zeitknappheit, relative gesehen kürzer ist).}  
-
+%
 \item $ S_{wait,q} = \beta_{wait, q} \cdot t_{wait,q}$ 
-
+%
 denotes the waiting time spent for example in front of a yet closed store, where $\beta_{wait,q}$ is marginal utility of waiting and $t_{wait,q}$ is the waiting time.
-		
+%		
 \item $S_{late.ar,q}= \left\{
   \begin{array}{l l}
     \beta_{late.ar,q} \cdot (t_{start,q} - t_{latest.ar,q}) & \quad \text{if $t_{start,q} > t_{latest.ar,q}$}\\
     0 & \quad \text{else}
   \end{array} \right.$
-  
+%  
   specifies the late arrival penalty, where $t_{start,q}$ is the starting time of activity $q$ and $t_{latest.ar}$ is the latest possible starting time of that activity for example given by opening times.
-
+%
 \item $S_{early.dp} = \left\{
   \begin{array}{l l}
     \beta_{early.dp,q} \cdot (t_{earliest.dp, q} - t_{end,q}) & \quad \text{if $t_{end,q} > t_{earliest.dp,q}$}\\
     0 & \quad \text{else}
   \end{array} \right.$
-
+%
 defines the penalty for staying not long enough, where $t_{end,q}$ is the ending time of the activity and $t_{earliest.dp,q}$ is the earliest possible end time for activity $q$.
-
+%
 \item $ S_{short.dur, q} = \left\{
   \begin{array}{l l}
     \beta_{short.dur,q} \cdot (t_{short.dur, q} - t_{dur,q}) & \quad \text{if $t_{dur,q} < t_{short.dur,q}$}\\
     0 & \quad \text{else}
   \end{array} \right.$
-  
+%  
   is the penalty for a too short activity, where $t_{short.dur}$ is the shortest possible duration for the activity.
 \end{itemize}
 
@@ -110,7 +111,7 @@ where:
 %
 Note that the distance contributes to disutility in two ways. First, it is included in a direct manner via $\beta_{d, mode,q}$, which is natural for modes with physical efforts such as walking or cycling. Second, distance is also included monetarily via $\beta_c \cdot \gamma_{d, mode}$ which is natural for mode car or pt, where monetary costs increase dependent on distance.
 
-\kai{distance both via distance cost rate and via direct marginal utl.  ok with me, BK will (probably) be less happy.  If it stays this way, config needs to be made consistent with text above.}
+\kai{distance both via distance cost rate and via direct marginal utl.  ok with me, BK will (probably) be less happy. If it stays this way, config needs to be made consistent with text above.}
 
 \ah{Hatte, glaube ich, aus dem User Guide abgeguckt.}
 
@@ -142,7 +143,7 @@ This is important for calibration of the utility function.
 % ##################################################################################################################
 \section{Implementation of the MATSim Default Scoring Function}
 \label{sec:scoring-current}
-This section summarizes the current implementation of the default \acrshort{matsim} scoring function.  The section can be skipped as long as it is kept in mind that what has been said before is not the full story.
+This section summarizes the current implementation of the default \gls{matsim} scoring function. The section can be skipped as long as it is kept in mind that what has been said before is not the full story.
 
 %\kai{Habe das jetzt mal geschrieben, damit es vollständig ist.  Natürlich wird es auf diesem Weg immer detaillierter und damit didaktisch immer ungünstiger.  Bessere Alternativen willkommen.}
 %
@@ -155,24 +156,24 @@ The duration at which the utility of an activity is exactly zero is computed by 
 \[
 t_{0,q} := t_{typ,q} \cdot \exp\left( - \frac{10}{(t_{typ,q}/1\,h) \cdot prio} \right) \ ,
 \]
-where $prio$ is a configurable parameter.  This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \cite{CharyparNagel2005ga4acts}.  Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the "home" activity gets dropped first, which is clearly not plausible.  See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives.  In the meantime, the recommendations are:
+where $prio$ is a configurable parameter. This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \cite{CharyparNagel2005ga4acts}. Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the "home" activity gets dropped first, which is clearly not plausible. See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives. In the meantime, the recommendations are:
 \begin{compactitem}
 \item Do not set the \lstinline$priority$ value in the config away from its default value.
-\item Recognize that the current \acrshort{matsim} default scoring/utility function is not suitable for activity dropping.
+\item Recognize that the current \gls{matsim} default scoring/utility function is not suitable for activity dropping.
 \end{compactitem}
 
 % -------------------------------------------------------------------------------------
 \paragraph*{Negative Durations}
 
-In \acrshort{matsim}, somewhat curiously it is possible to have activities with negative durations.  This can happen because of the "wrap around" mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored.  Note that scoring the two activities separately would lead to a different result, because of the nonlinear (logarithmic) form of the utility of performing. \kai{Dies müsste eigentlich weiter oben stehen.}
+In \gls{matsim}, somewhat curiously it is possible to have activities with negative durations. This can happen because of the "wrap around" mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored. Note that scoring the two activities separately would lead to a different result, because of the nonlinear (logarithmic) form of the utility of performing. \kai{Dies müsste eigentlich weiter oben stehen.}
 
 \kai{make picture}
 
 \kai{Der Ansatz, dass man alle Aktivitäten des selben Typs erst aufsummiert, würde dies hier natürlich auch lösen.}
 
-In that situation \kai{und auch wenn wir es anders machen würden!!}, it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration.  However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration at zero cost would lead to more time elsewhere which could be used to accumulate score. This is a bit similar to the question of a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
+In that situation \kai{und auch wenn wir es anders machen würden!!}, it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration. However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration at zero cost would lead to more time elsewhere which could be used to accumulate score. This is a bit similar to the question of a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
 
-For an adaptive algorithm, such a penalty needs to guide the adaptation back into the feasible region. From this, it follows that the penalty needs to become larger with increasing negativity.  It also needs to be larger, i.e.\ more strongly negative, than any score value for a positive activity duration -- which is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above.  The current approach is to take the slope of when the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ crosses zero, and extend this towards minus infinity.
+For an adaptive \gls{algorithm}, such a penalty needs to guide the adaptation back into the feasible region. From this, it follows that the penalty needs to become larger with increasing negativity. It also needs to be larger, i.e.,\,more strongly negative, than any score value for a positive activity duration---which is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above. The current approach is to take the slope of when the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ crosses zero, and extend this towards minus infinity.
 
 \kai{make picture}
 
@@ -201,14 +202,14 @@ Parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting
 % Chaumet, R., P. Locher, F. Bruns, D. Imhof, M. Bernard and K.W.\ Axhausen (2007) Verfahren zur Berücksichtigung der Zuverlässigkeit in Evaluationen, final report for VSS 2002/002, Schriftenreihe, 1176, Bundesamt für Strassen, UVEK, Bern. 
 %}
 
-\citet[][]{Kickhoefer_MastersThesis_2009} added monetary variables and income to the MATSim utility function and performed a mode-specific estimation based on the survey by \citet[][]{VrticEtAl_ResRep_SVI_2007}. The utility function extended by monetary factors was linear, both in the variables and the parameters. Estimated parameters are given in Table 3 of \citet[][]{Kickhoefer_MastersThesis_2009}. The income-dependent utility function was based on \citet[][]{Franklin_PhDThesis_2006}.
+\citet[][]{Kickhoefer_MastersThesis_2009} added monetary variables and income to the \gls{matsim} utility function and performed a mode-specific estimation based on the survey by \citet[][]{VrticEtAl_ResRep_SVI_2007}. The utility function extended by monetary factors was linear, both in the variables and the parameters. Estimated parameters are given in Table 3 of \citet[][]{Kickhoefer_MastersThesis_2009}. The income-dependent utility function was based on \citet[][]{Franklin_PhDThesis_2006}.
 
 Note, that nowadays the utility function measures in the unit $utils$, where an earlier interpretation was based on monetary terms (e.g.,\,$\EUR$).
 
 % ##################################################################################################################
 \section{Applications and Extensions}
 \label{sec:appsExtensions}
-The default scoring function has been applied and extended for various purposes. Please be aware, that the MATSim code base and in particular the scoring functionality has changed a lot in recent years, e.g.,\,the scoring is now based on events rather than on plans as it was the case in the beginning of MATSim. Thus, the historical development is accompanied by various conceptual and technical modifications leading to the current utility function described above. This also means, that the reported parameter settings in the literature are an indication not a direct recommendation.
+The default scoring function has been applied and extended for various purposes. Please be aware, that the \gls{matsim} code base and in particular the scoring functionality has changed a lot in recent years, e.g.,\,the scoring is now based on events rather than on plans as it was the case in the beginning of \gls{matsim}. Thus, the historical development is accompanied by various conceptual and technical modifications leading to the current utility function described above. This also means, that the reported parameter settings in the literature are an indication not a direct recommendation.
 
 Important applications for large scenarios are described in Chapter~\ref{ch:scenarios}.
 
