@@ -6,24 +6,26 @@
 
 \begin{center} \includegraphics[width=0.4\textwidth, angle=0]{extending/figures/DTS/dts.png} \mm{change this picture} \end{center}
 
-\createStandardInformation{dvrp}{todo}{todo}{todo}
+\createStandardInformation{dvrp}{----------------------}
+{------------------------}
+{
+\citet{MaciejewskiNagel2013TaxiSimulation, MaciejewskiNagel2013OnlineTaxisVSPWP, MaciejewskiNagel2013CooperationTaxiDispatching, Maciejewski2014OnlineViaOffline}
+}
 
+\mm{No typical MATSim config, no predefined invocation. Setting up VrpOptimizer and coupling it with MATSim requires lots of Java code and each time may look completely different. See Section~\ref{sec:dvrp_config}}
 % ##################################################################################################################
 
 \section{Introduction}
 
 The recent technological advancements in Information and Communications Technology (ICT), have allowed for emergence of novel on-line fleet management tools and thus opened up a broad range of possibilities for transport services to become more intelligent, that is flexible, demand responsive, safe and energy/cost efficient. This concerns both significant enhancements in operations of the traditional means of transport, such as regular public transport or taxis, as well as the introduction of novel solutions, such as demand-responsive transport or personal rapid transport. However, the growing complexity of modern transport systems, besides all the benefits offered, increases the risk of poor performance, or even failure, due to the lack of precise design, implementation and testing.
 
-One way of dealing with this problem is to use simulation tools that offer a wide spectrum of possibilities for validating transport service models. Such tools have to accurately model not only the dynamically changing demand and supply for the service, but also the traffic flow and other existing transport services/modes. To the best knowledge of the author, none of the existing solutions provides large-scale microscopic simulation that is necessary for detailed analysis. 
-\mm{ReganMahmassaniJaillet1998DynamicFleetManagementSimulation, BarceloEtc2007RoutingSchedulingSimulationLogistics, LiaoEtc2008ObjOrFramework4DVRP} \mm{find better references, incl.\ Agentpolis}
-
-\mm{Reference to the DVRPs??? Why simulation instead of competitive analysis?}
+One way of dealing with this problem is to use simulation tools that offer a wide spectrum of possibilities for validating transport service models. Such tools have to model in detail not only the dynamically changing demand and supply of the service in question, but also the traffic flow and even other existing transport services, including mutual interactions/relations between all these components. Although several approaches have been proposed \citep[e.g.,][]{ReganMahmassaniJaillet1998DynamicFleetManagementSimulation, BarceloEtc2007RoutingSchedulingSimulationLogistics, LiaoEtc2008ObjOrFramework4DVRP,Certicky:2014:AST:2615731.2616118}, to the best knowledge of the author, none of the existing solutions provides large-scale microscopic simulation including all the above-mentioned components.
 
 % ##################################################################################################################
 
 \section{DVRP Extension}
 
-To address the above mentioned problem, MATSim's DVRP ($=$ \emph{Dynamic Vehicle Routing Problem}) extension has been developed. The extension is intended to be highly general and customizable so that a broad scope of dynamic vehicle routing and scheduling processes can be modeled and simulated. Currently, the domain model is capable of representing a wide range of one-to-many and many-to-many VRPs, and one can easily extend the model even further to cover other specific cases (see Section~\ref{sec:DVRP_model}). Since the central focus is on online optimization, the architecture of the DVRP extension allows plugging in various algorithms. At present, there are several different algorithms available, among them a memetic algorithm for the \emph{Dynamic Multi-Depot Vehicle Routing Problem with Time Windows and Time-Dependent Travel Times and Costs} analyzed in \citep{MaciejewskiNagel2011DVRPMatsim}, and a family of algorithms for online taxi dispatching studied in \mm{cite the taxi papers}.
+To address the above mentioned problem, MATSim's DVRP ($=$ \emph{Dynamic Vehicle Routing Problem}) extension has been developed. The extension is intended to be highly general and customizable so that a broad scope of dynamic vehicle routing and scheduling processes can be modeled and simulated. Currently, the domain model is capable of representing a wide range of one-to-many and many-to-many VRPs, and one can easily extend the model even further to cover other specific cases (see Section~\ref{sec:DVRP_model}). Since the central focus is on online optimization, the architecture of the DVRP extension allows plugging in various algorithms. At present, there are several different algorithms available, among them a memetic algorithm for the \emph{Dynamic Multi-Depot Vehicle Routing Problem with Time Windows and Time-Dependent Travel Times and Costs} analyzed in \citep{MaciejewskiNagel2012OfflineDVRPMATSimPPAM}, and a family of algorithms for online taxi dispatching studied in \citep{ MaciejewskiNagel2013TaxiSimulation, MaciejewskiNagel2013OnlineTaxisVSPWP, MaciejewskiNagel2013CooperationTaxiDispatching, Maciejewski2014OnlineViaOffline}.
 
 The DVRP extension is responsible for modeling both supply and demand, and optimizing fleet operations, whereas the MATSim's core is used for simulating supply and demand, both embedded into a large-scale microscopic transport simulation. In particular, the extension is responsible for:
 %
@@ -231,6 +233,7 @@ two or more mutually conflicting decisions could be made by the optimizer at dis
 % ##################################################################################################################
 
 \section{Configuring and running a DVRP simulation}
+\label{sec:dvrp_config}
 
 Like in within-day replanning (see Section~\ref{ch:withinday}), dynamic transport services are typically run with the DVRP extension as a single-iteration simulation. Setting up and running such a simulation requires carrying out the following steps:
 %
