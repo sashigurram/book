@@ -13,16 +13,49 @@
 
 \ah{Finde es je länger desto besser dieses Kapitel drinzuhaben und es hier drinzuhaben. Wenn wir schon über die verweneten Konzepte refektieren, dann ist auch eine Art Reflektion über das MATSim-Unternehmen an sich nötig. ... wo auch die frühere History-Einsprengsel nochmals auf einen Blick und im Fluss vorkommen}
 
+\kai{Finde ich eigentlich auch.  Nehme das mal zum Anlass, da etwas mehr zu schreiben.}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%TRANSIMS (already mentioned in Chapter~\ref{??}) was a collection of stand-alone modules, coupled by a script.  For example, the population synthesizer would generate a population file, the activity generate would take the population file as input and generate an activities file as output, etc.  Iterations were done by running the traffic microsimulation based on plans and outputting average link travel times, and then the router based on link travel times and outputting plans.
+\section{Kai Nagel's perspective}
 
-The first version of \acrshort{matsim} was, similar to the original TRANSIMS (already mentioned in Chapter~\ref{ch:introducing}, a collection of stand-alone modules coupled by scripts.  For example, the router would read plans and events, and replace some of the plans by other plans with modified routes.  The program flow was organized with shell scripts and makefiles.  Later it was possible to start all modules simultaneously and they would use messages to interact \citep[also see][]{GloorNagel2005ped-att04-birkh}, but the file-based and scripted interaction always remained available.
+\kai{Wäre vielleicht gut, wenn wir das hinterher zusammenführen könnten.}
 
-That approach had, as a consequence, very clearly defined interfaces, i.e.\ the files.  Exchanging information that was not exchanged before meant changing the readers and writes on \emph{both} side, which was in consequence rarely done, and the stand-alone modules rather tried to live with the information they had.
+\subsection{Fast microscopic modelling of traffic flow (University of Cologne with some does of Los Alamos National Laboratory)}
+\label{sec:history-u-of-cologne-phase}
 
-When \acrshort{matsim} was re-implemented in \gls{java} around 2006--7, it was re-implemented as one system.  As a result, now everything could interact with everything.  For example, a router would modify the network, route on the modified network, and then modify it back -- including the danger of not getting things completely right in changing it back.  
+Kai Nagel originally wanted to do this Ph.D.\ in meteorology.  When the funding did not come together, he started exploring alternatives, and applied with Prof.\ A.\ Bachem at the University of Cologne for a position in insurance modelling.  He was instead offered a position in operations research/logistics, solving problems such as dynamic vehicle routing with time windows. 
+
+Having had some training in Computational Statistical Physics, he soon became a bit sceptical if it made sense to optimize up to the last second of a closing time window while at the same time being faced with highly stochastic transport system.  He thus embarked on using his training to build a microscopic model of the transport system, in particular single-lane~\citep{NagelSchreckenberg1992CA,Nagel1999flowTheoTrr} road traffic on long links as well combining such links to large-scale network-based simulations where each vehicle would follow its own individual route~\citep{Nagel1996NRW}, including an adaptive dynamics being influenced most heavily by \cite{ArthurBar}.  Already that paper describes what is still the main MATSim architecture, where agents have many different plans, they keep trying them out, and eventually settle on the best option.  In contrast to the current approach, all plans were pre-computed, i.e.\ there was no innovation during the iterations.  This was possible because the network was much coarser than what we use today, and thus computing route plans with enough diversity was easy.
+
+\subsection{TRANSIMS (Los Alamos National Laboratory with some dose of Santa Fe Institute)}
+\label{sec:history-lanl-phase}
+
+Some of the above Ph.D.\ work was already done at Los Alamos National Laboratory (LANL).  After his Ph.D., Kai Nagel then moved fully to LANL, where he worked with the TRANSIMS \citep[TRansportation ANalysis and SIMulation System, e.g.][]{SmithEtc1995TRANSIMSSeattle} team, under the leadership of Chris Barrett.
+%
+The TRANSIMS project inherited some of the above design, most notably the cellular automata approach to road traffic modeling, which was thus extended to multi-lane traffic \citep{NagelWolfEtAl1998TwoLaneSystematic}, to intersections \citep{NagelEtc1997flow-char}, and to massive parallel computing \citep{NagelRickert2001parallel}.
+
+%% However, it became quickly clear that if the goal was realistic long-term traffic forecasting, demand modelling needed to correspond to what the network loading could do.  This was the time when activity-based demand modelling gained ground \citep{Axhausen1988PhD,Bowman1998PhD,KitamuraEtcSequential}, and it was thus expected that the activity-based demand would eventually come from somewhere else.  
+
+In terms of software design, TRANSIMS was a collection of stand-alone modules, coupled by a script.  For example, the population synthesizer would generate a population file, the activity generate would take the population file as input and generate an activities file as output, etc.  Iterations were done by running the traffic microsimulation based on plans and outputting average link travel times, and then the router based on link travel times and outputting plans.
+
+
+\subsection{MATSim in C++ (ETH Zurich Computer Science)}
+\label{sec:history-ethz-phase}
+
+Kai Nagel moved to ETH Zurich Computer Science in 1999.  Unfortunately, it turned out to be difficult to continue with TRANSIMS, for example because TRANSIMS was not under an open source license, and also because TRANSIMS fell under U.S.\ technology export restrictions for some time.  In consequence, \acrshort{matsim} was started.
+
+MATSim had to important differences to TRANSIMS from the beginning: (1) it tried to be more ``lightweight'', i.e.\ running much faster, in particular by using the queue model \citep{GawronPhd,Gawron1998IterativeAlgorithmto} rather than the cellular automata model for network loading; and (2) other than TRANSIMS, agent properties such as demographic data, activity patterns or routes were no longer distributed across multiple files, but contained in one hierarchical XML file.
+
+Another difference followed eventually, which was to go back to the approach of \citet{Nagel1996NRW}, but this time truly following \citet{ArthurBar} by giving each individual agent its own memory \citep{RaneyNagel2006traf-framework}.  After experimentation with relational databases such as MySQL \citep{mysql-wikipedia} or Oracle \citep{oracle}, it was eventually decided to implement MATSim as an object-oriented database ``in memory'', i.e.\ by first reading in all XML files, modifying the data in memory during the life-time of a run, and writing the data back from memory to XML files at the end of the run.  The decision was based on the observation that the MATSim data model was described much better by XML files, and conversion to the relational format was impractical, prone to errors, and also too slow if not kept in memory during iterations. 
+
+
+The first version of MATSim was, similar to the original TRANSIMS, a collection of stand-alone modules coupled by scripts.  For example, the router would read plans and events, and replace some of the plans by other plans with modified routes.  The program flow was organized with shell scripts and makefiles.  Later it was possible to start all modules simultaneously and they would use messages to interact \citep[also see][]{GloorNagel2005ped-att04-birkh}, but the file-based and scripted interaction always remained available.
+
+The original approach had, as a consequence, very clearly defined interfaces, i.e.\ the files.  Exchanging information that was not exchanged before meant changing the readers and writes on \emph{both} side, which was in consequence rarely done, and the stand-alone modules rather tried to live with the information they had.
+
+When \acrshort{matsim} was re-implemented in \gls{java} around 2006--7, it was re-implemented as one system.  As a result, now everything could interact with everything.  For example, a router would modify the network, compute routes on the modified network, and then modify it back -- including the danger of not getting things completely right in changing it back.  
 
 What made even more problems, however, were extensions to the program flow.  The program flow was, as it still is, organized by the \lstinline$Controler$ class.  Originally, everybody who wanted to change the program flow, in particular insert his or her own research modules, would inherit from \lstinline$Controler$, override some methods, and insert his or how own instructions.  This did, however, have the consequence that it was impossible to combine the extensions without possibly massive manual interventions (see Figure~\ref{fig:do-not-extend-controler}).
 
