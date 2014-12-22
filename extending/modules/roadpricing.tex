@@ -20,18 +20,18 @@
 \section{Introduction}
 \label{sec:roadpricing-intro}
 
-Roadpricing is an often-discussed policy measure \citep[e.g.][]{...} \kai{todo}.  Its implementation in \acrshort{matsim} is conceptually straightforward \citep{%
+Roadpricing is an often-discussed policy measure \citep[e.g.][]{ButtonVerhoef_1998}.  Its implementation in \acrshort{matsim} is conceptually straightforward \citep{%
 %
 %RieserEtAl_TechRep_VSP_2007,%
 RieserBeuckNagel2007early-toll-zrh-etc,%
 RieserEtAl_TRBTDF_2008,%
 GretherEtAl_ERSA_2008%
 %
-}: Essentially, for each vehicle entering a link at a given time, the appropriate toll is computed, and charged to the vehicle's driver.  The scoring function will pick this up by the term (cf.\ Equation~\ref{eq:tdisutility})
+}: Essentially, for each vehicle entering a link at a given time, the appropriate toll is computed, and charged to the vehicle's driver.  The scoring function will pick this up by the term (cf.\ Equation~(\ref{eq:tdisutility}))
 \[
 S_{trav,car,q} = ... + \beta_{c} \cdot (- \tau) + ... \ ,
 \]
-where $\tau$ is the sum of all toll payments, and $\beta_{c}$ is the marginal utility of money (also see Chapter~\ref{ch:economicEval}).  The driver then takes this into account for decision-making, e.g.\ with respect to route choice, departure time choice, mode choice, location choice, etc., trading off toll payments with other elements of his or her function.
+where $\tau$ is the sum of all toll payments, and $\beta_{c}$ is the marginal utility of money (also see Chapter~\ref{ch:economicEval}).  The driver then takes this into account for decision-making, e.g.\ with respect to route choice, departure time choice, mode choice, location choice, etc., trading off toll payments with other elements of his or her scoring function.
 
 It should be clear that this picks automatically up all kinds of heterogeneities, for example:
 \begin{compactitem}
@@ -44,9 +44,10 @@ It should be clear that this picks automatically up all kinds of heterogeneities
   
 \end{compactitem}
 
-A challenge is, however, that the innovative \kai{??} modules need to be consistent with the scoring: The approach will not work if, say, the router consistently generates toll avoiding routes for a synthetic person with a high value of time -- since, if a suitable route is never generated, then the scoring has no chance to identify it and thus the choice process has no chance to select it in subsequent iterations.  
+A challenge is, however, that the innovative modules (cf.~Section~\ref{sec:strategymodules}) need to be consistent with the scoring that is now modified by the road pricing: The approach described so far will not work if, say, the router consistently generates toll avoiding routes for a synthetic person with a high value of time who normally would want to pay money for a faster option -- since, if a suitable route is never generated, then the scoring has no chance to identify it and thus the choice process has no chance to select it in subsequent iterations.
 
-However, passing all details of an individual, i.e.\ not only the marginal utility of money but also the specific time pressure at the time of the route search, is quite complex, in particular since time pressure is only implicitly given by the first derivative of the scoring function \emph{given the agent's current schedule}.  
+However, passing all details of an individual, i.e.\ not only the marginal utility of money but also the specific time pressure at the time of the route search, is quite complex.
+%% , in particular since time pressure is only implicitly given by the first derivative of the scoring function \emph{given the agent's current schedule}.  
 
 An alternative approach is to make the router \emph{randomizing}, i.e.\ to run it with a randomly generated value of time every time it is called for a given person.  Computational experiments with this approach show that this finds solutions for the synthetic travellers which are about as good or even better than an ``engineered'' router \citep{NagelKickhoeferJoubertHeterogeneousVoTs}.  At the same time, the software consistency burden is significantly reduced, noticeable in the much reduced amount of information that needs to be extracted from the agent during each call of the router.
 
@@ -54,13 +55,19 @@ An alternative approach is to make the router \emph{randomizing}, i.e.\ to run i
 
 \paragraph{Effect of an afternoon toll on morning traffic}
 
-As an early illustration of the capabilities, an afternoon toll for the Zürich area was simulated.  While this is not the most probable policy scheme, it still clearly demonstrated the advantage of the integrated approach over other approaches: Not only did the synthetic travelers switch to public transit, but they also did so for the morning rush hour, where no toll was charged.  Thus, the \acrshort{matsim} approach proved its capability to affect the whole daily plan, not just the trip.  For more information, see \cite{RieserEtAl_TRBTDF_2008}.
+As an early illustration of the capabilities, an afternoon toll for the Zürich area was simulated.  While this is not the most probable policy scheme, it still clearly demonstrated the advantage of the integrated approach over other approaches: Not only did the synthetic travelers switch to public transit, but they also did so for the morning rush hour, where no toll was charged (Figure~\ref{fig:afternoon-toll}).  Thus, the \acrshort{matsim} approach proved its capability to affect the whole daily plan, not just the trip.  For more information, see \cite{RieserEtAl_TRBTDF_2008}.
 
-\kai{search for picture}
+\begin{figure}
+\centerline{%
+\includegraphics[width=0.99\hsize,trim=2cm 2.5cm 2cm 3cm,clip]{extending/figures/roadpricing/583vs585onRoute.pdf}
+}
+\caption{An afternoon city toll (between 15:00 and 19:00) affects mode choice not just during the toll time, but also in the morning.}
+\label{fig:afternoon-toll}
+\end{figure}
 
-\benjamin{Es gibt ein ähnliches Bild auch in meiner Diss...Verweis siehe unten.}
+%% \benjamin{Es gibt ein ähnliches Bild auch in meiner Diss...Verweis siehe unten.}
 
-\benjamin{One could also cite NagelGretherEtc2008ag-based-evaluation...}
+%% \benjamin{One could also cite NagelGretherEtc2008ag-based-evaluation...}
 
 \paragraph{Income-dependent values of time}
 
@@ -81,7 +88,16 @@ For more information, please refer to the two studies above.
 
 A large scale application was undertaken for the Gauteng province in South Africa (cf.\ Section~\ref{sec:gauteng}).  It is based on the so-called e-toll, which was switched on in december 2013.  The e-toll plausibly charges different rates for different vehicle types, charging higher rates for heavy trucks.  Again plausibly, this should go along with higher values of time of the driver-vehicle-units.  Somewhat surprisingly, this turned out to be difficult to do with the \acrshort{matsim} software structure that was there when the project was started in 2008.  While it was easy to charge the higher toll to the freight vehicles, it was difficult to give different replanning methods and a different scoring function to the freight population, and it was essentially impossible to feed the router with the different values of time of the freight population.  This was an important driver for much development in recent years, including making the scoring function better accessible (cf.\ Section~\ref{sec:scoring-extension-point}), allowing different replanning strategies for different sub-populations \kai{erwähnen wir die sub-populations irgendwo?}, and reducing the consistency requirements between the router, the vehicle-based toll and the driver-based scoring function \citep{NagelEtAl_PCS_2014}.
 
-\kai{picture?}
+The simulation, as expected, predicts reduced traffic volumes on the tolled roads, and increased volumes elsewhere (Figure \ref{fig:gauteng-toll-volumes}).
+
+
+\begin{figure}
+  \centerline{%
+\includegraphics[width=0.8\hsize,trim=0 0 0 0,clip]{extending/figures/roadpricing/abs-diff-link-vol-vot55-24h.png}
+}
+  \caption{Predicted differences in link volumes after introduction of the toll (red: higher volumes, green: lower volumes).}
+  \label{fig:gauteng-toll-volumes}
+\end{figure}
 
 
 \section{Invocation}
@@ -132,30 +148,34 @@ In the end, the approach suffered from the same consistency burden as the genera
 
 \subsection{Invocation as ``script in Java''}
 
-The above \lstinline$org.matsim.roadpricing.run.Main$ class can also be used as a starting point for one's own ``script in Java'':
-\begin{lstlisting}
-public static void main(String[] args) {
-	// load the config, telling it to "materialize" the road pricing section:
-	Config config = ConfigUtils.loadConfig(args[0], new RoadPricingConfigGroup());
+See Sec.~\ref{sec:roadpricing-stdInfo} under ``Invoking the module''.
+
+%% The above \lstinline$org.matsim.roadpricing.run.Main$ class can also be used as a starting point for one's own ``script in Java'':
+%% \begin{lstlisting}
+%% public static void main(String[] args) {
+%% 	// load the config, telling it to "materialize" the road pricing section:
+%% 	Config config = ConfigUtils.loadConfig(args[0], new RoadPricingConfigGroup());
 	
-	// load the scenario:
-	Scenario scenario = ScenarioUtils.loadScenario(config) ;
+%% 	// load the scenario:
+%% 	Scenario scenario = ScenarioUtils.loadScenario(config) ;
 
-	// instantiate the controler:
-	Controler controler = new Controler(scenario) ;
+%% 	// instantiate the controler:
+%% 	Controler controler = new Controler(scenario) ;
 
-	// instantiate road pricing and add it as controler listener:
-	RoadPricing roadPricing = new RoadPricing() ;
-	controler.addControlerListener( roadPricing ) ;
+%% 	// instantiate road pricing and add it as controler listener:
+%% 	RoadPricing roadPricing = new RoadPricing() ;
+%% 	controler.addControlerListener( roadPricing ) ;
 
-	// run the controler:
-	controler.run() ;
-}
-\end{lstlisting}
+%% 	// run the controler:
+%% 	controler.run() ;
+%% }
+%% \end{lstlisting}
 
-\subsection{More information}
+\section{More information}
 
-\url{http://ci.matsim.org:8080/job/MATSim_contrib_M2/org.matsim.contrib$roadpricing/javadoc/?}
+See Sec.~\ref{sec:roadpricing-stdInfo}.
+
+%% \url{http://ci.matsim.org:8080/job/MATSim_contrib_M2/org.matsim.contrib$roadpricing/javadoc/?}
 
 
 % Local Variables:
