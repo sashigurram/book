@@ -172,6 +172,8 @@ Also external components plugged in and replacing a MATSim module, such as a mob
 
 MATSim provides the possibility that the parameters of arbitrary external modules are added to the configuration file as shown above. In the respective module, the parameters can be accessed with the method \lstinline|public final String findParam(final String moduleName, final String paramName)| of the \lstinline|Config| class.
 
+\kai{MZ, wollen wir dieses findParam eigentlich noch ``advertisen''?  Bisher ist es immer darauf hinausgelaufen, dass ich das irgendwann durch eine ``typisierte'' config group ersetzt habe.  M.E.\ könnte man zukünftig auch gleich mit einer typisierten config group anfangen.  Oder?}
+
 \paragraph{Standalone Tools:} % --------------
 Also the standalone tools referencing MATSim as a library, such as the network editor, or the visualizer via, can be seen as modules.
 %are termed modules in current practice.
@@ -313,10 +315,10 @@ The \lstinline|scenario| module is, on the one hand, a container containing the 
 
 The config file section is, on the other hand, used in a slightly different manner. It defines the usage of lanes, signal systems, road pricing, agent knowledges, vehicles, households and public transport. Still a respective config file section is required for every additional functionality. \kai{Ist das genau so?  Ich habe da ehrlich gesagt das genaue Design nie verstanden.  Oft für ein Eintrag in der scenario config group nur dafür, dass die Daten gelesen werden, und sonst passiert gar nichts.  Hm ...  Geradeziehen???}
 
-\subsection{Supply side data containers}
-\label{sec:supplysidemodules}
+%% \subsection{Supply-Side Data Containers}
+%% \label{sec:supplysidemodules}
 % ===================================================================================
-\subsubsection{Network}
+\subsection{Network}
 \label{sec:network}
 \begin{compactitem}
 \item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
@@ -364,7 +366,7 @@ network.addNetworkChangeEvent(networkChangeEvent);
 \kai{lieber ein Verweis auf ein code snippet?  U.a. muss man auf NetworkImpl casten, was wir gerne irgendwann loswerden wollen und daher nicht im Buch haben wollen.}
 
 % ===================================================================================
-\subsubsection{Counts}
+\subsection{Counts}
 \label{sec:counts}
 \begin{compactitem}
 \item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
@@ -377,7 +379,7 @@ MATSim offers the possibility to perform link volume comparisons between simulat
 As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario link volume comparisons have been successfully performed with data based on city level, cantonal level and national level \citep[][]{ASTRA_Webpage_2006}, where an average working day (Monday to Thursday, excluding public holidays) was built. Usually it is helpful to exclude a substantial part of the outer range of the modeled study region to prevent boundary effects.
 
 % ===================================================================================
-\subsubsection{Facilities}
+\subsection{Facilities}
 \label{sec:facilities}
 \begin{compactitem}
 \item Invoking the module: By adding the respective configuration file section, the module is invoked automatically. Please make sure, that added modules can manage facilities.
@@ -390,11 +392,11 @@ Facilities are a non-mandatory element of MATSim scenarios. They identify activi
 % ===================================================================================
 
 % ##################################################################################################################
-\subsection{Demand-Side Data Containers}
-\label{sec:dsm}
+%% \subsection{Demand-Side Data Containers}
+%% \label{sec:dsm}
 
 % ===================================================================================
-\subsubsection{Population}
+\subsection{Population}
 \label{sec:population}
 \begin{compactitem}
 \item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
@@ -404,7 +406,7 @@ Facilities are a non-mandatory element of MATSim scenarios. They identify activi
 
 The population module manages transport demand, i.e., the population and the agents' plans.
 % ===================================================================================
-\subsubsection{Households}
+\subsection{Households}
 \label{sec:households}
 \begin{compactitem}
 \item Invoking the module: Enable househlds in the \lstinline|scenario| section of the configuration file and provide the paths to a households file and another file containing the households' attributes in the configuration file section \lstinline|households|.
@@ -415,8 +417,15 @@ The population module manages transport demand, i.e., the population and the age
 Similar to the vehicles module, the household module is not used by default in MATSim.
 
 % ===================================================================================
-\subsubsection{Vehicles}
+%% \subsection{Data containers belonging both to demand and to supply}
+\subsection{Vehicles}
 \label{sec:vehicles}
+
+%% A private household's decision to buy a vehicle in order to satisfy one's transport needs is a demand side decision.
+%% %
+%% However, if a public transit company decides to buy buses of a certain type, this is more a supply side decision (to supply potential passengers with a vehicle) than a demand side decision (the vehicle will have a demand for road space once it runs).
+
+
 
 \begin{compactitem}
 \item Invoking the module: Vehicles need to be enabled in the \lstinline|scenario| configuration file section.
