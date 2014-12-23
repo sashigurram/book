@@ -38,7 +38,7 @@ We think that the \gls{matsim} core is already quite powerful; for example, the 
 \label{sec:using-contribs}
 \Glspl{contribution} are in a separate part of the repository, separate from the core.  The documentation is not yet fully organized, information about \glspl{contribution} can be found at \url{http://matsim.org/javadoc} or \url{http://www.matsim.org/extensions}.  There are also release versions \kai{check} \ah{gibt es beides am gleichen Ort wie MATSim} and nightly builds \kai{url?}.
 
-In general, contribs should provide main methods with which they can be used.  We might eventually provide clickable jar files here as well, but for the time being the extensions need to be bundled with core \gls{matsim} (and potentially other contribs). As shown at \url{http://www.matsim.org/docs/extensions} the syntax roughly is
+In general, \glspl{contribution} should provide main methods with which they can be used.  We might eventually provide clickable jar files here as well, but for the time being the extensions need to be bundled with core \gls{matsim} (and potentially other \glspl{contribution}). As shown at \url{http://www.matsim.org/docs/extensions} the syntax roughly is
 \begin{lstlisting}
 java -Xmx2000m -cp MATSim.jar:contrib/contrib.jar org.matsim.contrib.run.Main config.xml  
 \end{lstlisting}
@@ -47,17 +47,17 @@ where
 \begin{compactitem}
 \item \lstinline$-Xmx2000m$ increases the \gls{java} heap space so that most \gls{matsim} runs fit in
 \item \lstinline$MATSim.jar$ needs to be replaced by a relative or absolute path to the \gls{matsim} jar to be used
-\item \lstinline$contrib/contrib.jar$ needs to be replaced by a relative or absolute path to the contrib jar to be used
-\item \lstinline$org.matsim.contrib.run.Main$ needs to be replaced by full java class name containing the desired main method (given by the contrib documentation)
-\item \lstinline$config.xml$ needs to be replaced by a relative or absolute path to a config file, which may contain additional sections specifically for the contrib
+\item \lstinline$contrib/contrib.jar$ needs to be replaced by a relative or absolute path to the \gls{contribution} jar to be used
+\item \lstinline$org.matsim.contrib.run.Main$ needs to be replaced by full \gls{java} class name containing the desired main method (given by the \gls{contribution} documentation)
+\item \lstinline$config.xml$ needs to be replaced by a relative or absolute path to a config file, which may contain additional sections specifically for the \gls{contribution}
 \end{compactitem}
 
-It is possible to combine several contribs in this way, provided someone has made available a corresponding main method.  This can in principle be done relatively quickly, so persons who want to run studies with combinations of existing contributions but without programming skills can ask someone with those skills and with access to the repository to help.
+It is possible to combine several \glspl{contribution} in this way, provided someone has made available a corresponding main method.  This can in principle be done relatively quickly, so persons who want to run studies with combinations of existing \glspl{contribution} but without programming skills can ask someone with those skills and with access to the repository to help.
 
 % --------------------------------------------------------------------------------------
 \subsubsection{Writing "Scripts in Java"}
 \label{sec:writing-scripts-java}
-The contribs are written in a style that they can be plugged into core \gls{matsim} via extension points (see Chapter~\ref{ch:extensionpoints}). If a specific combination or configuration of modules is not (yet) available, one can write it for oneself. The syntax roughly is
+The \glspl{contribution} are written in a style that they can be plugged into core \gls{matsim} via extension points (see Chapter~\ref{ch:extensionpoints}). If a specific combination or configuration of modules is not (yet) available, one can write it for oneself. The syntax roughly is
 \begin{lstlisting}
 ... main( ... ) {
     // construct the config object:
@@ -149,7 +149,7 @@ The config modules loosely correspond to components providing distinct functiona
 \kai{Lasse das bis zur Klärung dieser Frage mal offen.}
 
 \paragraph{Contributions:} % --------------
-The term "module" is furthermore used for contributions, residing in the \lstinline|org.matsim.contrib| package. % and either having their section in the default configuration file (such as destination innovation) or not (such as the wagonsim contribution).
+The term "module" is furthermore used for \gls{contribution}, residing in the \lstinline|org.matsim.contrib| package. % and either having their section in the default configuration file (such as destination innovation) or not (such as the wagonsim contribution).
 
 \kai{Von mir aus können wir das durchgängig ``contribs'' oder ``contributions'' oder ``extensions'' nennen.  Leider hat Marcel für die package einen anderen Namen (contrib) gewählt als für die Doku (extensions).  Aber ``module'' muss nicht sein.}
 %
@@ -584,7 +584,7 @@ Strategy modules are numbered, where each module is given a weight which determi
 
 \kai{Ich meine, dass es diese Transit Sonderformen gar nicht mehr gibt.  ????} 
 
-\ah{Please note, that combining strategy modules that are contributions such as destination choice or public transport is not straight forward. Contact the mailing list, for further information.}
+\ah{Please note, that combining strategy modules that are \gls{contribution} such as destination innovation or public transport is not straight forward. Contact the mailing list, for further information.}
 
 % ===================================================================================
 \subsection{Time Innovation}
@@ -604,7 +604,7 @@ Strategy modules are numbered, where each module is given a weight which determi
 \item Code: \lstinline|org.matsim.core.replanning.modules.TimeAllocationMutator|
 \end{compactitem}
 
-The module shifts activity end times randomly within a configurable range as described by \citet[][]{BalmerEtAl_Timmermans_2005, Raney_PhDThesis_2005, Balmer_unpub_VSP_2004, BalmerEtAl_unpub_EIRASS_2004, BalmerEtAl_unpub_STRC_2004}. A best-reponse approach to time choice is applied by ``planomat'' described in Section \ref{sec:planomat}.
+The module shifts activity end times randomly within a configurable range as described by \citet[][]{BalmerEtAl_Timmermans_2005, Raney_PhDThesis_2005, Balmer_unpub_VSP_2004, BalmerEtAl_unpub_EIRASS_2004, BalmerEtAl_unpub_STRC_2004}. A best-reponse approach to time choice is applied by "Planomat" described in Section~\ref{sec:planomat}.
 
 % ===================================================================================
 \subsection{Route Innovation}
@@ -687,7 +687,7 @@ Following selectors are available in the configuration file strategy module:
 	\item \lstinline|SelectExpBeta| performs \gls{mnl} selection between plans.
 	\item \lstinline|ChangeExpBeta| changes to a different plan with probability dependent on $e^{\Delta_{score}}$, where $\Delta_{score}$ is the score difference between the two plans.
 	\item \lstinline|SelectRandom| performs random selection between the plans.
-	\item \lstinline|SelectPathSizeLogit| selects an existing Plan according to the Path Size Logit described by \citet[][]{FrejingerBierlaire_TransResB_2007}.
+	\item \lstinline|SelectPathSizeLogit| selects an existing plan according to the path size logit described by \citet[][]{FrejingerBierlaire_TransResB_2007}.
 \end{compactitem}
 %
 \item Configuration: no further configuration necessary \ah{? selectExpBeta ...}
@@ -728,7 +728,6 @@ Link stats allow to specify the output interval of simulation statistics of indi
 % ##################################################################################################################
 \section{MATSim Survival Guide}
 \label{sec:survival}
-
 There are already many options and possibilities available with \gls{matsim}, and finding them can be a taunting exercise.  Here are a couple of recommendations, derived from our own frequent use of the system.
 \begin{enumerate}
 
