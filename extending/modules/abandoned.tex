@@ -10,20 +10,20 @@ This chapter lists modules that have been important in the past, but whose devel
 % ################################################################################################################
 \section{DEQSim}
 \label{sec:deqsim}
-\emph{DEQSim} (``Discrete Event Queue Simulation'') was used for project \emph{Westumfahrung} \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009}. It was a queue-based, event-based parallel simulation written in C++ \citep[][]{CharyparEtAl_TRR_2007, Charypar_PhDThesis_2008}. This simulation included handling of reduced capacities due to traffic lights in an aggregate manner \citep[][p.139 ff]{Charypar_PhDThesis_2008}. It further supported modeling of gap back propagation at junctions \citep[][p.98 ff]{Charypar_PhDThesis_2008}. Events handling was done via file input and output. This represented a major bottleneck in terms of framework performance and thus it was replaced by a JAVA version, the \emph{JDEQSim} mobsim (``Java Discrete Event Queue Simulation''; see Section~\ref{sec:jdeqsim}).
+\gls{deqsim} was used for project \emph{Westumfahrung} \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009}. It was a queue-based, event-based parallel simulation written in \gls{cpp} \citep[][]{CharyparEtAl_TRR_2007, Charypar_PhDThesis_2008}. This simulation included handling of reduced capacities due to traffic lights in an aggregate manner \citep[][p.139 ff]{Charypar_PhDThesis_2008}. It further supported modeling of gap back propagation at junctions \citep[][p.98 ff]{Charypar_PhDThesis_2008}. Events handling was done via file input and output. This represented a major bottleneck in terms of framework performance and thus it was replaced by a \gls{java} version, the \gls{jdeqsim} (see Section~\ref{sec:jdeqsim}).
  %% \kai{Andreas, gibt es da ein Kapitel zu?}. \ah{nicht wirklich}).
 
 % ################################################################################################################
 \section{Planomat}
 \label{sec:planomat}
-%\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus MATSim entfernt haben.}
+%\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus \gls{matsim} entfernt haben.}
 %\ah{Ist die Frage, ob man die Historie noch mitschleppen will oder nur den aktuellen Stand beschreiben will. Bin in diesem Fall etwas unschlüssig. Planomat war für zwei grosse Projekte hier ein wichtiges Teil, deshalb wird man gute Argumente hören dafür es drinzulassen. Für den aktuellen Stand ist es aber tatsächlich nicht mehr relevant.}
 
-Chapter~\ref{ch:extensionpoints} explains how MATSim can be extended.  One extension point that had been around for a long time is the \lstinline{PlanStrategy} extension point (Section~\ref{sec:replanning-extension-point}).  It allows the addition of ``innovative'' strategy modules (cf.\ Section~\ref{sec:strategymodules}) beyond those available by default.
+Chapter~\ref{ch:extensionpoints} explains how \gls{matsim} can be extended.  One extension point that had been around for a long time is the \lstinline{PlanStrategy} extension point (Section~\ref{sec:replanning-extension-point}).  It allows the addition of "innovative" strategy modules (cf.\ Section~\ref{sec:strategymodules}) beyond those available by default.
 
 One such replanning model was Planomat \citep[][]{MeisterEtAl_IATBR_2006, MeisterEtAl_STRC_2006, Meister_PhDThesis_2011}.  It replaced the randomizing modules  for (departure) time innovation (Section~\ref{sec:timechoice}) and for mode innovation (Section~\ref{sec:modechoice}) by a module that computed a joint best reply for both choice dimensions.  It did that by internally using a Genetic Algorithm, thus 
 %% A special replanning module using a different logic than undirected trial-and-error was Planomat. Planomat did 
-not just evaluating one random alternative per iteration as standard MATSim would do, but multiple alternatives within one single iteration, in order to obtain a (at least locally) optimal solution. 
+not just evaluating one random alternative per iteration as standard \gls{matsim} would do, but multiple alternatives within one single iteration, in order to obtain a (at least locally) optimal solution. 
 %% It used a genetic algorithm  for this purpose. 
 Planomat was successfully applied in the 
 project \emph{KTI Frequencies} for time choice and mode choice for sub-tours \citep[][p.10]{BalmerEtAl_ResRep_datapuls_2010}.
@@ -32,53 +32,52 @@ Unfortunately, there were three interacting problem complexes with Planomat:
 
 \item Any strategy module that generates best reply plans needs to able to compare plans and say which one is better, at least along the considered choice dimensions.  This is typically achieved by giving such a module an objective function which needs to be optimized.  For example, a fastest path router minimizes the travel time; a generalized cost router minimizes the generalized travel cost.
 
-All best reply modules here face the challenge that they cannot run the full mobsim ($=$ network loading $=$ synthetic reality) every time they need such information.  In consequence, all best reply modules are forced to build some internal model of the synthetic reality.  
+All best reply modules here face the challenge that they cannot run the full \gls{mobsim} ($=$ network loading $=$ synthetic reality) every time they need such information.  In consequence, all best reply modules are forced to build some internal model of the synthetic reality.  
 
-Planomat did this by running its plans through a simplified mobsim of its own.  This mobsim was a re-implementation of the most important aspects of the core mobsim.
+Planomat did this by running its plans through a simplified \gls{mobsim} of its own. This \gls{mobsim} was a re-implementation of the most important aspects of the core \gls{mobsim}.
 %
 %% Planomat 
-%% %did not re-use core MATSim structural information, but 
-%% built its own model of the environment.  For example, it would not use the MATSim core scoring function provided by the infrastructure, but compute its own score based on the events. \kai{Thibaut or Andreas H., is this correct?} \ah{at least for the KTI frequencies project based on Planomat this is true.}  \thibaut{Uhm, not really, this is exactly the opposite: it would go through the new plan, and ``fake'' events, that it would pass to the scoring function. It caused problems, because the way plans were replayed could easily differ from what the mobsim did (it for instance did not use the ``activity duration interpretation'' parameter, or was unable to consider tolls, as they are represented by money events thrown during the mobsim step), which was pretty hard to check (I remember having passed a lot of time trying to figure out the proper way to consider start, end time and duration in activities).}
+%% %did not re-use core \gls{matsim} structural information, but 
+%% built its own model of the environment.  For example, it would not use the \gls{matsim} core scoring function provided by the infrastructure, but compute its own score based on the events. \kai{Thibaut or Andreas H., is this correct?} \ah{at least for the KTI frequencies project based on Planomat this is true.}  \thibaut{Uhm, not really, this is exactly the opposite: it would go through the new plan, and ``fake'' events, that it would pass to the scoring function. It caused problems, because the way plans were replayed could easily differ from what the mobsim did (it for instance did not use the ``activity duration interpretation'' parameter, or was unable to consider tolls, as they are represented by money events thrown during the mobsim step), which was pretty hard to check (I remember having passed a lot of time trying to figure out the proper way to consider start, end time and duration in activities).}
 %% \ah{It also used its own scoring function, right?}
 %
-Unfortunately, however, this means that any change or addition to the core mobsim would not automatically be picked up by Planomat.
+Unfortunately, however, this means that any change or addition to the core \gls{mobsim} would not automatically be picked up by Planomat.
 %
-A consequence of this was that Planomat's idea of what was a good plan often diverged from MATSim's idea of a good plan, especially when MATSim extensions were used.
+A consequence of this was that Planomat's idea of what was a good plan often diverged from \gls{matsim}'s idea of a good plan, especially when \gls{matsim} extensions were used.
 %
-In other words, any addition to the MATSim system, for example tolls, or opening/closing time restrictions, or differentiating link travel times by turning directions, would have to be mirrored inside Planomat.
+In other words, any addition to the \gls{matsim} system, for example tolls, or opening/closing time restrictions, or differentiating link travel times by turning directions, would have to be mirrored inside Planomat.
 %
 
 \ah{Btw: when exactly (revision?) did we switch to events-based scoring? Is relevant in other chapters too.}\kai{MZ should know this.}\thibaut{plan elements from the plans stopped being passed to the scoring function from r17026 on (24 Oct 2011).}
 
-\item Planomat had a tendency to always return the same solution.  While this is to be expected from a best-reply module, it becomes a problem when what the module thinks is a best reply is no longer consistent with what the core thinks.  
+\item Planomat had a tendency to always return the same solution. While this is to be expected from a best-reply module, it becomes a problem when what the module thinks is a best reply is no longer consistent with what the core thinks.  
 
-While an innovative strategy which deliberately generates  diversity can be useful even when not fully consistent with the MATSim core (cf.\cite{NagelKickhoeferJoubertHeterogeneousVoTs}), this is impossible for a non-diverse innovative strategy, since it insists on returning suboptimal plans and nothing else.
+While an innovative strategy which deliberately generates  diversity can be useful even when not fully consistent with the \gls{matsim} core (cf.\cite{NagelKickhoeferJoubertHeterogeneousVoTs}), this is impossible for a non-diverse innovative strategy, since it insists on returning suboptimal plans and nothing else.
 
-\item This went along with the fact that Planomat used the MATSim core router in a way that was not amenable to further software development of the core router.  Essentially, Planomat used MATSim classes and methods that were not designed for re-use, but just happened to be public.
+\item This went along with the fact that Planomat used the \gls{matsim} core router in a way that was not amenable to further software development of the core router.  Essentially, Planomat used \gls{matsim} classes and methods that were not designed for re-use, but just happened to be public.
 
-It was thus in the way of a major re-design of the MATSim core router, undertaken by T.~Dubernet (cf.~Section~\ref{sec:router-extension-point} for the result).
+It was thus in the way of a major re-design of the \gls{matsim} core router, undertaken by T.~Dubernet (cf.~Section~\ref{sec:router-extension-point} for the result).
 
 \end{itemize}
 
-All three things together mean that Planomat was eventually abandoned: Moving it to the new router infrastructure would have meant a major piece of one-time work.  After that, maintaining Planomat's best-reply capability would have been a permanent work-intensive obligation.  It was thus decided to rather invest our scarce resources into the design of a better core that would allow for extensions to survive without a lot of manual intervention.  Although this will always be work in progress, Chapter~\ref{ch:extensionpoints} describes that we have moved forward in the direction of pluggable extensibility quite a bit.
+All three things together mean that Planomat was eventually abandoned: Moving it to the new router infrastructure would have meant a major piece of one-time work. After that, maintaining Planomat's best-reply capability would have been a permanent work-intensive obligation. It was thus decided to rather invest our scarce resources into the design of a better core that would allow for extensions to survive without a lot of manual intervention. Although this will always be work in progress, Chapter~\ref{ch:extensionpoints} describes that we have moved forward in the direction of pluggable extensibility quite a bit.
 
-\kai{pls note following new paragraph:} It has to be noted, though, that the improved software architecture does not resolve the general conceptual problem that best reply modules somehow need to follow the development of the core system.  Chapter~\ref{ch:psim} discusses a newer alternative that re-uses mobsim output for the evaluation of plans without having to run the full mobsim every time. An alternative approach, based on the diversity of plans, is investigated by \cite{NagelKickhoeferJoubertHeterogeneousVoTs}.  Additionally, Chapter~\ref{ch:discretechoice} discusses aspects of diversity in plan set generation.
+\kai{pls note following new paragraph:} It has to be noted, though, that the improved software architecture does not resolve the general conceptual problem that best reply modules somehow need to follow the development of the core system. Chapter~\ref{ch:psim} discusses a newer alternative that re-uses \gls{mobsim} output for the evaluation of plans without having to run the full \gls{mobsim} every time. An alternative approach, based on the diversity of plans, is investigated by \cite{NagelKickhoeferJoubertHeterogeneousVoTs}. Additionally, Chapter~\ref{ch:discretechoice} discusses aspects of diversity in plan set generation.
 
 %% The Planomat module cannot be invoked directly anymore; it is not available in current releases anymore but can be downloaded from SVN history.
 %% \kai{hier stand noch das mit der svn history.  ich vermute mal, dass man das wirklich noch aus svn bekommt, aber wollen wir das wirklich nochmal ausprobieren?  Falls nicht, wollen wir das wirklich schreiben?}
-%% \ah{Vermutlich sollte man die Leute tatsächlich "zwingen" erstmal mit dem MATSim-Team zu sprechen, anstatt sie implizit zu ermuntern auf eigene Faust sich das Zeug zu besorgen und loszulegen.}
+%% \ah{Vermutlich sollte man die Leute tatsächlich "zwingen" erstmal mit dem \gls{matsim}-Team zu sprechen, anstatt sie implizit zu ermuntern auf eigene Faust sich das Zeug zu besorgen und loszulegen.}
 
 % ################################################################################################################
 \section{PlanomatX}
 
-PlanomatX leaned on Planomat. It extended it by performing activity choice and adopting a Tabu Search approach \citep[][]{Feil_PhDThesis_2010}. To cope with curse of dimensionality due to the added choice dimension, PlanomatX introduced schedule recycling, which was basically a warmstart concept. Due to problems with a logarithmic utility function for activity choice, PlanomatX furthermore replaced to standard MATSim scoring function by an S-shaped function. Rough estimates for its parameters based on an multinomial logit model (MNL) exist. 
+PlanomatX leaned on Planomat. It extended it by performing activity choice and adopting a Tabu Search approach \citep[][]{Feil_PhDThesis_2010}. To cope with curse of dimensionality due to the added choice dimension, PlanomatX introduced schedule recycling, which was basically a warmstart concept. Due to problems with a logarithmic utility function for activity choice, PlanomatX furthermore derived an alternative utility function from \citet[][]{Joh_PhDThesis_2004}. Rough estimates for its parameters based on an \gls{mnl} exist but turned out to be problematic as shown in Section~\ref{sec:alternative-functions}.
 
 %% PlanomatX module cannot be invoked directly anymore; it is not available in current releases anymore but can be downloaded from SVN history.
 
 PlanomatX, being derived from Planomat, suffered the same maintenance problems as Planomat.  It was thus eventually abandoned for the same reasons.
 
-\ah{Könnte man hier (anstatt in Research Avenues) noch mehr auf die S-shaped function und ihre Probleme eingehen?
-}
+%\ah{Könnte man hier (anstatt in Research Avenues) noch mehr auf die S-shaped function und ihre Probleme eingehen?}
 
 % ===================================================================================
 
@@ -92,7 +91,7 @@ PlanomatX, being derived from Planomat, suffered the same maintenance problems a
 
 %% For some time, there existed two different versions of the QSim, the more advanced and experimental one called ``QSim'', and the more basic one named ``simulation'' or ``queueSimulation''.   Essentially, the basic version was forked off just before QSim exploded in terms of functionality and extensibility, in order to have a much simpler reference mobsim available.  
 
-%% Over time, however, changes in the core made it necessary to adapt the basic queue simulation to those changes.  Many of these changes had to do with agent behavior, where the basic queue simulation was not able to differentiate, say, between activity end and departure.  In order to reduce the maintenance burden, eventually the agent concept in the basic queue simulation was retrofitted to the agent concept of the more advanced QSim.  In the end this meant that the basic queue simulation was slowly drifing away from the original fork, while on the other hand not being used and thus not tested by the MATSim core team.
+%% Over time, however, changes in the core made it necessary to adapt the basic queue simulation to those changes.  Many of these changes had to do with agent behavior, where the basic queue simulation was not able to differentiate, say, between activity end and departure.  In order to reduce the maintenance burden, eventually the agent concept in the basic queue simulation was retrofitted to the agent concept of the more advanced QSim.  In the end this meant that the basic queue simulation was slowly drifing away from the original fork, while on the other hand not being used and thus not tested by the \gls{matsim} core team.
 
 %% It was thus eventually decided to remove the basic queue simulation from the repository, and concentrate on \lstinline{QSim}.
 %% %% The queueSimulation was another mobsim forked from QSim. It cannot be invoked directly anymore; it is not available in current releases anymore but can be downloaded from SVN history. 
@@ -106,17 +105,17 @@ PlanomatX, being derived from Planomat, suffered the same maintenance problems a
 %% ===================================================================================
 %\subsection{Planomat}
 %\label{sec:planomat}
-%\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus MATSim entfernt haben.}
+%\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus \gls{matsim} entfernt haben.}
 %\ah{Ist die Frage, ob man die Historie noch mitschleppen will oder nur den aktuellen Stand beschreiben will. Bin in diesem Fall etwas unschlüssig. Planomat war für zwei grosse Projekte hier ein wichtiges Teil, deshalb wird man gute Argumente hören dafür es drinzulassen. Für den aktuellen Stand ist es aber tatsächlich nicht mehr relevant.}
 %
 %% ===================================================================================
 %\subsection{PlanomatX ... Activity Choice}
 %\label{sec:activitychoice}
 %
-%\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus MATSim entfernt haben.}
+%\kai{Müssen wir das hier wirklich drinlassen?  Es hatte ja schon seinen Grund, dass wir das aus \gls{matsim} entfernt haben.}
 %\ah{Ähnlich oben, nur dass ich hier die Argumente dann nicht so gut nachvollziehen kann.}
 %
-%\kai{Ich habe das wie folgt in Erinnerung: (1) PlanomatX war mit heißer Nagel gestrickt.  Es gab nie ein Bemühem um code re-use, weder im code von Feil selber noch in bezug auf Matsim Infrastruktur.  Jedes "computational experiment" wurde definiert durch eine weitgehenden Kopie der gesamten code base.  Wir sahen uns nicht dazu in der Lage, hier dasjenige Subset zu extrahieren, welches einer sinnvollen Funktionalität entsprach.  (2) Durch die vielen Kopien war der playground beim refactoring massiv im Weg.  Es ist schon ok, wenn man bestimmte code Zeilen pro playground ein- oder zweimal austauschen muss, aber 14x ist zu viel.  (3) Michael Balmer sagte, dass er den Resultaten, insbesondere denen in den hinteren Kapiteln der Diss, nicht trauen würde (sonst hätten wir vielleicht ein paar test cases drumherum gebaut und versucht, es zu retten).}
+%\kai{Ich habe das wie folgt in Erinnerung: (1) PlanomatX war mit heißer Nagel gestrickt.  Es gab nie ein Bemühem um code re-use, weder im code von Feil selber noch in bezug auf \gls{matsim} Infrastruktur.  Jedes "computational experiment" wurde definiert durch eine weitgehenden Kopie der gesamten code base.  Wir sahen uns nicht dazu in der Lage, hier dasjenige Subset zu extrahieren, welches einer sinnvollen Funktionalität entsprach.  (2) Durch die vielen Kopien war der playground beim refactoring massiv im Weg.  Es ist schon ok, wenn man bestimmte code Zeilen pro playground ein- oder zweimal austauschen muss, aber 14x ist zu viel.  (3) Michael Balmer sagte, dass er den Resultaten, insbesondere denen in den hinteren Kapiteln der Diss, nicht trauen würde (sonst hätten wir vielleicht ein paar test cases drumherum gebaut und versucht, es zu retten).}
 %
 %\kai{Ich sehe das von daher gesehen interessanterweise eher umgekehrt wie Du: Meiner Intuition nach hätte eher der normale planomat bleiben können.  Hier kann ich mich nicht dran erinnern, dass ich eine eigene Meinung hatte.  Als wesentliches technisches Problem habe ich in Erinnerung, dass planomat die Tendenz hatte, immer die gleiche Lösung zu finden, völlig unabhängig von den Präferenzen des Agenten (z.B.\ value of time).}
 %
