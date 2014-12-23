@@ -6,8 +6,7 @@
 
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ##################################################################################################################
 \section{\acrshort{matsim} and Agents}
 
 % Q-learning: learn utility for each state-action pair
@@ -65,22 +64,19 @@ In the meantime, both AI and the field of transport simulation have moved on, in
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ##################################################################################################################
 \section{Within-Day Replanning and the User Equilibrium}
 \label{sec:researchavenues-withinday}
 
 \vfill\eject
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Frozen randomness}
+% ##################################################################################################################
+\section{Frozen Randomness}
 
 a horni
 
 \vfill\eject
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Choice set generation}
+% ##################################################################################################################
+\section{Choice Set Generation}
 \label{sec:choicesets}
 
 \kai{in particular plans removal!! From Benjamin's diss:}
@@ -114,13 +110,11 @@ Using the logsum formulation with correlated choice sets requires a careful inte
 %
 In that sense, one could include some approximation of the error into the analysis of results, possibly similar to Eq.~\ref{eq:ch:economicEval:logsumMaxError}. If the differences in utility levels between the two states are in the same magnitude as $\ln(P)$, it is possible that the signal of the policy effect is smaller than the noise of randomness.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ##################################################################################################################
 \section{Utility function}
 \label{sec:future-of-scoring-function}
 
-\kai{In particular: calibration of 2nd derivative!}
-
+% =========================================================================================
 \subsection{Estimating a Utility Function}
 \label{sec:estimation}
 \ah{With the exception of \citet[][]{BalmerEtAl_ResRep_datapuls_2010}, the estimates by \citet[][]{Kickhoefer_MastersThesis_2009} have not been considered for the various calibrations and extensions mentioned above although it represents a valuable base for further estimations. Having such a base at hand is important as estimating and applying a MATSim utility function is non-trivial due to the following. 
@@ -136,18 +130,56 @@ A numerical problem, particularly relevant for activity choice, concerns the fun
 Estimating a utility function for MATSim is associated with another problem. The function is applied iteratively for a travel demand which is in the beginning of the relaxation process usually not very similar to the situation where the function was estimated. In other words, the function is used for a whole range of working points, where it has been estimated for only one  possibly completely different working point. The MATSim function thus must be also correct in the elasticities, to be able to efficiently drive the relaxation process toward the final relaxation point, where the estimated function is valid by construction. 
 }
 
+% =========================================================================================
 \subsection{Agent-Specific Preferences:}
 \label{sec:agent-specific-prefs}
 \ah{In project Surprice \citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014}, agent-specific travel preferences and individual income-dependent marginal utilities of money are incorporated. It is simulated with a 1\% multi-modal Zürich scenario, the preference values however, are assigned randomly. }
 
-\subsection{S-Shaped Function and Its Estimates:}
-\label{sec:s-shaped-function}
-\ah{Both \citet[][p.127f]{Feil_PhDThesis_2010} and \citet[][p.32]{MATSim_Userguide_2014} report that the standard logarithmic function of MATSim is not suitable for modeling activity sequence choice. Due to the log form very short activities are favored, which means that the schedule is filled-up with numerous short activities, where the usually long home activities are replaced first. Since this is unrealistic behavior, a new function was introduced by \citet[][p.129ff]{Feil_PhDThesis_2010}. The function is based on \citet[][]{Joh_PhDThesis_2004} and is asymmetrically S-shaped. First estimates of the new function based on the Swiss microcensus were provided, which were calibrated for the schedule recycling functionality by \citet[][p.152f]{Feil_PhDThesis_2010}. The function was not developed further.}
+% =========================================================================================
+\subsection{Alternative Functional Forms of the Utility Function}
+\kai{In particular: calibration of 2nd derivative!}
+
+
+\ah{Feils Versuch mit der Joh-Funktion: 
+Both \citet[][p.127f]{Feil_PhDThesis_2010} and \citet[][p.32]{MATSim_Userguide_2014} report that the standard logarithmic function of MATSim is not suitable for modeling activity sequence choice. Due to the log form very short activities are favored, which means that the schedule is filled-up with numerous short activities, where the usually long home activities are replaced first. Since this is unrealistic behavior, a new function was introduced by \citet[][p.129ff]{Feil_PhDThesis_2010}. The function is based on \citet[][]{Joh_PhDThesis_2004} and is asymmetrically S-shaped. First estimates of the new function based on the Swiss microcensus were provided, which were calibrated for the schedule recycling functionality by \citet[][p.152f]{Feil_PhDThesis_2010}. The function was not developed further.}
+
+\kai{Hallo Kay,
+
+Ist Euch die S-shaped utl function so wichtig, dass Ihr sie im "Buch" stehen haben wollt?
+
+Meine Intuition ist nämlich folgende:
+
+Es herrscht Wettbewerb zwischen Aktivitäten.
+
+Optimal ist wenn alle ersten Ableitungen nach der Zeit identisch (wie bei normaler consumer theory Ableitungen nach dem Preis).
+
+Theoretisch kann damit ein Arbeitspunkt auch im konvexen Teil der utl fct liegen.  Das ist aber instabil (siehe PS), und wird sich daher immer entweder nach Null oder in den konkaven Bereich bewegen.
+
+Damit gibt es aber auch in der Realität nur wenig oder gar keine Dauern im konvexen Bereich.
+
+Damit ist der konvexe Bereich nicht schätzbar.
+
+Insofern waren die Probleme bei Feil hier m.E. nicht Pech, sondern systematisch.
+
+Von mir aus kann sich die Welt damit trotzdem beschäftigen.
+
+Aber soll es wirklich als "research avenue" in das MATSim-Buch?  Oder könnten wir uns auf eine allgemeinere Formulierung einigen (wo wir einfach sagen, dass die derzeitige matsim fct zu unflexibel ist)?
+
+Danke & vG
+
+Kai
+
+PS: "Instabil": Sobald der Arbeitspunkt hier etwas nach rechts geht, geht die Steigung nach oben, der marginale Zugewinn steigt also an.  
+
+- Falls dieser Gewinn an Steigung mehr ist als der Verlust an Steigung an allen anderen Aktivitäten, dann wird der Anteil der betrachteten Aktivität immer größer, bis der Arbeitspunkt im konkaven Bereich ist.
+
+- Falls nicht, so gilt das Argument andersherum, und die betrachtete Aktivität wird auf Dauer Null zusammenschnurren.
+
+}
 
 
 \vfill\eject
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ##################################################################################################################
 \section{Results Variability}
 \label{sec:variability}
 Microsimulation system design as well as concrete microsimulation studies require specification of the measures \kai{quantities?} of interest.\footnote{%
@@ -245,9 +277,8 @@ Further MATSim investigations are reported by \citet[][]{Hackney_PhDThesis_2009,
 {} 
 
 \vfill\eject
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Transients vs.\ the notion of ``learning''}
+% ##################################################################################################################
+\section{Transients Versus the Notion of "Learning"}
 \label{sec:transients-vs-learning}
 
 As in many other simulations of similar kind, the interpretation of the relaxation procedure (iterations) of MATSim is unclear. 
@@ -258,16 +289,14 @@ An opposite perspective exists, where the relaxation procedure is just a numeric
 
 
 \vfill\eject
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{MFD}
+% ##################################################################################################################
+\section{Macroscopic Fundamental Diagram}
 \label{sec:researchavenues-mfd}
 
 \kai{Siehe auch Material in basicprocedure.tex}
 
 \vfill\eject
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ##################################################################################################################
 % Local Variables:
 % mode: latex
 % mode: reftex
