@@ -7,7 +7,7 @@
 \begin{center} \includegraphics[width=0.5\textwidth, angle=0]{extending/figures/modules.pdf} \end{center}
 
 % ##################################################################################################################
-In this chapter you will learn about the possibilities to configure, extend, and customize MATSim by available functionality. In Chapter~\ref{ch:extensionpoints} you will see how you can hook in your own extensions.
+In this chapter you will learn about the possibilities to configure, extend, and customize \gls{matsim} by available functionality. In Chapter~\ref{ch:extensionpoints} you will see how you can hook in your own extensions.
 
 %%\kai{Frage mich im Moment, ob wir diejenigen ``Module'', die man per config aufrufen kann, nicht doch lieber bereits unter ``using'' beschreiben sollten.  Aber vielleicht ist das inzwischen fast egal, und wir sollten lieber Standard-MATSim komplett separat von jeder Art Variation halten.  ???}
 
@@ -16,36 +16,37 @@ In this chapter you will learn about the possibilities to configure, extend, and
 \label{sec:matsim-modularity}
 \kai{Andreas, haben wir noch eine Chance, diese Ungleichheiten in der Nomenklatur geradezuziehen?  contrib vs extension; PlanStrategy vs StrategyModule; ... }
 
+% ====================================================================================================
 \subsection{Levels of Access}
 \label{sec:levels-of-access}
+\gls{matsim} currently provides four levels of access: using the core only, using core and \glspl{contrib}, writing "scripts in \gls{java}", and finally writing your own \glspl{extension}.
 
-\acrshort{matsim} currently provides four levels of access: using the core only, using core and contribs, writing ``scripts in Java'', and finally writing your own extensions.
-
+% --------------------------------------------------------------------------------------
 \subsubsection{Using the Core Only}
 \label{sec:using-core-only}
 In order to use the core only, one needs to do the following:
 \begin{compactitem}
-\item Download a \acrshort{matsim} release \url{http://sourceforge.net/projects/matsim/files/} or a nightly build \url{http://matsim.org/downloads/nightly} % \kai{url?}.
+\item Download a \gls{matsim} release \url{http://sourceforge.net/projects/matsim/files/} or a nightly build \url{http://matsim.org/downloads/nightly} % \kai{url?}.
 \item Minimally obtain a network file and an initial plans file.  Small versions can be typed by hand; larger versions should be generated automatically by some computational method.
 \item Write or edit a config file.
-\item Click on the \acrshort{matsim} jar file\footnote{This works since winter 2014/15 and should be in the 0.7.0 release.} and follow the instructions. 
+\item Click on the \gls{matsim} jar file\footnote{This works since winter 2014/15 and should be in the 0.7.0 release.} and follow the instructions. 
 \end{compactitem}
-We think that the \acrshort{matsim} core is already quite powerful; for example, the synthetic persons already follow full daily plans with a full daily scoring function and in consequence opening times for activity types, departure time choice, and schedule delay can be investigated.  Also, schedule-based public transit assignment is contained in the core.
+We think that the \gls{matsim} core is already quite powerful; for example, the synthetic persons already follow full daily plans with a full daily scoring function and in consequence opening times for activity types, departure time choice, and schedule delay can be investigated.  Also, schedule-based public transit assignment is contained in the core.
 
+% --------------------------------------------------------------------------------------
 \subsubsection{Using one or More Contribs}
 \label{sec:using-contribs}
+\Glspl{contrib} are in a separate part of the repository, separate from the core.  The documentation is not yet fully organized, information about \glspl{contrib} can be found at \url{http://matsim.org/javadoc} or \url{http://www.matsim.org/extensions}.  There are also release versions \kai{check} \ah{gibt es beides am gleichen Ort wie MATSim} and nightly builds \kai{url?}.
 
-Contribs are in a separate part of the repository, separate from the core.  The documentation is not yet fully organized, information about contribs can be found at \url{http://matsim.org/javadoc} or \url{http://www.matsim.org/extensions}.  There are also release versions \kai{check} \ah{gibt es beides am gleichen Ort wie MATSim} and nightly builds \kai{url?}.
-
-In general, contribs should provide main methods with which they can be used.  We might eventually provide clickable jar files here as well, but for the time being the extensions need to be bundled with core \acrshort{matsim} (and potentially other contribs). As shown at \url{http://www.matsim.org/docs/extensions} the syntax roughly is
+In general, contribs should provide main methods with which they can be used.  We might eventually provide clickable jar files here as well, but for the time being the extensions need to be bundled with core \gls{matsim} (and potentially other contribs). As shown at \url{http://www.matsim.org/docs/extensions} the syntax roughly is
 \begin{lstlisting}
 java -Xmx2000m -cp MATSim.jar:contrib/contrib.jar org.matsim.contrib.run.Main config.xml  
 \end{lstlisting}
 \kai{Maybe better point to electronic docu?} \ah{siehe url oben}
 where
 \begin{compactitem}
-\item \lstinline$-Xmx2000m$ increases the \gls{java} heap space so that most \acrshort{matsim} runs fit in
-\item \lstinline$MATSim.jar$ needs to be replaced by a relative or absolute path to the \acrshort{matsim} jar to be used
+\item \lstinline$-Xmx2000m$ increases the \gls{java} heap space so that most \gls{matsim} runs fit in
+\item \lstinline$MATSim.jar$ needs to be replaced by a relative or absolute path to the \gls{matsim} jar to be used
 \item \lstinline$contrib/contrib.jar$ needs to be replaced by a relative or absolute path to the contrib jar to be used
 \item \lstinline$org.matsim.contrib.run.Main$ needs to be replaced by full java class name containing the desired main method (given by the contrib documentation)
 \item \lstinline$config.xml$ needs to be replaced by a relative or absolute path to a config file, which may contain additional sections specifically for the contrib
@@ -53,10 +54,10 @@ where
 
 It is possible to combine several contribs in this way, provided someone has made available a corresponding main method.  This can in principle be done relatively quickly, so persons who want to run studies with combinations of existing contributions but without programming skills can ask someone with those skills and with access to the repository to help.
 
+% --------------------------------------------------------------------------------------
 \subsubsection{Writing "Scripts in Java"}
 \label{sec:writing-scripts-java}
-
-The contribs are written in a style that they can be plugged into core \acrshort{matsim} via extension points (see Chapter~\ref{ch:extensionpoints}).  If a specific combination or configuration of modules is not (yet) available, one can write it for oneself.  The syntax roughly is
+The contribs are written in a style that they can be plugged into core \gls{matsim} via extension points (see Chapter~\ref{ch:extensionpoints}). If a specific combination or configuration of modules is not (yet) available, one can write it for oneself. The syntax roughly is
 \begin{lstlisting}
 ... main( ... ) {
     // construct the config object:
@@ -80,35 +81,34 @@ The contribs are written in a style that they can be plugged into core \acrshort
 \end{lstlisting}
 The extension points, especially at \lstinline{(*)} and \lstinline{(**)}, are described in more detail in Chapter~\ref{ch:extensionpoints}.
 
+% --------------------------------------------------------------------------------------
 \subsubsection{Writing Your Own Extensions}
 \label{sec:writing-your-own-extensions}
-If the existing extensions \ah{contribs?} are not sufficient to plug you own study together, the next option is to write your own extension.  Again, this should preferably use the extension points described in Chapter~\ref{ch:extensionpoints}, since this is the only way in which an \gls{extension} may later become a \gls{contribution}.  \kai{here is a difference between an extension and a contrib :--)}
+If the existing \glspl{contrib} are not sufficient to plug your own study together, the next option is to write your own \gls{extension}.  Again, this should preferably use the extension points described in Chapter~\ref{ch:extensionpoints}, since this is the only way in which an \gls{extension} may later become a \gls{contribution}.  \kai{here is a difference between an extension and a contrib :--)}
 
 %% \paragraph{If none of this is enough}
 
-%% Clearly, it is always possible to download some version of \acrshort{matsim}, remove all the \lstinline{final} 
+%% Clearly, it is always possible to download some version of \gls{matsim}, remove all the \lstinline{final} 
 
-
+% ====================================================================================================
 \subsection{The Ideas Behind this Setup}
-The setup as described above came out of the observation that an ever growing monolithic MATSim would eventually overwhelm the core team.  Therefore, a set-up was searched where the core team could concentrate on central infrastructure, while specific functionality such as road pricing, multi-modal simulations, signals, additional choice dimensions, or analysis modules could be written and contributed by other people.  Clearly, a plug-in architecture had to be the solution, but it took (and still takes) time and effort to make the extension points sufficiently capable and sufficiently robust.  
+The setup as described above came out of the observation that an ever growing monolithic \gls{matsim} would eventually overwhelm the core team. Therefore, a set-up was searched where the core team could concentrate on central infrastructure, while specific functionality such as road pricing, multi-modal simulations, signals, additional choice dimensions, or analysis modules could be written and contributed by other people. Clearly, a plug-in architecture had to be the solution, but it took (and still takes) time and effort to make the extension points sufficiently capable and sufficiently robust.  
 
-At the same time, \acrshort{matsim} is a research platform, and a trait of research is that it investigates innovative questions, which often means that the questions were not foreseen by the designes of the code.  Quite often, scripting languages are the solution to such problems; for example, QGIS or VISUM allows python \cite{...} for plug-ins; EMME allows ???; SUMO allows ??? \kai{traci}.  Scala \cite{...} was discussed for \acrshort{matsim}, but in the end it was decided to just use Java itself as the scripting language.  This has the advantage that persons who are in between core development and \acrshort{matsim} application do not need to learn two languages, and in addition VSP can continue to teach Java both as an entry point to \acrshort{matsim} and as a general professional skill.
+At the same time, \gls{matsim} is a research platform, and a trait of research is that it investigates innovative questions, which often means that the questions were not foreseen by the designs of the code.  Quite often, scripting languages are the solution to such problems; for example, QGIS or VISUM allows python \cite{...} for plug-ins; EMME allows ???; SUMO allows ??? \kai{traci}.  Scala \cite{...} was discussed for \gls{matsim}, but in the end it was decided to just use Java itself as the scripting language.  This has the advantage that persons who are in between core development and \gls{matsim} application do not need to learn two languages, and in addition VSP can continue to teach Java both as an entry point to \gls{matsim} and as a general professional skill.
 
-
+% ====================================================================================================
 \subsection{MATSim Modules}
-
 According to the Merriam-Webster (\url{http://www.merriam-webster.com}), a module is
 %
 "one of a set of parts that can be connected or combined to build or complete something" 
 %
 or more specifically
 %
-``a part of a computer or computer program that does a particular job''. 
+"a part of a computer or computer program that does a particular job". 
 %
-That is, "module" is not a very specific term, and in consequence modules exist in MATSim at many levels.
+That is, "module" is not a very specific term, and in consequence modules exist in \gls{matsim} at many levels.
 %
-In the following are some important examles.
-
+In the following are some important examples.
 
 %% The basic concept to extend MATSim is the usage of modules. But, please be aware that when it comes to configuring MATSim the term ``module'' is very extensively used such that a clear definition of what is a module and what is not is not available to date. This consequence of organic grows be corrected on the long run, for now, we try to just sort out the different meanings of the word module
 
@@ -117,8 +117,9 @@ In the following are some important examles.
 %% Following different components are called modules.
 
 %% \paragraph{Components in \lstinline|org.matsim|:} % --------------
-\paragraph{Config modules:} % --------------
-The config xml file uses a syntax of the type
+% ...........................................................................
+\paragraph{Config Modules:} % --------------
+The config \gls{xml} file uses a syntax of the type
 \begin{xml}
 <module name="aModule">
     <param name="aParameterForAModule0" value="someValueX" />
@@ -137,9 +138,8 @@ The config modules loosely correspond to components providing distinct functiona
 \kai{Andreas, habe obige Argumentation mal umgedreht.  Du bist von der code Struktur zum config file gegangen.  Ich gehe jetzt vom config file aus, und erwähne den code nur beiläufig.  Grund: Die beiden hängen tatsächlich nicht besonders stark zusammen.  Insbesondere passen wir die config, wg. Rückwärts-Kompatibilität, praktisch nie an strukturelle Änderungen im Code an.  (Abgesehen davon ist die config Struktur gar nicht so schlecht; problematisch finde ich teilweise eher die Benennungen.  Ein Favorit: ``planCalcScore'' (ohne s hinter plan) vs ''plansCalcRoute'' (mit s hinter plan). Oder?)}
 
 }
-
+% ...........................................................................
 \paragraph{Replanning Modules:} % --------------
-
 
 %% A slightly different meaning of modules, which is only relevant for the MATSim developer and API-user, is as follows. In the package package \lstinline|org.matsim.core.replanning.modules| replanning functionality is provided in classes that are derived from \lstinline|AbstractMultithreadedModule|.
 
@@ -149,7 +149,7 @@ The config modules loosely correspond to components providing distinct functiona
 \kai{Lasse das bis zur Klärung dieser Frage mal offen.}
 
 \paragraph{Contributions:} % --------------
-The term ``module is furthermore used for contributions, residing in the \lstinline|org.matsim.contrib| package and either having their section in the default configuration file (such as destination choice) or not (such as the wagonsim contribution).
+The term "module" is furthermore used for contributions, residing in the \lstinline|org.matsim.contrib| package. % and either having their section in the default configuration file (such as destination innovation) or not (such as the wagonsim contribution).
 
 \kai{Von mir aus können wir das durchgängig ``contribs'' oder ``contributions'' oder ``extensions'' nennen.  Leider hat Marcel für die package einen anderen Namen (contrib) gewählt als für die Doku (extensions).  Aber ``module'' muss nicht sein.}
 %
@@ -157,25 +157,21 @@ The term ``module is furthermore used for contributions, residing in the \lstinl
 %
 \kai{Verstehe das Argument.  Andererseits wird es auch nicht einfacher, wenn wir die Sprache nicht konsistent halten.  Hm.}
 
-\bigskip
+%\kai{Contribs haben im Prinzip keine config sections mehr im default config file. locationchoice ist, soweit ich sehe, die einzige verbliebene Ausnahme :-); wir können sie gerne mal abräumen.}
+%\ah{Dann nehme ich das mal raus. replace(getParam, findParam) müsste das Problem wohl lösen.}
+%\kai{Gerne.  Siehe \url{https://matsim.atlassian.net/browse/MATSIM-307}}.
+%\ah{ist mal aus dem core raus, bis auf vplConsistency checks}
 
-\kai{Contribs haben im Prinzip keine config sections mehr im default config file. locationchoice ist, soweit ich sehe, die einzige verbliebene Ausnahme :-); wir können sie gerne mal abräumen.}
-
-\ah{Dann nehme ich das mal raus. replace(getParam, findParam) müsste das Problem wohl lösen.}
-
-\kai{Gerne.  Siehe \url{https://matsim.atlassian.net/browse/MATSIM-307}}.
-\ah{ist mal aus dem core raus, bis auf vplConsistency checks}
-
-
+% ...........................................................................
 \paragraph{External Functionality:} % --------------
-Also external components plugged in and replacing a MATSim module, such as a mobsim, are called modules.
+Also external components plugged in and replacing a \gls{matsim} module, such as a \gls{mobsim}, are called modules.
 
-MATSim provides the possibility that the parameters of arbitrary external modules are added to the configuration file as shown above. In the respective module, the parameters can be accessed with the method \lstinline|public final String findParam(final String moduleName, final String paramName)| of the \lstinline|Config| class.
+\gls{matsim} provides the possibility that the parameters of arbitrary external modules are added to the configuration file as shown above. In the respective module, the parameters can be accessed with the method \lstinline|public final String findParam(final String moduleName, final String paramName)| of the \lstinline|Config| class.
 
 \kai{MZ, wollen wir dieses findParam eigentlich noch ``advertisen''?  Bisher ist es immer darauf hinausgelaufen, dass ich das irgendwann durch eine ``typisierte'' config group ersetzt habe.  M.E.\ könnte man zukünftig auch gleich mit einer typisierten config group anfangen.  Oder?}
 
 \paragraph{Standalone Tools:} % --------------
-Also the standalone tools referencing MATSim as a library, such as the network editor, or the visualizer via, can be seen as modules.
+Also the standalone tools referencing \gls{matsim} as a library, such as the network editor, or the visualizer via, can be seen as modules.
 %are termed modules in current practice.
 
 
@@ -196,11 +192,11 @@ Also the standalone tools referencing MATSim as a library, such as the network e
 
 % ##################################################################################################################
 \section{An Overview of Existing Modules}
-Figure~\ref{fig:matsimmodules} shows where in the MATSim loop, common MATSim modules can be plugged in. The technical details for their usage, in particular the parameter sets are described in \citep[][]{MATSim_Userguide_2014} and in the javadoc.
+Figure~\ref{fig:matsimmodules} shows where in the \gls{matsim} loop, common \gls{matsim} modules can be plugged in. The technical details for their usage, in particular the parameter sets are described in \citep[][]{MATSim_Userguide_2014} and in the javadoc.
 
 For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be ``mode choice'' instead of the atomic categories, where we use terms ``functionality'' for the larger categories and ``module'' for the atomic components. %\kai{adapt table structure to revised chapter structure} \ah{erledigt}
 
-Due to the distributed and project- and dissertation-driven MATSim contribution process (see Chapter \ref{ch:developmentprocess}) modules are usually implemented for a specific practical purpose leading to various limitations of the respective module, e.g., modules might only work for a specific mode or for a defined calling order. Before, an additional effort is undertaken to generalize the module toward its embedding in the complete framework, the combination of a specific module with other functionality remains a non-straight-forward task. This means, that the user is in charge of systematically testing a specific modules combination before productively applying it.
+Due to the distributed and project- and dissertation-driven \gls{matsim} contribution process (see Chapter~\ref{ch:developmentprocess}) modules are usually implemented for a specific practical purpose leading to various limitations of the respective module, e.g.,\,modules might only work for a specific mode or for a defined calling order. Before, an additional effort is undertaken to generalize the module toward its embedding in the complete framework, the combination of a specific module with other functionality remains a non-straight-forward task. This means, that the user is in charge of systematically testing a specific modules combination before productively applying it.
 
 \createfigure%
 {MATSim functionality}%
@@ -209,7 +205,7 @@ Due to the distributed and project- and dissertation-driven MATSim contribution 
 {\includegraphics[width=0.99\textwidth, angle=0]{extending/figures/modules.pdf}}%
 {}
 %
-The description of the modules in this and the following chapters is based on following categorization (Table~\ref{tab:modules})
+The description of the modules in this and the following chapters is based on the categorization shown in Table~\ref{tab:modules}.
 %
 %\kai{TODO: macros for section names to re-use for table entries}
 %\ah{Mache das später. Denke die jetzige Korrektur hält eine Weile}
@@ -268,7 +264,7 @@ The description of the modules in this and the following chapters is based on fo
 	Travel Time Calculator & Section~\ref{sec:ttc} \\
 	Link Stats & Section~\ref{sec:linkStats} \\
 	\hline
-	\textbf{Further Modules Possibly Running in a MATSim Run} & \\
+	\textbf{Further Modules Possibly Running in a \gls{matsim} Run} & \\
 	\hline
 	Within-day Replanning & Chapter~\ref{ch:withinday} \\
 	Public Transport & Chapter~\ref{ch:pt} \\
@@ -293,7 +289,7 @@ The description of the modules in this and the following chapters is based on fo
 	Senozon via Visualizer & Chapter~\ref{ch:via} \\
 	OTFVis Visualizer & Chapter~\ref{ch:otfvis} \\
 	Cadyts & Chapter~\ref{ch:cadyts} \\
-	MATSim For UrbanSim & Chapter~\ref{ch:matsim4urbansim} \\	
+	\gls{matsim} For UrbanSim & Chapter~\ref{ch:matsim4urbansim} \\	
 	Network Editors &  Chapter~\ref{ch:networkeditor} \\
 	Interactive Analysis and Decision Support & Chapter~\ref{ch:businessanalytics} \\
 \end{longtable}
@@ -374,7 +370,7 @@ network.addNetworkChangeEvent(networkChangeEvent);
 \item Code: \lstinline|org.matsim.counts|
 \end{compactitem}
 
-MATSim offers the possibility to perform link volume comparisons between simulated and counted value for both motorized individual traffic \citep{Horni_unpub_IVT_2007}  and public transport. The later are described in Chapter \ref{ch:pt}. The count package offers analyses for the average working day with hourly resolution. A google maps based visualization is available, showing each station with a its load curve in a pop-up window at the geographic location.
+\gls{matsim} offers the possibility to perform link volume comparisons between simulated and counted value for both motorized individual traffic \citep{Horni_unpub_IVT_2007}  and public transport. The later are described in Chapter \ref{ch:pt}. The count package offers analyses for the average working day with hourly resolution. A google maps based visualization is available, showing each station with a its load curve in a pop-up window at the geographic location.
 
 As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario link volume comparisons have been successfully performed with data based on city level, cantonal level and national level \citep[][]{ASTRA_Webpage_2006}, where an average working day (Monday to Thursday, excluding public holidays) was built. Usually it is helpful to exclude a substantial part of the outer range of the modeled study region to prevent boundary effects.
 
@@ -387,7 +383,7 @@ As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario
 \item Code: \lstinline|org.matsim.core.facilities|
 \end{compactitem}
 
-Facilities are a non-mandatory element of MATSim scenarios. They identify activity locations and can hold opening hour and capacity information. facilities are mostly used in the MATSim Zürich group, in particular in the Zürich scenario, where facilities are derived from the Federal Enterprise Census 2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information and using NOGA-classification. Detailed technical description of facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008, Meister_unpub_IVT_2007}.
+Facilities are a non-mandatory element of \gls{matsim} scenarios. They identify activity locations and can hold opening hour and capacity information. facilities are mostly used in the \gls{matsim} Zürich group, in particular in the Zürich scenario, where facilities are derived from the Federal Enterprise Census 2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information and using NOGA-classification. Detailed technical description of facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008, Meister_unpub_IVT_2007}.
 
 % ===================================================================================
 
@@ -404,7 +400,7 @@ Facilities are a non-mandatory element of MATSim scenarios. They identify activi
 \item Code: \lstinline|org.matsim.core.population|
 \end{compactitem}
 
-The population module manages transport demand, i.e., the population and the agents' plans.
+The population module manages transport demand, i.e.,\,the population and the agents' plans.
 % ===================================================================================
 \subsection{Households}
 \label{sec:households}
@@ -414,7 +410,7 @@ The population module manages transport demand, i.e., the population and the age
 \item Code: \lstinline|org.matsim.households|
 \end{compactitem}
 
-Similar to the vehicles module, the household module is not used by default in MATSim.
+Similar to the vehicles module, the household module is not used by default in \gls{matsim}.
 
 % ===================================================================================
 %% \subsection{Data containers belonging both to demand and to supply}
@@ -429,7 +425,7 @@ Similar to the vehicles module, the household module is not used by default in M
 
 \begin{compactitem}
 \item Invoking the module: Vehicles need to be enabled in the \lstinline|scenario| configuration file section.
-\item Configuration: At the moment vehicles are only used for public transport (Chapter \ref{ch:pt}), i.e., motorized individual traffic vehicles are not used in MATSim nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section. 
+\item Configuration: At the moment vehicles are only used for public transport (Chapter~\ref{ch:pt}), i.e.,\,motorized individual traffic vehicles are not used in \gls{matsim} nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section. 
 \ah{Klären, ob man diese kleine Inkonsistenz beheben möchte.}  
 \kai{Ist das nicht schon erledigt?}
 \ah{final String vehiclesFile = this.config.transit().getVehiclesFile();}
@@ -453,7 +449,7 @@ The vehicles package provides a file reader and a factory to create vehicles.
 \item Code: \lstinline|org.matsim.core.controler|
 \end{compactitem}
 
-The controler is an indispensable module for running MATSim. The module, can be furthermore extended by \lstinline|Events| and \lstinline|Listeners| as detailed in Chapter~\ref{ch:extensionpoints}. 
+The controler is an indispensable module for running \gls{matsim}. The module, can be furthermore extended by \lstinline|Events| and \lstinline|Listeners| as detailed in Chapter~\ref{ch:extensionpoints}. 
 %% Classes implementing one or more \lstinline|Listener Interfaces| and can be registered with the Controler with \lstinline|addControlerListener()|. The controler fires \lstinline|Controler Events| at specific points during the run to the registered \lstinline|Listeners|, which can then execute their own code.
 %
 %Das ist nur ein Ausschnitt von dem, was der Controler kann.  Da es im entsprechenden Kap. ja beschrieben wird, brauchen wir das hier m.E. nicht nochmal. kai, dec'14
@@ -481,31 +477,19 @@ The replanning modules get their information about number of threads from this m
 \item Code: mainly \lstinline|org.matsim.core.events.ParallelEventsManagerImpl| for parallel event handling. See qsim for parallel mobsim running.
 \end{compactitem}
 
-As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in MATSim simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. 
+As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in \gls{matsim} simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. 
 % Clearly, the number of threads should correspond with available processor cores.  \kai{Meine Erfahrung ist eine andere, und je nach Maschine kann man das manchmal überauslasten und manchmal sollte man es eher unterauslasten.}  
 According to our experiences the optimal degree of capacity utilization (threads versus cores) is highly machine-dependent.
 As mentioned above, the mobsim \emph{QSim} is running parallel by default.
 
 Being able to speed-up scenarios might become even more important than today, when additional innovation (choice) dimensions are added with large variability in the parameters rendering ensemble runs necessary. % (see Section~\ref{sec:variability}).
 
-%\ah{auch Doblers Arbeiten einfügen!?}
-%
 %\ah{Marcel hatte mal Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.) geplant. Nachfragen, ob schon was vorhanden}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-% % ===================================================================================
-%\subsection{Flight Traffic}
-%\label{sec:flighttraffic}
-%Flight traffic is described by \citet[][]{Grether_PhDThesis_2014}.
-
-% ===================================================================================
 
 % ##################################################################################################################
 \section{Mobsims}
 \label{sec:mobsims}
-An overview of MATSim mobility simulations is given in \citet[][]{Dobler_TechRep_IVT_2011}. See also the presentation of \citet[][]{Rieser_unpub_IVT_2011}.
+An overview of \gls{matsim} mobility simulations is given in \citet[][]{Dobler_TechRep_IVT_2011}. See also the presentation of \citet[][]{Rieser_unpub_IVT_2011}.
 
 % ===================================================================================
 \subsection{QSim}
@@ -518,8 +502,7 @@ An overview of MATSim mobility simulations is given in \citet[][]{Dobler_TechRep
 
 At the moment, in most applications \emph{QSim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is used. 
 %% It has started as a software branch of \emph{queueSimulation} before supplanting this later simulation. 
-Through multiple engines it can be run in 
-parallel and simulate multi-modal traffic (Chapter~\ref{ch:multimodalsim}). It is queue-based and time-step based. The simulation is able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, public transport \citep[][]{Rieser_PhDThesis_2010} and in an experimental manner also traffic lights \citep[][]{Neumann_MastersThesis_2008}). Inclusion of public transport is described in Chapter~\ref{ch:pt}.
+Through multiple engines it can be run in parallel and simulate multi-modal traffic (Chapter~\ref{ch:multimodalsim}). It is queue-based and time-step based. The simulation is able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, public transport \citep[][]{Rieser_PhDThesis_2010} and in an experimental manner also traffic lights \citep[][]{Neumann_MastersThesis_2008}). Inclusion of public transport is described in Chapter~\ref{ch:pt}.
 
 % ===================================================================================
 \subsection{JDEQSim}
@@ -530,7 +513,7 @@ parallel and simulate multi-modal traffic (Chapter~\ref{ch:multimodalsim}). It i
 \item Code: \lstinline|org.matsim.core.mobsim.jdeqsim|
 \end{compactitem}
 
-\emph{JDEQSim} \citep[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} was used for project \emph{KTI Frequencies} \citep[][]{BalmerEtAl_ResRep_datapuls_2010}. It is is a java reimplementation of \emph{DEQSim} shown below \citep[][]{WaraichEtAl_STRC_2009, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009} and provides parallel event handling but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps are supported. Traffic lights, public transport and within-day replanning are not supported.
+\gls{jdeqsim} \citep[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} was used for project \emph{KTI Frequencies} \citep[][]{BalmerEtAl_ResRep_datapuls_2010}. It is is a \gls{java} reimplementation of \gls{deqsim} \citep[][]{WaraichEtAl_STRC_2009, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009} and provides parallel event handling but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps are supported. Traffic lights, public transport and within-day replanning are not supported.
 
 %##################################################################################################################
 \section{Scoring}
@@ -549,7 +532,7 @@ The parameters related to scoring described in Chapter~\ref{ch:scoring}.
 \section{Strategy Modules}
 \label{sec:strategymodules}
 %\kai{Habe ``strategy'' ans Ende gezogen, weil ein matsim run so auch tatsächlich losgeht: erst mobsim, dann scoring, dann replanning.  Gibt es Argumente für andere Reihenfolgen?} \ah{nein, super Punkt!}
-The strategy modules are the basic innovation modules available in MATSim. We do not call them \emph{choice} modules although they are involved in people's choice making. The choice process, however, is performed over the iterations with an \emph{implicit} choice set and it is not based on explicit probability function drawing. Usually, innovation modules also do no define their own utility function. This is particularly true for random mutation modules, where best response modules such as destination choice are closer to the standard procedure of choice modeling but still not full-blown choice models. For a detailed discussion of MATSim in choice modeling context see Chapter~\ref{ch:discretechoice}.
+The strategy modules are the basic innovation modules available in \gls{matsim}. We do not call them \emph{choice} modules although they are involved in people's choice making. The choice process, however, is performed over the iterations with an \emph{implicit} choice set and it is not based on explicit probability function drawing. Usually, innovation modules also do no define their own utility function. This is particularly true for random mutation modules, where best response modules such as destination choice are closer to the standard procedure of choice modeling but still not full-blown choice models. For a detailed discussion of \gls{matsim} in choice modeling context see Chapter~\ref{ch:discretechoice}.
 
 All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
 %
@@ -649,7 +632,7 @@ The module shifts activity end times randomly within a configurable range as des
 \item Code: \lstinline|org.matsim.core.router|
 \end{compactitem}
 %
-MATSim routing is described by \citet[]{LefebvreBalmer_STRC_2007, LefebvreBalmer_TechRep_IVT_2007}. The configuration necessary for public transport is shown in Chapter \ref{ch:pt}.  \kai{Da steht m.E.\ noch nichts in der Richtung.  Aber meiner Erinnerung nach ist auch gar keine Sonderkonfiguration mehr nötig.  Michael Z.?}
+\gls{matsim} routing is described by \citet[]{LefebvreBalmer_STRC_2007, LefebvreBalmer_TechRep_IVT_2007}. The configuration necessary for public transport is shown in Chapter \ref{ch:pt}.  \kai{Da steht m.E.\ noch nichts in der Richtung.  Aber meiner Erinnerung nach ist auch gar keine Sonderkonfiguration mehr nötig.  Michael Z.?}
 
 % ===================================================================================
 \subsection{Mode Innovation}
@@ -678,7 +661,7 @@ MATSim routing is described by \citet[]{LefebvreBalmer_STRC_2007, LefebvreBalmer
 \item Code: \lstinline|org.matsim.core.replanning.modules| and \lstinline|org.matsim.population.algorithms|.
 \end{compactitem}
 
-\lstinline|ChangeLegMode| randomly picks one of the plans of a person and changes its mode of transport. By default, the supported modes are driving a car and using public transport. Only one mode of transport per plan is supported. For using different modes for sub-tours on a single day the \lstinline|SubtourModeChoice| module is required. Optionally, car-availability is respected. \lstinline| ChangeSingleLegMode| randomly picks one of the plans of a person and changes the mode of transport of one single leg. The leg is picked randomly. In contrast to \lstinline|ChangeLegMode|, it allows for multiple modes in one plan. By default, the supported modes are driving a car and using public transport. Also, this module is able to (optionally) respect car-availability.
+\lstinline|ChangeLegMode| randomly picks one of the plans of a person and changes its mode of transport. By default, the supported modes are driving a car and using public transport. Only one mode of transport per plan is supported. For using different modes for sub-tours on a single day the \lstinline|SubtourModeChoice| module is required. Optionally, car-availability is respected. \lstinline|ChangeSingleLegMode| randomly picks one of the plans of a person and changes the mode of transport of one single leg. The leg is picked randomly. In contrast to \lstinline|ChangeLegMode|, it allows for multiple modes in one plan. By default, the supported modes are driving a car and using public transport. Also, this module is able to (optionally) respect car-availability.
 
 Mode choice is described by \citet[][]{RieserEtAl_TRR_2009, MeisterEtAl_WCTRS_2010, CiariEtAl_STRC_2008, CiariEtAl_STRC_2007}.
 
@@ -701,7 +684,7 @@ Following selectors are available in the configuration file strategy module:
 \begin{compactitem}
 	\item \lstinline|KeepLastSelected| keeps the plan selected in the previous iteration.
 	\item \lstinline|BestScore| selects the plan with the highest score of the previous iteration.
-	\item \lstinline|SelectExpBeta| performs multinomial logit model selection between plans.
+	\item \lstinline|SelectExpBeta| performs \gls{mnl} selection between plans.
 	\item \lstinline|ChangeExpBeta| changes to a different plan with probability dependent on $e^{\Delta_{score}}$, where $\Delta_{score}$ is the score difference between the two plans.
 	\item \lstinline|SelectRandom| performs random selection between the plans.
 	\item \lstinline|SelectPathSizeLogit| selects an existing Plan according to the Path Size Logit described by \citet[][]{FrejingerBierlaire_TransResB_2007}.
@@ -711,9 +694,9 @@ Following selectors are available in the configuration file strategy module:
 \item Code: \lstinline|org.matsim.core.replanning.selectors|
 \end{compactitem}
 
-Note, that the \lstinline|BestScore| should be used with care as it is prone to getting stuck with sub-optimal plans. Plans that are rated bad due to a random fluctuation in one single iteration, due to e.g., a rare traffic jam, will never be tested again. It is therefore recommended to use this in conjunction with \lstinline|SelectRandom| only.
+Note, that the \lstinline|BestScore| should be used with care as it is prone to getting stuck with sub-optimal plans. Plans that are rated bad due to a random fluctuation in one single iteration, due to e.g.,\,a rare traffic jam, will never be tested again. It is therefore recommended to use this in conjunction with \lstinline|SelectRandom| only.
 
-Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. Per default, the plan with the lowest score is removed if the agent's memory is full. In line with the requirements of e.g., simulated annealing approaches, the removal of candidates will be configurable to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This will reduce the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
+Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. Per default, the plan with the lowest score is removed if the agent's memory is full. In line with the requirements of e.g.,\,simulated annealing approaches, the removal of candidates will be configurable to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This will reduce the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
 \ah{siehe Mail by M. Zilske, August 14 ``[Matsim-devel] custom plan selector for removal'')}
 
 %##################################################################################################################
@@ -746,12 +729,12 @@ Link stats allow to specify the output interval of simulation statistics of indi
 \section{MATSim Survival Guide}
 \label{sec:survival}
 
-There are already many options and possibilities available with MATSim, and finding them can be a taunting exercise.  Here are a couple of recommendations, derived from our own frequent use of the system.
+There are already many options and possibilities available with \gls{matsim}, and finding them can be a taunting exercise.  Here are a couple of recommendations, derived from our own frequent use of the system.
 \begin{enumerate}
 
 \item Always start and test with a small example.
 
-\item Always test large scenarios with one percent runs first (e.g.\ a randomly drawn 1\% subsample of your initial demand).
+\item Always test large scenarios with one percent runs first (e.g.,\,a randomly drawn 1\,\% subsample of your initial demand).
 
 \item Check \lstinline{logfileWarningsErrors.log}.
 
