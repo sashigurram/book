@@ -20,6 +20,7 @@ Because of the absence of complete-day-utility functions in the literature, \gls
 \label{sec:charyparnagel}
 % ============================================================================================
 \subsection{Mathematical form}
+
 The first and still basic \gls{matsim} \gls{utility} function was formulated by \citet[][]{CharyparNagel_Transportation_2005} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far indicated that the \gls{matsim} function is also appropriate for modeling the further choice dimensions.
 %
 It is, however, almost certainly not appropriate for activity dropping and addition (see Section~\ref{sec:scoring-current}).
@@ -108,14 +109,21 @@ where:
 \item $d_{trav, q}$ is the distance traveled, and,
 \item $S_{transfer, mode, q}$ are transfer penalties in public transport (normally negative).
 \end{compactitem}
-%
+This is the direct utility contribution of travel; see Section~\ref{sec:opport-cost-of-time} for the relation to the VTTS, and Section~\ref{ch:economicEval} for a more general discussion.
+
 Note that the distance contributes to disutility in two ways. First, it is included in a direct manner via $\beta_{d, mode,q}$, which is natural for modes with physical efforts such as walking or cycling. Second, distance is also included monetarily via $\beta_c \cdot \gamma_{d, mode}$ which is natural for mode car or pt, where monetary costs increase dependent on distance.
 
-\kai{distance both via distance cost rate and via direct marginal utl.  ok with me, BK will (probably) be less happy. If it stays this way, config needs to be made consistent with text above.}
+%% \kai{distance both via distance cost rate and via direct marginal utl.  ok with me, BK will (probably) be less happy. If it stays this way, config needs to be made consistent with text above.}
 
-\ah{Hatte, glaube ich, aus dem User Guide abgeguckt.}
+%% \ah{Hatte, glaube ich, aus dem User Guide abgeguckt.}
 
-It is important to note that travel receives an additional implicit penalty from the opportunity cost of time: If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer. The marginal utility of travel time savings is thus:
+%Ist jetzt im code nicht mehr deprecated. kai, dec'14
+
+% ============================================================================================
+\subsection{MATSim Scoring, Opportunity Cost of Time, and the VTTS}
+\label{sec:opport-cost-of-time}
+
+It is very important to note that travel receives an additional implicit penalty from the opportunity cost of time: If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer. The marginal utility of travel time savings is thus:
 %
 \[
 mUTTS = - \frac{\partial}{\partial t_{trav}} S_{trav} + \frac{\partial}{\partial t_{dur}}S_{dur} 
@@ -139,6 +147,12 @@ VTTS(t_{dur,q} = t_{typ,q}) = \frac{mUTTS}{\beta_{c}} = \frac{\beta_{trav} - \be
 This is important for calibration of the utility function.
 
 %The extensions made over time to the original utility function are described in the next section~\ref{sec:appsExtensions}. Clearly, only a few extensions made it into the default current utility function. \kai{I added a section ``Current version ...'' so wie can summarize which of the extensions actually made it into the default.}
+
+% ============================================================================================
+\subsection{The Resulting Modeling of Schedule Delay Costs}
+\label{sec:schedule-delay-costs}
+
+\kai{todo, possibly by myself}
 
 % ##################################################################################################################
 \section{Implementation of the MATSim Default Scoring Function}
@@ -179,7 +193,7 @@ For an adaptive \gls{algorithm}, such a penalty needs to guide the adaptation ba
 
 % ##################################################################################################################
 \section{Parameters}
-To frequently applied starting points for utility function calibration are the parameter set proposed by \citet[][]{CharyparNagel_Transportation_2005} and the estimates by \citet[][]{Kickhoefer_MastersThesis_2009}.
+Two frequently applied starting points for utility function calibration are the parameter set proposed by \citet[][]{CharyparNagel_Transportation_2005} and the estimates by \citet[][]{Kickhoefer_MastersThesis_2009}.
 
 \citet[][p.393]{CharyparNagel_Transportation_2005} comes up with 
 \begin{compactitem}
@@ -209,13 +223,17 @@ Note, that nowadays the utility function measures in the unit $utils$, where an 
 % ##################################################################################################################
 \section{Applications and Extensions}
 \label{sec:appsExtensions}
-The default scoring function has been applied and extended for various purposes. Please be aware, that the \gls{matsim} code base and in particular the scoring functionality has changed a lot in recent years, e.g.,\,the scoring is now based on events rather than on plans as it was the case in the beginning of \gls{matsim}. Thus, the historical development is accompanied by various conceptual and technical modifications leading to the current utility function described above. This also means, that the reported parameter settings in the literature are an indication not a direct recommendation.
+The default scoring function has been applied and extended for various purposes. Please be aware, that the \gls{matsim} code base and in particular the scoring functionality has changed a lot in recent years, e.g.,\,the scoring is now based on events rather than on plans as it was the case before revision r17026 in October 2011.
+%\ah{Btw: when exactly (revision?) did we switch to events-based scoring? Is relevant in other chapters too.}
+%\kai{MZ should know this.}
+%\thibaut{plan elements from the plans stopped being passed to the scoring function from r17026 on (24 Oct 2011).}
+Thus, the historical development is accompanied by various conceptual and technical modifications leading to the current utility function described above. This also means, that the reported parameter settings in the literature are an indication not a direct recommendation.
 
 Important applications for large scenarios are described in Chapter~\ref{ch:scenarios}.
 
-Special utility functions have been developed for car sharing (see Chapter~\ref{ch:carsharing}), social contacts and joints trips (see Chapter~\ref{ch:jointtrips}), parking (see Chapter~\ref{ch:parking}), road pricing (see Chapter~\ref{ch:roadpricing}), and destination choice (see Chapter~\ref{ch:destinationchoice}), also describing facility loading scoring and inclusion of random error terms. 
+Special utility functions have been developed for car sharing (see Chapter~\ref{ch:carsharing}), social contacts and joints trips (see Chapter~\ref{ch:jointtrips}), parking (see Chapter~\ref{ch:parking}), road pricing (see Chapter~\ref{ch:roadpricing}), and destination innovation (see Chapter~\ref{ch:destinationchoice}), also describing facility loading scoring and inclusion of random error terms. 
  
-Future topics, available in an experimental manner, are a full-blown utility function estimation (Section~\ref{sec:estimation}), inclusion of agent-specific preferences (Section~\ref{sec:agent-specific-prefs}), application of an S-shaped rather than logarithm-shaped utility function (Section~\ref{sec:s-shaped-function}).
+Future topics, available in an experimental manner, are a full-blown utility function estimation (Section~\ref{sec:estimation}), inclusion of agent-specific preferences (Section~\ref{sec:agent-specific-prefs}), and application of alternative utility function forms (Section~\ref{sec:alternative-functions}).
 
 % ##################################################################################################################
 %\section{Discussion}

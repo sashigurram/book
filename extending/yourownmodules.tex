@@ -36,7 +36,11 @@ Some modules are so large that fully replacing them in order to adapt the simula
 \item the \lstinline|QSim|, which is the default implementation of the \lstinline|Mobsim| interface, and
 \item the router.
 \end{compactitem}
-In consequence, it is possible to add material \ah{?} into the execution flow of the \lstinline|QSim| by \lstinline|MobsimListeners| in a similar way as this is possible with the \lstinline|ControlerListeners| mentioned above.
+In consequence, it is possible to add %material 
+additional executable code
+\ah{?} 
+\kai{ok?}
+into the execution flow of the \lstinline|QSim| by \lstinline|MobsimListeners| in a similar way as this is possible with the \lstinline|ControlerListeners| mentioned above.
 %
 The router, in contrast, is most importantly configured by replacing the definition of the generalized travel cost. 
 
@@ -147,8 +151,50 @@ the methods of an \lstinline|EventHandler| instance are called sequentially, but
 may run on different threads of execution. Access to shared data must be synchronized externally. Whenever
 possible, different \lstinline|EventHandler| instances should only communicate through events.
 
+\subsection{TripRouter}
+\label{sec:router-extension-point}
+
+A \lstinline{TripRouter} is a service object providing methods to generate \emph{trips} between locations,
+given a (main) mode, a departure time and a \lstinline{Person}.
+A trip is a sequence of plan elements representing a movement.
+It typically consists of a single \lstinline{Leg},
+or of a sequence of \lstinline{Leg}s with ``\emph{stage activities}'' in between.
+For instance, public transport trips
+contain \lstinline{pt interaction} activities,
+representing changes of vehicles in public transport trips.
+
+\subsubsection{Using the router}
+
+A \lstinline{TripRouter} instance provides a few methods to work with trips, namely
+\begin{compactitem}
+	\item compute a route for a given mode and origin-destination pair, for a \lstinline{Person} with a specific departure time
+	\item identify the \emph{main mode} of a trip. For instance, a trip composed of several \emph{walk} and \emph{pt} \lstinline{Leg}s should be identified as a public transport trip.
+	\item identify which activities are \emph{stage activities}, and, by extension,
+		identify the trips in the plan: a trip is the longest sequence of consecutive
+		\lstinline{Leg}s and \emph{stage activities}
+\end{compactitem}
+
+Please check the documentation of the \lstinline{TripRouter} class  (see \url{http://matsim.org/javadoc} $\to$ core) for more details and pointers to examples.
+
+\subsubsection{Configuring the router}
+
+The \lstinline{TripRouter} computes routes by means of \lstinline{RoutingModule}
+instances, one of which is associated with each mode.
+A \lstinline{RoutingModule} defines the way a trip is computed,
+and is able to identify the \emph{stage activities} it generates.
+
+The association between modes and \lstinline{RoutingModule} instances is configurable.
+You can even provide you own \lstinline{RoutingModule} implementations.
+Do this if your use-case requires custom routing logic, for instance if you
+want to implement your own complex travel mode.
+
+Please check the documentation of the \lstinline{TripRouter} class  (see \url{http://matsim.org/javadoc} $\to$ core) for more details and pointers to examples.
+
+
 % =========================================================================================
 \subsection{Mobsim}
+\label{sec:mobsim-extension-point}
+
 Besides adding \lstinline|MobsimListener| implementations to enrich the standard \lstinline|Mobsim|, it is also possible to replace
 the entire \lstinline|Mobsim| by a custom implementation. A \lstinline|Mobsim| is basically
 a \lstinline|Runnable| which is supposed to take a \lstinline|Scenario| and
