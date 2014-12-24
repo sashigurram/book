@@ -6,7 +6,7 @@
 
 \begin{center} \includegraphics[width=0.6\textwidth, angle=0]{extending/figures/air/air_network_europe_osm} \end{center}
 
-\createStandardInformation{todo}{todo}{todo}{todo}
+\createStandardInformation{todo}{todo}{todo}{\citet{GretherFuerbasNagel2013FlightTechnologyPROCEDIA,Grether2014PhD}}
 
 % ##################################################################################################################
 Options for the simulation of air- and rail-transport technology and passengers using \gls{matsim} are subject of this chapter. 
@@ -68,32 +68,32 @@ Modeling, results, and studies of this chapter present the highlights of \citet[
 % ------------
 \createfigure%
 {Layout of the air network}%
-{Layout of the air network}%
-{\label{fig:air_network}}%
+{Layout of airports in the air transport network: In- and outbound runway are modeled by separate links that are connected by taxiways and a link representing the apron. There the transit stop facility is attached.}%
+{\label{fig:air_airport}}%
 {\includegraphics[width=0.8\textwidth]{extending/figures/air/sf_flight_model_airport.pdf}}%
 {\citet{Grether2014PhD}}
 % ------------
 %
-\createtable%
-{Airport layout and characteristics}%
-{Airport layout and characteristics}%
-{\label{fig:matsim_airport}}%
-{%
-  \begin{tabular}{lrrr}
-		Linktype & Count & Length [m] & Speed [km/h] \\
-		\hline
-		Runway   	  & 2					& 1500	& $length \cdot c_{flow} $  	\\ % former value 220
-		Taxiway   	& 2					& 500		& 20  	\\
-		Apron   		& 1					& 500		& 20  	\\
-	\end{tabular}	
-}%
-{}
+%\createtable%
+%{Airport layout and characteristics}%
+%{Airport layout and characteristics}%
+%{\label{fig:matsim_airport}}%
+%{%
+%  \begin{tabular}{lrrr}
+%		Linktype & Count & Length [m] & Speed [km/h] \\
+%		\hline
+%		Runway   	  & 2					& 1500	& $length \cdot c_{flow} $  	\\ % former value 220
+%		Taxiway   	& 2					& 500		& 20  	\\
+%		Apron   		& 1					& 500		& 20  	\\
+%	\end{tabular}	
+%}%
+%{}
 %
 % ------------
 \createfigure%
 {Network layout}%
-{Network layout}%
-{\label{fig:matsim_network_model}}%
+{Layout of airways in the air transport network: Each airport pair is directly connected by two airway links, one for each flight and direction. }%
+{\label{fig:air_network_model}}
 {\includegraphics[width=0.8\textwidth]{extending/figures/air/sf_airport_network_no_slide.pdf}}%
 {}
 % ------------
@@ -107,8 +107,8 @@ Compared to using all flights of an entire week, the network may be incomplete, 
 %\mnote{Network}
 The modeling of the air network aims at a simulation with \gls{matsim}.  
 The network consists of airports, each showing an identical layout, and point-to-point connections in between. 
-Every runway is solely used either for inbound or outbound flights with taxiways connecting the runways to the apron. The latter accommodates a transit stop, i.e.,\,the terminal, where flight movements originate and terminate (Figure~\ref{fig:matsim_airport}). 
-Each airport pair is directly connected by airway links, one for each flight and direction of travel (Figure~\ref{fig:matsim_network_model}). 
+Every runway is solely used either for inbound or outbound flights with taxiways connecting the runways to the apron. The latter accommodates a transit stop, i.e.,\,the terminal, where flight movements originate and terminate (Figure~\ref{fig:air_airport}). 
+Each airport pair is directly connected by airway links, one for each flight and direction of travel (Figure~\ref{fig:air_network_model}). 
 The maximum speed on any of these links is calculated based on the distance and flight duration provided by OAG. 
 Times for taxi, take-off, and landing are also taken into account, i.e.,\,the flight duration is reduced by the time needed from push-back to airborne before the maximum speed for an airway link is calculated.
 Each flight has an individual link that could be interpreted as route, each possessing individual characteristics. 
@@ -183,7 +183,7 @@ For another 100\,iterations only the \gls{mnl} is used by the passengers to sele
 % ------------
 \createfigure%
 {Passengers in aircraft and available seats over time in Germany}%
-{Passengers in aircraft and available seats over time in Germany, iteration 600}%
+{Passengers in aircraft and available seats over time in Germany: At any time there are more seats than passengers. Air transport only scenario based on O-D data for Germany, iteration 600}%
 {\label{fig:2009_passengers_seats}}%
 {\includegraphics[width=0.99\textwidth, angle=0]{./extending/figures/air/in_vehicle_histogram_flight_1876_it_600.pdf}}%
 {}
@@ -241,7 +241,8 @@ Further, it is an open issue of the implemented algorithm: If the number of plan
 % ------------
 \createfigure%
 {Results with random selector for plan removal, iteration 600.}%
-{Results with random selector for plan removal, iteration 600. Passengers waiting for a flight or traveling by plane or by the alternative mode over time of day}%
+{Passengers waiting for a flight or traveling by plane or by the alternative mode over time of day. 
+Air transport and alternative mode scenario for Germany, iteration 600. Results with random selector for plan removal.}%
 {\label{fig:2009_leg_histogram_modes_psl}}%
 {\includegraphics[width=0.99\textwidth, angle=0]{./extending/figures/air/leg_histogram_improved_flight_train_en_route_1893_1897_it_600.pdf}}%
 {\citet{Grether2014PhD}}
@@ -250,7 +251,10 @@ Further, it is an open issue of the implemented algorithm: If the number of plan
 %
 \createtable%
 {Results with random selector for plan removal, iteration 600. Modal split for different speeds of the alternative mode}%
-{Results with random selector for plan removal, iteration 600. Modal split for different speeds of the alternative mode}%
+{Modal split for different speeds $v$ of the alternative mode. % 
+Air transport and alternative mode scenario for Germany, iteration 600. %
+Results with random selector for plan removal. % 
+}%
 {\label{tab:2009_results_train_modal_split_psl}}%
 {%
   \begin{tabular}{@{}l|ccc|ccc@{}}
@@ -276,7 +280,11 @@ At most one passenger gets stuck at the end of day.
 
 \createtable%
 {Results with random selector for plan removal, iteration 600. Simulation results including an alternative mode at different speeds $v$}%
-{Results with random selector for plan removal, iteration 600. Simulation results including an alternative mode at different speeds $v$}%
+{%
+Error calculations for different speeds $v$ of the alternative mode. % 
+Air transport and alternative mode scenario for Germany, iteration 600. %
+Results with random selector for plan removal. % 
+}%
 {\label{tab:2009_results_alternative_mode_psl}}%
 {%
   \begin{tabular}{@{}l|cccc@{}}
