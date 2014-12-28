@@ -2,16 +2,24 @@
 \label{ch:developmentprocess}
 % ##################################################################################################################
 
-\hfill \textbf{Authors:} Andreas Horni, Marcel Rieser, Kai Nagel
+\hfill \textbf{Authors:} Andreas Horni, Kai Nagel, Marcel Rieser
 
 \begin{center} \includegraphics[width=0.5\textwidth, angle=0]{extending/figures/ConceptualMeetingVillaHatt.png} \end{center}
 
 % ##################################################################################################################
-This chapter describes how new functionality enters \gls{matsim}. It describes the \gls{matsim} team and community, the different roles existing in the \gls{matsim} project, development drivers and processes, and tools used for integration. The goal is to give you an overview on the development process such that you quickly find access to the \gls{matsim} community and such that you are able to efficiently contribute to \gls{matsim} according to one role or another, if you commendably like to.
+This chapter describes how new functionality enters \gls{matsim}. It describes the \gls{matsim} team and community, the different roles existing in the \gls{matsim} project, development drivers and processes, and tools used for integration. The goal is to 
+%give you 
+provide an overview of the development process such that 
+%you 
+one quickly finds access to the \gls{matsim} community and such that 
+%you are 
+one is able to efficiently contribute to \gls{matsim} according to one role or another, if you commendably like to.
 
 % ##################################################################################################################
 \section{MATSim Team and MATSim Community}
-The \gls{matsim} team, the heart of the \gls{matsim} community, are three research groups and a spin-off company, namely 
+The \gls{matsim} core team, 
+%the heart of the \gls{matsim} community, 
+currently consists of three research groups and a spin-off company, namely 
 \begin{compactitem}
 \item the Transport Systems Planning and Transport Telematics group at the Institute for Land and Sea Transport Systems (VSP), Technische Universität Berlin, led by Prof.~Dr.~Kai Nagel,
 \item the Transport Planning group at the Institute for Transport Planning and Systems (IVT), Swiss Federal Institute of Technology Zürich, led by Prof.~Dr.~Kay~W.~Axhausen, 
@@ -21,7 +29,10 @@ The \gls{matsim} team, the heart of the \gls{matsim} community, are three resear
 
 As common in research the universities groups' composition changes frequently. Over the last decade more than 50\,people build the \gls{matsim} core as listed earlier.
 
-Besides the \gls{matsim} team, there is a community composed of closely connected research groups (such as Stockholm, Pretoria, Poznan, Jülich and Toronto) and more loosely connected external users coming together, e.g.,\,at the annual \gls{matsim} user meeting.   
+Besides the \gls{matsim} core team, there is a community composed of closely connected research groups (such as Stockholm, Pretoria, Poznan, and Jülich),
+% and Toronto) 
+\kai{habe Toronto hier rausgenommen.  Spricht etwas dagegen?}
+and more loosely connected external users coming together, e.g.,\,at the annual \gls{matsim} user meeting.   
 
 \gls{matsim} is an open-source program provided by the \gls{gplv2}, thus, you are also very welcome to contribute to the code base as described in Section~\ref{sec:yourcontribution}. New contributors are mentored in the beginning \citep[][]{MATSIM-BecomingAContributor_Webpage_2015} to become familiar with the project and the coding conventions \citep[][]{MATSIM-CodingGuide_Webpage_2015}.
 
@@ -43,19 +54,43 @@ There are the following roles in the \gls{matsim} community.
 %
 \begin{compactitem}
 \item The \textbf{\gls{matsim} user} uses the official releases or nightly builds and runs \gls{matsim} with the config file. Part~I of the book is dedicated to the \gls{matsim} user. On the web page he or she finds relevant information in the \emph{user's guide} and in the user's mailing list \lstinline|matsim-users@lists.sourceforge.net|.
+%
+Part~III of the book discusses conceptual issues, including Chapter~\ref{ch:researchavenues} that sketches some issues that need further development.
+%
 \item The \textbf{\gls{matsim} \gls{api}-user} extends \gls{matsim} by programming against the \gls{matsim}-\gls{api}. He or she finds his or her information in Part~II of the book, in particular in Chapter~\ref{ch:extensionpoints}, on the web page in the \emph{\gls{api}-user's guide} and in the mailing list \lstinline|matsim-devel@lists.sourceforge.net|.
-\item The \textbf{\gls{matsim} developer} also programs against the \gls{matsim}-\gls{api}, but additionally he or she is part of the \gls{matsim} code base by having his or her own playground or contribution being part of the refactorings. 
+%
+\item The \textbf{\gls{matsim} API-developer} also programs against the \gls{matsim}-\gls{api}, but additionally he or she is part of the \gls{matsim} code base by having his or her own playground or \gls{contribution} being part of the refactorings. 
 %\ah{contribs auch, oder?} \kai{ja}. 
-The developer finds information in Part~II of this book, on the web page in the \emph{developer's guide} and in the mailing list \lstinline|matsim-devel@lists.sourceforge.net| 
-\item There are relatively few \textbf{\gls{matsim} core developers} stemming from the \gls{matsim} team. These role is an extension of the \gls{matsim} developer and these guys make necessary modifications of the core code (\lstinline|package org.matsim.core.*| see next section), usually after having discussed them in the \gls{matsim} committee or at a developer meeting (see below). 
-%% Part~III of this book might be particularly interesting for them.
+The API-developer finds information in Part~II of this book, on the web page in the \emph{developer's guide} and in the mailing list \lstinline|matsim-devel@lists.sourceforge.net| 
+%
+\item There are relatively few \textbf{\gls{matsim} core developers} stemming from the \gls{matsim} team. This role is an extension of the \gls{matsim} API-developer and these guys make necessary modifications of the core code (\lstinline|package org.matsim.core.*| see next section), usually after having discussed them in the issue tracker, in the \gls{matsim} committee, or at a developer meeting (see below). 
+%% Part~II and part~III of this book might be particularly interesting for them.
+%
+% Sehe nicht, warum ausgerechnet die core developers neben dem software engineering auch noch die mathematisch-konzeptionelle Arbeit übernehmen müssen. --> weglassen
+
 \end{compactitem}
 %
 % ##################################################################################################################
 \section{Drivers and Organization of Development}
-Main drivers of the \gls{matsim} development are the projects and dissertations accomplished by the \gls{matsim} team. New features are developed as an answer to requirements of these dissertations and projects, where projects range from purely scientific ones (often sponsored by \gls{snf}) to projects for the administration, to projects where science and industry contribute equally (usually \gls{cti}-projects) and to purely industrial projects, which are managed by \gls{senozon} in the majority of cases. A significant amount of innovation is also introduced by the collaboration with external researchers.
+Main drivers of the \gls{matsim} development are the projects and dissertations accomplished by the \gls{matsim} team. New features are developed as an answer to requirements of these dissertations and projects, where projects range 
+%
+from purely scientific ones (often sponsored by \gls{snf} or \gls{dfg}) 
+%
+via projects for governmental entities
+%administration 
+%
+and projects where science and industry contribute equally (e.g.\ \gls{cti}-projects) 
+%
+to purely 
+%industrial 
+commercial projects, which are managed by \gls{senozon} in the majority of cases. 
+%
+A significant amount of innovation is also introduced by the collaboration with external researchers.
 
-Systematic code integration is mainly performed by the Berlin group and by \gls{senozon}. This includes continuous code review and integration upon request of the community, but also comprehensive code refactorings to clean degenerated code. Refactorings are documented in the \gls{matsim} issue tracker.
+Systematic code integration is mainly performed by the Berlin group and by \gls{senozon}. This includes continuous code review and integration upon request of the community, but also comprehensive code refactorings to clean up
+%degenerated 
+code and to 
+improve modularity.  Refactorings are discussed and documented in the \gls{matsim} issue tracker.
 
 The development process is supported by a standing \gls{matsim} committee discussing conceptual issues on a regular basis. Another element bringing in innovation but also organization are the annual meetings. Right from the beginnings, there has been a \gls{matsim} developer meeting focused on coding issues. Later, a user meeting giving insights into accomplished work by the community has been invented. Finally, a conceptual meeting has been added strictly dedicated to issues that go beyond pure software engineering. The developer and the conceptual meeting have shown to establish an effective road map, which has guided the development for the remainder of the year. 
 
@@ -68,8 +103,33 @@ Due to the heterogeneous character of the community and its individual research 
 \section{Code Base, Development Tools and Techniques}
 
 % ====================================================================================
-\subsection{MATSim, Contribs and Playgrounds}
-The main part of the \gls{matsim} code base is the \gls{matsim} project \lstinline|org.matsim.*|. Additionally, there is not directly related to the core functionality of \gls{matsim}, which is agent-behavior and transport simulation, is available in the code base as \gls{matsim} contributions (\lstinline|package org.matsim.contrib.*|). Such modules are usually provided by \gls{matsim} \gls{api}-users or developers. Finally, there are the developers' playgrounds.
+\subsection{MATSim, Contribs, and Playgrounds}
+
+The various pieces of MATSim are delineated by Maven \citep{...} projects and sub-projects.  The Maven layout corresponds to the layout of the Subversion (svn) repository.  Somewhat confusingly, Java packages do not directly correspond to the Subversion/Maven layout.
+
+\subsubsection{Core}
+
+The so-called MATSim core corresponds to the ``matsim'' part of the Subversion repository.  It is currently at Sourceforge \citep{...}  under \url{https://svn.code.sf.net/p/matsim/source/matsim}. The exact path name sometimes changes, e.g.\ because of changes at Sourceforge.
+
+Most of its material is in packages that start with
+\begin{compactitem}
+\item \lstinline{org.matsim.api.*}
+\item \lstinline{org.matsim.core.*}
+\item \lstinline{tutorial.*}
+\end{compactitem}
+This is the material that the core developers consider most important. 
+
+There is also additional material, for example \lstinline{org.matsim.withinday} or \lstinline{org.matsim.pt}, that could as well be moved into the ``contrib'' section, but for the time being has remained in the core, mostly because the maintainers of these parts have moved to \acrshort{senozon} and from there continue to maintain these functionalities.
+
+\subsubsection{contrib}
+
+%% Additionally, there is not directly related to the core functionality of \gls{matsim}, which is agent-behavior and transport simulation, 
+Additional material, often denoted as ``contrib'' material, is in the ``contrib'' part of the Subversion repository.  It is currently at Sourceforge \citep{...}  under \url{https://svn.code.sf.net/p/matsim/source/contrib}.  The Java packages often have the root \lstinline{org.matsim.contrib.*}, but \kai{TO BE COMPLETED}
+
+
+in the code base 
+as \gls{matsim} contributions (\lstinline|package org.matsim.contrib.*|). Such modules are usually provided by \gls{matsim} \gls{api}-users or developers. %
+Finally, there are the developers' playgrounds.
 
 % ====================================================================================
 \subsection{Releases, Nightly Builds and Code HEAD}
@@ -81,11 +141,11 @@ MATSim is based on continuous integration and, thus, nightly builds are availabl
 
 Only \gls{matsim} developers---either programming in their playground, in a contrib, or in the core---work on the code's HEAD version, which is available from \gls{sourceforge} at \url{http://sourceforge.net/p/matsim/source/HEAD/tree/}.
 
-Note that nightly builds are only generated when the code compiles and passes the regression tests.  They are, in consequence, somewhat ``safer'' than the direct download from the HEAD.
+Note that nightly builds are only generated when the code compiles and passes the regression tests.  They are, in consequence, somewhat "safer" than the direct download from the HEAD.
 
 % ====================================================================================
 \subsection{MATSim Core}
-Since the huge refactoring greatly improving the code base structure and establishing, the \gls{matsim} project code is divided into the \emph{core} \lstinline|org.matsim| and \gls{api} packages \lstinline|org.matsim.api| and remaining packages. This refactoring was undertaken by the Berlin group starting at the end of 2007 and ended in the beginning of 2009 before the first user meeting \ah{stimmt das so?}.
+Since the huge refactoring greatly improving the code base structure and establishing, the \gls{matsim} project code is divided into the \emph{core} \lstinline|org.matsim| and \gls{api} packages \lstinline|org.matsim.api| and remaining packages. This refactoring was undertaken by the Berlin group starting at the end of 2007 and ended in the beginning of 2009 before the very first user meeting \ah{stimmt das so?}.
 
 In the early days of \gls{matsim}, the code was programmed in \gls{cpp} (see Chapter~\ref{ch:history}). Later, however, the code was migrated to \gls{java}. Performance of \gls{java} and \gls{cpp} had converged to a reasonable extent, such that the much higher developer friendliness of \gls{java} could be exploited. A fast access to the program is essential for \gls{matsim} as many \gls{api}-users have their background in computer science but in fields like transport planning or social sciences. 
 
