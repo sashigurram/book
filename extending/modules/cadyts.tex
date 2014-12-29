@@ -6,15 +6,38 @@
 
 \begin{center} \includegraphics[width=0.25\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
 
-\createStandardInformation{cadytsIntegration}{\lstinline{RunCadyts4CarExample} class}{cadytsCar}{\citet[][]{FloetteroedEtAl_TechRep_TRANSPOR_2008}}
+\createStandardInformation{cadytsIntegration}{\lstinline{RunCadyts4CarExample} class}{cadytsCar}{\citet[][]{Floetteroed2010Manual110,FloetteroedBierlaireNagel2010Bayesian,FloetteroedChenEtAl2011BehavioralCalibAndAnaNETS}}
 
 % ##################################################################################################################
-\ah{
+Cadyts (Calibration of Dynamic Traffic Simulations) is a calibration tool that adjusts MATSim plans such that a measured calibration target is meet. Often count data is used as empirical data source.
 
-Cadyts \citep[][]{FloetteroedEtAl_TechRep_TRANSPOR_2008} is a calibration tool that adjusts MATSim plans such that a measured calibration target is meet. Often count data is used as empirical data source.
-}
+The plan-specific utility corrections are composed of link- and time-additive correction terms $\Delta V_a(k)$.
+In case congestion can be assumed to be light and traffic counts are independently and normally distributed, these link- and time-additive correction terms become \cite[p.487]{FloetteroedChenEtAl2011BehavioralCalibAndAnaNETS}
+\begin{equation}
+\Delta V_a(k) = \frac{y_a(k) - q_a(k)} {\sigma_a^2(k)} \ ,
+\label{eq:cadyts:correction}
+\end{equation}
+%
+where $y_a(k)$ is the real-world traffic, $q_a(k)$ is the simulated traffic count, and $\sigma^2_a(k)$ is the variance of the traffic count at location $a$ for time bin $k$.
+%
+%(its calculation is for example explained by \citet[p.54]{Moyo2013PhD} \kai{das ist eigentlich auch keine gute Referenz dafür; gibt es nicht etwas von Gunnar selber?  (Aber das enthält einen Fehler, oder wie war das?)}).
+%\dominik{Bei Manuel stand bzgl. des sigma einfach etwas mehr, deswegen war er hier die Referenz}
 
-% ################################################################################################################
+The utility correction of a given activity-travel plan of an agent is calculated as the sum of all $\Delta V_a(k)$ that are covered by the plan \citep{FloetteroedChenEtAl2011BehavioralCalibAndAnaNETS}. With this, the \textit{a posteriori} choice probability of plan $i$ of agent $n$ becomes
+\begin{equation}
+P_n(i|\vec{y}) \sim \exp\left(V_n(i)+ \sum_{ak\in_{}i}   \frac{y_a(k)-q_a(k)}{\sigma^2_a(k)} \right)	
+\label{eq:cadyts:selection}
+\end{equation}
+where $V_n(i)$ is the \textit{a priori} score of a plan $i$ of agent $n$ as calculated for example with Equation~(\ref{eq:matsimUTF}).
+%The notation $ak \in i$ means all links $a$ and time slots $k$ in which the plan $i$ influences the measurements on those links.
+%
+Intuitively, if the simulation value, $q_a(k)$, is smaller than the measurement from reality, $y_a(k)$, an increase in score and thus an increase in choice probability results. $\sigma_a(k)$ denotes how much one should trust that specific measurement -- a large $\sigma_a(k)$ implying a large variance and thus a low trust level.
+
+%% \begin{equation}
+%% = P_n(i) \cdot \exp\left( \sum_{ak\in_{}i}   \frac{(y_a(k)-q_a(k))}{\sigma^2_a(k)} \right)	
+%% \end{equation}
+
+%% $P_n(i)$ is the \textit{a priori} choice probability of plan $i$ of agent $n$, and 
 
 
 
