@@ -41,7 +41,7 @@ The TRANSIMS project inherited some of the above design, most notably the cellul
 In terms of software design, TRANSIMS was a collection of stand-alone modules, coupled by a script.  For example, the population synthesizer would generate a population file, the activity generate would take the population file as input and generate an activities file as output, etc.  Iterations were done by running the traffic microsimulation based on plans and outputting average link travel times, and then the router based on link travel times and outputting plans.
 
 
-\subsection{MATSim in C++ (ETH Zurich Computer Science)}
+\subsection{MATSim in \gls{cpp} (ETH Zurich Computer Science)}
 \label{sec:history-ethz-phase}
 
 Kai Nagel moved to ETH Zurich Computer Science in 1999.  Unfortunately, it turned out to be difficult to continue with TRANSIMS, for example because TRANSIMS was not under an open source license, and also because TRANSIMS fell under U.S.\ technology export restrictions for some time.  In consequence, \acrshort{matsim} was started.
@@ -50,10 +50,63 @@ MATSim had to important differences to TRANSIMS from the beginning: (1) it tried
 
 Another difference followed eventually, which was to go back to the approach of \citet{Nagel1996NRW}, but this time truly following \citet{ArthurBar} by giving each individual agent its own memory \citep{RaneyNagel2006traf-framework}.  After experimentation with relational databases such as MySQL \citep{mysql-wikipedia} or Oracle \citep{oracle}, it was eventually decided to implement MATSim as an object-oriented database ``in memory'', i.e.\ by first reading in all XML files, modifying the data in memory during the life-time of a run, and writing the data back from memory to XML files at the end of the run.  The decision was based on the observation that the MATSim data model was described much better by XML files, and conversion to the relational format was impractical, prone to errors, and also too slow if not kept in memory during iterations. 
 
+\subsection{MATSim in \gls{java} (TU Berlin)}
+\label{sec:matsim-in-\gls{java}}
 
-The first version of MATSim was, similar to the original TRANSIMS, a collection of stand-alone modules coupled by scripts.  For example, the router would read plans and events, and replace some of the plans by other plans with modified routes.  The program flow was organized with shell scripts and makefiles.  Later it was possible to start all modules simultaneously and they would use messages to interact \citep[also see][]{GloorNagel2005ped-att04-birkh}, but the file-based and scripted interaction always remained available.
+Michael Balmer wrote his dissertation about demand modelling for MATSim, i.e.\ about the upstream process that leads to initial plans
+\citep{Balmer2007phd}.  That project, other than the main MATSim code at that time, was written in \gls{java}.  Together with the assessment that \gls{java} would be the better language than \gls{cpp} to continue development at TU Berlin transport engineering, it was decided to use Michael Balmer's code as starting point for a \gls{java} version.  Arguments for \gls{java} included:
+\begin{itemize}
 
-The original approach had, as a consequence, very clearly defined interfaces, i.e.\ the files.  Exchanging information that was not exchanged before meant changing the readers and writes on \emph{both} side, which was in consequence rarely done, and the stand-alone modules rather tried to live with the information they had.
+\item  \gls{java} is more restrictive.  For example, in \gls{java} objects are always passed by reference,\footnote{%
+%
+We abstract away from the notion that \gls{java} ``passes object references by value'' \citep{...}.
+%
+} while in \gls{cpp} one has the choice between passing a pointer, a reference, or a deep copy of the object.  Since in academic environments standards are difficult to enforce, a more restrictive language seemed (and still seems) the better choice.
+
+\item \gls{java} runs well on many platforms.  This allowed (and still allows) us to let people work on their favorite platforms, be it linux, windows, or mac.
+
+\item There is better non-commercial support for \gls{java} 
+
+\item The \gls{java} compiler is easier to handle.  For example, there is no extraction of header files, and the \gls{java} compiler by itself sorts out the sequence in which modules need to be compiled.
+
+\item For our applications, \gls{java} consistently was \emph{not} slower than \gls{cpp}.  This assessment was based on several years of teaching a MATSim class at ETH Zurich, where computer science students implemented simple versions of MATSim in a programming language of their choice.  It consistently came out that while the fastest \gls{cpp} code may have been 30\% faster than the fastest \gls{java} code, the slowest \gls{cpp} code typically was a factor of 3 slower than the slowest \gls{java} code.  In other words, while \gls{cpp} gives more opportunities for optimization, it also gives more opportunities for very serious performance degradation.
+
+Again, in an academic environment where much of the programming style is left to the (Ph.D.) students, it seemed (and still seems) more important to avoid important performance degradations than to go for the last 30\%.
+
+\kai{There is also a reference for this somewhere.}
+
+In addition, it seems that the gap between \gls{cpp} and \gls{java} has narrowed further since then.  Important differences remain in numerical applications, in part also because \gls{cpp}, other than the \gls{java}, allows operator overloading \citep{..}.  However, the agent-based approach of MATSim means that the handling of complex objects happens much more frequently than true numerical computations.
+
+\item One reason for using \gls{cpp} was that it could be combined with \acrshort{mpi}, which was a reliable message passing standard for parallel computing.  Parallel computing was necessary both for performance reasons and to be able to run simulations that needed more than about 4~GB of memory -- the maximum that could be addressed with the 32~bit architecture that was standard at that time.  \acrshort{mpi} is also available for \gls{java}, but it is much less well mainateind.
+
+With the advent of the 64~bit architectures, the second reason for parallel computing became obsolete. In addition, Kai Nagel now being at a transport engineering department, it seemed that making conceptual progress was more important than keeping the parallel computing edge, especially since the maintenance parallel code \emph{permanently} consumes additional resources.
+
+With the decision to give up on parallel computing, it was no longer necessary to maintain compatibility with \acrshort{mpi}, and thus the move to \gls{java} was facilitated.
+
+
+\end{compactitem}
+In terms of language, \gls{csharp} might have been an alternative to \gls{java}.  However, \gls{csharp} depends much more on the \gls{windows} platform, and community support is not as good as it is for \gls{java}.
+
+Clearly, the code by Michael Balmer already had all the necessary data classes, readers and writers.  This was used as a starting point to reimplement MATSim in Java.  Nevertheless, many important elements such as the mobsim, the events architecture, scoring, routing, and the co-evolutionary architecture, had to be re-implemented.  It took about two years from taking that decision to the first plausible run of MATSim in Java.
+
+
+
+%% In the early days of \gls{matsim}, the code was programmed in \gls{cpp} (see Chapter~\ref{ch:history}). Later, however, the code was migrated to \gls{java}. Performance of \gls{java} and \gls{cpp} had converged to a reasonable extent, such that the much higher developer friendliness of \gls{java} could be exploited. A fast access to the program is essential for \gls{matsim} as many \gls{api}-users have their background in computer science but in fields like transport planning or social sciences. 
+
+%% Up to 2007, when \gls{matsim} was brought to \gls{sourceforge}, \gls{matsim} was provided by a download website and \gls{svn} repository hosted on a VSP server.
+
+%% \gls{matsim} development furthermore greatly benefits from the possibility to run large-scale scenarios. Therefore, several servers with up to 512\,\gls{gb} of \gls{ram} and 40\,\gls{cpu} cores are available.  
+%
+% part of that argument is included further above (from 32 to 64 bit mem architecture)
+
+
+
+\subsection{Code reorganization}
+\label{sec:matsim-core-reorg}
+
+The first version of MATSim, still in \gls{cpp}, was, similar to the original TRANSIMS, a collection of stand-alone modules coupled by scripts.  For example, the router would read plans and events, and replace some of the plans by other plans with modified routes.  The program flow was organized with shell scripts and makefiles.  Later it was possible to start all modules simultaneously and they would use messages to interact \citep[also see][]{GloorNagel2005ped-att04-birkh}, but the file-based and scripted interaction always remained available.
+
+That approach had, as a consequence, very clearly defined interfaces, i.e.\ the files.  Exchanging information that was not exchanged before meant changing the readers and writes on \emph{both} side, which was in consequence rarely done, and the stand-alone modules rather tried to live with the information they had.
 
 When \acrshort{matsim} was re-implemented in \gls{java} around 2006--7, it was re-implemented as one system.  As a result, now everything could interact with everything.  For example, a router would modify the network, compute routes on the modified network, and then modify it back -- including the danger of not getting things completely right in changing it back.  
 
@@ -103,6 +156,14 @@ You can neither say \protect\lstinline$YourControler extends MyControler$ nor \p
 \label{fig:do-not-extend-controler}
 \end{figure}
 
+Therefore, in 2008 a decision was made to make MATSim more modular.  The first step in that direction was a decision to submit the whole MATSim repository to frequent refactorings, i.e.\ to \emph{not} leave the code alone as much as possible but rather make the community get used to frequent changes of code while maintaining functionality.  In order to facilitate that approach, the coverage by automatic regression tests on the build server was hugely increased, and all developers were encouraged to write automatic regression tests for their own code and their own projects. 
+
+The changes since then are too numerous to be listed here.  They include, in particular, fairly restrictive data classes that are no longer extended or modified by every scientific project, and well-defined extensions points both in the iterative loop and inside the mobsim.  Please see Chapter~\ref{ch:extensionpoints} for the currently existing extension points.
+
+
+%% Since the huge refactoring greatly improving the code base structure and establishing, the \gls{matsim} project code is divided into the \emph{core} \lstinline|org.matsim| and \gls{api} packages \lstinline|org.matsim.api| and remaining packages. This refactoring was undertaken by the Berlin group starting at the end of 2007 and ended in the beginning of 2009 before the very first user meeting \ah{stimmt das so?}.
+
+
 % ##################################################################################################################
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,7 +171,7 @@ You can neither say \protect\lstinline$YourControler extends MyControler$ nor \p
 % mode: latex
 % mode: reftex
 % mode: visual-line
-% TeX-master: "main"
+% TeX-master: "../main"
 % comment-padding: 1
 % fill-column: 9999
 % End: 
