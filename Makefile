@@ -19,7 +19,7 @@ kaimain:
 kai: kai.aux
 
 kai.aux:
-	pdflatex kai
+	pdflatex -interaction=nonstopmode kai
 
 #	pdflatex kai
 
