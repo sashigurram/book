@@ -18,27 +18,27 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Kai Nagel's perspective}
+\section{Kai Nagel's Perspective}
 
 \kai{Wäre vielleicht gut, wenn wir das hinterher zusammenführen könnten.}
 
-\subsection{Fast microscopic modelling of traffic flow (University of Cologne with some does of Los Alamos National Laboratory)}
+\subsection{Fast microscopic modeling of traffic flow (University of Cologne with some does of Los Alamos National Laboratory)}
 \label{sec:history-u-of-cologne-phase}
 
-Kai Nagel originally wanted to do this Ph.D.\ in meteorology.  When the funding did not come together, he started exploring alternatives, and applied with Prof.\ A.\ Bachem at the University of Cologne for a position in insurance modelling.  He was instead offered a position in operations research/logistics, solving problems such as dynamic vehicle routing with time windows. 
+Kai Nagel originally wanted to do this Ph.D.\ in meteorology.  When the funding did not come together, he started exploring alternatives, and applied with Prof.\ A.\ Bachem at the University of Cologne for a position in insurance modeling.  He was instead offered a position in operations research/logistics, solving problems such as dynamic vehicle routing with time windows. 
 
-Having had some training in Computational Statistical Physics, he soon became a bit sceptical if it made sense to optimize up to the last second of a closing time window while at the same time being faced with highly stochastic transport system.  He thus embarked on using his training to build a microscopic model of the transport system, in particular single-lane~\citep{NagelSchreckenberg1992CA,Nagel1999flowTheoTrr} road traffic on long links as well combining such links to large-scale network-based simulations where each vehicle would follow its own individual route~\citep{Nagel1996NRW}, including an adaptive dynamics being influenced most heavily by \cite{ArthurBar}.  Already that paper describes what is still the main MATSim architecture, where agents have many different plans, they keep trying them out, and eventually settle on the best option.  In contrast to the current approach, all plans were pre-computed, i.e.\ there was no innovation during the iterations.  This was possible because the network was much coarser than what we use today, and thus computing route plans with enough diversity was easy.
+Having had some training in Computational Statistical Physics, he soon became a bit sceptical if it made sense to optimize up to the last second of a closing time window while at the same time being faced with highly stochastic transport system.  He thus embarked on using his training to build a microscopic model of the transport system, in particular single-lane~\citep{NagelSchreckenberg1992CA,Nagel1999flowTheoTrr} road traffic on long links as well combining such links to large-scale network-based simulations where each vehicle would follow its own individual route~\citep{Nagel1996NRW}, including an adaptive dynamics being influenced most heavily by \cite{ArthurBar}.  Already that paper describes what is still the main \gls{matsim} architecture, where agents have many different plans, they keep trying them out, and eventually settle on the best option.  In contrast to the current approach, all plans were pre-computed, i.e.\ there was no innovation during the iterations.  This was possible because the network was much coarser than what we use today, and thus computing route plans with enough diversity was easy.
 
 \subsection{TRANSIMS (Los Alamos National Laboratory with some dose of Santa Fe Institute)}
 \label{sec:history-lanl-phase}
 
-Some of the above Ph.D.\ work was already done at Los Alamos National Laboratory (LANL).  After his Ph.D., Kai Nagel then moved fully to LANL, where he worked with the TRANSIMS \citep[TRansportation ANalysis and SIMulation System, e.g.][]{SmithEtc1995TRANSIMSSeattle} team, under the leadership of Chris Barrett.
+Some of the above Ph.D.\ work was already done at Los Alamos National Laboratory (LANL).  After his Ph.D., Kai Nagel then moved fully to LANL, where he worked with the \gls{transims} \citep[e.g.,][]{SmithEtc1995TRANSIMSSeattle} team, under the leadership of Chris Barrett.
 %
-The TRANSIMS project inherited some of the above design, most notably the cellular automata approach to road traffic modeling, which was thus extended to multi-lane traffic \citep{NagelWolfEtAl1998TwoLaneSystematic}, to intersections \citep{NagelEtc1997flow-char}, and to massive parallel computing \citep{NagelRickert2001parallel}.
+The \gls{transims} project inherited some of the above design, most notably the cellular automata approach to road traffic modeling, which was thus extended to multi-lane traffic \citep{NagelWolfEtAl1998TwoLaneSystematic}, to intersections \citep{NagelEtc1997flow-char}, and to massive parallel computing \citep{NagelRickert2001parallel}.
 
 %% However, it became quickly clear that if the goal was realistic long-term traffic forecasting, demand modelling needed to correspond to what the network loading could do.  This was the time when activity-based demand modelling gained ground \citep{Axhausen1988PhD,Bowman1998PhD,KitamuraEtcSequential}, and it was thus expected that the activity-based demand would eventually come from somewhere else.  
 
-In terms of software design, TRANSIMS was a collection of stand-alone modules, coupled by a script.  For example, the population synthesizer would generate a population file, the activity generate would take the population file as input and generate an activities file as output, etc.  Iterations were done by running the traffic microsimulation based on plans and outputting average link travel times, and then the router based on link travel times and outputting plans.
+In terms of software design, \gls{transims} was a collection of stand-alone modules, coupled by a script.  For example, the population synthesizer would generate a population file, the activity generate would take the population file as input and generate an activities file as output, etc.  Iterations were done by running the traffic microsimulation based on plans and outputting average link travel times, and then the router based on link travel times and outputting plans.
 
 
 \subsection{MATSim in C++ (ETH Zurich Computer Science)}
@@ -46,51 +46,49 @@ In terms of software design, TRANSIMS was a collection of stand-alone modules, c
 
 \ah{somehow latex on ci.matsim.org does not like gls in section titles (?). See Build \#432. I'll try to find a work-around.}
 
-Kai Nagel moved to ETH Zurich Computer Science in 1999.  Unfortunately, it turned out to be difficult to continue with TRANSIMS, for example because TRANSIMS was not under an open source license, and also because TRANSIMS fell under U.S.\ technology export restrictions for some time.  In consequence, \acrshort{matsim} was started.
+Kai Nagel moved to ETH Zürich Computer Science in 1999.  Unfortunately, it turned out to be difficult to continue with \gls{transims}, for example because \gls{transims} was not under an open source license, and also because \gls{transims} fell under U.S.\ technology export restrictions for some time.  In consequence, \gls{matsim} was started.
 
-MATSim had to important differences to TRANSIMS from the beginning: (1) it tried to be more ``lightweight'', i.e.\ running much faster, in particular by using the queue model \citep{GawronPhd,Gawron1998IterativeAlgorithmto} rather than the cellular automata model for network loading; and (2) other than TRANSIMS, agent properties such as demographic data, activity patterns or routes were no longer distributed across multiple files, but contained in one hierarchical XML file.
+MATSim had to important differences to TRANSIMS from the beginning: (1) it tried to be more "lightweight", i.e.,\,running much faster, in particular by using the queue model \citep{GawronPhd,Gawron1998IterativeAlgorithmto} rather than the cellular automata model for network loading; and (2) other than \gls{transims}, agent properties such as demographic data, activity patterns or routes were no longer distributed across multiple files, but contained in one hierarchical \gls{xml} file.
 
-Another difference followed eventually, which was to go back to the approach of \citet{Nagel1996NRW}, but this time truly following \citet{ArthurBar} by giving each individual agent its own memory \citep{RaneyNagel2006traf-framework}.  After experimentation with relational databases such as MySQL \citep{mysql-wikipedia} or Oracle \citep{oracle}, it was eventually decided to implement MATSim as an object-oriented database ``in memory'', i.e.\ by first reading in all XML files, modifying the data in memory during the life-time of a run, and writing the data back from memory to XML files at the end of the run.  The decision was based on the observation that the MATSim data model was described much better by XML files, and conversion to the relational format was impractical, prone to errors, and also too slow if not kept in memory during iterations. 
+Another difference followed eventually, which was to go back to the approach of \citet{Nagel1996NRW}, but this time truly following \citet{ArthurBar} by giving each individual agent its own memory \citep{RaneyNagel2006traf-framework}.  After experimentation with relational databases such as MySQL \citep{mysql-wikipedia} or Oracle \citep{oracle}, it was eventually decided to implement \gls{matsim} as an object-oriented database "in memory", i.e.,\,by first reading in all \gls{xml} files, modifying the data in memory during the life-time of a run, and writing the data back from memory to \gls{xml} files at the end of the run.  The decision was based on the observation that the \gls{matsim} data model was described much better by \gls{xml} files, and conversion to the relational format was impractical, prone to errors, and also too slow if not kept in memory during iterations. 
 
-\subsection{MATSim in \gls{java} (TU Berlin)}
+\subsection{MATSim in Java (TU Berlin)}
 \label{sec:matsim-in-java}
 
-Michael Balmer wrote his dissertation about demand modelling for MATSim, i.e.\ about the upstream process that leads to initial plans
-\citep{Balmer2007phd}.  That project, other than the main MATSim code at that time, was written in \gls{java}.  Together with the assessment that \gls{java} would be the better language than \gls{cpp} to continue development at TU Berlin transport engineering, it was decided to use Michael Balmer's code as starting point for a \gls{java} version.  Arguments for \gls{java} included:
+Michael Balmer wrote his dissertation about demand modeling for \gls{matsim}, i.e.,\,about the upstream process that leads to initial plans
+\citep{Balmer2007phd}.  That project, other than the main \gls{matsim} code at that time, was written in \gls{java}.  Together with the assessment that \gls{java} would be the better language than \gls{cpp} to continue development at TU Berlin transport engineering, it was decided to use Michael Balmer's code as starting point for a \gls{java} version.  Arguments for \gls{java} included:
 \begin{itemize}
 
 \item  \gls{java} is more restrictive.  For example, in \gls{java} objects are always passed by reference,\footnote{%
 %
-We abstract away from the notion that \gls{java} ``passes object references by value'' \citep{...}.
+We abstract away from the notion that \gls{java} "passes object references by value" \citep{...}.
 %
 } while in \gls{cpp} one has the choice between passing a pointer, a reference, or a deep copy of the object.  Since in academic environments standards are difficult to enforce, a more restrictive language seemed (and still seems) the better choice.
 
-\item \gls{java} runs well on many platforms.  This allowed (and still allows) us to let people work on their favorite platforms, be it linux, windows, or mac.
+\item \gls{java} runs well on many platforms.  This allowed (and still allows) us to let people work on their favorite platforms, be it linux, \gls{windows}, or \gls{mac}.
 
 \item There is better non-commercial support for \gls{java} 
 
 \item The \gls{java} compiler is easier to handle.  For example, there is no extraction of header files, and the \gls{java} compiler by itself sorts out the sequence in which modules need to be compiled.
 
-\item For our applications, \gls{java} consistently was \emph{not} slower than \gls{cpp}.  This assessment was based on several years of teaching a MATSim class at ETH Zurich, where computer science students implemented simple versions of MATSim in a programming language of their choice.  It consistently came out that while the fastest \gls{cpp} code may have been 30\% faster than the fastest \gls{java} code, the slowest \gls{cpp} code typically was a factor of 3 slower than the slowest \gls{java} code.  In other words, while \gls{cpp} gives more opportunities for optimization, it also gives more opportunities for very serious performance degradation.
+\item For our applications, \gls{java} consistently was \emph{not} slower than \gls{cpp}.  This assessment was based on several years of teaching a \gls{matsim} class at ETH Zürich, where computer science students implemented simple versions of \gls{matsim} in a programming language of their choice.  It consistently came out that while the fastest \gls{cpp} code may have been 30\,\% faster than the fastest \gls{java} code, the slowest \gls{cpp} code typically was a factor of 3 slower than the slowest \gls{java} code.  In other words, while \gls{cpp} gives more opportunities for optimization, it also gives more opportunities for very serious performance degradation.
 
-Again, in an academic environment where much of the programming style is left to the (Ph.D.) students, it seemed (and still seems) more important to avoid important performance degradations than to go for the last 30\%.
+Again, in an academic environment where much of the programming style is left to the (Ph.D.) students, it seemed (and still seems) more important to avoid important performance degradations than to go for the last 30\,\%.
 
 \kai{There is also a reference for this somewhere.}
 
-In addition, it seems that the gap between \gls{cpp} and \gls{java} has narrowed further since then.  Important differences remain in numerical applications, in part also because \gls{cpp}, other than the \gls{java}, allows operator overloading \citep{..}.  However, the agent-based approach of MATSim means that the handling of complex objects happens much more frequently than true numerical computations.
+In addition, it seems that the gap between \gls{cpp} and \gls{java} has narrowed further since then.  Important differences remain in numerical applications, in part also because \gls{cpp}, other than the \gls{java}, allows operator overloading \citep{..}.  However, the agent-based approach of \gls{matsim} means that the handling of complex objects happens much more frequently than true numerical computations.
 
-\item One reason for using \gls{cpp} was that it could be combined with \acrshort{mpi}, which was a reliable message passing standard for parallel computing.  Parallel computing was necessary both for performance reasons and to be able to run simulations that needed more than about 4~GB of memory -- the maximum that could be addressed with the 32~bit architecture that was standard at that time.  \acrshort{mpi} is also available for \gls{java}, but it is much less well mainateind.
+\item One reason for using \gls{cpp} was that it could be combined with \gls{mpi}, which was a reliable message passing standard for parallel computing.  Parallel computing was necessary both for performance reasons and to be able to run simulations that needed more than about 4\,\gls{gb} of memory---the maximum that could be addressed with the 32\,bit architecture that was standard at that time.  \gls{mpi} is also available for \gls{java}, but it is much less well maintained.
 
-With the advent of the 64~bit architectures, the second reason for parallel computing became obsolete. In addition, Kai Nagel now being at a transport engineering department, it seemed that making conceptual progress was more important than keeping the parallel computing edge, especially since the maintenance parallel code \emph{permanently} consumes additional resources.
+With the advent of the 64\,bit architectures, the second reason for parallel computing became obsolete. In addition, Kai Nagel now being at a transport engineering department, it seemed that making conceptual progress was more important than keeping the parallel computing edge, especially since the maintenance parallel code \emph{permanently} consumes additional resources.
 
-With the decision to give up on parallel computing, it was no longer necessary to maintain compatibility with \acrshort{mpi}, and thus the move to \gls{java} was facilitated.
+With the decision to give up on parallel computing, it was no longer necessary to maintain compatibility with \gls{mpi}, and thus the move to \gls{java} was facilitated.
 
 \end{itemize}
 In terms of language, \gls{csharp} might have been an alternative to \gls{java}.  However, \gls{csharp} depends much more on the \gls{windows} platform, and community support is not as good as it is for \gls{java}.
 
-Clearly, the code by Michael Balmer already had all the necessary data classes, readers and writers.  This was used as a starting point to reimplement MATSim in Java.  Nevertheless, many important elements such as the mobsim, the events architecture, scoring, routing, and the co-evolutionary architecture, had to be re-implemented.  It took about two years from taking that decision to the first plausible run of MATSim in Java.
-
-
+Clearly, the code by Michael Balmer already had all the necessary data classes, readers and writers.  This was used as a starting point to re-implement \gls{matsim} in \gls{java}.  Nevertheless, many important elements such as the \gls{mobsim}, the events architecture, scoring, routing, and the co-evolutionary architecture, had to be re-implemented.  It took about two years from taking that decision to the first plausible run of \gls{matsim} in \gls{java}.
 
 %% In the early days of \gls{matsim}, the code was programmed in \gls{cpp} (see Chapter~\ref{ch:history}). Later, however, the code was migrated to \gls{java}. Performance of \gls{java} and \gls{cpp} had converged to a reasonable extent, such that the much higher developer friendliness of \gls{java} could be exploited. A fast access to the program is essential for \gls{matsim} as many \gls{api}-users have their background in computer science but in fields like transport planning or social sciences. 
 
@@ -102,16 +100,16 @@ Clearly, the code by Michael Balmer already had all the necessary data classes, 
 
 
 
-\subsection{Code reorganization}
+\subsection{Code Reorganization}
 \label{sec:matsim-core-reorg}
 
-The first version of MATSim, still in \gls{cpp}, was, similar to the original TRANSIMS, a collection of stand-alone modules coupled by scripts.  For example, the router would read plans and events, and replace some of the plans by other plans with modified routes.  The program flow was organized with shell scripts and makefiles.  Later it was possible to start all modules simultaneously and they would use messages to interact \citep[also see][]{GloorNagel2005ped-att04-birkh}, but the file-based and scripted interaction always remained available.
+The first version of \gls{matsim}, still in \gls{cpp}, was, similar to the original \gls{transims}, a collection of stand-alone modules coupled by scripts.  For example, the router would read plans and events, and replace some of the plans by other plans with modified routes.  The program flow was organized with shell scripts and makefiles.  Later it was possible to start all modules simultaneously and they would use messages to interact \citep[also see][]{GloorNagel2005ped-att04-birkh}, but the file-based and scripted interaction always remained available.
 
-That approach had, as a consequence, very clearly defined interfaces, i.e.\ the files.  Exchanging information that was not exchanged before meant changing the readers and writes on \emph{both} side, which was in consequence rarely done, and the stand-alone modules rather tried to live with the information they had.
+That approach had, as a consequence, very clearly defined interfaces, i.e.,\,the files.  Exchanging information that was not exchanged before meant changing the readers and writes on \emph{both} side, which was in consequence rarely done, and the stand-alone modules rather tried to live with the information they had.
 
 When \acrshort{matsim} was re-implemented in \gls{java} around 2006--7, it was re-implemented as one system.  As a result, now everything could interact with everything.  For example, a router would modify the network, compute routes on the modified network, and then modify it back -- including the danger of not getting things completely right in changing it back.  
 
-What made even more problems, however, were extensions to the program flow.  The program flow was, as it still is, organized by the \lstinline$Controler$ class.  Originally, everybody who wanted to change the program flow, in particular insert his or her own research modules, would inherit from \lstinline$Controler$, override some methods, and insert his or how own instructions.  This did, however, have the consequence that it was impossible to combine the extensions without possibly massive manual interventions (see Figure~\ref{fig:do-not-extend-controler}).
+What made even more problems, however, were extensions to the program flow.  The program flow was, as it still is, organized by the \lstinline$Controler$ class.  Originally, everybody who wanted to change the program flow, in particular insert his or her own research \glspl{module}, would inherit from \lstinline$Controler$, override some methods, and insert his or how own instructions.  This did, however, have the consequence that it was impossible to combine the \glspl{extension} without possibly massive manual interventions (see Figure~\ref{fig:do-not-extend-controler}).
 
 \begin{figure}\footnotesize
 \hrule
@@ -157,9 +155,9 @@ You can neither say \protect\lstinline$YourControler extends MyControler$ nor \p
 \label{fig:do-not-extend-controler}
 \end{figure}
 
-Therefore, in 2008 a decision was made to make MATSim more modular.  The first step in that direction was a decision to submit the whole MATSim repository to frequent refactorings, i.e.\ to \emph{not} leave the code alone as much as possible but rather make the community get used to frequent changes of code while maintaining functionality.  In order to facilitate that approach, the coverage by automatic regression tests on the build server was hugely increased, and all developers were encouraged to write automatic regression tests for their own code and their own projects. 
+Therefore, in 2008 a decision was made to make \gls{matsim} more modular.  The first step in that direction was a decision to submit the whole \gls{matsim} repository to frequent refactorings, i.e.,\,to \emph{not} leave the code alone as much as possible but rather make the community get used to frequent changes of code while maintaining functionality.  In order to facilitate that approach, the coverage by automatic regression tests on the build server was hugely increased, and all developers were encouraged to write automatic regression tests for their own code and their own projects. 
 
-The changes since then are too numerous to be listed here.  They include, in particular, fairly restrictive data classes that are no longer extended or modified by every scientific project, and well-defined extensions points both in the iterative loop and inside the mobsim.  Please see Chapter~\ref{ch:extensionpoints} for the currently existing extension points.
+The changes since then are too numerous to be listed here.  They include, in particular, fairly restrictive data classes that are no longer extended or modified by every scientific project, and well-defined extensions points both in the iterative loop and inside the \gls{mobsim}.  Please see Chapter~\ref{ch:extensionpoints} for the currently existing extension points.
 
 
 %% Since the huge refactoring greatly improving the code base structure and establishing, the \gls{matsim} project code is divided into the \emph{core} \lstinline|org.matsim| and \gls{api} packages \lstinline|org.matsim.api| and remaining packages. This refactoring was undertaken by the Berlin group starting at the end of 2007 and ended in the beginning of 2009 before the very first user meeting \ah{stimmt das so?}.
