@@ -301,15 +301,21 @@ The description of the modules in this and the following chapters is based on th
 % ===================================================================================
 \subsection{Scenario}
 \label{sec:scenario}
+
 \begin{compactitem}
-\item Invoking the module: Add the respective config file section.
-\item Configuration: \lstinline|scenario| config file section \ah{Hier haben wir doch eine kleine Inkonsistenz zwischen Container und Configuration Section, oder?}
+\item Invoking the module: (1) if you use Controler, scenario is always there. (2) otherwise, it needs to be generated explicitly in java.  \kai{chk}
+\kai{Wir sind uns nicht im klaren darüber, was diese switches genau bedeuten, siehe \url{https://matsim.atlassian.net/browse/MATSIM-320}.  $\to$ weglassen.}
+
+\item Configuration: There is a \lstinline|scenario| config file section, but we don't know what it means. \kai{chk}
+%% \ah{Hier haben wir doch eine kleine Inkonsistenz zwischen Container und Configuration Section, oder?}
 \item Code: \lstinline|org.matsim.core.scenario|
 \end{compactitem}
 
-The \lstinline|scenario| module is, on the one hand, a container containing the main components of a scenario such as the \lstinline|config|, the \lstinline|network|, the \lstinline|population|, the \lstinline|facilities|, the \lstinline|transitSchedule|, \lstinline|households| and \lstinline|vehicles|.
+The \lstinline|scenario| module is
+%, on the one hand, 
+a container containing the main components of a scenario such as the \lstinline|config|, the \lstinline|network|, the \lstinline|population|, the \lstinline|facilities|, the \lstinline|transitSchedule|, \lstinline|households| and \lstinline|vehicles|.
 
-The config file section is, on the other hand, used in a slightly different manner. It defines the usage of lanes, signal systems, road pricing, agent knowledges, vehicles, households and public transport. Still a respective config file section is required for every additional functionality. \kai{Ist das genau so?  Ich habe da ehrlich gesagt das genaue Design nie verstanden.  Oft für ein Eintrag in der scenario config group nur dafür, dass die Daten gelesen werden, und sonst passiert gar nichts.  Hm ...  Geradeziehen???}
+%% The config file section is, on the other hand, used in a slightly different manner. It defines the usage of lanes, signal systems, road pricing, agent knowledges, vehicles, households and public transport. Still a respective config file section is required for every additional functionality. \kai{Ist das genau so?  Ich habe da ehrlich gesagt das genaue Design nie verstanden.  Oft für ein Eintrag in der scenario config group nur dafür, dass die Daten gelesen werden, und sonst passiert gar nichts.  Hm ...  Geradeziehen???}
 
 %% \subsection{Supply-Side Data Containers}
 %% \label{sec:supplysidemodules}
@@ -330,14 +336,14 @@ The adaptation can be specified by adding following two lines to the \lstinline|
 <param name="inputChangeEventsFile" value="path_to_change_events_file" />
 \end{lstlisting}
 %
-An example file setting the free speed of three network links to zero is as follows:
+An example snippet setting the free speed of three network links to zero approximately looks as follows:
 %
+%% <?xml version="1.0" encoding="UTF-8"?>
+%% 	<networkChangeEvents xmlns="http://www.matsim.org/files/dtd"
+%% 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+%% 	xsi:schemaLocation="http://www.matsim.org/files/dtd
+%% 	http://www.matsim.org/files/dtd/networkChangeEvents.xsd">}
 \begin{lstlisting}
-<?xml version="1.0" encoding="UTF-8"?>
-	<networkChangeEvents xmlns="http://www.matsim.org/files/dtd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.matsim.org/files/dtd
-	http://www.matsim.org/files/dtd/networkChangeEvents.xsd">}
 
   <networkChangeEvent startTime="03:06:00">
     <link refId="12487"/>
@@ -346,9 +352,11 @@ An example file setting the free speed of three network links to zero is as foll
     <freespeed type="absolute" value="0.0"/>
   </networkChangeEvent>
 
-</networkChangeEvents>
 \end{lstlisting}
+%% </networkChangeEvents>
 %
+\kai{add reference to real file}
+
 Alternatively, network change events can be directly added to the code as follows:
 \begin{lstlisting}
 networkChangeEvent =
