@@ -6,14 +6,14 @@
 
 \begin{center} \includegraphics[width=0.67\textwidth, angle=0]{extending/figures/DTS/eTaxiDispMatsimBook.png} \end{center}
 
-\createStandardInformation{dvrp}{No predefined invocation. Setting up \lstinline|VrpOptimizer| and coupling it with MATSim requires lots of coding and each time may look completely different as shown in Section~\ref{sec:dvrp_config}}{No typical MATSim config}
+\createStandardInformation{dvrp}{No predefined invocation. Setting up a \lstinline|VrpOptimizer| and coupling it with MATSim requires some tailor-made code as shown in Section~\ref{sec:dvrp_config}}{No typical MATSim config}
 {
 \citet{MaciejewskiNagel2013TaxiSimulation, MaciejewskiNagel2013OnlineTaxisVSPWP, MaciejewskiNagel2013CooperationTaxiDispatching, Maciejewski2014OnlineViaOffline}
 }
 
 % ##################################################################################################################
 \section{Introduction}
-The recent technological advancements in \gls{ict}, have allowed for emergence of novel on-line fleet management tools and, thus, opened up a broad range of possibilities for transport services to become more intelligent, that is flexible, demand responsive, safe and energy/cost efficient. This concerns both significant enhancements in operations of the traditional means of transport, such as regular public transport or taxis, as well as the introduction of novel solutions, such as demand-responsive transport or personal rapid transport. However, the growing complexity of modern transport systems, besides all the benefits offered, increases the risk of poor performance, or even failure, due to the lack of precise design, implementation and testing.
+The recent technological advancements in \gls{ict}, have allowed for the emergence of novel on-line fleet management tools and, thus, opened up a broad range of possibilities for transport services to become more intelligent, that is flexible, demand responsive, safe and energy/cost efficient. This concerns both significant enhancements in operations of the traditional means of transport, such as regular public transport or taxis, as well as the introduction of novel solutions, such as demand-responsive transport or personal rapid transport. However, the growing complexity of modern transport systems, besides all the benefits offered, increases the risk of poor performance, or even failure, due to the lack of precise design, implementation and testing.
 
 One way of dealing with this problem is to use simulation tools that offer a wide spectrum of possibilities for validating transport service models. Such tools have to model in detail not only the dynamically changing demand and supply of the service in question, but also the traffic flow and even other existing transport services, including mutual interactions/relations between all these components. Although several approaches have been proposed \citep[e.g.,][]{ReganMahmassaniJaillet1998DynamicFleetManagementSimulation, BarceloEtc2007RoutingSchedulingSimulationLogistics, LiaoEtc2008ObjOrFramework4DVRP,Certicky:2014:AST:2615731.2616118}, to the best knowledge of the author, none of the existing solutions provides large-scale microscopic simulation including all the above-mentioned components.
 
@@ -33,12 +33,12 @@ The \gls{dvrp} extension is responsible for modeling both supply and demand, and
 	\item coordinating interaction/cooperation between drivers, passengers and dispatchers
 \end{compactitem}
 
-Dynamic transport services are simulated in \gls{matsim} as one of the components of the whole transport system. The optimizer plugged into the \gls{dvrp} extension reacts to selected events generated during simulation. Those events can be request submissions, vehicle departures or arrivals, etc. Additionally, it can monitor the movement of individual vehicles, as well as query other sources of online information, for instance, about the current traffic conditions. In response to the changes in the system, the optimizer may update drivers' schedules, either by applying smaller modifications or re-optimizing them from scratch. Drivers are notified about changes in their schedules and adjust to them as soon as possible, including immediate diversion from their current destinations. In the case of passenger transport, such as taxi or demand-responsive transport services, interactions between drivers, passengers and the dispatcher are simulated in detail, including such actions as calling a ride or picking up and dropping off passengers.
+Dynamic transport services are simulated in \gls{matsim} as one of the components of the whole transport system. The optimizer plugged into the \gls{dvrp} extension reacts to selected events generated during simulation. Those events can be request submissions, vehicle departures or arrivals, etc. Additionally, it can monitor the movement of individual vehicles, as well as query other sources of online information, for instance, about the current traffic conditions. In response to the changes in the system, the optimizer may update drivers' schedules, either by applying smaller modifications or re-optimizing them from scratch. Drivers are notified about the changes in their schedules and adjust to them as soon as possible, including immediate diversion from their current destinations. In the case of passenger transport, such as taxi or demand-responsive transport services, interactions between drivers, passengers and the dispatcher are simulated in detail, including such actions as calling a ride or picking up and dropping off passengers.
 
 % ##################################################################################################################
 \section{DVRP Model}
 \label{sec:DVRP_model}
-The \gls{dvrp} extension can be used for simulating rich vehicle routing problems. Compared to the classical \emph{Capacitated VRP}, the major enhancement concerning the model are as follows:
+The \gls{dvrp} extension can be used for simulating \emph{Rich VRPs}. Compared to the classical \emph{Capacitated VRP}, the major enhancement concerning the model are as follows:
 %
 \begin{itemize}
 	\item one-to-many (many-to-one) and many-to-many topologies
@@ -46,9 +46,8 @@ The \gls{dvrp} extension can be used for simulating rich vehicle routing problem
 	\item dynamic requests
 	\item request and vehicle types
 	\item time windows for requests and vehicles
-	\item time-dependent stochastic travel times
-	\item time-dependent stochastic travel costs
-	\item network-based routing (including vehicle monitoring and diversion)
+	\item time-dependent stochastic travel times and costs
+	\item network-based routing (including route planning, vehicle monitoring and diversion)
 \end{itemize}
 %
 Except for the travel times and costs (discussed in Section~\ref{sec:VRP-router}), which are calculated on demand, all the VRP-related data are accessible via \lstinline$VrpData$%
@@ -59,10 +58,10 @@ In the most basic setup, there are only two types of entities, namely \lstinline
 
 \subsection{Schedule}
 \label{sec:VRP-schedule}
-Each \lstinline$Vehicle$ has a \lstinline$Schedule$ that is a sequence of \lstinline$Task$s of different types, such as driving from one location to another (\lstinline$DriveTask$), or staying (e.g.,\,serving a customer or waiting) at a given location (\lstinline$StayTask)$%
+Each \lstinline$Vehicle$ has a \lstinline$Schedule$ that is a sequence of \lstinline$Task$s of different types, such as driving from one location to another (\lstinline$DriveTask$), or staying at a given location (e.g.,\,serving a customer or waiting;  \lstinline$StayTask)$%
 \footnote{
 Package \lstinline$org.matsim.contrib.dvrp.schedule$.
-}. \lstinline$Schedule$ is the place where supply and demand are coupled. All schedules are calculated by an online optimization algorithm (see Section~\ref{sec:VRP-optimizer}) that represents the fleet's dispatcher. Each task is in one of the following states (defined in the \lstinline$Task.TaskStatus$ enum): \lstinline$PLANNED$, \lstinline$STARTED$, \lstinline$PERFORMED$ or \lstinline$CANCELLED$, whereas each schedule's status is one of the following:
+}. A \lstinline$Schedule$ is the place where supply and demand are coupled. All schedules are calculated by an online optimization algorithm (see Section~\ref{sec:VRP-optimizer}) that represents the fleet's dispatcher. Each task is in one of the following states (defined in the \lstinline$Task.TaskStatus$ enum): \lstinline$PLANNED$, \lstinline$STARTED$, \lstinline$PERFORMED$ or \lstinline$CANCELLED$, whereas each schedule's status is one of the following:
 %
 \begin{itemize}
 	\item \lstinline$UNPLANNED$---no tasks assigned
@@ -84,7 +83,7 @@ In the most basic version, trackers only predict the end time of the current tas
 
 \lstinline$ScheduleImpl$, along with \lstinline$DriveTaskImpl$ and \lstinline$StayTaskImpl$, is the default implementation of \lstinline$Schedule$ and offers several additional features, such as data validation or automation of handling tasks. It also serves as the starting point when implementing domain-specific schedules or tasks (e.g.,\,\lstinline$ChargeTask$ in the electric VRP model mentioned above).
 
-\subsection{Least-cost paths}
+\subsection{Least-cost Paths}
 \label{sec:VRP-router}
 
 \gls{matsim}'s network model consists of nodes connected by one-way links. Because of the queue-based traffic flow simulation (Section~\ref{sec:trafficflowmodel}), a link is the smallest traversable element (i.e,\,a vehicle cannot stop in the middle of a link). Besides links, the \gls{dvrp} extension operates also on a higher level of abstraction, that is paths. Each path is a sequence of links to be traversed to get from one location to another in the network, or more precisely, from the end of one link end to the end of another link. 
@@ -102,9 +101,9 @@ To reduce computational burden, the already calculated paths can be cached for f
 % ##################################################################################################################
 \section{DynAgent}
 \label{sec:dynAgent}
-Contrary to the standard day-to-day learning in \gls{matsim} (but see also Section~\ref{sec:transients-vs-learning}), in the \gls{dvrp} extension, each driver behaves dynamically and follows the orders continuously coming from the dispatcher. The \lstinline$DynAgent$ class, along with the \lstinline$org.matsim.contrib.dynagent$ package, provides the foundation for simulating such dynamically behaving agents. Although  being created for the needs of the DVRP extension, \lstinline$DynAgent$ is not limited to this context only, and can be applied in a wide range of different simulation scenarios where dynamism of agents is required.
+Contrary to the standard day-to-day learning in \gls{matsim} (but see also Section~\ref{sec:transients-vs-learning}), in the \gls{dvrp} extension, each driver behaves dynamically and follows the orders coming continuously from the dispatcher. The \lstinline$DynAgent$ class, along with the \lstinline$org.matsim.contrib.dynagent$ package, provides the foundation for simulating such dynamically behaving agents. Although  being created for the needs of the DVRP extension, \lstinline$DynAgent$ is not limited to this context only, and can be applied in a wide range of different simulation scenarios where dynamism of agents is required.
 
-The main idea behind \lstinline$DynAgent$ is that instead of using a pre-computed (and occasionally re-computed; see \ref{sec:impl-plan-based}) plan, an agent can actively decide what to do at each simulation step. It is up to the agent, whether decisions are made on the fly or (re-)planned in advance. In some applications, a \lstinline$DynAgent$ may represent a fully autonomous agent that acts according to his/her desires, beliefs and intentions, whereas in other cases, it may a non-autonomous agent following orders that are systematically coming from the outside (e.g.,\,a driver receiving tasks from a centralized vehicle dispatching system).
+The main idea behind \lstinline$DynAgent$ is that instead of using a pre-computed (and occasionally re-computed; see \ref{sec:impl-plan-based}) plan, an agent can actively decide what to do at each simulation step. It is up to the agent, whether decisions are made on the fly or (re-)planned in advance. In some applications, a \lstinline$DynAgent$ may represent a fully autonomous agent that acts according to his/her desires, beliefs and intentions, whereas in other cases, it may be a non-autonomous agent following orders that are systematically coming from the outside (e.g.,\,a driver receiving tasks from a centralized vehicle dispatching system).
 
 % ==================================================================================================
 \subsection{Main Interfaces and Classes}
@@ -115,14 +114,14 @@ The \lstinline$DynAgent$ class is a dynamic implementation of \lstinline$MobsimD
 
 	\item the agent's high-level behavior is controlled by a \lstinline$DynAgentLogic$ that can be seen as the agent's brain; the \lstinline$DynAgentLogic$ is responsible for deciding on the agent's next action (leg or activity) once the current one has ended
 	
-	\item dynamic legs and activities fully define the agent's low-level behavior, down to the level of a single step in simulation.
+	\item dynamic legs and activities fully define the agent's low-level behavior, down to the level of a single simulation step.
 \end{compactitem}
 %
 At the higher level, the dynamism of the \lstinline$DynAgent$ results from the fact that dynamic activities and legs are usually created on the fly by the agent's \lstinline$DynAgentLogic$, thus the agent does not have to plan future actions in advance. In the case when the agent has a more or less detailed plan of legs and activities, the agent does not have to adhere to it, and may modify his/her plan at any time (e.g.,\,change the mode or destination of a future leg, or include or omit a future activity).
 
 The low-level dynamism is provided by the mechanism of executing dynamic activities and legs. As for the currently executed activity, the agent can shorten or lengthen its duration at any time. Additionally, at each time step, the agent may decide upon what to do right now (e.g.,\,communicate with other agents, re-plan the next activity or leg, and so on). In the case of driving a car (\lstinline$DriverDynLeg$), the agent can change the route, destination or even decide upon picking up or dropping off somebody on the way. When using the public transport (\lstinline$PTPassengerDynLeg$), the agent chooses which bus to get on and which stop to exit at.
 
-Incidentally, the behavior of \gls{matsim}'s default plan-based agent, \lstinline$PersonDriverAgentImpl$, can be simulated by \lstinline$DynAgent$ combined with the \lstinline$PlanToDynAgentLogicAdapter$ logic. This adapter class creates series of dynamic activities and legs that mimics a given \lstinline$Plan$ of static \lstinline$Activity$s and \lstinline$Leg$s.
+Incidentally, the behavior of \gls{matsim}'s default plan-based agent, \lstinline$PersonDriverAgentImpl$, can be simulated by \lstinline$DynAgent$ combined with the \lstinline$PlanToDynAgentLogicAdapter$ logic. This adapter class creates a series of dynamic activities and legs that mimics a given \lstinline$Plan$ of static \lstinline$Activity$s and \lstinline$Leg$s.
 
 % ==================================================================================================
 \subsection{Configuring and Running a Dynamic Simulation}
@@ -166,7 +165,7 @@ Following the rules specified in Section~\ref{sec:config-dyn-sim}, setting up an
 
 % ##################################################################################################################
 \section{Agents in DVRP}
-Realistic simulation of dynamic transport services requires a proper model of interactions and possible collaborations between the main actors, that is drivers, customers (often being passengers), and the dispatcher. By default, drivers and passengers are simulated as agents whereas the dispatcher's decisions are decisions are calculated by the optimization algorithm (see Section~\ref{sec:VRP-optimizer}). This, however, is not the only possible configuration. One may simulate, for example, a decentralized system with the dispatcher being rather a middleman than the fleet's manager.
+Realistic simulation of dynamic transport services requires a proper model of interactions and possible collaborations between the main actors, that is drivers, customers (often being passengers), and the dispatcher. By default, drivers and passengers are simulated as agents whereas the dispatcher's decisions are calculated by the optimization algorithm (see Section~\ref{sec:VRP-optimizer}). This, however, is not the only possible configuration. One may simulate, for example, a decentralized system with the dispatcher being a middleman rather than the fleet's manager.
 
 % ==================================================================================================
 \subsection{Drivers}
@@ -175,7 +174,7 @@ A driver is modeled as a \lstinline$DynAgent$ whose behavior is controlled by a 
 \footnote{
 Package \lstinline$org.matsim.contrib.dvrp.vrpagent$.
 }
-that makes the agent follow the dynamically changing \lstinline$Schedule$. As a result, all changes made to the schedule are visible to and obeyed by the driver. Whenever a new task is started, the driver logic (using a \lstinline$DynActionCreator$) translates it to the corresponding dynamic action. Specifically, a \lstinline$DriveTask$ is executed as a \lstinline$VrpLeg$, whereas a \lstinline$StayTask$ is simulated as a \lstinline$VrpActivity$. Both \lstinline$VrpLeg$ and \lstinline$VrpActivity$ are implemented in such a way that any change to the referenced task is automatically visible to them. At the same time, any progress made while carrying them out, is instantly reported to the task tracker.
+that makes the agent follow the dynamically changing \lstinline$Schedule$. As a result, all changes made to the schedule are visible to and obeyed by the driver. Whenever a new task is started, the driver logic (using a \lstinline$DynActionCreator$) translates it into the corresponding dynamic action. Specifically, a \lstinline$DriveTask$ is executed as a \lstinline$VrpLeg$, whereas a \lstinline$StayTask$ is simulated as a \lstinline$VrpActivity$. Both \lstinline$VrpLeg$ and \lstinline$VrpActivity$ are implemented in such a way that any change to the referenced task is automatically visible to them. At the same time, any progress made while carrying them out, is instantly reported to the task tracker.
 
 % ==================================================================================================
 \subsection{Passengers}
@@ -202,21 +201,21 @@ that is, implements the following two methods:
 \begin{itemize}
 	\item \lstinline$requestSubmitted(Request request)$---called on submitting \lstinline$request$; in response, the optimizer either adapts vehicles' schedules so that \lstinline$request$ can be served, or rejects it
 	
-	\item \lstinline$nextTask(Schedule<? extends Task> schedule)$---called whenever \lstinline$schedule$'s current task has been completed and the driver is switching to the next planned task; this is the last moment to make the final decision upon what to do next
+	\item \lstinline$nextTask(Schedule<? extends Task> schedule)$---called whenever \lstinline$schedule$'s current task has been completed and the driver is switching to the next planned task; this is the last moment to make or revise the decision upon what to do next
 
 \end{itemize}
 
 This basic functionality can be freely extended. Besides request submission, one may, for example, consider modifying or even canceling already submitted requests. Another option is monitoring vehicles as they travel along designated routes and reacting when they are ahead of/behind their schedules. Such functionality is available by implementing \lstinline$VrpOptimizerWithOnlineTracking$'s \lstinline$nextLinkEntered(DriveTask driveTask)$ method, which is called whenever a vehicle moves from the current link to the next one on its path.
 
-Last but not least, there are two ways of responding to the incoming events. They can be handled either \emph{immediately} (\emph{synchronously}) or \emph{between time steps} (\emph{asynchronously}). In the former case, schedules are re-calculated (update, re-optimized) directly in response to calling one of the optimizer's methods. This simplifies accepting/rejecting new requests since the answer is immediately passed back to the caller. In the latter case, all events observed within a simulation step are recorded and then processed in batch mode just before the next simulation step begins%
+Last but not least, there are two ways of responding to the incoming events. They can be handled either \emph{immediately} (\emph{synchronously}) or \emph{between time steps} (\emph{asynchronously}). In the former case, schedules are re-calculated (updated or re-optimized) directly in response to the calling of the optimizer's methods. This simplifies accepting/rejecting new requests since the answer is immediately passed back to the caller. In the latter case, all events observed within a simulation step are recorded and then processed in batch mode just before the next simulation step begins%
 \footnote{
-This may be achieved by using an optimizer that implements the interface \lstinline$org.matsim.core.mobsim.framework.listeners.MobsimBeforeSimStepListener$ 
+This may be achieved by using an optimizer that implements the interface \lstinline$org.matsim.core.mobsim.framework.listeners.MobsimBeforeSimStepListener$. 
 }.
-By doing that one can not only speedup significantly computations, but also avoid situations when %due to vehicles' inertia (e.g., an idle driver can stop waiting and depart only at the beginning of the simulation step),
-two or more mutually conflicting decisions could be made by the optimizer at distinct moments during the same simulation step, causing the latter to overwrite the former, which is not always intentional.
+By doing that one can not only speedup computations significantly, but also avoid situations when %due to vehicles' inertia (e.g., an idle driver can stop waiting and depart only at the beginning of the simulation step),
+two or more mutually conflicting decisions could be made by the optimizer at distinct moments during a single simulation step, causing the latter to overwrite the former, which is not always intentional.
 
 % ##################################################################################################################
-\section{Configuring and running a DVRP simulation}
+\section{Configuring and Running a DVRP simulation}
 \label{sec:dvrp_config}
 Like in within-day replanning (see Chapter~\ref{ch:withinday}), dynamic transport services are typically run with the \gls{dvrp} extension as a single-iteration simulation. Setting up and running such a simulation requires carrying out the following steps:
 %
@@ -231,7 +230,7 @@ Like in within-day replanning (see Chapter~\ref{ch:withinday}), dynamic transpor
 	
 	\item Add \lstinline$AgentSource$s to the \lstinline$QSim$; for the \lstinline$DynAgent$-based drivers, one may use a specialized \lstinline$VrpAgentSource$ and provide a \lstinline$DynActionCreator$%
 	\footnote{
-	Package \lstinline$org.matsim.contrib.dvrp.vrpagent$
+	Package \lstinline$org.matsim.contrib.dvrp.vrpagent$.
 	}
 	
 	\item Run the \lstinline$QSim$ simulation
@@ -239,9 +238,9 @@ Like in within-day replanning (see Chapter~\ref{ch:withinday}), dynamic transpor
 	\item Finalize processing events by the \lstinline$EventsManager$
 \end{enumerate}
 
-The \lstinline$org.matsim.contrib.dvrp.run$ package contains \lstinline$VrpLauncherUtils$ and other utility classes that simplify the above scheme. To facilitate access to the data representing the current state of the simulated dynamic transport service, \lstinline$MatsimVrpContext$ provides the \lstinline$Scenario$ and \lstinline$VrpData$ objects and the current time (based on the \lstinline$QSim$'s timer).
+The \lstinline$org.matsim.contrib.dvrp.run$ package contains \lstinline$VrpLauncherUtils$ and other utility classes that simplify certain steps of the above scheme. To facilitate access to the data representing the current state of the simulated dynamic transport service, \lstinline$MatsimVrpContext$ provides the \lstinline$Scenario$ and \lstinline$VrpData$ objects and the current time (based on the \lstinline$QSim$'s timer).
 
-The \lstinline$VrpOptimizer$'s performance may be assessed either by analyzing the resultant schedules, or by processing events that have arrived during the simulation.
+The \lstinline$VrpOptimizer$'s performance may be assessed either by analyzing the resultant schedules, or by processing events collected during the simulation.
 
 % ##################################################################################################################
 \section{OneTaxi Example}
@@ -258,15 +257,15 @@ The \lstinline$org.matsim.contrib.dvrp.examples.onetaxi$ package contains a simp
 	
 	\item \lstinline$OneTaxiActionCreator$---translates tasks into dynamic activities and legs
 	
-	\item \lstinline$OneTaxiLauncher$---sets up and runs the whole scenario
+	\item \lstinline$OneTaxiLauncher$---sets up and runs the scenario
 \end{compactitem}
 %
-All data necessary to run the OneTaxi example is located in the \lstinline$/contrib/dvrp/src/main/resources/one_taxi$ directory.
+All data necessary to run the OneTaxi example are located in the \lstinline$/contrib/dvrp/src/main/resources/one_taxi$ directory.
 
 % ##################################################################################################################
-\section{Research With DVRP}
+\section{Research with DVRP}
 Currently, the \gls{dvrp} extension is used in several research projects. Two of them focus on on-line dispatching of electric taxis in Berlin and Poznan \citep{MaciejewskiNagel2013TaxiSimulation, MaciejewskiNagel2013OnlineTaxisVSPWP, MaciejewskiNagel2013CooperationTaxiDispatching, Maciejewski2014OnlineViaOffline}. Another project deals with design of demand-responsive transport, where \gls{dvrp} has been applied to the case of twin towns, Yarrawonga and Mulwala, described in Section~\ref{sec:yarrawonga} \citep{RonThoWin2015, ronald14SimulatingDRT}. In a recently launched project, the \gls{dvrp} extension will be used for simulation of \gls{drt} services in three cities, namely Stockholm, Tel Aviv and Leuven.
 
-The current focus, in terms of code development, is on increasing the performance and flexibility of the implemented shortest paths search (see Section~\ref{sec:VRP-router}). An interesting future research topic, related in particular to \gls{drt} planning, is multi-modal path search where on-demand vehicles may be combined with fixed-route buses within a single trip. Another potential research direction is adding a benchmarking functionality and standardized interfaces so that the \gls{dvrp} extension could serve as a testbed for rich VRP optimization algorithms.
+The current focus, in terms of code development, is on increasing the performance and flexibility of the implemented shortest paths search (see Section~\ref{sec:VRP-router}). An interesting future research topic, related in particular to \gls{drt} planning, is multi-modal path search where on-demand vehicles may be combined with fixed-route buses within a single trip. Another potential research direction is adding a benchmarking functionality and standardized interfaces so that the \gls{dvrp} extension could serve as a testbed for the \emph{Rich VRP} optimization algorithms.
 
 % ##################################################################################################################
