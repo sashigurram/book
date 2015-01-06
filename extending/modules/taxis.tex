@@ -6,7 +6,7 @@
 
 \begin{center} \includegraphics[width=0.67\textwidth, angle=0]{extending/figures/DTS/eTaxiDispMatsimBook.png} \end{center}
 
-\createStandardInformation{dvrp}{No predefined invocation. Setting up a \lstinline|VrpOptimizer| and coupling it with MATSim requires some tailor-made code as shown in Section~\ref{sec:dvrp_config}}{No typical MATSim config}
+\createStandardInformationBasic{dvrp}{No predefined invocation. Setting up a \lstinline|VrpOptimizer| and coupling it with MATSim requires some tailor-made code as shown in Section~\ref{sec:dvrp_config}}{No typical MATSim config}
 {
 \citet{MaciejewskiNagel2013TaxiSimulation, MaciejewskiNagel2013OnlineTaxisVSPWP, MaciejewskiNagel2013CooperationTaxiDispatching, Maciejewski2014OnlineViaOffline}
 }
@@ -56,6 +56,7 @@ Package \lstinline$org.matsim.contrib.dvrp.data$.
 }.
 In the most basic setup, there are only two types of entities, namely \lstinline$Vehicle$s and \lstinline$Request$s. This model, however, can be easily extended according to one's needs. For instance, in the case of a fleet of electric vehicles, specialized \lstinline$ElectricVrpData$ stores also information about \lstinline$Charger$s. This and other examples of extending the base VRP model, such as a model of the \emph{VRP with Pickup and Delivery}, are available in the \lstinline$org.matsim.contrib.dvrp.extensions$ package.
 
+% ========================================================================================
 \subsection{Schedule}
 \label{sec:VRP-schedule}
 Each \lstinline$Vehicle$ has a \lstinline$Schedule$ that is a sequence of \lstinline$Task$s of different types, such as driving from one location to another (\lstinline$DriveTask$), or staying at a given location (e.g.,\,serving a customer or waiting;  \lstinline$StayTask)$%
@@ -215,15 +216,13 @@ By doing that one can not only speedup computations significantly, but also avoi
 two or more mutually conflicting decisions could be made by the optimizer at distinct moments during a single simulation step, causing the latter to overwrite the former, which is not always intentional.
 
 % ##################################################################################################################
-\section{Configuring and Running a DVRP simulation}
+\section{Configuring and Running a DVRP Simulation}
 \label{sec:dvrp_config}
 Like in within-day replanning (see Chapter~\ref{ch:withinday}), dynamic transport services are typically run with the \gls{dvrp} extension as a single-iteration simulation. Setting up and running such a simulation requires carrying out the following steps:
 %
 \begin{enumerate}
-	\item Create a \lstinline$Scenario$ (\gls{matsim}'s domain data) and \lstinline$VrpData$ (VRP's domain data)
-	
+	\item Create a \lstinline$Scenario$ (\gls{matsim}'s domain data) and \lstinline$VrpData$ (VRP's domain data)	
 	\item Create a \lstinline$VrpOptimizer$; this includes instantiation of a least-cost path/tree calculator, e.g.,\,\lstinline$VrpPathCalculator$.
-	
 	\item Call \lstinline$DynAgentLauncherUtils$' \lstinline$initQSim(Scenario scenario)$ method to create and initialize a \lstinline$QSim$; this includes creating a series of objects, such as an \lstinline$EventsManager$, \lstinline$DynActivityEngine$, or \lstinline$TeleportationEngine$
 	
 	\item When simulating passenger services, add a \lstinline$PassengerEngine$ to the \lstinline$QSim$; this includes instantiation of a \lstinline$PassengerRequestCreator$ that converts calls/orders into \lstinline$PassengerRequest$s; otherwise (i.e.,\,non-passenger services), add an appropriate source of requests to the \lstinline$QSim$, either as a \lstinline$MobsimEngine$ or \lstinline$MobsimListener$
@@ -232,9 +231,7 @@ Like in within-day replanning (see Chapter~\ref{ch:withinday}), dynamic transpor
 	\footnote{
 	Package \lstinline$org.matsim.contrib.dvrp.vrpagent$.
 	}
-	
 	\item Run the \lstinline$QSim$ simulation
-	
 	\item Finalize processing events by the \lstinline$EventsManager$
 \end{enumerate}
 
@@ -247,16 +244,11 @@ The \lstinline$VrpOptimizer$'s performance may be assessed either by analyzing t
 The \lstinline$org.matsim.contrib.dvrp.examples.onetaxi$ package contains a simple example of how to simulate on-line taxi dispatching with the \gls{dvrp} extension. In this scenario, there are ten taxi customers and one taxi driver, who serves all requests in the \gls{fifo} order. Each customer dials a taxi at a given time to get from work to home. The example is made up of six classes:
 %
 \begin{compactitem}
-	\item \lstinline$OneTaxiRequest$---represents a taxi request
-	
+	\item \lstinline$OneTaxiRequest$---represents a taxi request	
 	\item \lstinline$OneTaxiRequestCreator$---converts taxi calls into requests prior to submitting them to the optimizer
-	
 	\item \lstinline$OneTaxiOptimizer$---creates and updates the driver's schedule
-	
 	\item \lstinline$OneTaxiServeTask$---represents \lstinline$StayTask$s related to picking up and dropping off customers
-	
 	\item \lstinline$OneTaxiActionCreator$---translates tasks into dynamic activities and legs
-	
 	\item \lstinline$OneTaxiLauncher$---sets up and runs the scenario
 \end{compactitem}
 %
