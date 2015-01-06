@@ -7,21 +7,20 @@
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
 
 % ##################################################################################################################
-\kai{Auch dieses Module nur ein Vorschlag.  Ich nehme es erstmal als Ablage für Absätze, die ich in diese Richtung geschrieben habe.  Johan war daran mal sehr interessiert.}
+%\kai{Auch dieses Module nur ein Vorschlag.  Ich nehme es erstmal als Ablage für Absätze, die ich in diese Richtung geschrieben habe.  Johan war daran mal sehr interessiert.}
+%
+%\ah{Finde es je länger desto besser dieses Kapitel drinzuhaben und es hier drinzuhaben. Wenn wir schon über die verweneten Konzepte refektieren, dann ist auch eine Art Reflektion über das MATSim-Unternehmen an sich nötig. ... wo auch die frühere History-Einsprengsel nochmals auf einen Blick und im Fluss vorkommen}
+%
+%\kai{Finde ich eigentlich auch.  Nehme das mal zum Anlass, da etwas mehr zu schreiben.}
 
 \ah{Wo wir sonst noch History drinhaben und Konsistenz garantieren müssen: Editor's Foreword, Preface, Section\ref{sec:howitstarted}, Chapter~\ref{ch:developmentprocess}}
 
-\ah{Finde es je länger desto besser dieses Kapitel drinzuhaben und es hier drinzuhaben. Wenn wir schon über die verweneten Konzepte refektieren, dann ist auch eine Art Reflektion über das MATSim-Unternehmen an sich nötig. ... wo auch die frühere History-Einsprengsel nochmals auf einen Blick und im Fluss vorkommen}
-
-\kai{Finde ich eigentlich auch.  Nehme das mal zum Anlass, da etwas mehr zu schreiben.}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% ##################################################################################################################
 \section{Kai Nagel's Perspective}
 
 \kai{Wäre vielleicht gut, wenn wir das hinterher zusammenführen könnten.}
 
+% ========================================================================================================
 \subsection{Fast microscopic modeling of traffic flow (University of Cologne with some does of Los Alamos National Laboratory)}
 \label{sec:history-u-of-cologne-phase}
 
@@ -29,7 +28,8 @@ Kai Nagel originally wanted to do this Ph.D.\ in meteorology.  When the funding 
 
 Having had some training in Computational Statistical Physics, he soon became a bit sceptical if it made sense to optimize up to the last second of a closing time window while at the same time being faced with highly stochastic transport system.  He thus embarked on using his training to build a microscopic model of the transport system, in particular single-lane~\citep{NagelSchreckenberg1992CA,Nagel1999flowTheoTrr} road traffic on long links as well combining such links to large-scale network-based simulations where each vehicle would follow its own individual route~\citep{Nagel1996NRW}, including an adaptive dynamics being influenced most heavily by \cite{ArthurBar}.  Already that paper describes what is still the main \gls{matsim} architecture, where agents have many different plans, they keep trying them out, and eventually settle on the best option.  In contrast to the current approach, all plans were pre-computed, i.e.\ there was no innovation during the iterations.  This was possible because the network was much coarser than what we use today, and thus computing route plans with enough diversity was easy.
 
-\subsection{TRANSIMS (Los Alamos National Laboratory with some dose of Santa Fe Institute)}
+% ========================================================================================================
+\subsection{\protect\gls{transims} (Los Alamos National Laboratory with some dose of Santa Fe Institute)}
 \label{sec:history-lanl-phase}
 
 Some of the above Ph.D.\ work was already done at Los Alamos National Laboratory (LANL).  After his Ph.D., Kai Nagel then moved fully to LANL, where he worked with the \gls{transims} \citep[e.g.,][]{SmithEtc1995TRANSIMSSeattle} team, under the leadership of Chris Barrett.
@@ -40,11 +40,12 @@ The \gls{transims} project inherited some of the above design, most notably the 
 
 In terms of software design, \gls{transims} was a collection of stand-alone modules, coupled by a script.  For example, the population synthesizer would generate a population file, the activity generate would take the population file as input and generate an activities file as output, etc.  Iterations were done by running the traffic microsimulation based on plans and outputting average link travel times, and then the router based on link travel times and outputting plans.
 
-
-\subsection{MATSim in C++ (ETH Zurich Computer Science)}
+% ========================================================================================================
+\subsection{\protect\gls{matsim} in \protect\gls{cpp} (ETH Zurich Computer Science)}
 \label{sec:history-ethz-phase}
 
-\ah{somehow latex on ci.matsim.org does not like gls in section titles (?). See Build \#432. I'll try to find a work-around.}
+%\ah{somehow latex on ci.matsim.org does not like gls in section titles (?). See Build \#432. I'll try to find a work-around.}
+%\ah{got it: \protect\gls{...}}
 
 Kai Nagel moved to ETH Zürich Computer Science in 1999.  Unfortunately, it turned out to be difficult to continue with \gls{transims}, for example because \gls{transims} was not under an open source license, and also because \gls{transims} fell under U.S.\ technology export restrictions for some time.  In consequence, \gls{matsim} was started.
 
@@ -52,14 +53,14 @@ MATSim had to important differences to TRANSIMS from the beginning: (1) it tried
 
 Another difference followed eventually, which was to go back to the approach of \citet{Nagel1996NRW}, but this time truly following \citet{ArthurBar} by giving each individual agent its own memory \citep{RaneyNagel2006traf-framework}.  After experimentation with relational databases such as MySQL \citep{mysql-wikipedia} or Oracle \citep{oracle}, it was eventually decided to implement \gls{matsim} as an object-oriented database "in memory", i.e.,\,by first reading in all \gls{xml} files, modifying the data in memory during the life-time of a run, and writing the data back from memory to \gls{xml} files at the end of the run.  The decision was based on the observation that the \gls{matsim} data model was described much better by \gls{xml} files, and conversion to the relational format was impractical, prone to errors, and also too slow if not kept in memory during iterations. 
 
-\subsection{MATSim in Java (TU Berlin)}
+% ========================================================================================================
+\subsection{\protect\gls{matsim} in \protect\gls{java} (TU Berlin)}
 \label{sec:matsim-in-java}
-
 Michael Balmer wrote his dissertation about demand modeling for \gls{matsim}, i.e.,\,about the upstream process that leads to initial plans
 \citep{Balmer2007phd}.  That project, other than the main \gls{matsim} code at that time, was written in \gls{java}.  Together with the assessment that \gls{java} would be the better language than \gls{cpp} to continue development at TU Berlin transport engineering, it was decided to use Michael Balmer's code as starting point for a \gls{java} version.  Arguments for \gls{java} included:
 \begin{itemize}
 
-\item  \gls{java} is more restrictive.  For example, in \gls{java} objects are always passed by reference,\footnote{%
+\item  \gls{java} is more restrictive. For example, in \gls{java} objects are always passed by reference,\footnote{%
 %
 We abstract away from the notion that \gls{java} "passes object references by value" \citep{...}.
 %
@@ -99,15 +100,15 @@ Clearly, the code by Michael Balmer already had all the necessary data classes, 
 % part of that argument is included further above (from 32 to 64 bit mem architecture)
 
 
-
+% ========================================================================================================
 \subsection{Code Reorganization}
 \label{sec:matsim-core-reorg}
 
 The \gls{cpp} version of MATSim still was, similar to the original TRANSIMS, a collection of stand-alone executables coupled by scripts.  For example, the router would read plans and events, and replace some of the plans by other plans with modified routes.  The program flow was organized with shell scripts and makefiles.  Later it was possible to start all modules simultaneously and they would use messages to interact \citep[also see][]{GloorNagel2005ped-att04-birkh}, but the file-based and scripted interaction always remained available.
 
-That approach had, as a consequence, very clearly defined interfaces, i.e.\ the files.  Exchanging information that was not included in the files meant changing the readers and writes on \emph{both} sides, which was in consequence rarely done, and the stand-alone modules rather tried to live with the information they had.
+That approach had, as a consequence, very clearly defined interfaces, i.e.,\,the files. Exchanging information that was not included in the files meant changing the readers and writes on \emph{both} sides, which was in consequence rarely done, and the stand-alone modules rather tried to live with the information they had.
 
-When \acrshort{matsim} was re-implemented in \gls{java} around 2006--7, it was re-implemented as one system.  As a result, now everything could interact with everything.  For example, a router could modify the network, compute routes on the modified network, and then modify it back -- including the danger of not getting things completely right in changing it back.  \kai{not very clear}
+When \acrshort{matsim} was re-implemented in \gls{java} around 2006--7, it was re-implemented as one system.  As a result, now everything could interact with everything.  For example, a router could modify the network, compute routes on the modified network, and then modify it back---including the danger of not getting things completely right in changing it back.  \kai{not very clear}
 
 What made even more problems, however, were extensions to the program flow.  The program flow was, as it still is, organized by the \lstinline$Controler$ class.  Originally, everybody who wanted to change the program flow, in particular insert his or her own research \glspl{module}, would inherit from \lstinline$Controler$, override some methods, and insert his or how own instructions.  This did, however, have the consequence that it was impossible to combine the \glspl{extension} without possibly massive manual interventions (see Figure~\ref{fig:do-not-extend-controler}).
 
@@ -159,9 +160,7 @@ Therefore, in 2008 a decision was made to make \gls{matsim} more modular.  The f
 
 The changes since then are too numerous to be listed here.  They include, in particular, fairly restrictive data classes that are no longer extended or modified by every scientific project, and well-defined extensions points both in the iterative loop and inside the \gls{mobsim}.  Please see Chapter~\ref{ch:extensionpoints} for the currently existing extension points.
 
-
 %% Since the huge refactoring greatly improving the code base structure and establishing, the \gls{matsim} project code is divided into the \emph{core} \lstinline|org.matsim| and \gls{api} packages \lstinline|org.matsim.api| and remaining packages. This refactoring was undertaken by the Berlin group starting at the end of 2007 and ended in the beginning of 2009 before the very first user meeting \ah{stimmt das so?}.
-
 
 % ##################################################################################################################
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
