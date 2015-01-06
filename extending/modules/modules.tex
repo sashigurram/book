@@ -31,18 +31,18 @@ In order to use the core only, one needs to do the following:
 \item Write or edit a config file.
 \item Click on the \gls{matsim} jar file\footnote{This works since winter 2014/15 and should be in the 0.7.0 release.} and follow the instructions. 
 \end{compactitem}
-We think that the \gls{matsim} core is already quite powerful; for example, the synthetic persons already follow full daily plans with a full daily scoring function and in consequence opening times for activity types, departure time choice, and schedule delay can be investigated.  Also, schedule-based public transit assignment is contained in the core.
+We think that the \gls{matsim} core is already quite powerful; for example, the synthetic persons already follow full daily plans with a full daily scoring function and in consequence opening times for activity types, departure time choice, and schedule delay can be investigated. Also, schedule-based public transit assignment is contained in the core.
 
 % --------------------------------------------------------------------------------------
-\subsubsection{Using one or More Contribs}
+\subsubsection{Using One or More Contribs}
 \label{sec:using-contribs}
-\Glspl{contribution} are in a separate part of the repository, separate from the core.  The documentation is not yet fully organized, information about \glspl{contribution} can be found at \url{http://matsim.org/javadoc} or \url{http://www.matsim.org/extensions}.  There are also release versions \kai{check} \ah{gibt es beides am gleichen Ort wie MATSim} and nightly builds \kai{url?}.
+\Glspl{contribution} are in a separate part of the repository, separate from the core.  The documentation is not yet fully organized, information about \glspl{contribution} can be found at \url{http://matsim.org/javadoc} or \url{http://www.matsim.org/extensions}. There are also release versions and nightly builds, which are provided at \url{http://sourceforge.net/projects/matsim/files/} and \url{http://matsim.org/files/builds/}. % \kai{check} \ah{gibt es beides am gleichen Ort wie MATSim} \kai{url?}.
 
 In general, \glspl{contribution} should provide main methods with which they can be used.  We might eventually provide clickable jar files here as well, but for the time being the extensions need to be bundled with core \gls{matsim} (and potentially other \glspl{contribution}). As shown at \url{http://www.matsim.org/docs/extensions} the syntax roughly is
 \begin{lstlisting}
 java -Xmx2000m -cp MATSim.jar:contrib/contrib.jar org.matsim.contrib.run.Main config.xml  
 \end{lstlisting}
-\kai{Maybe better point to electronic docu?} \ah{siehe url oben}
+\kai{Maybe better point to electronic docu?} \ah{command ist unter url oben gegeben}
 where
 \begin{compactitem}
 \item \lstinline$-Xmx2000m$ increases the \gls{java} heap space so that most \gls{matsim} runs fit in
@@ -308,6 +308,9 @@ The description of the modules in this and the following chapters is based on th
 
 \item Configuration: There is a \lstinline|scenario| config file section, but we don't know what it means. \kai{chk}
 %% \ah{Hier haben wir doch eine kleine Inkonsistenz zwischen Container und Configuration Section, oder?}
+
+\item Configuration: \lstinline|scenario| config file section \ah{Hier haben wir doch eine kleine Inkonsistenz zwischen Container und Configuration Section. Config section definiert lanes, signals, households, vehicles, transit. Scenario hat aber z.B. facilities und population drin. Man sollte diese config section evtl. umbenennen in sowas wie optional\_scenario\_elements oder ähnlich.}
+
 \item Code: \lstinline|org.matsim.core.scenario|
 \end{compactitem}
 
@@ -561,6 +564,8 @@ Strategy modules are numbered, where each module is given a weight which determi
 
 By specifying the parameter \lstinline|ModuleSubpopulation_X|, i.e.,\,\lstinline|<param name="ModuleSubpopulation_1" value="externalAgent"/>| replanning strategies can be applied to distinct sub-populations.
 
+Please note, that combining strategy modules that are \glspl{contribution} such as destination innovation and public transport is not straight forward. Combine them with care and contact the mailing list in case you are unsure.}
+
 %Combining different modules is not straight-forward in MATSim. This important topic urgently awaits future analysis. To begin with, here, the combination of the strategy modules with public transport is presented in Table \ref{tab:combination}.
 %
 %% ----------------------------------
@@ -592,9 +597,8 @@ By specifying the parameter \lstinline|ModuleSubpopulation_X|, i.e.,\,\lstinline
 %}%
 %{}
 
-\kai{Ich meine, dass es diese Transit Sonderformen gar nicht mehr gibt.  ????} 
-
-\ah{Please note, that combining strategy modules that are \gls{contribution} such as destination innovation or public transport is not straight forward. Contact the mailing list, for further information.}
+%\kai{Ich meine, dass es diese Transit Sonderformen gar nicht mehr gibt.  ????}
+%\ah{habs mal auskommentiert und die Warnung über Contrib-Kombinationen oben hingeschrieben.} 
 
 % ===================================================================================
 \subsection{Time Innovation}
@@ -642,7 +646,9 @@ The module shifts activity end times randomly within a configurable range as des
 \item Code: \lstinline|org.matsim.core.router|
 \end{compactitem}
 %
-\gls{matsim} routing is described by \citet[]{LefebvreBalmer_STRC_2007, LefebvreBalmer_TechRep_IVT_2007}. The configuration necessary for public transport is shown in Chapter \ref{ch:pt}.  \kai{Da steht m.E.\ noch nichts in der Richtung.  Aber meiner Erinnerung nach ist auch gar keine Sonderkonfiguration mehr nötig.  Michael Z.?}
+\gls{matsim} routing is described by \citet[]{LefebvreBalmer_STRC_2007, LefebvreBalmer_TechRep_IVT_2007}. 
+
+The configuration necessary for public transport is shown in Chapter \ref{ch:pt}.  \kai{Da steht m.E.\ noch nichts in der Richtung.  Aber meiner Erinnerung nach ist auch gar keine Sonderkonfiguration mehr nötig.  Michael Z.?}
 
 % ===================================================================================
 \subsection{Mode Innovation}
@@ -700,14 +706,14 @@ Following selectors are available in the configuration file strategy module:
 	\item \lstinline|SelectPathSizeLogit| selects an existing plan according to the path size logit described by \citet[][]{FrejingerBierlaire_TransResB_2007}.
 \end{compactitem}
 %
-\item Configuration: no further configuration necessary \ah{? selectExpBeta ...}
+\item Configuration: selectExtBeta can be configured by the \lstinline|BrainExpBeta| parameter from the scoring group.
 \item Code: \lstinline|org.matsim.core.replanning.selectors|
 \end{compactitem}
 
 Note, that the \lstinline|BestScore| should be used with care as it is prone to getting stuck with sub-optimal plans. Plans that are rated bad due to a random fluctuation in one single iteration, due to e.g.,\,a rare traffic jam, will never be tested again. It is therefore recommended to use this in conjunction with \lstinline|SelectRandom| only.
 
 Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. Per default, the plan with the lowest score is removed if the agent's memory is full. In line with the requirements of e.g.,\,simulated annealing approaches, the removal of candidates will be configurable to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This will reduce the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
-\ah{siehe Mail by M. Zilske, August 14 ``[Matsim-devel] custom plan selector for removal'')}
+%\ah{siehe Mail by M. Zilske, August 14 "[Matsim-devel] custom plan selector for removal")}
 
 %##################################################################################################################
 \section{Observational Modules}

@@ -11,37 +11,27 @@ The three main elements of the \gls{matsim} cycle---execution, scoring, and \gls
 These three elements are the main screws to configure \gls{matsim}:
 \begin{description}
 \item[Execution] The \gls{mobsim} can be replaced, either by an internally available alternative, or by a fully external \gls{mobsim}.
-%% In addition, one can insert additional instructions into the program flow of \lstinline$QSim$, which is the default implementation of the \lstinline$Mobsim$.  This is achieved by so-called \lstinline$MobstimListener$s.
 \item[Scoring] The scoring can be replaced, by possibly giving each individual agent a different recipe to compute its score.
 \item[Replanning] Arbitrary implementations of type \lstinline|PlanStrategy| can be added to the \gls{replanning}; these either generate new plans from scratch or by mutating existing ones, or they select between plans.
 \end{description}
 %
-%It is also possible to insert additional material \ah{?} between these elements. This is achieved by so-called \lstinline|ControlerListener|s.
 The simulation's behavior can be further configured by using so-called \lstinline|ControlerListener|s.
 
 The \gls{mobsim} generates a stream of \glspl{event}. These are primarily used in two places:
 \begin{compactitem}
 \item The scoring uses them to track each agent's success at executing its plan, and compute the scoring value based on this.
-\item \lstinline|PlanStrategy| modules use them to build approximate models of the world in which they operate.  For example, the router obtains time-dependent expected link travel times from a \lstinline|TravelTime| object, which in turn listens to link enter and link exit events.
+\item \lstinline|PlanStrategy| modules use them to build approximate models of the world in which they operate. For example, the router obtains time-dependent expected link travel times from a \lstinline|TravelTime| object, which in turn listens to link enter and link exit events.
   
 \end{compactitem}
 %% In consequence, each \lstinline|PlanStrategy| module can use events to obtain information about the world in which the plans of the synthetic travelers need to be improved. 
-Additionally, one can write nearly arbitrary event handlers for analysis.
-%% : If one 
-%% wanted to and if the corresponding information is in the data, then one could extract the average age of all drivers using roads with speed limits 30 or less.
-Such analysis is either possible during the iterations, or after a run by re-playing the events file.
+Additionally, one can write any sort of event handlers for analysis during the iterations, or after a run by evaluating the events file.
 
 Some modules are so large that fully replacing them in order to adapt the simulation system to one's need is too much work. These are, in particular,
 \begin{compactitem}
 \item the \lstinline|QSim|, which is the default implementation of the \lstinline|Mobsim| interface, and
 \item the router.
 \end{compactitem}
-In consequence, it is possible to add %material 
-additional executable code
-%\ah{?} 
-%\kai{ok?}
-%\ah{jau}
-into the execution flow of the \lstinline|QSim| by \lstinline|MobsimListeners| in a similar way as this is possible with the \lstinline|ControlerListeners| mentioned above.
+In consequence, it is possible to add additional executable code into the execution flow of the \lstinline|QSim| by \lstinline|MobsimListeners| in a similar way as this is possible with the \lstinline|ControlerListeners| mentioned above.
 %
 The router, in contrast, is most importantly configured by replacing the definition of the generalized travel cost. 
 
@@ -49,56 +39,44 @@ The router, in contrast, is most importantly configured by replacing the definit
 \section{Extension Points}
 \label{sec:matsim-spi}
 This section describes what could be called the \gls{spi} of \gls{matsim}.
-Historically, the main entry-point for writing a \gls{matsim} \gls{extension} has been to literally extend (in the \gls{java} sense)
-the \lstinline|Controler| class. Essentially, one would override the methods calling the \gls{mobsim}, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. This is now discouraged. While this pattern worked when a each member of the team was working on extending the \gls{matsim} core by a different aspect, it fails when it comes to
-integrating those aspects to a single product: There is nothing one can do with a \lstinline|PublicTransportControler|, an \lstinline|EmissionsControler|, a \lstinline|RoadPricingControler| and an \lstinline|OTFVisControler|, if one wants to combine them to visualize the emissions of buses on toll roads.
+Historically, the main entry-point for writing a \gls{matsim} \gls{extension} has been to literally extend (in the \gls{java} sense) the \lstinline|Controler| class. Essentially, one would override the methods calling the \gls{mobsim}, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. This is now discouraged. While this pattern worked when a each member of the team was working on extending the \gls{matsim} core by a different aspect, it fails when it comes to integrating those aspects to a single product: There is nothing one can do with a \lstinline|PublicTransportControler|, an \lstinline|EmissionsControler|, a \lstinline|RoadPricingControler| and an \lstinline|OTFVisControler|, if one wants to combine them to visualize the emissions of buses on toll roads.
 
 % =========================================================================================
 \subsection{Config Group}
 \label{sec:config}
-The configuration of a \gls{matsimrun} is a grouped list of key-value pairs, stored in \gls{xml} format, often in a file named \lstinline|config.xml| (see Section~\ref{sec:config}).
-Recall that it is grouped and looks, for example, like this:
+The configuration of a \gls{matsimrun} is a grouped list of key-value pairs, stored in \gls{xml} format in the \gls{configfile} (see Section~\ref{sec:config}).
+%Recall that it is grouped and looks, for example, like this:
+%%
+%\begin{lstlisting}
+%<module name="qsim" >
+		%<param name="flowCapacityFactor" value="0.2" />
+		%<param name="storageCapacityFactor" value="0.3" />
+%</module>
 %
-\begin{lstlisting}
-<module name="qsim" >
-		<param name="flowCapacityFactor" value="0.2" />
-		<param name="storageCapacityFactor" value="0.3" />
-</module>
-
-<module name="transit" >
-		<!-- Comma-separated list of transportation modes that are handled as transit. -->
-		<param name="transitModes" value="pt" />
-
-		<!-- Input file containing the transit schedule to be simulated. -->
-		<param name="transitScheduleFile" value="network/transitSchedule.xml.gz" />
-</module>
-\end{lstlisting}
+%<module name="transit" >
+		%<!-- Comma-separated list of transportation modes that are handled as transit. -->
+		%<param name="transitModes" value="pt" />
+%
+		%<!-- Input file containing the transit schedule to be simulated. -->
+		%<param name="transitScheduleFile" value="network/transitSchedule.xml.gz" />
+%</module>
+%\end{lstlisting}
+%\ah{shown earlier}
 
 At runtime, the entire configuration is stored in an instance of \lstinline|Config|, from which instances of \lstinline|ConfigGroup| can be accessed by their name.
-The author of an extension can subclass the \lstinline|ConfigGroup| class to provide named accessors for the parameters.
-There is even a utility class \lstinline|ReflectiveConfigGroup| which you can use if you want to define the mapping of named parameters to accessors using \gls{java} annotations.
+The author of an extension can subclass the \lstinline|ConfigGroup| class to provide named accessors for the parameters. There is even a utility class \lstinline|ReflectiveConfigGroup| which you can use if you want to define the mapping of named parameters to accessors using \gls{java} annotations.
 
 % =========================================================================================
 \subsection{ScenarioElement}
-The object-oriented in-memory database which holds the \lstinline|Person| objects with their plan memories is accessible via the
-\lstinline|Population| interface. The \lstinline|Network| interface gives access to the traffic network graph, consisting of links and nodes.
-There is a \lstinline|TransitSchedule| interface which represents the public transit schedule. Your own modeling tasks may need an additional data container
-like these. We call them scenario elements. The freight carrier population of the freight \gls{extension} described in Section~\ref{sec:carriers} is a typical example. 
+The object-oriented in-memory database which holds the \lstinline|Person| objects with their plan memories is accessible via the \lstinline|Population| interface. The \lstinline|Network| interface gives access to the traffic network graph, consisting of links and nodes. There is a \lstinline|TransitSchedule| interface which represents the public transit schedule. Your own modeling tasks may need an additional data container like these. We call them scenario elements. The freight carrier population of the freight \gls{extension} described in Section~\ref{sec:carriers} is a typical example. 
 
-\lstinline|Scenario| is the interface which ties all scenario elements together. You can add your own named scenario element
-to the \lstinline|Scenario| at startup, for example in a \lstinline|StartupListener|. All standard scenario elements are populated
-from \gls{xml} files at startup, but your own scenario elements could just as well be interfaces to an external relational database.
+\lstinline|Scenario| is the interface which ties all scenario elements together. You can add your own named scenario element to the \lstinline|Scenario| at startup, for example in a \lstinline|StartupListener|. All standard scenario elements are populated from \gls{xml} files at startup, but your own scenario elements could just as well be interfaces to an external relational database.
 
 % =========================================================================================
 \subsection{ControlerListener}
 \label{sec:controlerListener-extension-point}
-\label{sec:controlerextension}
-\lstinline|Controler| remains the main user-facing class of \gls{matsim}, but please do not subclass it. Rather, use its setter methods to plug in your own code.
-\lstinline|ControlerListeners| are called at the transitions of the \gls{matsim} cycle (Figure~\ref{fig:matsimcycle}), in undefined order.
-Thus, \lstinline|AControlerListener| may only rely on the computation of \lstinline|BControlerListener| if \lstinline|BControlerListener|
- makes that computation in an earlier transition. For instance, if \lstinline|BControlerListener| is a \lstinline|StartupListener|
- and loads data into a \lstinline|Map| on start-up, \lstinline|AControlerListener| can be an \lstinline|IterationStartsListener| and use that \lstinline|Map|.
- But do not write two \lstinline|IterationStartsListeners|, where the first puts some data into a \lstinline|Map| and the second expects to find it there---they may be called in any order.
+% \label{sec:controlerextension} \ah{double label working?}
+\lstinline|Controler| remains the main user-facing class of \gls{matsim}, but please do not subclass it. Rather, use its setter methods to plug in your own code. \lstinline|ControlerListeners| are called at the transitions of the \gls{matsim} cycle (Figure~\ref{fig:matsimcycle}), in undefined order. Thus, \lstinline|AControlerListener| may only rely on the computation of \lstinline|BControlerListener| if \lstinline|BControlerListener| makes that computation in an earlier transition. For instance, if \lstinline|BControlerListener| is a \lstinline|StartupListener| and loads data into a \lstinline|Map| on start-up, \lstinline|AControlerListener| can be an \lstinline|IterationStartsListener| and use that \lstinline|Map|. But do not write two \lstinline|IterationStartsListeners|, where the first puts some data into a \lstinline|Map| and the second expects to find it there---they may be called in any order.
 
 % =========================================================================================
 \subsection{Events}
@@ -114,139 +92,85 @@ The \gls{mobsim} moves the agents around in the virtual world according to their
 \item An agent starts an activity
 \end{compactitem}
 %
-Each event has a timestamp, a type, and additional attributes required to describe the action like a vehicle id, a link id, an activity type or other data. In theory, it should be possible to replay the \gls{mobsim} just by the information stored in the events. While a plan 
-describes an agent's intention, the stream of events describes how the simulated day actually was.
+Each event has a timestamp, a type, and additional attributes required to describe the action like a vehicle id, a link id, an activity type or other data. In theory, it should be possible to replay the \gls{mobsim} just by the information stored in the events. While a \gls{plan} describes an agent's intention, the stream of events describes how the simulated day actually was.
 
 As the events are so basic, the number of events generated by a \gls{mobsim} can easily reach a million or more, with large simulations even generating more than a billion events. But as the events describe all the details from the execution of the plans, it is possible to extract mostly any kind of aggregated data one is interested in. Practically all analyses of \gls{matsim} simulations make use of events to calculate some data. Examples of such analyses are the average duration of an activity, average trip duration or distance, mode shares per time window, number of passengers in specific transit lines and many more.
 
-The scoring of the executed plans makes use of events to find out how much time agents spent at activities or for traveling. Some \gls{replanning} modules might make use of events as well: The router for example can use the information contained in events to figure out what links are jammed at certain times and route agents around that jam when creating new plans.
+The scoring of the executed plans makes use of events to find out how much time agents spent at activities or for traveling. Some \gls{replanning} modules might make use of \glspl{event} as well: The router for example can use the information contained in events to figure out what links are jammed at certain times and route agents around that jam when creating new plans.
 
 % -----------------------------------------------------------------------------
 \subsubsection{Handling Events}
-MATSim extensions can watch the \gls{mobsim} by interpreting the stream of \glspl{event}. This is done by implementing the \lstinline|EventHandler| interface and registering the implementation with the framework. The lifecycle of an \lstinline|EventHandler| can be chosen by the developer. Normally, an \lstinline|EventHandler| lives as long as the simulation run.
+\gls{matsim} extensions can watch the \gls{mobsim} by interpreting the stream of \glspl{event}. This is done by implementing the \lstinline|EventHandler| interface and registering the implementation with the framework. The lifecycle of an \lstinline|EventHandler| can be chosen by the developer. Normally, an \lstinline|EventHandler| lives as long as the simulation run.
 It is notified before the beginning of each new iteration so that its state can be reset to listen to a new iteration. This pattern can be used to collect information over all iterations. But if the purpose of an \lstinline|EventHandler| is to make a calculation based on one single iteration, it may be more natural to create a new \lstinline|EventHandler| instance for each iteration, query it for its result and discard it after the iteration finishes. This can be done in a \lstinline|ControlerListener|.
 
 % -----------------------------------------------------------------------------
 \subsubsection{Producing Events}
-You can extend the \gls{matsim} event model by extending the \lstinline|Event| class to define your own event types.
-Events can be produced from all places in code which are executed during the running \gls{mobsim},
-and in particular from other \lstinline|EventHandler| instances. Assume for example you want to analyze
-left-turns. A good starting point would be to specify a \lstinline|LeftTurnEvent| class, and produce
-an instance of this class whenever a vehicle does a left-turn. You may do this from a class which is a 
-\lstinline|LinkLeaveEventHandler| as well as a \lstinline|LinkEnterEventHandler|. 
-A \lstinline|LinkLeaveEvent| is produced every time a vehicle leaves a road segment, and a \lstinline|LinkEnterEvent| is
-produced when it enters the next road segment. Pairing each \lstinline|LinkLeaveEvent| with the next \lstinline|LinkEnterEvent| for
-the same vehicle gives a model for a vehicle crossing a node. At this point, your code would look at the road
-network model to determine if this was a left-turn, and if so, produce a \lstinline|LeftTurnEvent|.
+One can extend the \gls{matsim} event model by extending the \lstinline|Event| class to define own event types. \Glspl{event} can be produced from all places in code which are executed during the running \gls{mobsim}, and in particular from other \lstinline|EventHandler| instances. Assume for example you want to analyze left-turns. A good starting point would be to specify a \lstinline|LeftTurnEvent| class, and produce an instance of this class whenever a vehicle does a left-turn. You may do this from a class which is a \lstinline|LinkLeaveEventHandler| as well as a \lstinline|LinkEnterEventHandler|. 
+A \lstinline|LinkLeaveEvent| is produced every time a vehicle leaves a road segment, and a \lstinline|LinkEnterEvent| is produced when it enters the next road segment. Pairing each \lstinline|LinkLeaveEvent| with the next \lstinline|LinkEnterEvent| for the same vehicle gives a model for a vehicle crossing a node. At this point, your code would look at the road network model to determine if this was a left-turn, and if so, produce a \lstinline|LeftTurnEvent|.
     
-To produce a custom \lstinline|Event| which is not triggered by another Event, you can implement the
-\lstinline|MobsimListener| interface. A \lstinline|MobsimListener| is called in each simulation timestep.
-For example, if you wanted to include a model of weather conditions into the simulation, you could use this
-extension point to decide in every time step if it should start or stop raining on a certain road segment, 
-and produce custom events for this. You would then calculate rain exposure per agent by adding an \lstinline|EventHandler| which 
-handles \lstinline|LinkEnterEvent|, \lstinline|LinkLeaveEvent| and your custom rain events. 
+To produce a custom \gls{event} which is not triggered by another \gls{event}, you can implement the \lstinline|MobsimListener| interface. A \lstinline|MobsimListener| is called in each simulation timestep.
+For example, if you wanted to include a model of weather conditions into the simulation, you could use this extension point to decide in every time step if it should start or stop raining on a certain road segment, and produce custom events for this. You would then calculate rain exposure per agent by adding an \lstinline|EventHandler| which handles \lstinline|LinkEnterEvent|, \lstinline|LinkLeaveEvent| and your custom rain events. 
 
-Note that \lstinline|EventHandler| and \lstinline|MobsimListener| instances may be run in parallel by
-the framework. It is generally not safe to share state between them. The framework guarantees that 
-the methods of an \lstinline|EventHandler| instance are called sequentially, but two different instance
-may run on different threads of execution. Access to shared data must be synchronized externally. Whenever
-possible, different \lstinline|EventHandler| instances should only communicate through events.
+Note that \lstinline|EventHandler| and \lstinline|MobsimListener| instances may be run in parallel by the framework. It is generally not safe to share state between them. The framework guarantees that 
+the methods of an \lstinline|EventHandler| instance are called sequentially, but two different instance may run on different threads of execution. Access to shared data must be synchronized externally. Whenever possible, different \lstinline|EventHandler| instances should only communicate through events.
 
 % =========================================================================================
 \subsection{TripRouter}
 \label{sec:router-extension-point}
-A \lstinline{TripRouter} is a service object providing methods to generate \emph{trips} between locations,
-given a (main) mode, a departure time and a \lstinline{Person}.
-A trip is a sequence of plan elements representing a movement.
-It typically consists of a single \lstinline{Leg},
-or of a sequence of \lstinline{Leg}s with "\emph{stage activities}" in between.
-For instance, public transport trips
-contain \lstinline{pt interaction} activities,
-representing changes of vehicles in public transport trips.
+A \lstinline{TripRouter} is a service object providing methods to generate \emph{trips} between locations, given a (main) mode, a departure time and a \lstinline{Person}. A trip is a sequence of plan elements representing a movement. It typically consists of a single \glspl{leg} (\lstinline{Leg} objects), or of a sequence of \glspl{leg} with "\emph{stage activities}" in between. For instance, public transport trips contain \lstinline{pt interaction} activities, representing changes of vehicles in public transport trips.
 
 % ----------------------------------------------------------------
 \subsubsection{Using the Router}
 A \lstinline{TripRouter} instance provides a few methods to work with trips, namely
 \begin{compactitem}
-	\item compute a route for a given mode and \gls{od} pair, for a \lstinline{Person} with a specific departure time
-	\item identify the \emph{main mode} of a trip. For instance, a trip composed of several \emph{walk} and \emph{pt} \lstinline{Leg}s should be identified as a public transport trip.
-	\item identify which activities are \emph{stage activities}, and, by extension,
-		identify the trips in the plan: a trip is the longest sequence of consecutive
-		\lstinline{Leg}s and \emph{stage activities}
+	\item Compute a route for a given mode and \gls{od} pair, for a \lstinline{Person} with a specific departure time
+	\item Identify the \emph{main mode} of a trip. For instance, a trip composed of several \emph{walk} and \emph{pt} \glspl{leg} should be identified as a public transport trip.
+	\item Identify which activities are \emph{stage activities}, and, by extension, identify the trips in the plan: a trip is the longest sequence of consecutive \lstinline{Leg}s and \emph{stage activities}
 \end{compactitem}
 
-Please check the documentation of the \lstinline{TripRouter} class  (see \url{http://matsim.org/javadoc} $\to$ core) for more details and pointers to examples.
+Please check the documentation of the \lstinline{TripRouter} class (see \url{http://matsim.org/javadoc} $\to$ core) for more details and pointers to examples.
 
 % ----------------------------------------------------------------
 \subsubsection{Configuring the Router}
-The \lstinline{TripRouter} computes routes by means of \lstinline{RoutingModule}
-instances, one of which is associated with each mode.
-A \lstinline{RoutingModule} defines the way a trip is computed,
+The \lstinline{TripRouter} computes routes by means of \lstinline{RoutingModule} instances, one of which is associated with each mode. A \lstinline{RoutingModule} defines the way a trip is computed,
 and is able to identify the \emph{stage activities} it generates.
 
-The association between modes and \lstinline{RoutingModule} instances is configurable.
-You can even provide you own \lstinline{RoutingModule} implementations.
-Do this if your use-case requires custom routing logic, for instance if you
-want to implement your own complex travel mode.
+The association between modes and \lstinline{RoutingModule} instances is configurable. You can even provide you own \lstinline{RoutingModule} implementations. Do this if your use-case requires custom routing logic, for instance if you want to implement your own complex travel mode.
 
 Please check the documentation of the \lstinline{TripRouter} class  (see \url{http://matsim.org/javadoc} $\to$ core) for more details and pointers to examples.
 
 % =========================================================================================
 \subsection{Mobsim}
 \label{sec:mobsim-extension-point}
-Besides adding \lstinline|MobsimListener| implementations to enrich the standard \gls{mobsim}, it is also possible to replace
-the entire \gls{mobsim} by a custom implementation. A \gls{mobsim} is basically
-a \lstinline|Runnable| which is supposed to take a \lstinline|Scenario| and
-produce a stream of \lstinline|Events|.
-This allows you to use the co-evolutionary framework of \gls{matsim} while replacing the traffic model itself.
-Your implementation need not be written in \gls{java}. The framework includes a helper class to call an arbitrary
-executable which is then expected to write its \lstinline|Event| stream into a file. 
+Besides adding \lstinline|MobsimListener| implementations to enrich the standard \gls{mobsim}, it is also possible to replace the entire \gls{mobsim} by a custom implementation. A \gls{mobsim} is basically
+a \lstinline|Runnable| which is supposed to take a \gls{scenario} and produce a stream of \glspl{event}. This allows you to use the co-evolutionary framework of \gls{matsim} while replacing the traffic model itself. Your implementation need not be written in \gls{java}. The framework includes a helper class to call an arbitrary executable which is then expected to write its \gls{event} stream into a file. 
 
 % =========================================================================================
 \subsection{PlanStrategy}
 \label{sec:replanning-extension-point}
-Replanning in \gls{matsim} is specified by defining a set of weighted strategies. In each
-iteration, each agent makes a draw from this set and executes the selected strategy. The
-strategy specifies how the agent changes its behavior. Most generally, it is an operation on the plan memory
-of an agent: It adds and/or removes plans, and it marks one of these plans as selected.
+Replanning in \gls{matsim} is specified by defining a set of weighted strategies. In each iteration, each agent makes a draw from this set and executes the selected strategy. The strategy specifies how the agent changes its behavior. Most generally, it is an operation on the plan memory of an agent: It adds and/or removes plans, and it marks one of these plans as selected.
 
-Strategies are implementations of the \lstinline|PlanStrategy| interface. 
-The two most common cases are:
+Strategies are implementations of the \lstinline|PlanStrategy| interface. The two most common cases are:
 \begin{compactitem}
 \item Pick one plan from memory according to a specified choice algorithm.
-\item Pick one plan from memory
-at random, copy it, mutate it in some specific aspect, add the mutated plan to the plan memory, and
-mark this new plan as selected.
+\item Pick one plan from memory at random, copy it, mutate it in some specific aspect, add the mutated plan to the plan memory, and mark this new plan as selected.
 \end{compactitem}
 
-The framework provides a helper class which can be used to implement both of these strategy templates. 
-The helper class delegates to an implementation of \lstinline|PlanSelector|, which selects a plan from memory, 
-and to zero, one or more implementations of \lstinline|PlanStrategyModule|, which mutate a copy of the selected plan.
+The framework provides a helper class which can be used to implement both of these strategy templates. The helper class delegates to an implementation of \lstinline|PlanSelector|, which selects a plan from memory, and to zero, one or more implementations of \lstinline|PlanStrategyModule|, which mutate a copy of the selected plan.
 
-The maximum size of the plan memory per agent is a configurable parameter of \gls{matsim}. Independent
- of what the selected \lstinline|PlanStrategy| does, the framework will remove plans in excess
- of the maximum from the plan memory. The algorithm by which this is done is another implementation
- of \lstinline|PlanSelector| and can be configured. 
+The maximum size of the plan memory per agent is a configurable parameter of \gls{matsim}. Independent of what the selected \lstinline|PlanStrategy| does, the framework will remove plans in excess of the maximum from the plan memory. The algorithm by which this is done is another implementation of \lstinline|PlanSelector| and can be configured. 
 
 The four most commonly used strategies shipped with \gls{matsim} are:
 \begin{compactitem}
 \item Select from the existing plans at random, which are weighted by their current score.
 \item Mutate a random existing plan by re-routing all trips.
-\item Mutate a random existing plan by randomly shifting all activity end times backwards or forwards and re-routing 
-all trips.
+\item Mutate a random existing plan by randomly shifting all activity end times backwards or forwards and re-routing all trips.
 \item Mutate a random existing plan by changing the mode of transport and re-routing one or more trips or tours.
 \end{compactitem}
 
-Routes are computed based on the traffic conditions of the previous iteration, which are measured
-by means of an \lstinline|EventHandler|. Using the same pattern, your own \lstinline|PlanStrategy| can use any data which
-can be computed from the mobility simulation. The source code of the standard \lstinline|PlanStrategy| implementations can be 
-used as a starting point for implementing custom behavior.
+Routes are computed based on the traffic conditions of the previous iteration, which are measured by means of an \lstinline|EventHandler|. Using the same pattern, your own \lstinline|PlanStrategy| can use any data which can be computed from the mobility simulation. The source code of the standard \lstinline|PlanStrategy| implementations can be used as a starting point for implementing custom behavior.
 
-Re-routing as a building block of many \gls{replanning} strategies is a complex operation by itself. It can
-even be recursive: For example, finding a public transport route may consist of selecting access and egress stations as
-sub-destination, finding a scheduled connection between them, and finding pedestrian routes between the
-activity locations and the stations. With the \lstinline|TripRouter| interface, the framework includes high-level 
-support for assembling complex modes of transport from building blocks provided by other modules or the core. 
+Re-routing as a building block of many \gls{replanning} strategies is a complex operation by itself. It can even be recursive: For example, finding a public transport route may consist of selecting access and egress stations as sub-destination, finding a scheduled connection between them, and finding pedestrian routes between the activity locations and the stations. With the \lstinline|TripRouter| interface, the framework includes high-level support for assembling complex modes of transport from building blocks provided by other modules or the core. 
   
 % =========================================================================================
 \subsection{Scoring}

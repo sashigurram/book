@@ -25,10 +25,11 @@ If you prefer to use the more up to date nightly builds, you need to manually do
 % ================================================================================================
 \subsection{Running MATSim}
 \label{sec:runexample}
-
 \kai{note: inzwischen kann man auch einfach auf das matsim jar draufklicken. :--)  Das sollten wir unbedingt nochmal testen, und dann beschreiben.  (Geht nicht mit dem derzeitigen release 6, aber im HEAD und nightly builds geht es schon.)}
 
-\gls{matsim} does not provide a graphical user interface, thus, you need to be able to handle and access a command line tool. In Linux or Mac OS X, this is typically a Terminal application, and in Windows, the Power Shell or Command Prompt.
+\ah{hab den Text entsprechend angepasst.}
+
+At the time of writing this book, the nightly built \gls{matsim} \gls{jar} file is executable by double-clicking. A minimal \gls{gui} as shown in Figure~\ref{fig:matsimgui} opens and the \gls{matsimrun} can be configured and started. For the release 0.6. \gls{matsim} does not provide a \gls{gui}, thus, you need to be able to handle and access a command line tool. In Linux or Mac OS X, this is typically a Terminal application, and in Windows, the Power Shell or Command Prompt.
 
 On the command prompt type the following command as one line, but substitute the correct paths: \\
 \lstinline|java -Xmx512m -cp /path/to/matsim.jar org.matsim.run.Controler /path/to/config.xml|
@@ -50,6 +51,15 @@ Such a command exists of multiple parts:
 \item \lstinline|org.matsim.run.Controler| specifies which class (think of an "entry point") should be run. In most cases, the default \gls{matsim} \lstinline|Controler| is the class you will need to run simulations.
 \item \lstinline|/path/to/config.xml| tells \gls{matsim} which \gls{configfile} is to be used.
 \end{compactitem}
+
+% ----------
+\createfigure%
+{Minimal MATSim GUI}%
+{Minimal MATSim GUI}%
+{\label{fig:matsimgui}}%
+{\includegraphics[width=0.8\textwidth, angle=0]{using/figures/matsimgui.png}}%
+{}
+% ----------
 
 % ================================================================================================
 \subsection{Configuring MATSim}
@@ -375,17 +385,10 @@ It starts with a header containing general descriptive information about the cou
 % ===============================================================================================
 \subsection{Typical Output Data}
 \label{sec:outputdata}
-\gls{matsim} creates a bunch of output data, which can be used to analyze the results but also to monitor the correct working of the current simulation setup. 
-A \gls{matsimrun} contains a configurable number of \glspl{iteration}. \ah{vielleicht muss das noch an einen anderen Ort.}
-Some of the files summarize the complete run, while others are created for a specific iteration only. 
-The first ones go directly to the top level of the output folder, which can be specified in the \lstinline|controler| section of the config file.
-The latter ones are stored in iteration-specific folders \lstinline|ITERS.it{iteration number}| continuously created in the output folder.
-For some files (typically for the large ones, such as the population) the output frequency can be specified in the config file. They go to the respective iteration folder.
-The files, which summarize the complete run, are build-up on the fly, i.e.,\,after every iteration the currently computed iteration values are stored, such that a continuous monitoring of the run is possible. 
-There are data, that are created by default (such as the score files) and there are ones, which need to be triggered by a respective configuration file section (such as count data).
+\gls{matsim} creates a bunch of output data, which can be used to analyze the results but also to monitor the correct working of the current simulation setup. Some of the files summarize a complete \gls{matsimrun}, while others are created for a specific \gls{iteration} only. The first ones go directly to the top level of the output folder, which can be specified in the \lstinline|controler| section of the config file. The latter ones are stored in iteration-specific folders \lstinline|ITERS.it{iteration number}| continuously created in the output folder. For some files (typically for the large ones, such as the population) the output frequency can be specified in the \gls{configfile}. They go to the respective iteration folder. The files, which summarize the complete \gls{matsimrun}, are build-up on the fly, i.e.,\,after every iteration the currently computed iteration values are stored, such that a continuous monitoring of the run is possible. There are data, that are created by default (such as the score files) and there are ones, which need to be triggered by a respective configuration file section (such as count data).
 
-\kai{Sollten wir (1) den Unterschied zwischen ``main'' und ``ITERS'' directory beschreiben, und (2) darauf hinweisen, wo die folgenden Dateien jeweils sind?}
-\ah{sollte jetzt erledigt sein}
+%\kai{Sollten wir (1) den Unterschied zwischen ``main'' und ``ITERS'' directory beschreiben, und (2) darauf hinweisen, wo die folgenden Dateien jeweils sind?}
+%\ah{sollte jetzt erledigt sein}
 
 The following output files are continuously build-up to summarize the complete run.
 
@@ -404,9 +407,8 @@ Leg travel distance statistics are comparable to the score statistics, but inste
 \paragraph{Stopwatch:}
 The stopwatch file (\lstinline|stopwatch.txt|) contains the durations of actions like the replanning or the execution of the mobility simulation for every iteration. This data might be helpful for performance analyses (e.g.,\,how long does the replanning take compared to the mobility simulation?).
 
-
-\kai{``run'' vs ``iterations'': Wir benutzen normalerweise die Semantik, dass ein ``run'' die Summe aller ``iterations'' ist.  Dann wäre das oben ``Once per iteration''.  Oder ``At the end of each run'', obwohl das technisch nicht richtig ist, weil es tatsächlich am Ende einer jeden Iteration neu erzeugt wird; so kann man alles bereits während der Iterationen mitverfolgen.}
-\ah{sollte jetzt erledigt sein}
+%\kai{``run'' vs ``iterations'': Wir benutzen normalerweise die Semantik, dass ein ``run'' die Summe aller ``iterations'' ist.  Dann wäre das oben ``Once per iteration''.  Oder ``At the end of each run'', obwohl das technisch nicht richtig ist, weil es tatsächlich am Ende einer jeden Iteration neu erzeugt wird; so kann man alles bereits während der Iterationen mitverfolgen.}
+%\ah{sollte jetzt erledigt sein}
 
 The following output files are created for specific iterations:
 
@@ -441,7 +443,6 @@ The \gls{matsim} release is shipped with an example scenario named \lstinline|eq
 %% or trips with taxi mode is also provided (\lstinline|plans-w-taxi.xml|). 
 
 %% A tolls file can be used for road pricing scenarios not discussed here (\lstinline|toll.xml|).
-
 
 \kai{Habe da neulich, als Resultat einer Diskussion, etwas ausgedünnt.  Müssen wir ggf.\ anpassen, aber m.E.\ stimmt es so nun.}
 
@@ -523,7 +524,7 @@ In several input files, you need to specify coordinates, e.g.,\,for the nodes of
 
 Many countries and regions have custom coordinate system defined, optimized for usages in their appropriate areas. It might be best to ask some \gls{gis} specialists in your region of interest what the most commonly used local coordinate system is and use that as well for your data.
 
-If you don not have any clue about what coordinate system is used in your region, it might be best to use the Universal Transverse Mercator coordinate system. This coordinate system divides the world into multiple bands, each six degrees width and separated into a northern and southern part, which it calls UTM zones. For each zone, an optimized coordinate system is defined. Choose the \gls{utm} zone which covers your region (Wikipedia has a nice map showing the zones) and use its coordinate system. 
+If you don not have any clue about what coordinate system is used in your region, it might be best to use the \gls{utm} coordinate system. This coordinate system divides the world into multiple bands, each six degrees width and separated into a northern and southern part, which it calls \gls{utm} zones. For each zone, an optimized coordinate system is defined. Choose the \gls{utm} zone which covers your region (Wikipedia has a nice map showing the zones) and use its coordinate system. 
 
 \paragraph{Telling MATSim about Your Coordinate System:}
 In some places, \gls{matsim} requires to know which coordinate system your data is in. You have multiple ways to specify the coordinate system you use. The easiest one is to use the so-called "\gls{epsg} codes". Most of the commonly used coordinate systems got standardized and numbered. The \gls{epsg} code uniquely identifies a coordinate system and can be directly used by \gls{matsim}. As an alternative, \gls{matsim} can also parse the description of a coordinate system in the so-called \gls{wkt} format. As the \gls{wkt} format is much more error prone it is suggested to use \gls{epsg} codes whenever possible.
