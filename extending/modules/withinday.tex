@@ -200,17 +200,17 @@ MATSim provides infrastructure for both approaches. The plan-based approach curr
 % ============================================================================================
 \subsection{Implementation Alternative 1: Plan-Based Implementation}
 \label{sec:impl-plan-based}
-\kai{Christoph, die ``mnote'' sind für mich, damit ich einen schnellen Überblick habe, was Du geschrieben hast.  Damit ich das nicht wiederhole, sondern mich ggf.\ darauf beziehe.}
-
-\mnote{day-to-day loop no longer necessary}
+%\kai{Christoph, die ``mnote'' sind für mich, damit ich einen schnellen Überblick habe, was Du geschrieben hast.  Damit ich das nicht wiederhole, sondern mich ggf.\ darauf beziehe.}
+%
+%\mnote{day-to-day loop no longer necessary}
 
 When adding within-day replanning to \gls{matsim}, its iterative loop (see Figure~\ref{fig:matsimcycle}) has to be adapted as shown in Figure~\ref{fig:labelWithinDayMATSimLoop}. On one hand, the additional \emph{within-day replanning} module is added, which interacts with the \gls{mobsim}. On the other hand, multiple iterations are only necessary if a combined simulation approach is used.
-
-\mnote{implementation as MobsimEngine ... tracking agents and plans}
+%
+%\mnote{implementation as MobsimEngine ... tracking agents and plans}
 
 The implementation is realized as so-called \lstinline{MobsimEngine} which can be plugged into the \emph{QSim}. In every simulated time step, the \emph{QSim} iterates over all registered \lstinline{MobsimEngines} and allows them to simulate the current time step. Besides simulation of the traffic flows, those engines are also able to let agents start or end activities. The engine containing the within-day replanning logic (called \lstinline{WithinDayEngine}) does not simulate traffic flows but tracks agents and adapts their plans. Doing so is separated into two steps. First, agents whose plans have to be adapted in the current time step are identified. In a second step, the adaption of their plans is performed. 
-
-\mnote{register identifiers with replanners, replanners with the within-day engine}
+%
+%\mnote{register identifiers with replanners, replanners with the within-day engine}
 
 Figure~\ref{fig:labelWithinDayEngine} shows the structure of the \lstinline{WithinDayEngine}. Multiple \lstinline{Replanners} can be registered to the engine. Each \lstinline{Replanner} represents a unique replanning strategy like re-routing or time mutation and uses a set of \lstinline{Identifiers} which communicate with agents and select those agents who are given the opportunity to adapt their plans. An \lstinline{Identifier} can be seen as an information-distributing unit, like a radio station or a policeman. Therefore, not every \emph{Identifier} communicates with all agents. For example, agents at home will probably listen to the radio, but agents walking in the park will not. Each \lstinline{Identifier} returns a list of agents to its superior \lstinline{Replanner}, which then adapts those agents' plans.
 
@@ -222,21 +222,21 @@ Figure~\ref{fig:labelWithinDayEngine} shows the structure of the \lstinline{With
 {\includegraphics[width=8.0cm, angle=0]{extending/figures/WithinDayReplanning/ReplanningManager}}%
 {}
 %---------------------------------------------------------------------
-
-\mnote{more about itentifiers and replanners}
+%
+%\mnote{more about itentifiers and replanners}
 
 There is a division of responsibilities between \lstinline{Replanners} and \lstinline{Identifiers}. The first ones are responsible for adapting the agents' plans but they should not check whether an agent should be replanned or not. If, for example, a \lstinline{Replanner} updates an agent's route, it has to be ensured by the \lstinline{Identifiers} that only agents who are currently performing a leg are replanned. In turn, \lstinline{Identifiers} should select agents who have to be replanned but should not change their plans. As a result of this division, the often time consuming replanning of the agents' plans can be performed using parallel threads which leads to an almost linear speed-up. In general, simulation results do not depend on the order in which agents are replanned. \emph{Replanners} which use random numbers are a special case. 
 %They have to ensure that 
 In the present implementation, their \emph{random number generator} is re-initialized for every replanned agent using a deterministic value (e.g.,\,a combination of the agent's Id and the current time step). On one hand, this ensures that an agent's decisions can be reproduced even when the global sequence of random numbers changes. On the other hand, the simulation outcomes do not change if the number of threads used for the replanning is changed.
 % \kai{Christoph, ist es das?  ``have to'' (wie Du es vorher hattest), erscheint mir auf jeden Fall zu stark.  Oder hat es etwas mit multi-threading zu tun?}
-
-\mnote{identifiers run sequentially}
+%
+%\mnote{identifiers run sequentially}
 
 Running the \lstinline{Identifier(s)} to select those agents who have to adapt their plans is performed sequentially. On one hand, an \lstinline{Identifier}'s runtime is typically very short and therefore no significant performance losses are expected. On the other hand, 
 %it is a robust design which 
 this makes the design robust so it cannot produce race conditions which could occur if multiple instances of an \lstinline{Identifier} run concurrently. An example would be an \lstinline{Identifier} which selects agents on household level, i.e.,\,if a member of a household is identified, also all other members are added to the list of agents who have to be replanned. In an approach with parallel running instances of an \lstinline{Identifier}, an instance could identify member A of a household while concurrently another instance could identify member B of the same household. As a result, the household's members would be twice in the list of agents to be replanned---once added by each \lstinline{Identifier} instance.
-
-\mnote{different basic replanners for current/future trips/acts}
+%
+%\mnote{different basic replanners for current/future trips/acts}
 
 \lstinline{Replanner} implementations are available for every possible basic change of an agent's scheduled daily plan. Any trips and activities can be adapted, although some replanning operations are not available when trip or activity has already been started. Possible adaptations are:
 \begin{compactitem}
@@ -247,8 +247,8 @@ this makes the design robust so it cannot produce race conditions which could oc
 \end{compactitem}
 %
 For complex plan adaptations, those basic \lstinline{Replanners} can be combined. If, for example, an agent currently performing a trip changes the destination of its next activity, routes of the current and next trip have to be adapted.
-
-\mnote{different basic identifiers}
+%
+%\mnote{different basic identifiers}
 
 Additionally, four basic \lstinline{Identifiers} have been implemented so far. They identify agents, which are...
 \begin{compactitem}
@@ -257,16 +257,16 @@ Additionally, four basic \lstinline{Identifiers} have been implemented so far. T
     \item performing a trip.
     \item performing a trip and are going to move to another link.
 \end{compactitem}
-
-\mnote{AgentFilters (e.g.,\,for spatial areas)}
+%
+%\mnote{AgentFilters (e.g.,\,for spatial areas)}
 
 Often, identifiers have to handle only a subset of the population, e.g.~only male agents or agents which are currently performing a car trip. In order to prevent that the same functionality has to be implemented multiple times, so-called \lstinline{AgentFilters} are introduced. Their task is to remove agents which do not meet the filter criteria from a set of agents. Using \lstinline{AgentFilters} not only avoids duplicated code but can also reduce the computation effort. An example would be two \lstinline{Identifiers} which should identify only agents currently traveling in a certain part of the network. Without \lstinline{AgentFilters}, each of them would have to track all traveling agents and their current positions. When this functionality is moved to an \lstinline{AgentFilter}, the two \lstinline{Identifiers} can share a single instance of that filter.
-
-\mnote{filters: simple and re-usable; identifiers: complex and include decision-making}
+%
+%\mnote{filters: simple and re-usable; identifiers: complex and include decision-making}
 
 Basically, simple and re-usable functionality should be implemented as \lstinline{AgentFilters} while more complex and/or decision making functionality should be part of an \lstinline{Identifier}. Again, this can be depicted with an example, e.g.,\,a scenario in which the search for a parking space is modeled. A filter can be utilized to take only agents into account which are currently traveling by car. The \lstinline{Identifier} solves the more complex tasks such as deciding when the agent starts its search or selecting the searching strategy to be applied.
-
-\mnote{basic AgentFilters}
+%
+%\mnote{basic AgentFilters}
 
 Three basic \lstinline{AgentFilters} have been implemented so far. They filter agents which are not...
 \begin{compactitem}
@@ -274,8 +274,8 @@ Three basic \lstinline{AgentFilters} have been implemented so far. They filter a
     \item currently using a transport mode included in a given set.
     \item currently located on a link included in a predefined set.
 \end{compactitem}
-
-\mnote{observers}
+%
+%\mnote{observers}
 
 Besides the logic that identifies agents and adapts their plans, another important part of the within-day replanning framework is code that continuously collects information and provides it to the \lstinline{Identifiers} which decide based on that data whether agents are replanned or not. In a time step based approach---as it is realized by the \emph{QSim}---collecting, analyzing and aggregating data as well as providing it can be easily realized. Figure~\ref{fig:labelQSimTimeStep} shows the structure of a \emph{QSim's} time step. Each time step is separated into three phases---\lstinline{before time step}, \lstinline{do sim step} and \lstinline{after time step}. During the \lstinline{do sim step} phase, all registered \lstinline{MobsimEngines} simulate the current time step. The \lstinline{before time step} and \lstinline{after time step} phases allow to execute code before respectively after the simulation of the current time step. A class can collect data like link travel times during the \lstinline{do sim step} phase. Afterward, the collected data can be analyzed and aggregated in the \lstinline{after time step} phase. In the next time step, the \lstinline{WithinDayEngine's Identifiers} can use that data for their decisions. The \lstinline{WithinDayEngine} is always the first \lstinline{MobsimEngine} which executes its \lstinline{doSimStep} method. This ensures that no agent has changed its state since the \lstinline{after time step} phase of the previous time step. As a result, the \lstinline{Identifiers} make their decisions on %actual 
 current data.
@@ -288,8 +288,8 @@ current data.
 {\includegraphics[width=8.0cm, angle=0]{extending/figures/WithinDayReplanning/QSimTimeStep}}%
 {}
 %---------------------------------------------------------------------
-
-\mnote{example: TravelTimeCollector}
+%
+%\mnote{example: TravelTimeCollector}
 
 An example for such a class is the so-called \lstinline{TravelTimeCollector}. Its task is to provide actual link travel times to the \lstinline{Replanners} by collecting and averaging travel times of agents that have recently passed a link during a given time span. A typical time span is 15\,minutes; older link travel times are ignored. Duration of the specific time span has an important impact on travel times reported to the \lstinline{Replanners}. On one hand, significant changes in link travel times will be communicated very slowly, if the time span is too long. On the other hand, a too short duration will overrate outliers.
 
@@ -305,16 +305,16 @@ Because of the abandonment of such features, it is very robust, even in scenario
 {\includegraphics[width=8.0cm, angle=0]{extending/figures/WithinDayReplanning/TravelTimeCollector}}%
 {}
 %---------------------------------------------------------------------
-
-\mnote{matsim person vs.\ matsim agent}
+%
+%\mnote{matsim person vs.\ matsim agent}
 
 The current \gls{matsim} code differentiates between \lstinline$Person$ and \lstinline$MobsimAgent$.  
 %
 \lstinline$Person$ can be seen as a very simple Q-learning entity, possessing multiple \lstinline$Plan$s ("actions"), each together with an expected score which is updated every time the plan is tried out. In consequence, a \lstinline$Person$ is persistent over the iterations; in fact, the internal state of each \lstinline$Person$ is written to file at the end of the iterations.
 %
 \lstinline$MobsimAgent$, in contrast, is instantiated every time the \lstinline$QSim$ is called, and does not exist beyond the running time of the \lstinline$QSim$. A \lstinline$MobsimAgent$ is essentially reactive, being queried by the framework about decisions when approaching intersections, arrival points, or public transit stops. In the standard implementation, these queries are answered by the plan, but other implementations can be used, and/or additional \lstinline$MobsimAgent$s can be added which do not correspond to \lstinline$Person$s.
-
-\mnote{Which plan to modify}
+%
+%\mnote{Which plan to modify}
 
 This leads to the question if within-day adaptations to the \lstinline$Plan$ should be passed through to the \lstinline$Person$. Let us call the actual trajectory through the system the "executed plan"'.  This can be different from the original plan, for example using a different route, different departure times, different modes, etc. The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output. In consequence, it is not possible to treat the executed plan together with the just obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
 
@@ -328,8 +328,8 @@ In consequence, the code uses a copy of the original plan and modifies the copy.
 %% \mnote{lskdjf}
 
 %% An important aspect that has to be considered when within-day replanning is used is whether the persons' or only the agents' plans are replanned. In this context, a person is a global object which exists during an entire simulation run. An agent represents a person in the (traffic flow) micro-simulation part of an iteration. Moreover, a person has several plans in its memory, an agent only a single one. By default, an agent's plan is only a copy of the plan of the person which is represented. Only the score of the person's plan is updated by MATSim's scoring module. 
-
-\mnote{parking example: parking search route should not be added to plan}
+%
+%\mnote{parking example: parking search route should not be added to plan}
 
 One example where setting the original to the executed plan clearly does not make sense is parking search \citep[][]{WaraichEtAl_unpub_TRB_2013, Waraich_unpub_IATBR_2012}. %% \kai{citation?}
 %% \dobi{Christoph: keine. Eventuell könntem an den Absatz auch weglassen? Der Standard ist ja mittlerweile, dass man den Plan der Person nicht verändert. Andererseits wäre dann der Absatz unten (mit den initial Routes) eher interessant, weil der eben ein Beispiel dafür gibt, wo die Standardeinstellung nicht sinnvoll ist.}.
@@ -354,18 +354,15 @@ The capabilities of this within-day replanning implementation are shown and disc
 
 The second set of experiments uses within-day replanning to create agents' initial routes. The results are compared to runs where those routes are created before the simulation is started and without having traffic flow information available. It is shown that agents' average travel times are already very close to the values in a relaxed state. When using MATSim's traditional approach, 10 to 15\,iterations have to be performed before the average travel times have reached this level. %\kai{Christoph: Vielleicht noch einen Satz über Ergebnisse?}
 
+% ============================================================================================
 \subsection{Implementation Alternative~2: Replacing the Agent}
 \label{sec:impl-repl-the-ag}
-
 %% \kai{go through following and make consistent!!!}
-
 According to \cite{RussellNorvigBook}, an agent is "anything that can be viewed as perceiving its environment through sensors and acting upon that environment through effectors."  As stated above, MATSim has agents on two levels:
+%
 \begin{compactitem}
-
-\item \lstinline$Person$ is a Q-learning agent that is persistent over the iterations.
-
-\item \lstinline$MobsimAgent$ is a reactive agent that only exists during the \lstinline$QSim$.
-
+	\item \lstinline$Person$ is a Q-learning agent that is persistent over the iterations.
+	\item \lstinline$MobsimAgent$ is a reactive agent that only exists during the \lstinline$QSim$.
 \end{compactitem}
 
 For the Q-learning agent, perception works through the events, i.e.,\,events are used to compute the score, build mental models to generate alternatives, etc. Acting upon the environment works through the selection of the plan.
@@ -381,11 +378,8 @@ Here, we will thus look at \lstinline$MobsimAgent$s which do no longer have a pr
 The \lstinline$DriverAgent$ interface structurally is something like
 \begin{compactitem}
 \item \lstinline$Id chooseNextLinkId()$---agent is asked at intersections and needs to return how to proceed.
-
 %% \item \lstinline$Id<Link> getDestinationLinkId()$ -- agent is essentially asked if it wants to arrive on the current link.\footnote{%
-
 %% The method can return {\tt null}.  Arguably, it should be modified to something like {\tt boolean isArrivingOnCurrentLink()}.
-
 %% }  
 \item \lstinline$boolean isWantingToArriveOnCurrentLink()$---agent is asked if it wants to arrive on the current link.
 \item \lstinline$void notifyMoveOverNode(Id newLinkId)$---agent is notified that it has traversed the intersection and entered a new link.
@@ -518,7 +512,6 @@ For working code, see \url{http://matsim.org/javadoc} $\to$ core $\to$ \lstinlin
 
 % ------------------------------------------------------------------
 \subsubsection{Using Framework Methods}
-
 MATSim uses a wide range of methods to plan the day of a simulated traveler. These can be passed into the guidance module, for example
 \begin{lstlisting}
    Controler ctrl = new Controler(...) ;
@@ -530,7 +523,7 @@ MATSim uses a wide range of methods to plan the day of a simulated traveler. The
 The guidance object can still be passed to the agent as before; it can now compute and then return, at each intersection, the best turn towards a destination.
 
 %For working code, see \url{http://matsim.org/javadoc} $\to$ core $\to$ the \lstinline{RunOwnMobsimAgentWithPerception} class and related.
-\ah{Satz auskommentiert, da er ja schon in "Basic Information"' ganz oben (Section~\ref{sec:withinDay-stdInfo}) vorkommt. OK?}
+%\ah{Satz auskommentiert, da er ja schon in "Basic Information"' ganz oben (Section~\ref{sec:withinDay-stdInfo}) vorkommt. OK?}
 
 % ---------------------------------------------------------------------
 \subsubsection{\lstinline{DynAgent}}
