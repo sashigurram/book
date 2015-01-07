@@ -87,14 +87,13 @@ The extension points, especially at \lstinline{(*)} and \lstinline{(**)}, are de
 If the existing \glspl{contribution} are not sufficient to plug your own study together, the next option is to write your own \gls{extension}.  Again, this should preferably use the extension points described in Chapter~\ref{ch:extensionpoints}, since this is the only way in which an \gls{extension} may later become a \gls{contribution}.  \kai{here is a difference between an extension and a contrib :--)}
 
 %% \paragraph{If none of this is enough}
-
 %% Clearly, it is always possible to download some version of \gls{matsim}, remove all the \lstinline{final} 
 
 % ====================================================================================================
 \subsection{The Ideas Behind this Setup}
 The setup as described above came out of the observation that an ever growing monolithic \gls{matsim} would eventually overwhelm the core team. Therefore, a set-up was searched where the core team could concentrate on central infrastructure, while specific functionality such as road pricing, multi-modal simulations, signals, additional choice dimensions, or analysis modules could be written and contributed by other people. Clearly, a plug-in architecture had to be the solution, but it took (and still takes) time and effort to make the extension points sufficiently capable and sufficiently robust.  
 
-At the same time, \gls{matsim} is a research platform, and a trait of research is that it investigates innovative questions, which often means that the questions were not foreseen by the designs of the code.  Quite often, scripting languages are the solution to such problems; for example, QGIS or VISUM allows python \cite{...} for plug-ins; EMME allows ???; SUMO allows ??? \kai{traci}.  Scala \cite{...} was discussed for \gls{matsim}, but in the end it was decided to just use Java itself as the scripting language. This has the advantage that persons who are in between core development and \gls{matsim} application do not need to learn two languages, and in addition VSP can continue to teach Java both as an entry point to \gls{matsim} and as a general professional skill.
+At the same time, \gls{matsim} is a research platform, and a trait of research is that it investigates innovative questions, which often means that the questions were not foreseen by the designs of the code.  Quite often, scripting languages are the solution to such problems; for example, QGIS or VISUM allows python \cite{...} for plug-ins; EMME allows ???; SUMO allows ??? \kai{traci}.  Scala \cite{...} was discussed for \gls{matsim}, but in the end it was decided to just use Java itself as the scripting language. This has the advantage that persons who are in between core development and \gls{matsim} application do not need to learn two languages, and in addition VSP can continue to teach \gls{java} both as an entry point to \gls{matsim} and as a general professional skill.
 
 % ====================================================================================================
 \subsection{MATSim Modules}
@@ -106,9 +105,7 @@ or more specifically
 %
 "a part of a computer or computer program that does a particular job". 
 %
-That is, "module" is not a very specific term, and in consequence modules exist in \gls{matsim} at many levels.
-%
-In the following are some important examples.
+That is, "module" is not a very specific term, and in consequence modules exist in \gls{matsim} at many levels. Metaphorically speaking, the term module can thus be seen as the greatest common divisor (gcd) of different functionality as listed below, so to say, a module is the \lstinline|AbstractClass| of \gls{matsim} functionality. As \gls{matsim} is highly modular, it nevertheless makes sense to think of functionality wrapped by a module. In the following are some important examples.
 
 %% The basic concept to extend MATSim is the usage of modules. But, please be aware that when it comes to configuring MATSim the term ``module'' is very extensively used such that a clear definition of what is a module and what is not is not available to date. This consequence of organic grows be corrected on the long run, for now, we try to just sort out the different meanings of the word module
 
@@ -118,8 +115,7 @@ In the following are some important examples.
 
 %% \paragraph{Components in \lstinline|org.matsim|:} % --------------
 % ...........................................................................
-\paragraph{Config Modules:} % --------------
-The config \gls{xml} file uses a syntax of the type
+\paragraph{Config Modules:} The config \gls{xml} file uses a syntax of the type
 \begin{xml}
 <module name="aModule">
     <param name="aParameterForAModule0" value="someValueX" />
@@ -132,14 +128,13 @@ The config modules loosely correspond to components providing distinct functiona
 
 %% Habe das mal auskommentiert.  Ist erstens eine Null-Aussage (alles ist unterhalb von org.matsim, auch die contribs), und zweitens ist es wenigstens im Java-Sinne keine package (oder genauer: Gerade in dieser package ist nichts drin). kai, dec'14
 
-
 {\footnotesize
 
 \kai{Andreas, habe obige Argumentation mal umgedreht.  Du bist von der code Struktur zum config file gegangen.  Ich gehe jetzt vom config file aus, und erwähne den code nur beiläufig.  Grund: Die beiden hängen tatsächlich nicht besonders stark zusammen.  Insbesondere passen wir die config, wg. Rückwärts-Kompatibilität, praktisch nie an strukturelle Änderungen im Code an.  (Abgesehen davon ist die config Struktur gar nicht so schlecht; problematisch finde ich teilweise eher die Benennungen.  Ein Favorit: ``planCalcScore'' (ohne s hinter plan) vs ''plansCalcRoute'' (mit s hinter plan). Oder?)}
 
 }
 % ...........................................................................
-\paragraph{Replanning Modules:} % --------------
+\paragraph{Replanning Modules:} Package \lstinline|org.matsim.core.replanning.modules| provides replanning functionality that can also be plugged into MATSim. 
 
 %% A slightly different meaning of modules, which is only relevant for the MATSim developer and API-user, is as follows. In the package package \lstinline|org.matsim.core.replanning.modules| replanning functionality is provided in classes that are derived from \lstinline|AbstractMultithreadedModule|.
 
@@ -149,8 +144,7 @@ The config modules loosely correspond to components providing distinct functiona
 \kai{Lasse das bis zur Klärung dieser Frage mal offen.}
 
 % ...........................................................................
-\paragraph{Contributions:} % --------------
-The term "module" is furthermore used for \gls{contribution}, residing in the \lstinline|org.matsim.contrib| package. % and either having their section in the default configuration file (such as destination innovation) or not (such as the wagonsim contribution).
+\paragraph{Contributions:} \Glspl{contribution} are modules residing in the \lstinline|org.matsim.contrib| package.
 
 \kai{Von mir aus können wir das durchgängig ``contribs'' oder ``contributions'' oder ``extensions'' nennen.  Leider hat Marcel für die package einen anderen Namen (contrib) gewählt als für die Doku (extensions).  Aber ``module'' muss nicht sein.}
 %
@@ -158,14 +152,13 @@ The term "module" is furthermore used for \gls{contribution}, residing in the \l
 %
 \kai{Verstehe das Argument.  Andererseits wird es auch nicht einfacher, wenn wir die Sprache nicht konsistent halten.  Hm.}
 
-%\kai{Contribs haben im Prinzip keine config sections mehr im default config file. locationchoice ist, soweit ich sehe, die einzige verbliebene Ausnahme :-); wir können sie gerne mal abräumen.}
-%\ah{Dann nehme ich das mal raus. replace(getParam, findParam) müsste das Problem wohl lösen.}
-%\kai{Gerne.  Siehe \url{https://matsim.atlassian.net/browse/MATSIM-307}}.
-%\ah{ist mal aus dem core raus, bis auf vplConsistency checks}
+\ah{Aus meiner Sicht ist "Modul" einfach der ggT oder die AbstractClass der verschiedenen Arten von ... Funktionalitäten (und somit eigentlich nutzlos?). Jedenfalls würde ich sie hier doch als Module bezeichnen, da sie sonst auch aus diesem Kapitel raus müssten.}
+
+\ah{Habe das oben mal (noch etwas blumig) angepasst.}
 
 % ...........................................................................
 \paragraph{External Functionality:} % --------------
-Also external components plugged in and replacing a \gls{matsim} module, such as a \gls{mobsim}, are called modules.
+Also external components plugged in and replacing a \gls{matsim} module, such as a \gls{mobsim}, can be interpreted as modules.
 
 \gls{matsim} provides the possibility that the parameters of arbitrary external modules are added to the configuration file as detailed above. In the respective module, the parameters can be accessed in two ways. The suggested way is extended the \lstinline|Config| object to include an external config group as follows.
 %
