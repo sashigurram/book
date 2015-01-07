@@ -549,6 +549,35 @@ All strategy modules are called by configuring the strategy module in the config
 %
 \begin{lstlisting}
 <module name="strategy" >
+	<parameterset type="strategysettings" >
+		<param name="strategyName" value="ChangeLegMode" />
+		<param name="weight" value="0.1" />
+	</parameterset>
+	
+	<parameterset type="strategysettings" >
+		<param name="strategyName" value="TimeAllocationMutator" />
+		<param name="weight" value="0.2" />
+	</parameterset>
+	
+	<parameterset type="strategysettings" >
+		<param name="strategyName" value="SelectExpBeta" />
+		<param name="weight" value="0.7" />
+	</parameterset>
+</module>
+\end{lstlisting}
+%
+Each module is given a weight which determines the probability by which the course of action represented by the module is taken. The weights of the strategy modules are renormalized in case they do not sum to one. In this example, each agent changes his leg mode with probability 0.1, its plan timing with probability 0.2. A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. In the example, the agent chooses a plan from his set of plans according to a logit model with probability 0.7. \ah{sollte man immer noch von proba reden, wo wir sie doch im Code endlich losgeworden sind? Andererseits ist es ja tatsächlich eine proba.}
+
+By specifying the parameter \lstinline|subpopulation|, i.e.,\,\
+\begin{lstlisting}
+<param name="subpopulation" value="externalAgent"/>
+\end{lstlisting}
+replanning strategies can be applied to distinct sub-populations.
+
+In older versions of the \gls{configfile} you will find following deprecated configuration using numbered strategy modules.
+%
+\begin{lstlisting}
+<module name="strategy" >
     <param name="ModuleProbability_1" value="0.1" />
     <param name="Module_1" value="ChangeLegMode" />
     <param name="ModuleProbability_2" value="0.2" />
@@ -559,10 +588,13 @@ All strategy modules are called by configuring the strategy module in the config
 \end{lstlisting}
 %
 \kai{Hier gibt es eine neue, bessere Syntax.  NB dass wir da gerade noch am ``Verhandeln'' sind!}
+\ah{angepasst}
 %
-Strategy modules are numbered, where each module is given a weight which determines the probability by which the course of action represented by the module is taken. In this example, each agent changes his leg mode with probability 0.1, its plan timing with probability 0.2. A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. In the example, the agent chooses a plan from his set of plans according to a logit model with probability 0.7. The weights of the strategy modules are renormalized in case they do not sum to one.
-
-By specifying the parameter \lstinline|ModuleSubpopulation_X|, i.e.,\,\lstinline|<param name="ModuleSubpopulation_1" value="externalAgent"/>| replanning strategies can be applied to distinct sub-populations.
+By specifying the parameter \lstinline|ModuleSubpopulation_X|, i.e.,\,
+\begin{lstlisting}
+<param name="ModuleSubpopulation_1" value="externalAgent"/>
+\end{lstlisting}
+replanning strategies can be applied to distinct sub-populations.
 
 Please note, that combining strategy modules that are \glspl{contribution} such as destination innovation and public transport is not straight forward. Combine them with care and contact the mailing list in case you are unsure.
 
