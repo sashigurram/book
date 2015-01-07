@@ -46,12 +46,10 @@ Microscopic modeling had been the basis of traffic flow simulation from the star
 %agent-based 
 microscopic simulations were not used to find an \gls{equilibrium} at first. 
 
-According to \citet[][p.~53]{RusselNorvig2010ArtificialIntelligence}, an agent is "anything that can be viewed as perceiving its environment through sensors and acting upon that environment through actuators". In that sense, both the models of \citet{Seddon_Simulation_1972} and of \citet{Wiedemann_PhDThesis_1974} can be classified as agent-based, and this holds even for the simple cellular automata models of \citet{NagelSchreckenberg1992CA} since here the driver-vehicle units perceive the distance to the vehicle ahead, and act by adjusting their velocity.  
+According to \citet[][p.~53]{RusselNorvig2010ArtificialIntelligence}, an \gls{agent} is "anything that can be viewed as perceiving its environment through sensors and acting upon that environment through actuators". In that sense, both the models of \citet{Seddon_Simulation_1972} and of \citet{Wiedemann_PhDThesis_1974} can be classified as agent-based, and this holds even for the simple cellular automata models of \citet{NagelSchreckenberg1992CA} since here the driver-vehicle units perceive the distance to the vehicle ahead, and act by adjusting their velocity.  
 % Bei Schwerdtfeger oder Daganzo würde ich das NICHT mehr sehen, hier kommt die Geschwindigkeit nämlich aus einer Dichte, und das ist eine aggregierte Systemgröße und keine agenten-spezifische Perzeption mehr. kai, dec'14
 
-Agent-based behavior can also be found at the level of demand modeling, where aggregate models such as the gravity model \citep{Wilson1971SpatialInteraction} can be replaced by person-centric formulations. In that sense, 
-%
-agent-based modeling of travel demand had been developed in Germany since the 1970s \citep[see the references in][]{AxhausenHerz_JTE_1989}, but then also in English speaking countries after the seminal book of \citet[][]{JonesEtAl_1983}.  
+Agent-based behavior can also be found at the level of demand modeling, where aggregate models such as the gravity model \citep{Wilson1971SpatialInteraction} can be replaced by person-centric formulations. In that sense, agent-based modeling of travel demand had been developed in Germany since the 1970s \citep[see the references in][]{AxhausenHerz_JTE_1989}, but then also in English speaking countries after the seminal book of \citet[][]{JonesEtAl_1983}.  
 %% \kai{Da steht ``then'', aber das Datum bei Jones ist deutlich früher. ??}  
 %% %
 %% \kwaah{Axhausen und Herz fassen Arbeiten seit den 1970iger Jahren zusammen. 
@@ -146,7 +144,7 @@ The iterative process is repeated until the average population score stabilizes,
 % ##################################################################################################################
 \section{MATSim's Traffic Flow Model}
 \label{sec:trafficflowmodel}
-\gls{matsim} provides two internal mobility simulations (called \emph{mobsims}): \emph{Qsim} and \emph{JDEQSim}. Furthermore, external mobility simulations can be plugged in. Some years ago the DEQSim written in C++ and described by \citet[][]{Charypar_PhDThesis_2008, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009, CharyparEtAl_WCTRS_2007} was plugged into \gls{matsim} and frequently used. The multi-threaded Qsim is the default mobsim \citep[][]{MATSim_Userguide_2015}. % commit 29999 michaz
+\gls{matsim} provides two internal \glspl{mobsim} (called \emph{mobsims}): \gls{qsim} and \gls{jdeqsim}. Furthermore, external mobility simulations can be plugged in. Some years ago the \gls{deqsim} written in \gls{cpp} and described by \citet[][]{Charypar_PhDThesis_2008, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009, CharyparEtAl_WCTRS_2007} was plugged into \gls{matsim} and frequently used. The multi-threaded \gls{qsim} is the default \gls{mobsim} \citep[][]{MATSim_Userguide_2015}. % commit 29999 michaz
 
 \citet[][]{CharyparEtAl_TRB_2009} distinguishes between 
 \begin{compactitem}
@@ -160,8 +158,8 @@ The iterative process is repeated until the average population score stabilizes,
 As \gls{matsim} is designed for large-scale \glspl{scenario} it adopts the computationally efficient queue-based approach (see Figure~\ref{fig:queue}). A car entering a network link (i.e.,\,a road segment) is added to the tail of the waiting queue. It remains there until the time for traveling the link with free flow has passed and until he or she is the head of the waiting queue and until the next destination link allows entering. The approach is very efficient, but clearly it comes at the price of reduced resolution, i.e.,\,car following effects are not captured.   
 %
 \createfigure%
-{Traffic Flow Model}%
-{Traffic Flow Model}%
+{Traffic flow model}%
+{Traffic flow model}%
 {\label{fig:queue}}%
 {\includegraphics[width=0.99\textwidth, angle=0]{using/figures/queue.pdf}}%
 {}
@@ -180,19 +178,19 @@ Triggering of update events is managed by a global scheduler. QSim, however, is 
 The \gls{matsim} traffic flow model is heavily based on the two attributes of a link: storage capacity and flow capacity. Storage capacity defines the number of cars fitting onto a network link. It is a physical property and thus fixed in the simulation. 
 %% For scenarios with a population smaller then the full population, say a 10\% sample, however, it needs to be scaled down, since otherwise there will be no spill-back any more.
 
-Flow capacity specifies the outflow capacity of a link, i.e.,\,how many travelers can leave the respective link. It is an individual attribute of the link. In the earlier \gls{deqsim} and in the current \gls{jdeqsim} an additional inflow capacity can be specified in addition to capture breakdowns at link entries \citep[][p.99]{Charypar_PhDThesis_2008}. The many simulation experiments with Qsim (and the former queueSimulation) have shown that neglecting inflow capacity does not have a substantial effect but further reduces model complexity. 
+Flow capacity specifies the outflow capacity of a link, i.e.,\,how many travelers can leave the respective link. It is an individual attribute of the link. In the earlier \gls{deqsim} and in the current \gls{jdeqsim} an additional inflow capacity can be specified in addition to capture breakdowns at link entries \citep[][p.99]{Charypar_PhDThesis_2008}. The many simulation experiments with \gls{qsim} (and the former queueSimulation) have shown that neglecting inflow capacity does not have a substantial effect but further reduces model complexity. 
 
-This basic traffic flow model has been extended with various modules: signals and multiple lane modeling have been added (Chapter~\ref{ch:signalslanes}), backward-moving gaps as investigated by \citet[][]{Charypar_PhDThesis_2008} are included in Qsim and \gls{jdeqsim}. Interactions between different modes are described in Chapter~\ref{ch:multimodalsim}. Limitations of the traffic flow model concern link dynamics (in particular overtaking and slow drivers) and intersection dynamics (in particular turn restrictions not explicitly modeled in the network). 
+This basic traffic flow model has been extended with various modules: signals and multiple lane modeling have been added (Chapter~\ref{ch:signalslanes}), backward-moving gaps as investigated by \citet[][]{Charypar_PhDThesis_2008} are included in \gls{qsim} and \gls{jdeqsim}. Interactions between different modes are described in Chapter~\ref{ch:multimodalsim}. Limitations of the traffic flow model concern link dynamics (in particular overtaking and slow drivers) and intersection dynamics (in particular turn restrictions not explicitly modeled in the network). 
 
 
 % ##################################################################################################################
-\section{MATSim's Co-Evolutionary Algorithm}
+\section{\protect\gls{matsim}'s Co-Evolutionary Algorithm}
 \label{sec:co-ev}
 %
 % ------------
 \createfigure%
-{The co-evolutionary algorithm in MATSim}%
-{The co-evolutionary algorithm in MATSim}%
+{The co-evolutionary algorithm in \protect\gls{matsim}}%
+{The co-evolutionary algorithm in \protect\gls{matsim}}%
 {\label{fig:ea}}%
 {\includegraphics[width=0.99\textwidth, angle=0]{using/figures/MATSimVSea.pdf}}%
 {}
