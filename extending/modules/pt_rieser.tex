@@ -1,0 +1,241 @@
+\section{Modeling Public Transport with MATSim \who{Rieser}}
+%\hfill \textbf{Author:} Marcel Rieser
+
+\ah{ to be deleted:
+Allgemeiner Teil: Funktionalitäten und Besonderheiten
+
+Modules in the config: 
+\begin{itemize}
+	\item \lstinline|transit|
+	\item \lstinline|transitRouter|
+	\item \lstinline|matrixBasedPtRouter|
+	\item \lstinline|ptCounts|
+\end{itemize}
+
+Literature: \citet[][]{RieserNagel_IATBR_2009, Rieser_PhDThesis_2010}
+
+http://matsim.org/docs/tutorials/transit
+
+Standard Use-Case Berlin
+}
+
+\subsection{Introduction}
+
+Public transport---or \emph{transit} as it is sometimes called---plays
+an important role in many transport planning measures, even if they only target
+non-transit modes in the first place. By making other modes more or less
+attractive (e.g. by providing higher capacity with additional lanes, allowing
+higher speeds, or charging money by setting up road pricing for an area), people
+might reconsider their mode choice and switch to public transport (\emph{pt})
+from other modes, or vice versa. Such changes can also occur when the transit
+infrastructure is changed: additional bus lines, changed tram routes with
+different stops served, altered headways, all have an influence whether
+people tend to us a specific line, or public transport in general. Around 2007,
+it was thus a central point to extend MATSim to support simulation of other
+modes besides private car traffic, and especially to simulate public transport
+in detail.
+
+In a first step, MATSim was extended in such a way that modes other than
+{\tt car} would be teleported, that is agents would be removed at one location
+and placed at a later point of time---corresponding to the estimated travel time---at
+their destination location, where they could commence their next activity.
+Together with a simple mode-choice module, randomly replacing all the
+transport modes in all legs of a plan, and a simple travel time estimation for
+modes different than {\tt car}, first case studies resulting in modal share
+changes were performed using MATSim
+\citep{RieserGretherNagel2008modeChoiceCalculations,
+GretherEtAl2009SimpleModeChoiceIPL}. This teleportation mode is now available by
+default in MATSim and still a very good fallback to get a multi-modal scenario
+up and running with as few data as possible.
+
+In a second step, \gls{qsim} was extended to support the detailed simulation of
+public transport vehicles that serve stops along fixed routes with a given schedule
+\citep{Rieser2010}.
+The next Section will describe the required data and resulting features for this
+detailed public transport simulation in more detail.
+
+
+
+\subsection{Data Model and Simulation Features}
+
+MATSim supports modeling public transport in a high level of detail: transit
+vehicles run along the defined routes of transit lines, picking up
+and dropping off passengers at stop locations, while taking care of the transit
+vehicles' capacities and maximum speeds. The data used to simulate public
+transport in MATSim can be split in three parts:
+
+\begin{compactitem}
+\item Stop locations
+\item Schedule, defining lines, routes and departures
+\item Vehicles
+\end{compactitem}
+
+This data is stored in two files, with the vehicles being defined in one
+file and stop locations and schedule being defined in
+another file.
+Examples of such files can be seen in
+Section~\ref{sec:inputdata:transitvehicles} and
+Section~\ref{sec:inputdata:transitschedule}, respectively.
+
+The data model is comparable to that of other public transport planning
+software, but simplified in a few aspects. A line has typically two or more
+routes: One route for each direction, and additional routes when vehicles start
+(or end) their service somewhere in the middle of the full route when coming
+from (or going to) a depot. Each transit route contains a network route,
+specifying along which links in the network the transit vehicle drives along,
+and a list of departures, providing the information at what time a vehicle
+starts at the first stop of the route. A route also describes the ordered list
+of stops that are being served along with timing information, when a vehicle
+arrives or leaves a stop. This timing information is given as offsets only, to
+be added to the departure time at the first stop. Each departure contains the
+time at which a vehicle starts the route, and a reference to the vehicle that
+runs this service. Because the timing information is part of the route, routes
+with the same sequence of stops may exist, differing only in the time offsets.
+This is often the case with bus lines that take traffic congestion and
+longer waiting times at stops during rush hours into account in the schedule. 
+
+Stop locations are described by their coordinates and an optional name, and must
+be assigned to exactly one line of the network for the simulation. Thus, they
+can be best compared to ``stop points'' in VISUM. There is currently no logical
+grouping of such stop locations to build a ``stop area''---a collection of
+stops typically having the same name but e.g. on different arms of an intersection and
+being served by different lines and where passengers can usually transfer
+between).
+
+Each vehicle belongs to one vehicle type. Such a vehicle type describes various
+characteristics of a vehicle, like the seating and standing capacity (number of
+passengers), its maximum speed, but also how many passengers can board or alight
+a vehicle per second.
+
+This data model already supports several advanced aspects of modeling public
+transport, like having different travel speeds along routes during different
+times of day (important for improved realism in the simulation), using vehicles
+of different types on a route at different times of day (interesting for the
+economic analysis of a schedule), and re-using transit vehicles for multiple
+headways along one or different routes (allows the optimization of vehicle
+deployment planning, or research the effects of delay-propagation).
+
+With all this data set, the \gls{qsim} will simulate the movements of all
+transit vehicles. The vehicles will start at the first stop of their route at the given
+departure time, allow passengers to enter, and then drive along their route,
+serving stops. At each stop, passengers can enter or leave the vehicle.
+The simulation generates additional, transit-related events whenever a transit
+vehicle arrives or departs at a stop, when passengers enter or leave a vehicle,
+but also when a passenger cannot board a vehicle because the vehicle's capacity
+limit is already reached. This allows for detailed analyses of the public transport
+simulation performed by MATSim.
+
+In order for passengers to use public transport in MATSim, they need to be able
+to calculate a route using transit services. For this, MATSim includes a public
+transport router which calculates the best route for arriving at the desired
+destination with minimal cost, given a departure time. Costs are typically
+defined as travel time only and a small penalty for changing lines, but other,
+more complex cost functions could be used.
+
+The routing algorithm is based on Dijkstra's shortest path algorithm
+\citep{Dijkstra1959ShortestPath}, but modified in order to take
+multiple possible transit stops around the start and the end coordinate
+into account to find a route. Multiple start and end stops must be considered in
+order to generate more realistic transit routes, as otherwise agents could
+be forced to first travel into the wrong direction, or wait at an infrequently
+served bus stop instead of going a bit further to a busy subway stop location.
+By modifying the shortest path algorithm to work with multiple start and end
+locations, a considerable performance gain was possible compared to the naive
+implementation, calculating a route for each combination of start/end location
+and then choosing the best out of it.
+
+
+\subsection{Possible Improvements}
+
+While the ability to simulate public transport was a big advance for MATSim,
+there are still several shortcomings that could see improvement:
+
+\begin{compactitem}
+	\item The data model (and thus, the simulation) does not yet fully support some
+	transit lines observed in the real world. Especially, circular lines without a
+	defined start and end cannot be easily modeled yet. Also, some bus or
+	train lines have stops where only boarding or alighting the vehicle is allowed,
+	but not both (e.g. overnight trains with sleeper cabins). At the moment, MATSim
+	always allows boarding and alighting at stops, leading to agents e.g. using a
+	train with sleeper cabins only for a short trip, where in reality they would be
+	denied boarding without a reservation for a longer trip.
+	\item A stop location as seen by passengers in the real world is
+	typically modeled as a number of stop facilities in MATSim, detailing the
+	different locations where transit vehicles stop depending on their route and
+	direction. For analysis purposes, one is often interested in aggregated values
+	for such logical stop locations, and not for the individual stop facilities.
+	Such a logical grouping is currently still missing in MATSim data format.
+	\item Running simulations with a reduced sample of the population leads to
+	artifacts when public transport is used. In a simulation with a sampled demand,
+	network capacity is reduced accordingly to accommodate the fact that fewer
+	private cars are on the road. But as still 100\% of public transport vehicles
+	must run (albeit with reduced passenger capacity), the calibration becomes
+	difficult. This should be solved in the future by not reducing the network
+	capacity, but by giving each vehicle and agent a weight for how much it should
+	count.
+	\item The public transport router available and used by MATSim by default is
+	strictly schedule based. It assumes, that the vehicles can keep up with the
+	schedule and that enough passenger capacity is provided. In some regions, where
+	transit offerings are notoriously delayed and overcrowded, MATSim's router will
+	consistently advise agents to use routes that will perform badly in the
+	simulation. Additional feedback from the simulation back to the router, as it
+	is already done in the private car router of MATSim, will be needed.
+	\item Last but not least, the current router based on a modified shortest path
+	algorithm of Dijkstra can become rather slow and memory-intensive for
+	larger areas with exhaustive transit offerings. Improved algorithms to generate
+	the routing graph, or different routing algorithms altogether (like the
+	non-graph based Connection Scan Algorithm
+	\citep{DibbeltEtAl_BonifaciEtAl_2013}) will have to be researched in the
+	future.
+\end{compactitem}
+
+
+
+\subsection{Applications}
+
+The public transport simulation has been used in a variety of applications of
+MATSim world-wide. The following list highlights some of these applications,
+pointing out specialties of them regarding the public transport simulation.
+
+\begin{compactitem}
+	\item Berlin: The Berlin scenario (see Section~\ref{sec:berlinI}) was one of
+	the first real applications using the public transport simulation in MATSim.
+	The road and rail network as well as the full transit schedule was converted
+	from a VISUM model. It is yet one of the few known models where bus and tram
+	lines share a common network with private car traffic, enabling full
+	interaction between private and public vehicles like transit vehicles getting
+	stuck in and delayed due to a traffic jam.
+	\item Switzerland: Senozon maintains a model of Switzerland, which contains the
+	full time table of all buses, trams, trains, ships, and even cable cars in the
+	Swiss alps. The schedule data is retrieved from the official time table,
+	available in a machine-readable format called ``HAFAS raw data format''.
+	\item Singapore: The model of Singapore (see Section~\ref{sec:singapore}) makes
+	heavy use of public transport, and continually pushes the boundaries of what is
+	currently possible to simulate. Due to the very large number of buses on
+	Singapore's roads and the strong demand for it, a number of extensions had to
+	be implemented in order to be able to realistically model pt in this context.
+	\item Minibus: The minibus contribution (see next Section,
+	\ref{sec:paratransit}) adds an optimization layer on top of the public
+	transport functionality in MATSim, providing the functionality to automatically
+	generate an optimized transit schedule for a certain region.
+	\item wagonsim: In the wagonsim contribution (see Section~\ref{sec:wagonsim}),
+	the public transport simulation was actually misused to simulate
+	rail-bound freight traffic. While the simulation was still moving around
+	transit vehicles and let passengers enter and leave such vehicles, the scenario
+	was built in such a way that vehicles correspond to freight trains, and
+	passengers correspond to the actual goods needing to be transported. Custom
+	implementations of the transit driver logic replaces the definition of a
+	vehicle's capacity by one that ensures that the trains the vehicles represent
+	do not get too long or too heavy. The network was built in a way that changing
+	vehicles at stops takes a minimum amount of time, corresponding to the time
+	needed for switching wagons at freight terminals.
+\end{compactitem}
+
+Besides the applications mentioned in the list above, many additional scenarios
+make use of the public transport simulation in MATSim by now. But the list also
+shows, that with some custom extensions and imagination, the public transport
+functionality can not only be used to ``just simulate public transport'', but be
+used to solve complex problems previously being handled by operation research
+groups.
+
+
