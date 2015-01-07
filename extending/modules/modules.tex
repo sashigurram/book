@@ -148,6 +148,7 @@ The config modules loosely correspond to components providing distinct functiona
 
 \kai{Lasse das bis zur Klärung dieser Frage mal offen.}
 
+% ...........................................................................
 \paragraph{Contributions:} % --------------
 The term "module" is furthermore used for \gls{contribution}, residing in the \lstinline|org.matsim.contrib| package. % and either having their section in the default configuration file (such as destination innovation) or not (such as the wagonsim contribution).
 
@@ -166,10 +167,22 @@ The term "module" is furthermore used for \gls{contribution}, residing in the \l
 \paragraph{External Functionality:} % --------------
 Also external components plugged in and replacing a \gls{matsim} module, such as a \gls{mobsim}, are called modules.
 
-\gls{matsim} provides the possibility that the parameters of arbitrary external modules are added to the configuration file as shown above. In the respective module, the parameters can be accessed with the method \lstinline|public final String findParam(final String moduleName, final String paramName)| of the \lstinline|Config| class.
+\gls{matsim} provides the possibility that the parameters of arbitrary external modules are added to the configuration file as detailed above. In the respective module, the parameters can be accessed in two ways. The suggested way is extended the \lstinline|Config| object to include an external config group as follows.
+%
+\begin{lstlisting}
+MyExternalConfigGroup myConfig = ConfigUtils.addOrGetModule(controler.getConfig(), MyExternalConfigGroup.GROUP_NAME, MyExternalConfigGroup.class);
+\end{lstlisting}
+%
+Parameters are then available by the getter methods of \lstinline|MyExternalConfigGroup|. A second way, is using the following command of the \lstinline|Config| class.
+\begin{lstlisting}
+public final String findParam(final String moduleName, final String paramName)| 
+\end{lstlisting}
+Note, that here, the user's input is not checked while reading in the \gls{configfile} but much later, possibly in the external module.
 
-\kai{MZ, wollen wir dieses findParam eigentlich noch ``advertisen''?  Bisher ist es immer darauf hinausgelaufen, dass ich das irgendwann durch eine ``typisierte'' config group ersetzt habe.  M.E.\ könnte man zukünftig auch gleich mit einer typisierten config group anfangen.  Oder?}
+\kai{MZ, wollen wir dieses findParam eigentlich noch "advertisen"?  Bisher ist es immer darauf hinausgelaufen, dass ich das irgendwann durch eine "typisierte" config group ersetzt habe.  M.E.\ könnte man zukünftig auch gleich mit einer typisierten config group anfangen.  Oder?}
+\ah{Hab mal beides hingeschrieben. Michael: Ist eines von beidem immerhin empfohlen? ;)}
 
+% ...........................................................................
 \paragraph{Standalone Tools:} % --------------
 Also the standalone tools referencing \gls{matsim} as a library, such as the network editor, or the visualizer via, can be seen as modules.
 %are termed modules in current practice.
@@ -194,7 +207,7 @@ Also the standalone tools referencing \gls{matsim} as a library, such as the net
 \section{An Overview of Existing Modules}
 Figure~\ref{fig:matsimmodules} shows where in the \gls{matsim} loop, common \gls{matsim} modules can be plugged in. The technical details for their usage, in particular the parameter sets are described in \citep[][]{MATSim_Userguide_2014} and in the javadoc.
 
-For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be ``mode choice'' instead of the atomic categories, where we use terms ``functionality'' for the larger categories and ``module'' for the atomic components. %\kai{adapt table structure to revised chapter structure} \ah{erledigt}
+For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be "mode choice" instead of the atomic categories, where we use terms "functionality" for the larger categories and "module" for the atomic components. %\kai{adapt table structure to revised chapter structure} \ah{erledigt}
 
 Due to the distributed and project- and dissertation-driven \gls{matsim} contribution process (see Chapter~\ref{ch:developmentprocess}) modules are usually implemented for a specific practical purpose leading to various limitations of the respective module, e.g.,\,modules might only work for a specific mode or for a defined calling order. Before, an additional effort is undertaken to generalize the module toward its embedding in the complete framework, the combination of a specific module with other functionality remains a non-straight-forward task. This means, that the user is in charge of systematically testing a specific modules combination before productively applying it.
 
