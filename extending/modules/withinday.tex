@@ -60,7 +60,7 @@ See Chapter~\ref{sec:dynAgent}.
 \section{Introduction}
 In recent years, transport planning and traffic management interest in unforeseeable, or only partially foreseeable events within scenarios has increased. Partially foreseeable events often occur with taxis and car sharing. For example, agents with a planned taxi trip cannot know in advance which taxi will be available when they need one. When using car sharing, an agent might walk to the car sharing station and check whether a car is available or not. If it is not, the agent could either decide to wait, or change its plan and switch to another transportation mode. Road accidents, terrorist attacks or disasters such as earthquakes are examples of completely unpredictable events.
 
-As discussed earlier, traditional simulation approaches (used in default-\gls{matsim}) calculate demand-supply equilibria using an iterative process. There, it is assumed that a typical situation is simulated where agents can rely on their experience from comparable situations, like previous iterations. Applying an iterative approach to a scenario with unexpected events results in problems like illogical agent behavior, producing false results. In the next section, these problems, as well as an alternative simulation approach, are presented. On one hand, this approach---called within-day replanning---simulates only a single iteration, avoiding problems resulting from an iterative simulation process. On the other hand, this approach does require a more detailed behavioral model for the agents. Subsequently, using MATSim as a base, the iterative approach is discussed, followed by two different implementations of the within-day replanning approach into the \gls{framework}, including discussions of the technical implementations.
+As discussed earlier, traditional simulation approaches (used in default-\gls{matsim}) calculate demand-supply equilibria using an iterative process. There, it is assumed that a typical situation is simulated where agents can rely on their experience from comparable situations, like previous iterations. Applying an iterative approach to a scenario with unexpected events results in problems like illogical agent behavior, producing false results. In the next section, these problems, as well as an alternative simulation approach, are presented. On one hand, this approach---called within-day replanning---simulates only a single iteration, avoiding problems resulting from an iterative simulation process. On the other hand, this approach does require a more detailed behavioral model for the agents. Subsequently, using \gls{matsim} as a base, the iterative approach is discussed, followed by two different implementations of the within-day replanning approach into the \gls{framework}, including discussions of the technical implementations.
 
 % ##################################################################################################################
 \section{Simulation Approaches} 
@@ -121,7 +121,7 @@ The second parameter categorizing a replanning action depends on when the replan
 
 Due to the limited available information, a within-day replanning approach will, in contrast to an iterative approach, not converge to a user equilibrium. Decisions made during the simulated time period may seem to be optimal when they are made. However, evaluated retrospectively, an agent might realize that they were not.
 
-Figure~\ref{fig:labelWithinDayMATSimLoop} shows how within-day replanning can be integrated into MATSim's iterative optimization loop. An additional block builds another (inner) loop with the mobility simulation. Depending on the type of simulated scenario, the outer loop can be skipped.
+Figure~\ref{fig:labelWithinDayMATSimLoop} shows how within-day replanning can be integrated into \gls{matsim}'s iterative optimization loop. An additional block builds another (inner) loop with the mobility simulation. Depending on the type of simulated scenario, the outer loop can be skipped.
 %---------------------------------------------------------------------
 \createfigure%
 {(Iterative) within-day replanning MATSim loop}%
@@ -142,7 +142,7 @@ Other agents might want to share their cars, so an actual meeting must be confir
 \section{Implementation}
 % ============================================================================================
 \subsection{General Thoughts}
-Within-day or en-route replanning means that travelers replan during the day or while they are on their route. This means that the simulation needs to find some way to influence the agent while the \gls{mobsim} (network loading) is running. For the MATSim main network loading module, the so-called \lstinline$QSim$, this could be achieved by inserting an agent-loop, as follows:
+Within-day or en-route replanning means that travelers replan during the day or while they are on their route. This means that the simulation needs to find some way to influence the agent while the \gls{mobsim} (network loading) is running. For the \gls{matsim} main network loading module, the so-called \gls{qsim}, this could be achieved by inserting an agent-loop, as follows:
 \begin{lstlisting}
    void doSimStep() {
       for ( each agent ) {   // <-- agent loop
@@ -175,21 +175,21 @@ Similar implementations are needed for all other queries that could be asked of 
 \begin{compactitem}
 \item Should the trip end on the current link?
 \item Should the agent get off at the current stop?
-\item What is the ID of the vehicle to be used for a trip?
+\item What is the \lstinline|ID| of the vehicle to be used for a trip?
 \end{compactitem}
 %
 From the agent's perspective, such an approach might be called \emph{event driven}, since the agent performs only mental activity at such events.
 
 There is, indeed, a mechanism to program such agents and to insert
-them into the \lstinline$QSim$. This is discussed in more detail in Section~\ref{sec:impl-repl-the-ag}.
+them into the \gls{qsim}. This is discussed in more detail in Section~\ref{sec:impl-repl-the-ag}.
 
 A challenge inherent in that approach is that the complete agent needs to be re-programmed.  This agent needs to have enough capabilities to be oriented about itself; for example, it needs to be able to compute plausible routes.
 
 On the other hand, there are situations where the capability to decide the turn at each intersection while en-route is, in fact, not needed.  
 %
-For example, for typical evacuation applications, it makes sense to start all agents on their normal daily plans. When an emergency warning is distributed, the simulation can go once through all agents and decide how they react.  This will be done by replacing some, or all, future elements of the current plan.  In some applications, this may happen more than once; for example, if recommended evacuation directions change because of a shift in the wind.  In other applications, evacuating agents could become stuck in unexpected congestion which might trigger en-route re-routing. This may, however, be restricted to relatively small regions, and it may be sufficient to go through such a replanning loop, perhaps every 300\,simulated seconds. 
+For example, for typical evacuation applications, it makes sense to start all agents on their normal daily plans. When an emergency warning is distributed, the simulation can go once through all agents and decide how they react. This will be done by replacing some, or all, future elements of the current plan. In some applications, this may happen more than once; for example, if recommended evacuation directions change because of a shift in the wind. In other applications, evacuating agents could become stuck in unexpected congestion which might trigger en-route re-routing. This may, however, be restricted to relatively small regions, and it may be sufficient to go through such a replanning loop, perhaps every 300\,simulated seconds. 
 
-For such applications, the plan-based approach (Section~\ref{sec:impl-plan-based}) is more suitable.  Rather than having each agent answering certain queries in every time step or at every intersection, the plan-based approach first waits for a trigger (such as an emergency warning, or unexpected congestion), then decides on the affected agents,  then goes through those agents and changes the future part of their plans. This is not only conceptually easier than having every agent answer for him-/herself, but it is also computationally more efficient, since it is only called when it is triggered and impacts only the affected agents. 
+For such applications, the plan-based approach (Section~\ref{sec:impl-plan-based}) is more suitable. Rather than having each agent answering certain queries in every time step or at every intersection, the plan-based approach first waits for a trigger (such as an emergency warning, or unexpected congestion), then decides on the affected agents,  then goes through those agents and changes the future part of their plans. This is not only conceptually easier than having every agent answer for him-/herself, but it is also computationally more efficient, since it is only called when it is triggered and impacts only the affected agents. 
 
 Overall, implementers and users will have to balance their needs.  
 %
@@ -197,7 +197,7 @@ If there are relatively few times when agents should re-plan, and these times ca
 %
 If, on the other hand, an agent goes into the simulation mostly or entirely without a plan, like an entirely reactive taxi driver, then this speaks for replacing the agent.
 
-MATSim provides infrastructure for both approaches. The plan-based approach currently provides more support infrastructure, i.e.,\,many important use cases can be implemented by re-using existing methods.  The approach that replaces the agent, in contrast, provides more flexibility. In particular, it allows agents to make decisions at the latest possible time without additional computational overhead.  While this is not entirely realistic behaviorally, such an approach is often desirable from a simulation perspective, where one does not want reproducibility of simulations depend on, e.g., random elements such as how far an agent plans ahead.
+\gls{matsim} provides infrastructure for both approaches. The plan-based approach currently provides more support infrastructure, i.e.,\,many important use cases can be implemented by re-using existing methods. The approach that replaces the agent, in contrast, provides more flexibility. In particular, it allows agents to make decisions at the latest possible time without additional computational overhead.  While this is not entirely realistic behaviorally, such an approach is often desirable from a simulation perspective, where one does not want reproducibility of simulations depend on, e.g.,\,random elements such as how far an agent plans ahead.
 
 % ============================================================================================
 \subsection{Implementation Alternative 1: Plan-Based Implementation}
@@ -210,7 +210,7 @@ When adding within-day replanning to \gls{matsim}, its iterative loop (see Figur
 %
 %\mnote{implementation as MobsimEngine ... tracking agents and plans}
 
-The implementation is realized as so-called \lstinline{MobsimEngine} which can be plugged into the \emph{QSim}. In every simulated time step, the \emph{QSim} iterates over all registered \lstinline{MobsimEngines} and allows them to simulate the current time step. Besides simulation of the traffic flows, those engines are also able to let agents start or end activities. The engine containing the within-day replanning logic (called \lstinline{WithinDayEngine}) does not simulate traffic flows, but tracks agents and adapts their plans. Doing so is separated into two steps. First, agents whose plans have to be adapted in the current time step are identified. In a second step, the adaption of their plans is performed. 
+The implementation is realized as so-called \lstinline{MobsimEngine} which can be plugged into the \gls{qsim}. In every simulated time step, the \gls{qsim} iterates over all registered \lstinline{MobsimEngines} and allows them to simulate the current time step. Besides simulation of the traffic flows, those engines are also able to let agents start or end activities. The engine containing the within-day replanning logic (called \lstinline{WithinDayEngine}) does not simulate traffic flows, but tracks agents and adapts their plans. Doing so is separated into two steps. First, agents whose plans have to be adapted in the current time step are identified. In a second step, the adaption of their plans is performed. 
 %
 %\mnote{register identifiers with replanners, replanners with the within-day engine}
 
@@ -262,7 +262,7 @@ Additionally, four basic \lstinline{Identifiers} have been implemented so far. T
 %
 %\mnote{AgentFilters (e.g.,\,for spatial areas)}
 
-Often, identifiers have to handle only a subset of the population, e.g.~only male agents, or agents currently traveling in a car. To prevent that the same functionality having to be implemented multiple times, so-called \lstinline{AgentFilters} are introduced. Their task is to remove agents not meeting the filter criteria from an agent set. Using \lstinline{AgentFilters} not only avoids duplicated code, but can also reduce computation effort: for example, two \lstinline{Identifiers} which should identify only agents currently traveling in a certain part of the network. Without \lstinline{AgentFilters}, each of them would have to track all traveling agents and their current positions. When this functionality is moved to an \lstinline{AgentFilter}, the two \lstinline{Identifiers} can share a single instance of that filter.
+Often, identifiers have to handle only a subset of the population, e.g.,\,only male agents, or agents currently traveling in a car. To prevent that the same functionality having to be implemented multiple times, so-called \lstinline{AgentFilters} are introduced. Their task is to remove agents not meeting the filter criteria from an agent set. Using \lstinline{AgentFilters} not only avoids duplicated code, but can also reduce computation effort: for example, two \lstinline{Identifiers} which should identify only agents currently traveling in a certain part of the network. Without \lstinline{AgentFilters}, each of them would have to track all traveling agents and their current positions. When this functionality is moved to an \lstinline{AgentFilter}, the two \lstinline{Identifiers} can share a single instance of that filter.
 %
 %\mnote{filters: simple and re-usable; identifiers: complex and include decision-making}
 
@@ -279,13 +279,13 @@ Three basic \lstinline{AgentFilters} have been implemented so far. They filter a
 %
 %\mnote{observers}
 
-In addition to the logic identifying agents and adapting their plans, another important within-day replanning framework component is code that continuously collects information and provides it to the \lstinline{Identifiers}. These decide,based on that data, whether agents are replanned or not. In a time step-based approach---as realized by the \emph{QSim}---collecting, analyzing and aggregating data, as well as providing it, can be easily realized. Figure~\ref{fig:labelQSimTimeStep} shows the structure of a \emph{QSim's} time step. Each time step is separated into three phases---\lstinline{before time step}, \lstinline{do sim step} and \lstinline{after time step}. During the \lstinline{do sim step} phase, all registered \lstinline{MobsimEngines} simulate the current time step. The \lstinline{before time step} and \lstinline{after time step} phases allow code execution before or after simulation of the current time step. A class can collect data such as link travel times during the \lstinline{do sim step} phase. Then, the collected data can be analyzed and aggregated in the \lstinline{after time step} phase. In the next time step, the \lstinline{WithinDayEngine's Identifiers} can use that data for their decisions. The \lstinline{WithinDayEngine} is always the first \lstinline{MobsimEngine} executing its \lstinline{doSimStep} method, ensuring that no agent has changed its status since the \lstinline{after time step} phase of the previous time step. As a result, the \lstinline{Identifiers} make their decisions on %actual 
+In addition to the logic identifying agents and adapting their plans, another important within-day replanning framework component is code that continuously collects information and provides it to the \lstinline{Identifiers}. These decide,based on that data, whether agents are replanned or not. In a time step-based approach---as realized by the \gls{qsim}---collecting, analyzing and aggregating data, as well as providing it, can be easily realized. Figure~\ref{fig:labelQSimTimeStep} shows the structure of a \gls{qsim}'s time step. Each time step is separated into three phases---\lstinline{before time step}, \lstinline{do sim step} and \lstinline{after time step}. During the \lstinline{do sim step} phase, all registered \lstinline{MobsimEngines} simulate the current time step. The \lstinline{before time step} and \lstinline{after time step} phases allow code execution before or after simulation of the current time step. A class can collect data such as link travel times during the \lstinline{do sim step} phase. Then, the collected data can be analyzed and aggregated in the \lstinline{after time step} phase. In the next time step, the \lstinline{WithinDayEngine's Identifiers} can use that data for their decisions. The \lstinline{WithinDayEngine} is always the first \lstinline{MobsimEngine} executing its \lstinline{doSimStep} method, ensuring that no agent has changed its status since the \lstinline{after time step} phase of the previous time step. As a result, the \lstinline{Identifiers} make their decisions on %actual 
 current data.
 
 %---------------------------------------------------------------------
 \createfigure%
-{QSim time step}%
-{QSim time step}%
+{\protect\gls{qsim} time step}%
+{\protect\gls{qsim} time step}%
 {\label{fig:labelQSimTimeStep}}%
 {\includegraphics[width=8.0cm, angle=0]{extending/figures/WithinDayReplanning/QSimTimeStep}}%
 {}
@@ -354,13 +354,13 @@ and probably not in another one, where the initially selected parking spot is av
 Capabilities of this within-day replanning implementation are shown and discussed by \citet{Dobler_PhDThesis_2013}, based on two sets of experiments. The first set is based on a model of Zürich city, where it is assumed that capacities of several city-center arterial roads are drastically reduced during the morning peak. Traveling agents are given the opportunity to bypass the resulting traffic jams by adapting their routes, using within-day replanning. As a result, average travel time of an agent affected by the incident is reduced from 42 to 23\,minutes. Also interesting is that even if only 50\,\% of the population adapts its routes, average travel times are reduced to 25\,minutes.
 %\kai{Christoph: Vielleicht noch einen Satz über Ergebnisse (oder den vorhergehenden Satz umschreiben: Agents bypass the resulting traffic jams by adapting ..., leading to an overall readuction of travel times XX sec compared to the solution where agents stay on their original routes.} 
 
-The second set of experiments uses within-day replanning to create agents' initial routes. The results are compared to runs where routes are created before the simulation starts, without traffic flow information. Results indicate that agents' average travel times are already very close to the values in a relaxed state. When using MATSim's traditional approach, 10 to 15\,iterations must be performed before average travel times reach this level. %\kai{Christoph: Vielleicht noch einen Satz über Ergebnisse?}
+The second set of experiments uses within-day replanning to create agents' initial routes. The results are compared to runs where routes are created before the simulation starts, without traffic flow information. Results indicate that agents' average travel times are already very close to the values in a relaxed state. When using \gls{matsim}'s traditional approach, 10 to 15\,iterations must be performed before average travel times reach this level. %\kai{Christoph: Vielleicht noch einen Satz über Ergebnisse?}
 
 % ============================================================================================
 \subsection{Implementation Alternative~2: Replacing the Agent}
 \label{sec:impl-repl-the-ag}
 %% \kai{go through following and make consistent!!!}
-According to \cite{RussellNorvigBook}, an agent is "anything that can be viewed as perceiving its environment through sensors and acting upon that environment through effectors."  As stated above, MATSim has agents on two levels:
+According to \cite{RussellNorvigBook}, an agent is "anything that can be viewed as perceiving its environment through sensors and acting upon that environment through effectors."  As stated above, \gls{matsim} has agents on two levels:
 %
 \begin{compactitem}
 	\item \lstinline$Person$ is a Q-learning agent that is persistent over the iterations.
@@ -514,7 +514,7 @@ For working code, see \url{http://matsim.org/javadoc} $\to$ core $\to$ \lstinlin
 
 % ------------------------------------------------------------------
 \subsubsection{Using Framework Methods}
-MATSim uses a wide range of methods to plan the day of a simulated traveler. These can be passed into the guidance module, for example
+\gls{matsim} uses a wide range of methods to plan the day of a simulated traveler. These can be passed into the guidance module, for example
 \begin{lstlisting}
    Controler ctrl = new Controler(...) ;
    ...
