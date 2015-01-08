@@ -1,7 +1,7 @@
 \chapter{Let's Get Started}
 \label{ch:lgstarted}
 % ##################################################################################################################
-\hfill \textbf{Authors:} ..., Andreas Horni, Marcel Rieser, ...
+\hfill \textbf{Authors:} Andreas Horni, Kai Nagel, Marcel Rieser
 
 \begin{center} \includegraphics[width=0.7\textwidth, angle=0]{using/figures/config.png} \end{center}
 
@@ -11,6 +11,8 @@ This chapter explains how to set up and run \gls{matsim} and it describes the re
 Getting the source code into different computing environments and extending \gls{matsim} through the \gls{api} is described in the second part of the book in Chapter~\ref{ch:extensionpoints}.
 
 \kai{Ich würde bei den xml snippets gerne überall den header entfernen, überall eine Formulierung benuzten in etwa wie ``a minimal config file approximately looks as follows'', und überall zusätzlich eine stabile(!!) Referenz auf Versionen im Repository geben (muss noch schauen, wie wir das machen).  Z.B.\ ist config inzwischen bereits v2, und hat an manchen Stellen eine modernere Syntax; das fällt nur deshalb nicht auf, weil die alte Syntax noch überall akzeptiert wird.}
+
+\ah{klingt gut.}
 
 % ##################################################################################################################
 \section{Running MATSim}
@@ -70,7 +72,7 @@ Such a command exists of multiple parts:
 \end{compactitem}
 
 % ================================================================================================
-\subsection{Configuring MATSim}
+\subsection{Configuring \protect\gls{matsim}}
 \label{sec:config}
 Configuring \gls{matsim} is (at this stage) only done via the \gls{configfile}. It builds the connection between the user and \gls{matsim}. It contains a list of settings which influence how the simulation behaves. In the second part of the book we will learn how \gls{matsim} can be configured and extended by programming against its API.
 
@@ -139,7 +141,7 @@ Some of the files, especially \lstinline|population.xml|, but also \lstinline|ne
 In more detail, the input files look as follows. Note that the configuration file is presented above.
 
 % -----------------------------------------------------------------------
-\subsubsection{network.xml}
+\subsubsection{\lstinline|network.xml|}
 The network describes the infrastructure on which the agents (or the vehicles, respectively), can move around. The network consists of \glspl{node} and \glspl{link} (in graph theory, these are typically called vertices and edges). A simple example for a description of a network in \gls{matsim}'s \gls{xml} data format can look as follows.
 
 \begin{xml}
@@ -154,13 +156,13 @@ The network describes the infrastructure on which the agents (or the vehicles, r
    </nodes> 
    <links> 
       <link id="1" from="1" to="2" length="3000.00" capacity="3600" 
-                                 freespeed="27.78" permlanes="2" modes="car" /> 
+            freespeed="27.78" permlanes="2" modes="car" /> 
       <link id="2" from="2" to="3" length="4000.00" capacity="1800" 
-                                 freespeed="27.78" permlanes="1" modes="car" /> 
+            freespeed="27.78" permlanes="1" modes="car" /> 
       <link id="3" from="3" to="2" length="4000.00" capacity="1800" 
-                                 freespeed="27.78" permlanes="1" modes="car" /> 
+            freespeed="27.78" permlanes="1" modes="car" /> 
       <link id="4" from="3" to="1" length="6000.00" capacity="3600" 
-                                 freespeed="27.78" permlanes="2" modes="car" /> 
+            freespeed="27.78" permlanes="2" modes="car" /> 
    </links> 
 </network>
 \end{xml}
@@ -171,12 +173,12 @@ Each element has an identifier id. Nodes are described by an \lstinline|x| and a
     \item the flow \lstinline|capacity| of the link, i.e.,\,the number of vehicles that can pass the link, typically in vehicles per hour.
     \item the \lstinline|freespeed| is the maximum speed at which vehicles are allowed to travel along the link, typically in meters per seconds.
     \item the number of lanes (\lstinline|permlanes|) available in the direction specified by the from and to nodes.
-    \item the list of \lstinline|modes| allowed on the link. This is a comma-separated list, e.g.,\,\lstinline|modes="car,bike,taxi"|.
+    \item the list of \lstinline|modes| allowed on the link. This is a comma-separated list, e.g.,\,\lstinline|modes="car, bike, taxi"|.
 \end{compactitem}
 Note that all links are uni-directional. If a road can be traveled in both directions, two links have to be defined with alternating \lstinline|to| and \lstinline|from| attributes (see links with id 2 and 3 in the example given in the listing above). Thus, the network can be seen as a directed graph. 
 
 % -----------------------------------------------------------------------
-\subsubsection{population.xml}
+\subsubsection{\lstinline|population.xml|}
 The travel demand for \gls{matsim} is described by the agents' day plans. The full set of agents is typically the population, hence the file name \lstinline|population.xml|. Alternatively, \lstinline|plans.xml| is also commonly used in \gls{matsim}, as the population file essentially contains a list of day plans.
 
 The population contains the data in a hierarchical structure as shown in the following small example.
@@ -248,7 +250,7 @@ Most notably, the following simplifications can be made:
 When a simulation is started, \gls{matsim}'s \lstinline|Controler| will load such a file and then automatically assign the nearest link to each activity and calculate a suitable route for each leg. This makes it easy to get started quickly. 
 
 % -----------------------------------------------------------------------
-\subsubsection{facilities.xml}
+\subsubsection{\lstinline|facilities.xml|}
 In the facilities file location attributes can be specified. Importantly, open times and capacities can be added here. Facilities are not a mandatory element of core \gls{matsim}. Some \glspl{module}, such as the destination innovation module (Section~\ref{ch:destinationchoice}), use it, however.
 
 An example listing is as follows.
@@ -266,7 +268,8 @@ An example listing is as follows.
 \end{xml}
 
 % -----------------------------------------------------------------------
-\subsubsection{transitVehicles.xml}
+\subsubsection{\lstinline|transitVehicles.xml|}
+\label{sec:inputdata:transitvehicles}
 To simulate public transport in \gls{matsim}, two additional input files are necessary. One is \lstinline|transitSchedule.xml|, which describes the vehicles which serve the lines: are they big buses, small buses, trains or light rail vehicles, and describes how many passengers each vehicle can transport.
 
 The description of public transport vehicles can be split into two parts: In a first part, vehicle types have to be described, specifying how many passengers such a vehicle can transport (Note that the term "vehicle" can refer to multiple vehicles in reality, e.g.,\,a train with several wagons should be specified as one long vehicle with a high number of seats). In the second part, actual vehicles have to be listed. Each vehicle has an identifier and is of a previously specified vehicle type. The following shows an example of a such a file, describing one vehicle type and two vehicles of that type. 
@@ -291,24 +294,25 @@ The description of public transport vehicles can be split into two parts: In a f
 \end{xml}
 
 % -----------------------------------------------------------------------
-\subsubsection{transitSchedule.xml}
+\subsubsection{\lstinline|transitSchedule.xml|}
+\label{sec:inputdata:transitschedule}
 The second file that is required to simulate public transport is \lstinline|transitSchedule.xml|, a rather complex file. It contains information about stop facilities (these can be bus stops, train stations or other stop locations) and transit services.
 
 In the first part, the stop facilities need to be defined, giving each one a coordinate, an identifier and a reference to a link in the network. The stop can only be served by vehicles driving on that specified link. Optionally, it is possible to specify a name for the stop and if other vehicles are blocked when a transit vehicle is waiting at a stop. This last attribute is useful to model e.g.,\,the difference of bus stops, where one bus stop has a bay, while at another stop, the bus has to stop on the actual road.
 
 After the stop facilities, the transit lines, their routes and schedules are described. This is a hierarchical data structure: Each line can have one or more routes, each route has a route profile, a network route and a list of departures. Following listing represents an example of a minimalistic but complete transit schedule.
-
+%
 \begin{xml}
 <?xml version="1.0" encoding="UTF-8"?> 
 <!DOCTYPE transitSchedule SYSTEM "http://www.matsim.org/files/dtd/transitSchedule_v1.dtd"> 
 <transitSchedule> 
    <transitStops> 
       <stopFacility id="1" x="990.0"  y="0.0"   name="Adorf" 
-                                                linkRefId="1" isBlocking="false"/> 
+           linkRefId="1" isBlocking="false"/> 
       <stopFacility id="2" x="1100.0" y="980.0" name="Beweiler" 
-                                                linkRefId="2" isBlocking="true"/> 
+           linkRefId="2" isBlocking="true"/> 
       <stopFacility id="3" x="0.0"    y="10.0"  name="Cestadt" 
-                                                linkRefId="3" isBlocking="false"/> 
+           linkRefId="3" isBlocking="false"/> 
    </transitStops> 
    <transitLine id="Blue Line"> 
       <transitRoute id="1"> 
@@ -337,7 +341,7 @@ After the stop facilities, the transit lines, their routes and schedules are des
 
 Each transit line must have a unique id. Each transit route has an id which must be unique within that one line, so the same route id can be used with different lines. The \lstinline|transportMode| describes on which links in the network the line runs (Actually, this is currently not yet enforced. It would be possible to let a bus run on train links in the simulation. It might be enforced in the future).
 
-The \lstinline|routeProfile| describes the stops this route serves, while route itself describes the series of links in the network the transit vehicle's driver has to drive along (thus often referred to as network route. Note that the complete route, i.e.,\,all links the vehicle drives along, must be listed in the route, and not only the ones where stops are located. All the specified stops should occur along this route in the specified order. The time offsets given for each stop in the \lstinline|routeProfile| describe the relative time offset to an actual departure time. If a bus is to depart at 7\,am, and stop 2 has a \lstinline|departureOffset| of 00:03:00, this must be read that the bus is expected to depart at 07:03 at the specific stop. All stops in the route profile must have a departure offset defined, except the last one. All stops, except the first one, can optionally have an arrival offset defined. This is mostly useful for large trains that stop for several minutes at a station to help the routing algorithm to find connecting services at the correct time, namely the expected arrival time of the train.
+The \lstinline|routeProfile| describes the stops this route serves, while route itself describes the series of links in the network the transit vehicle's driver has to drive along (thus often referred to as network route. Note that the complete route, i.e.,\,all links the vehicle drives along, must be listed in the route, and not only the ones where stops are located. All the specified stops should occur along this route in the specified order. The time offsets given for each stop in the \lstinline|routeProfile| describe the relative time offset to an actual departure time. If a bus is to depart at 7\,am, and stop 2 has a \lstinline|departureOffset| 3\,minutes, this must be read that the bus is expected to depart at 7:03\,am at the specific stop. All stops in the route profile must have a departure offset defined, except the last one. All stops, except the first one, can optionally have an arrival offset defined. This is mostly useful for large trains that stop for several minutes at a station to help the routing algorithm to find connecting services at the correct time, namely the expected arrival time of the train.
 
 As last part of the description of a transit route, the list of departures should be given. Each departure has an id, which must be unique within the route, and gives the departure time at the first stop of the specified route profile. In addition, the departure specifies with which vehicle the service should be run. This vehicle must be defined in the aforementioned list of transit vehicles. 
 
@@ -352,7 +356,7 @@ java -Xmx512m -cp /path/to/matsim.jar
 If run, this validator will print out a list of errors or warnings, if any are found, or show a message that the schedule appears to be valid. 
 
 % -----------------------------------------------------------------------
-\subsubsection{counts.xml}
+\subsubsection{\lstinline|counts.xml|}
 \gls{matsim} provides funtionality to compare traffic volumes from your simulation to real world values. The Counts infrastructure allows to compare the traffic volumes on links on an hourly basis. The following listing shows an example of a \lstinline|counts.xml| input file required to do traffic count comparisons. 
 
 \begin{xml}
@@ -421,7 +425,7 @@ The stopwatch file (\lstinline|stopwatch.txt|) contains the durations of actions
 
 The following output files are created for specific iterations:
 
-\paragraph{Events:} Every action in the simulation is recorded as a so-called \gls{matsim} event, be it the starting of an activity or the change of a network link. Each \lstinline|Event| hosts one or multiple attributes. By default, the time when the \lstinline|Event| occurred is contained. Additionally, information like the id of the agent who caused the event or the id of the link where the \lstinline|Event| occurred could be included. By default, the \gls{matsim} simulation module creates a so called events-file in every 10th iteration. This file contains every single \lstinline|Event| that has been created by the simulation. The events file is thus a formidable base for post-analyses for example with the visualizers. Events are discussed in detail in Section~\ref{sec:events-extension-point}.
+\paragraph{Events:} Every action in the simulation is recorded as a so-called \gls{matsim} \gls{event}, be it the starting of an activity or the change of a network link. Each \gls{event} hosts one or multiple attributes. By default, the time when the \gls{event} occurred is contained. Additionally, information like the id of the agent who caused the event or the id of the link where the \gls{event} occurred could be included. By default, the \gls{matsim} simulation module creates a so called events-file in every 10th iteration. This file contains every single \gls{event} that has been created by the simulation. The events file is thus a formidable base for post-analyses for example with the visualizers. Events are discussed in detail in Section~\ref{sec:events-extension-point}.
 
 \paragraph{Plans:} At configurable iterations the current state of the population with the agents' plans is printed.
 
@@ -438,8 +442,8 @@ The printing of the link volume comparison (between simulated and counted volume
 
 % ----------
 \createfigure%
-{Example for a Link Volumes Comparison Between Simulation and Road Count Values}%
-{Example for a Link Volumes Comparison Between Simulation and Road Count Values}%
+{Example for a link volumes comparison between simulation and road count values}%
+{Example for a link volumes comparison between simulation and road count values}%
 {\label{fig:countcomparison}}%
 {\includegraphics[width=0.7\textwidth, angle=0]{using/figures/link101227.png}}%
 {}
@@ -450,10 +454,10 @@ The printing of the link volume comparison (between simulated and counted volume
 The \gls{matsim} release is shipped with an example scenario named \lstinline|equil| in the folder \lstinline|examples/equil|. The scenario contains the following files \lstinline|config.xml|, \lstinline|network.xml| and \lstinline|plans100.xml|, \lstinline|plans2000.xml.gz| containing 100 and 2000\,persons respectively with their day plans using the car mode only. A tiny population containing only 2\,persons (\lstinline|plans2.xml|) one using public transport, the other person using car mode are provided. Furthermore, an example for count data can be found in the folder (\lstinline|counts100.xml|). 
 
 %% or trips with taxi mode is also provided (\lstinline|plans-w-taxi.xml|). 
-
 %% A tolls file can be used for road pricing scenarios not discussed here (\lstinline|toll.xml|).
 
-\kai{Habe da neulich, als Resultat einer Diskussion, etwas ausgedünnt.  Müssen wir ggf.\ anpassen, aber m.E.\ stimmt es so nun.}
+%\kai{Habe da neulich, als Resultat einer Diskussion, etwas ausgedünnt.  Müssen wir ggf.\ anpassen, aber m.E.\ stimmt es so nun.}
+%\ah{https://matsim.atlassian.net/browse/MATSIM-286}
 
 There is also a file with a demand of exactly 100\,\emph{trips} (\lstinline|plans100trips.xml|), i.e.,\,demand just going from one location to another, using a \lstinline$dummy$ activity type at each end.  This is provided to show that \gls{matsim} can also be run as a fully trip-based approach. Clearly, it loses some of its expressiveness, but the basic concepts, including route and even departure time adaptation, still work in exactly the same way.
 
@@ -461,8 +465,8 @@ The network of the scenario is shown in Figure~\ref{fig:equil}.
 
 % ----------
 \createfigure%
-{Equil Scenario Network}%
-{Equil Scenario Network}%
+{Equil scenario network}%
+{Equil scenario network}%
 {\label{fig:equil}}%
 {\includegraphics[width=0.8\textwidth, angle=0]{using/figures/equil.png}}%
 {}
@@ -475,19 +479,24 @@ As shown in the listing below, this scenario uses replanning. 10\,\% of the agen
 \begin{xml}
 <module name="strategy">
 	<param name="maxAgentPlanMemorySize" value="5" /> <!-- 0 means unlimited -->
-
-	<param name="ModuleProbability_1" value="0.9" />
-	<param name="Module_1" value="BestScore" />
-
-	<param name="ModuleProbability_2" value="0.1" />
-	<param name="Module_2" value="ReRoute" />
+	
+	<parameterset type="strategysettings" >
+		<param name="strategyName" value="SelectExpBeta" />
+		<param name="weight" value="0.9" />
+	</parameterset>
+	
+	<parameterset type="strategysettings" >
+		<param name="strategyName" value="ReRoute" />
+		<param name="weight" value="0.1" />
+	</parameterset>
+	
 </module>
 \end{xml}
 
 \kai{I think there is a better syntax for the above now (without the numbering); should we use that?}
-\ah{ja}
+\ah{ersetzt}
 
-The section \lstinline|planCalcScore| defines the parameters used for scoring. The parameters are explained in Chapter~\ref{ch:scoring}. As can be seen in the example the two activity types \lstinline|h| (home) and \lstinline|w| (work) are specified. The scenario is run for 10 iterations, writes the output files to \lstinline|./output/equil| (Section~\ref{sec:outputdata}), and uses \lstinline|qsim| as the mobility simulation (more on \gls{mobsim}s in Section~\ref{sec:trafficflowmodel} and \ref{sec:mobsims}).
+The section \lstinline|planCalcScore| defines the parameters used for scoring. The parameters are explained in Chapter~\ref{ch:scoring}. As can be seen in the example the two activity types \lstinline|h| (home) and \lstinline|w| (work) are specified. The scenario is run for 10\,iterations, writes the output files to \lstinline|./output/equil| (Section~\ref{sec:outputdata}), and uses \gls{qsim} as the mobility simulation (more on \glspl{mobsim} in Section~\ref{sec:trafficflowmodel} and \ref{sec:mobsims}).
 
 \begin{xml}
 <module name="controler">
@@ -509,21 +518,24 @@ Simulation results can be comfortably analyzed using one of the visualizers, via
 \subsubsection{Units}
 \gls{matsim} tries to make as few assumptions about actual units as is possible, but at some locations it cannot be done without any. In general, \gls{matsim} expects similar values (e.g.,\,all distances) to be in the same unit wherever they are used. In the following, the most important (expected) units are listed in a short overview. 
 
+% .......................................................
 \paragraph{Distance}
 
 Distance units are most prominently used in links' length. They should be specified in the same unit that the coordinate system uses. This allows \gls{matsim} to use simple triangulation, e.g.,\,with the nodes' coordinates, to calculate beeline distances. As most of the typically used, projected coordinate systems (see Section~\ref{sec:coordinatesystems}) use meters as unit of distance, this is the most common used unit of distance in \gls{matsim}. 
 
+% .......................................................
 \paragraph{Time}
 
-While \gls{matsim} supports an hour:minute:second notation in several places, internally it uses seconds as the default time unit. This implies that for example link speeds must be specified in distance per second, typically m/s. One notable exception from this rule are scoring parameters, where \gls{matsim} expects values per hour. This is due to the fact that most behavioral parameters like value of time are typically estimated per minute or hour, and that the corresponding values for seconds are very small and thus error prone to be configured. 
+While \gls{matsim} supports an hour:minute:second notation in several places, internally it uses seconds as the default time unit. This implies that for example link speeds must be specified in distance per second, typically meters per second. One notable exception from this rule are scoring parameters, where \gls{matsim} expects values per hour. This is due to the fact that most behavioral parameters like value of time are typically estimated per minute or hour, and that the corresponding values for seconds are very small and thus error prone to be configured. 
 
+% .......................................................
 \paragraph{Money}
 
-Money is unit-free. The units are implicitly given by the marginal utility of money (cf.,\,Equation~(\ref{eq:tdisutility}). That is when, say, one moves from Germany to Switzerland, then the parameter $\beta_c$ has to be changed from "utility per Euro" to "utility per Swiss franc".
+Money is unit-free. The units are implicitly given by the marginal utility of money (cf.,\,Equation~(\ref{eq:tdisutility}). That is when, say, one moves from Germany to Switzerland, then the parameter $\beta_c$ has to be changed from "utility per Euro" to "utility per Swiss Franc".
 
 % ----------------------------------------------------------------------------
 \subsubsection{Conventions}
-\gls{matsim} makes heavy uses of identifiers, short \lstinline|Id|s. This Ids can be arbitrary strings, with the following exceptions: Ids should not contain any spaces (incl. tabs, new lines, etc) or commas, as those characters are typically used for separating different Ids from each other in Id lists. 
+\gls{matsim} makes heavy uses of identifiers, short \lstinline|Id|s. This Ids can be arbitrary strings, with the following exceptions: Ids should not contain any spaces (incl. tabs, new lines, etc) or commas, as those characters are typically used for separating different Ids from each other in \lstinline|Id| lists. 
 
 % ----------------------------------------------------------------------------
 \subsubsection{Coordinate Systems}
@@ -556,7 +568,7 @@ This allows \gls{matsim} to work with your coordinates and convert them whenever
 \subsubsection{Demand Side}
 Demand estimation is 
 %the main 
-an important purpose of \gls{matsim}. That means that---in theory---only these demand components have to be provided to \gls{matsim}, which in reality do \emph{not} change during the simulated average working day. Examples are the population and its residential and working locations. In practice, however, \gls{matsim} is not quite there yet to endogenously model the complete travel demand. The sequence and preferred durations of activities for example have to be provided as input. In consequence all travel demand choices, which are not covered by the \gls{matsim} cycle, have to be endogenously estimated. 
+an important purpose of \gls{matsim}. That means that---in theory---only these demand components have to be provided to \gls{matsim}, which in reality do \emph{not} change during the simulated average working day. Examples are the population and its residential and working locations. In practice, however, \gls{matsim} is not quite there yet to endogenously model the complete travel demand. The sequence and preferred durations of activities for example have to be provided as input. In consequence all travel demand choices, which are not covered by the \gls{matsim} loop, have to be endogenously estimated. 
 
 For population generation, basically two possibilities exist. The comfortable way is to translate full population census and the slightly more demanding way is synthetic population generation \citep[e.g.,][]{GuoBhat_TRR_2007} based on sample or structure surveys. For \gls{matsim} both ways have been implemented based on \citet[][]{BfS_VZ_2000} and \citet[][]{Mueller_unpub_STRC_2011} respectively.
 
@@ -570,7 +582,7 @@ Having generated the residential population of the study area, additional demand
 \subsubsection{Supply Side}
 With the exception of some experimental work \citep[][]{HorniEtAl_TechRep_IVT_2012}, supply side is not changed by \gls{matsim}. In simulation practice, two different network types are in use, planning networks and navigation networks (compare the Swiss examples in Figure~\ref{fig:planningnetwork} and Figure \ref{fig:navigationnetwork} for the Zürich region). The former are thinned out and serve for initial explorative simulation runs, while the later are used for policy runs usually offering much more details such as bike and even pedestrian links.
 
-Clearly, many modules require further information about the infrastructure, in particular about the activity locations, for example about open times. For the Swiss scenario the facilities are derived from a business census \citep[][]{..}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
+Clearly, many modules require further information about the infrastructure, in particular about the activity locations, for example about open times. For the Swiss scenario the facilities are derived from a business census \citep[][]{SwissEnterpriseCensus_manual_2001}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
 %
 \createfigure%
 {Zürich networks}%
@@ -596,13 +608,13 @@ Calibration is a necessary task of any simulation study. Main calibration compon
 
 Verification and validation, however, are of more concern for the \gls{microsimulation} developers. Given a valuable estimate for demand and supply including a properly estimated utility function, from customer's perspective the simulation can be expected to generate valuable single run results out of the box.
 
-The user's or customer's responsibility is asked, at another place, though. \Glspl{microsimulation} are basically a sampling tool, just as a survey (see Section~\ref{sec:variability}). A single run represents the sampling unit, the individual in surveys. This obviously means that \gls{microsimulation} results must not to be presented as single runs but with the help of the usual statistical tools, e.g., by parameters with the common measures of spread or confidence intervals. That basically means that the user/customer is responsible to specify the sample size, the number of simulation runs initialized with different random seeds. 
+The user's or customer's responsibility is asked, at another place, though. \Glspl{microsimulation} are basically a sampling tool, just as a survey (see Section~\ref{sec:variability}). A single run represents the sampling unit, the individual in surveys. This obviously means that \gls{microsimulation} results must not to be presented as single runs but with the help of the usual statistical tools, e.g.,\,by parameters with the common measures of spread or confidence intervals. That basically means that the user/customer is responsible to specify the sample size, the number of simulation runs initialized with different random seeds. 
 
 Policy evaluations are often based on count data, usually widely available but also showing substantial temporal variability. For \gls{matsim}, the count data need to be converted to match the simulated period of the day.
 
 As simulation practice often mixes the terms, a few more theoretical words are said hereabout calibration, verification and validation. 
 
-These crucial steps are located in the modeling process as sketched in Figure \ref{fig:modeling}, which is loosely based on \citet[][Figure 10.2]{Petty_SokolowskiBanks_2010}. 
+These crucial steps are located in the modeling process as sketched in Figure~\ref{fig:modeling}, which is loosely based on \citet[][Figure 10.2]{Petty_SokolowskiBanks_2010}. 
 
 \emph{Calibration} is the process of adjusting model parameters to increase consistency of model outputs and observed target values \citep[][p.348]{HollanderLiu_Transportation_2007} \citep[see also][]{TrucanoEtAl_RESS_2006}. \citet[][Table 1]{HollanderLiu_Transportation_2007} list numerous studies that each calibrate a specific transport microsimulation. Further examples are \citet[][]{SmithEtAl_JTE_2008, KimEtAl_TRR_2005, RutterEtAl_JASA_2009}, microsimulation calibration guidelines are provided by \citet[][]{MilamChao_TRBATPM_2001, WegmannEverett_TechRep_CTRUT_2008, DowlingEtAl_manual_2002}. \citet[][Table 2]{HollanderLiu_Transportation_2007} describe measures of goodness-of-fit, that are productive for calibration. Due to the usually large number of model parameters, an automated process is favorable as far as possible. Essentially this is an optimization process \citep[][p.353]{HollanderLiu_Transportation_2007}, for which various established procedures exist \citep[e.g.,][p.41ff]{ZhangMa_ResRep_PATH_2008}. For \gls{matsim}, an automatic procedure adapting the plans to road counts was developed by \citet[][]{FloetteroedEtAl_TechRep_TRANSPOR_2008}. It is unclear however, if a certain loss of behavioral soundness is caused by adapting plans according to statistical matching. On the other hand, it is unclear anyway, to date, if the \gls{matsim} relaxation transitions should be given a behavioral meaning.
 
