@@ -25,7 +25,7 @@ A way to reduce the gap between these two simulation types is presented in the f
 \section{Requirements}
 Common micro-simulations focusing on vehicular traffic do not provide detailed information about the agents' positions when walking or biking. They either totally ignore non-motorized trips or \gls{teleport} agents from their trips' origins to destinations. When using the latter approach, as \gls{matsim} does so far, travel times are often determined using simple estimation rules, e.g.,\,using an average travel speed and an estimated traveled distance based on the trip's crow-fly distance.
 
-An application's required level of detail strongly influences the modeling approach selection. A simple model including agents' age and gender, but not incorporating agent-agent interactions, might be detailed enough for some studies (e.g.,\,e-bikes or public transport). However, for other studies,a more detailed model, also simulating agent interactions, might be necessary (e.g.,\,evacuation of crowded pedestrian areas).
+An application's required level of detail strongly influences the modeling approach selection. A simple model including agents' age and gender, but not incorporating agent-agent interactions, might be detailed enough for some studies (e.g.,\,e-bikes or public transport). However, for other studies, a more detailed model, also simulating agent interactions, might be necessary (e.g.,\,evacuation of crowded pedestrian areas).
 
 A model's computational effort increases with its level of detail. Therefore, to keep computation times short, a model should only be as detailed as necessary. One solution is to provide several models with various levels of detail and selecting an appropriate one. On the other hand, a flexible model with an adaptive level of detail can be used. While the latter are more complex, they can provide more detail where needed and can be more aggregated where possible.
 
@@ -38,10 +38,10 @@ When not sharing infrastructure, the simulation module for ride trips has to obs
 Compared to vehicular traffic flow simulations, non-vehicular simulations require different input data. An agent's age and gender, for example, strongly influence its walk speed, but this is not taken into account by vehicular traffic flows models. Models including agent-agent or agent-environment interactions also need detailed information about a road network's geometry (e.g.,\,shape, width and height profile of links), as well as buildings and other obstacles in the simulated area.
 
 % ##################################################################################################################
-\section{Modelling Approach and Implementation}
+\section{Modeling Approach and Implementation}
 \subsection{Multi-modal Link Extension} 
 \label{sec:Multi-modalSimulation}
-For the simulation of non-motorized trips a new simulation module has been developed for \gls{matsim}'s \emph{QSim}. Figure~\ref{fig:multi-modal-link-extension} shows the implementation's basic concept---a \gls{multimodal} extension is added to each link object in the mobility simulation. The existing network infrastructure is re-used, which---as discussed before---simplifies the realization of interactions between agents using different transport modes.
+For the simulation of non-motorized trips a new simulation module has been developed for \gls{matsim}'s \gls{qsim}. Figure~\ref{fig:multi-modal-link-extension} shows the implementation's basic concept---a \gls{multimodal} extension is added to each link object in the \gls{mobsim}. The existing network infrastructure is re-used, which---as discussed before---simplifies the realization of interactions between agents using different transport modes.
 
 %---------------------------------------------------------------------
 \createfigure%
@@ -142,7 +142,7 @@ The speed of cyclists is determined using results from \citet{ParkinRotheram_TPo
 %---------------------------------------------------------------------
 \afterpage{\clearpage}	% force latex to place the figures somewhere near here and not at the end of the chapter
 
-When calculating the steepness factor, one must define whether a link goes uphill or downhill. When going uphill, the person's speed is reduced by a factor based on the grade and a reference factor of 0.4002\,meters per second, which is scaled by the same factor as the person's reference speed. i.e.,\,the speed drop of slow people is lower than the drop of fast people. When bike speed drops below walk speed, which happens at a grade of approximately 12\,\%, it is assumed that the person switches to walking (see Equation~\ref{equ:bike_uphill}). For downhill links, a reference factor of 0.2379\,m/s is used. Additionally, it is assumed that cyclists limit their speed to 35\,kilometers per hour (9.7222\,meters per second; see Equation~(\ref{equ:bike_downhill})).
+When calculating the steepness factor, one must define whether a link goes uphill or downhill. When going uphill, the person's speed is reduced by a factor based on the grade and a reference factor of 0.4002\,meters per second, which is scaled by the same factor as the person's reference speed. i.e.,\,the speed drop of slow people is lower than the drop of fast people. When bike speed drops below walk speed, which happens at a grade of approximately 12\,\%, it is assumed that the person switches to walking (see Equation~(\ref{equ:bike_uphill})). For downhill links, a reference factor of 0.2379\,m/s is used. Additionally, it is assumed that cyclists limit their speed to 35\,kilometers per hour (9.7222\,meters per second; see Equation~(\ref{equ:bike_downhill})).
 
 % default seems to be ~14.0
 {\fontsize{12.8pt}{12}
