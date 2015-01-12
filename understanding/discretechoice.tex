@@ -168,7 +168,7 @@ through the \lstinline{learningRate} parameter.
 Assuming for simplicity that upon convergence the unfiltered stationary score
 $S_{ni}^{\infty}$ fluctuates independently from iteration to
 iteration around its expected value, one can derive the following 
-(see Appendix~\ref{sec:derive-filtered-score}): \gunnar{Nummerierung seltsam.}
+(as demonstrated in the appendix to this chapter):
 \begin{eqnarray}
 \text{E}\{\bar{S}_{ni}^{\infty}\} & = & \text{E}\{S_{ni}^{\infty}\}\\
 \text{VAR}\{\bar{S}_{ni}^{\infty}\} & = & \frac{\alpha}{2-\alpha}\text{VAR}\{S_{ni}^{\infty}\}.
@@ -224,7 +224,7 @@ problem.)
 
 The MH algorithm specifies the transition distribution
 of a Markov chain such that a desired stationary distribution of that
-chain is reached. Given that Chapter~\ref{sec:montecarlo} has established
+chain is reached. Given that Chapter~\ref{ch:montecarlo} has established
 a formulation of MATSim in terms of such a chain, the MH machinery can
 hence be inserted into the MATSim iterations. A simplification made in
 the following is that the choice distribution of agent $n$ is considered
@@ -341,7 +341,52 @@ innovation modules was suggested.
 
 % ##################################################################################################################
 
-% \appendix
-\ah{Gunnar: Willst du hier einen Kapitel-Appendix oder einen Buch-Appendix? Hab es provisorisch in einen Buch-Appendix (appendix.tex) geworfen, damit das Dokument wieder vernünftig kompiliert.}
+\section*{Appendix: Derivation of filtered score statistics}
 
-
+Writing out the expectation:
+\begin{eqnarray}
+\text{E}\{\bar{S}_{ni}^{k+1}\} & = & P_{n}(i)\text{E}\{\alpha S_{ni}^{k}+(1-\alpha)\bar{S}_{ni}^{k}\}+(1-P_{n}(i))\text{E}\{\bar{S}_{ni}^{k}\}\\
+% & = & \alpha P_{n}(i)\text{E}\{S_{ni}^{k}\}+P_{n}(i)\text{E}\{\bar{S}_{ni}^{k}\}-\alpha P_{n}(i)\text{E}\{\bar{S}_{ni}^{k}\}+\text{E}\{\bar{S}_{ni}^{k}\}-P_{n}(i)\text{E}\{\bar{S}_{ni}^{k}\}\\
+\Leftrightarrow\text{E}\{\bar{S}_{ni}^{k+1}\}-\text{E}\{\bar{S}_{ni}^{k}\} & = & \alpha P_{n}(i)(\text{E}\{S_{ni}^{k}\}-\text{E}\{\bar{S}_{ni}^{k}\}).
+\end{eqnarray}
+From $\lim_{k\rightarrow\infty}\text{E}\{\bar{S}_{ni}^{k+1}\}-\text{E}\{\bar{S}_{ni}^{k}\}=0$
+then follows
+\begin{eqnarray}
+\lim_{k\rightarrow\infty}\left(\text{E}\{S_{ni}^{k}\}-\text{E}\{\bar{S}_{ni}^{k}\}\right) & = & 0. \label{eq:first-score-moment}
+\end{eqnarray}
+%
+Proceeding similarly for the second moment:
+\begin{eqnarray}
+\text{E}\{(\bar{S}_{ni}^{k+1})^{2}\} 
+& = & 
+P_{n}(i)\text{E}\{(\alpha S_{ni}^{k}+(1-\alpha)\bar{S}_{ni}^{k})^{2}\}+(1-P_{n}(i))\text{E}\{(\bar{S}_{ni}^{k})^{2}\}\\
+%& = & 
+%P_{n}(i)\text{E}\{\alpha^{2}(S_{ni}^{k})^{2}+2\alpha(1-\alpha)S_{ni}^{k}\bar{S}_{ni}^{k}+(1-\alpha)^{2}(\bar{S}_{ni}^{k})^{2}\}+(1-P_{n}(i))\text{E}\{(\bar{S}_{ni}^{k})^{2}\}\\
+%& = & 
+%\alpha^{2}P_{n}(i)\text{E}\{(S_{ni}^{k})^{2}\}+2\alpha(1-\alpha)P_{n}(i)\text{E}\{S_{ni}^{k}\}^{2}+(1-\alpha)^{2}P_{n}(i)\text{E}\{(\bar{S}_{ni}^{k})^{2}\}+(1-P_{n}(i))\text{E}\{(\bar{S}_{ni}^{k})^{2}\}\\
+\Leftrightarrow
+\text{E}\{(\bar{S}_{ni}^{k+1})^{2}\}-\text{E}\{(\bar{S}_{ni}^{k})^{2}\} 
+%& = & \alpha^{2}P_{n}(i)\text{E}\{(S_{ni}^{k})^{2}\}+2\alpha(1-\alpha)P_{n}(i)\text{E}\{S_{ni}^{k}\}^{2}+(1-2\alpha+\alpha^{2})P_{n}(i)\text{E}\{(\bar{S}_{ni}^{k})^{2}\}-P_{n}(i)\text{E}\{(\bar{S}_{ni}^{k})^{2}\}\\
+%& = & \alpha^{2}P_{n}(i)\text{E}\{(S_{ni}^{k})^{2}\}+2\alpha(1-\alpha)P_{n}(i)\text{E}\{S_{ni}^{k}\}^{2}+(-2\alpha+\alpha^{2})P_{n}(i)\text{E}\{(\bar{S}_{ni}^{k})^{2}\}\\
+& = & P_{n}(i) \alpha \left[\alpha\text{E}\{(S_{ni}^{k})^{2}\}+2(1-\alpha)\text{E}\{S_{ni}^{k}\}^{2}-(2-\alpha)\text{E}\{(\bar{S}_{ni}^{k})^{2}\}\right]
+\end{eqnarray}
+From $\lim_{k\rightarrow\infty}\text{E}\{(\bar{S}_{ni}^{k+1})^{2}\}-\text{E}\{(\bar{S}_{ni}^{k})^{2}\}=0$
+then follows
+\begin{eqnarray}
+%\text{lim}_{k\rightarrow\infty}\alpha(2-\alpha)P_{n}(i)\text{E}\{(\bar{S}_{ni}^{k})^{2}\} 
+%& = & 
+%\text{lim}_{k\rightarrow\infty}\left[\alpha^{2}P_{n}(i)\text{E}\{(S_{ni}^{k})^{2}\}-2\alpha(1-\alpha)P_{n}(i)\text{E}\{S_{ni}^{k}\}^{2}\right]\\
+\text{lim}_{k\rightarrow\infty}\text{E}\{(\bar{S}_{ni}^{k})^{2}\} 
+%& = & \frac{\alpha^{2}}{\alpha(2-\alpha)}\text{E}\{(S_{ni}^{k})^{2}\}-\frac{2\alpha(1-\alpha)}{\alpha(2-\alpha)}\text{E}\{S_{ni}^{k}\}^{2}\\
+& = & 
+\frac{\alpha}{2-\alpha}\text{E}\{(S_{ni}^{k})^{2}\}-\frac{2-2\alpha}{2-\alpha}\text{E}\{S_{ni}^{k}\}^{2}. \label{eq:second-score-moment}
+\end{eqnarray}
+%
+The limiting variance then results from inserting of \MyEqRef{eq:first-score-moment} and \MyEqRef{eq:second-score-moment} into
+\begin{eqnarray}
+\text{lim}_{k\rightarrow\infty}\text{VAR}\{\bar{S}_{ni}^{k}\} 
+& = & \text{lim}_{k\rightarrow\infty}\left[\text{E}\{(\bar{S}_{ni}^{k})^{2}\}-\text{E}\{\bar{S}_{ni}^{k}\}^{2}\right]\\
+% & = & \frac{\alpha}{2-\alpha}\text{E}\{(S_{ni}^{k})^{2}\}-\frac{2-2\alpha}{2-\alpha}\text{E}\{S_{ni}^{k}\}^{2}-\frac{2-\alpha}{2-\alpha}\text{E}\{S_{ni}^{k}\}^{2}\\
+% & = & \frac{\alpha}{2-\alpha}\text{E}\{(S_{ni}^{k})^{2}\}+\frac{\alpha}{2-\alpha}\text{E}\{S_{ni}^{k}\}^{2}\\
+ & = & \frac{\alpha}{2-\alpha}\text{VAR}\{(S_{ni}^{k})^{2}\}.
+\end{eqnarray}
