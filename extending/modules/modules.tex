@@ -519,30 +519,26 @@ An overview of \gls{matsim} mobility simulations is given in \citet[][]{Dobler_T
 \item Code: \lstinline|org.matsim.core.mobsim.qsim|
 \end{compactitem}
 
-At the moment, in most applications \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is used. 
+At the moment, in most applications the queue-based and time-step based \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is used. 
 %% It has started as a software branch of \emph{queueSimulation} before supplanting this later simulation. 
-Through multiple engines it can be run in parallel and simulate multi-modal traffic (Section~\ref{sec:multimodalsim_qsim}). It is queue-based and time-step based. The simulation is able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, public transport \citep[][]{Rieser_PhDThesis_2010} and in an experimental manner also traffic lights \citep[][]{Neumann_MastersThesis_2008}). Inclusion of public transport is described in Chapter~\ref{ch:pt}.
+Through multiple engines it can be run in parallel. The simulation is able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, and in an experimental manner also traffic lights \citep[][]{Neumann_MastersThesis_2008}).
 
 % -----------------------------------------------------
-\subsubsection{Multi-Modal Simualtion}
+\subsubsection{Multi-Modal Simulation}
 \label{sec:multimodalsim_qsim}
+\gls{qsim} can run multi-modal simulations. Public transport can be included as described in \citet[][]{Rieser_PhDThesis_2010} and Chapter~\ref{ch:pt}. 
+\ah{Also here I am not up to date: are pt-car etc. interactions possible with a truly inter-modal network?}
 
-1) Scenario - Include vehicle types and vehicles corresponding to each person in scenario. \ah{params}
-2) Config - Set link dynamics from available options (Passing or FIFO) and inform qsim and router about main congested modes.
+Interactions between modes can be included by specifying the parameters \lstinline|linkDynamics| and \lstinline|mainMode|. For link dynamics either \gls{fifo} can be chosen or an approach, where passing is possible. i.e.,\,\lstinline$<param name="linkDynamics" value="FIFO|PassingQ" />$. Parameter \lstinline|mainMode| defines, which modes are congested. Technically, these are the modes that the departure handler of the \lstinline|netsimengine| handles. Effective cell size, effective lane width, flow capacity factor, and storage capacity factor need to be set with diligence. Theoretically also pedestrians can be included, however, only vehicular modes actually make sense. Thus also the vehicles and their type need to be specified for multi-modal interactions. \ah{where? in transit.\lstinline|<param name="vehiclesFile" value="null" />|}.
 
+Simulation experiments for this relatively new feature have been performed for the Patna scenario (Section~\ref{sec:patna}). 
 
-how can pass whom? bike-car-peds? either all or nothing? all congested main modes do not pass with FIFO.
-
-what about pt? Still its own network.
-
-\lstinline|<param name="linkDynamics" value="FIFO|PassingQ" />|
-Dobler and Lämmel are passingQ (Chapter~\ref{ch:multimodal}).
-
-\lstinline|<param name="mainMode" value="..." />|
-%[comma-separated list] Defines which modes are congested modes. Technically, these are the modes that the departure handler of the netsimengine handles.  Effective cell size, effective lane width, flow capacity factor, and storage capacity factor need to be set with diligence.  Need to be vehicular modes to make sense.
+In Chapter~\ref{ch:multimodalsim}, an earlier approach to improve the teleportation travel time estimation is presented. This approximate approach lies in between \gls{fifo} and passing.
 
 
-see Patna scenario (Section~\ref{sec:patna}) (write there about experiences with scenario, in particular computation times)
+\ah{notes:} \\
+1) Scenario - Include vehicle types and vehicles corresponding to each person in scenario. \ah{params? }
+2) Config - Set link dynamics from available options (Passing or FIFO) and inform qsim and router \ah{where? \lstinline|<param name="networkModes" value="car,ride" />|?} about main congested modes.
 
 % ===================================================================================
 \subsection{JDEQSim}
