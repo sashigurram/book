@@ -19,9 +19,10 @@ kaimain:
 kai: kai.aux
 
 kai.aux:
-	pdflatex -interaction=nonstopmode kai
+	pdflatex kai
 
-#	pdflatex kai
+#	pdflatex -interaction=nonstopmode kai
+
 
 kaibib:
 	pdflatex kai

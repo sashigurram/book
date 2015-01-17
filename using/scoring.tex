@@ -21,9 +21,11 @@ Because of the absence of complete-day-utility functions in the literature, \gls
 % ============================================================================================
 \subsection{Mathematical form}
 
-The first and still basic \gls{matsim} \gls{utility} function was formulated by \citet[][]{CharyparNagel2005ga4acts} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far indicated that the \gls{matsim} function is also appropriate for modeling the further choice dimensions.
+The first and still basic \gls{matsim} \gls{utility} function was formulated by \citet[][]{CharyparNagel2005ga4acts} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far indicated that the \gls{matsim} function is also appropriate for modeling 
+%the
+further choice dimensions.
 %
-It is, however, almost certainly not appropriate for activity dropping and addition (see Section~\ref{sec:scoring-current}).
+It is, however, almost certainly not appropriate for activity dropping and activity addition (see Section~\ref{sec:scoring-current}).
 
 %% As in the discrete choice modeling framework (see Chapter~\ref{ch:discretechoice}), the utility $S_{}$ is composed of a deterministic part $V$ and a random error term $\varepsilon$, i.e., $S_{} = V_{} + \varepsilon$. Except for destination choice the error term is not explicitly generated but stems from the random noise produced by the co-evolutionary process.  \kai{(*)}  Randomness is added in various ways in the process, an example is the order in which agents undergo the replanning (e.g., in which iteration choices are modified). \ah{Hier Diskussion Section~\ref{sec:discussion_scoring} noch weiter vertiefen}.
 
@@ -48,6 +50,8 @@ with $N$ as the number of activities. Trip $q$ is the trip that follows activity
 % -------------------------------------------------------------------------------------
 \paragraph{Activities}
 
+\kai{Andreas, there are no separate beta params per activity type.  maybe it would make sense to have them in some cases, but this would be a somewhat larger software change since at this point we cannot attach them to the activity types.}
+
 The utility of an activity $q$ is defined as follows \citep[see also][p.377ff]{CharyparNagel2005ga4acts}:
 \begin{equation}
 S_{act,q} = S_{dur,q} + S_{wait,q} + S_{late.ar,q} + S_{early.dp, q} + S_{short.dur, q},
@@ -65,13 +69,15 @@ and $t_{0,q}$ is minimal duration, or in other words, the duration for which uti
 %%
 %\ah{got it}
 %
-\item $ S_{wait,q} = \beta_{wait, q} \cdot t_{wait,q}$ 
+\item $ S_{wait,q} = \beta_{wait} \cdot t_{wait,q}$ 
 %
-denotes the waiting time spent for example in front of a yet closed store, where $\beta_{wait,q}$ is marginal utility of waiting and $t_{wait,q}$ is the waiting time.
-%		
+denotes the waiting time spent for example in front of a yet closed store, where $\beta_{wait}$ is the \emph{direct} marginal utility of waiting and $t_{wait,q}$ is the waiting time.
+
+It is recommended to leave $\beta_{wait}$ at zero; also see Section~\ref{sec:schedule-delay-costs}.
+
 \item $S_{late.ar,q}= \left\{
   \begin{array}{l l}
-    \beta_{late.ar,q} \cdot (t_{start,q} - t_{latest.ar,q}) & \quad \text{if $t_{start,q} > t_{latest.ar,q}$}\\
+    \beta_{late.ar} \cdot (t_{start,q} - t_{latest.ar,q}) & \quad \text{if $t_{start,q} > t_{latest.ar,q}$}\\
     0 & \quad \text{else}
   \end{array} \right.$
 %  
@@ -79,7 +85,7 @@ denotes the waiting time spent for example in front of a yet closed store, where
 %
 \item $S_{early.dp} = \left\{
   \begin{array}{l l}
-    \beta_{early.dp,q} \cdot (t_{earliest.dp, q} - t_{end,q}) & \quad \text{if $t_{end,q} > t_{earliest.dp,q}$}\\
+    \beta_{early.dp} \cdot (t_{earliest.dp, q} - t_{end,q}) & \quad \text{if $t_{end,q} > t_{earliest.dp,q}$}\\
     0 & \quad \text{else}
   \end{array} \right.$
 %
@@ -87,33 +93,45 @@ defines the penalty for staying not long enough, where $t_{end,q}$ is the ending
 %
 \item $ S_{short.dur, q} = \left\{
   \begin{array}{l l}
-    \beta_{short.dur,q} \cdot (t_{short.dur, q} - t_{dur,q}) & \quad \text{if $t_{dur,q} < t_{short.dur,q}$}\\
+    \beta_{short.dur} \cdot (t_{short.dur, q} - t_{dur,q}) & \quad \text{if $t_{dur,q} < t_{short.dur,q}$}\\
     0 & \quad \text{else}
   \end{array} \right.$
 %  
   is the penalty for a too short activity, where $t_{short.dur}$ is the shortest possible duration for the activity.
 \end{itemize}
 
-\paragraph{Travel} Travel disutility is given as 
+\paragraph{Travel} 
+
+\kai{Andreas, the mode-dependent beta can only be specified by mode, but not by the number of the trip or leg, i.e.\ not by q.  I changed all ``q'' to $mode(q)$.}
+
+\kai{Nennen wir das jetzt doch wieder ``c''?  Wir hatten doch versucht, den Ausdruck ``cost'' loszuwerden, weil er in der Software mal als generalisierte Kosten und mal als monetäre Kosten gemeint war.  Chk}
+
+Travel disutility for a leg $q$ is given as 
 \begin{equation}
 \label{eq:tdisutility}
-S_{trav, mode, q} = C_{mode} + \beta_{trav, mode, q} \cdot t_{trav, q} + \beta_{c} \cdot c  + (\beta_{d, mode, q} + \beta_{c} \gamma_{d, mode}) \cdot d_{trav,q} + S_{transfer,q} \,
+\begin{matrix}
+S_{trav, q} & = & C_{mode(q)} + \beta_{trav, mode(q)} \cdot t_{trav, q} + \beta_{c} \cdot c_q  
+\\ & & + (\beta_{d, mode(q)} + \beta_{c} \gamma_{d, mode(q)}) \cdot d_{trav,q} 
+%
++ \beta_{transfer} \, x_{transfer,q} \, \\
+\end{matrix}
 \end{equation} 
 where:
 \begin{compactitem} 
-\item $C_{mode}$ is a mode-specific constant,
-\item $\beta_{trav, mode, q}$ is the marginal utility of travel by mode (normally negative or zero),
+\item $C_{mode(q)}$ is a mode-specific constant,
+\item $\beta_{trav, mode(q)}$ is the marginal utility of travel by mode (normally negative or zero),
 \item $t_{trav, q}$ gives the travel time between location of activity $q$ and $q+1$,
 \item $\beta_{c}$ is the marginal utility of money (normally positive),
-\item $c$ are the monetary costs of the complete leg such as tolls or fares (normally negative),
-\item $\beta_{d, mode}$ is the  marginal utility of distance (normally negative),
-\item $\gamma_{d, mode}$ is the mode-specific distance cost rate (normally negative),
-\item $d_{trav, q}$ is the distance traveled, and,
-\item $S_{transfer, mode, q}$ are transfer penalties in public transport (normally negative).
+\item $c_q$ are the monetary costs of the complete leg such as tpolls or fares (normally negative \kai{negative Kosten??  vielleicht besser $m$??}),
+\item $\beta_{d, mode(q)}$ is the  marginal utility of distance (normally negative),
+\item $\gamma_{d, mode(q)}$ is the mode-specific distance cost rate (normally negative),
+\item $d_{trav, q}$ is the distance traveled, 
+\item $\beta_{transfer, mode(q)}$ are transfer penalties in public transport (normally negative) \kai{is this mode-specific?}, and
+\item $x_{transfer,q}$ is a 0/1 veriable denoting if a transfer has happend between the previous and the current leg.
 \end{compactitem}
-This is the direct utility contribution of travel; see Section~\ref{sec:opport-cost-of-time} for the relation to the VTTS, and Section~\ref{ch:economicEval} for a more general discussion.
+This is the direct utility contribution of travel; see Section~\ref{sec:opport-cost-of-time} for the the full indirect utility as well as the relation to the VTTS, and Section~\ref{ch:economicEval} for a more general discussion.
 
-Note that the distance contributes to disutility in two ways. First, it is included in a direct manner via $\beta_{d, mode,q}$, which is natural for modes with physical efforts such as walking or cycling. Second, distance is also included monetarily via $\beta_c \cdot \gamma_{d, mode}$ which is natural for mode car or pt, where monetary costs increase dependent on distance.
+Note that the distance contributes to disutility in two ways. First, it is included in a direct manner via $\beta_{d, mode(q)}$, which is natural for modes with physical efforts such as walking or cycling. Second, distance is also included monetarily via $\beta_c \cdot \gamma_{d, mode(q)}$ which is natural for mode car or pt, where monetary costs increase dependent on distance.
 
 %% \kai{distance both via distance cost rate and via direct marginal utl.  ok with me, BK will (probably) be less happy. If it stays this way, config needs to be made consistent with text above.}
 
@@ -125,6 +143,8 @@ Note that the distance contributes to disutility in two ways. First, it is inclu
 \subsection{MATSim Scoring, Opportunity Cost of Time, and the VTTS}
 \label{sec:opport-cost-of-time}
 
+\kai{check VZ}
+
 It is very important to note that travel receives an additional implicit penalty from the opportunity cost of time: If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer. The marginal utility of travel time savings is thus:
 %
 \[
@@ -132,19 +152,21 @@ mUTTS = - \frac{\partial}{\partial t_{trav}} S_{trav} + \frac{\partial}{\partial
 \]
 which is 
 \begin{equation}
-mUTTS = - \frac{\partial}{\partial t_{trav}} S_{trav} +  \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} 
+mUTTS = - \beta_{trav}
+%\frac{\partial}{\partial t_{trav}} S_{trav} 
++  \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} 
 \label{eq:mUTTSfull}
 \end{equation}
 and at the typical duration of an activity
 \[
-mUTTS(t_{dur,q} = t_{typ,q}) = \beta_{trav} + \beta_{dur}.
+mUTTS(t_{dur,q} = t_{typ,q}) = - \beta_{trav} + \beta_{dur}.
 \]
 The marginal utility of travel time savings at the typical duration can be transformed to the more common value of travel time savings by division with $\beta_{c}$:
 \[
-VTTS = \frac{mUTTS}{\beta_{c}} = \frac{\beta_{trav} - \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} }{\beta_{c}}
+VTTS = \frac{mUTTS}{\beta_{c}} = \frac{- \beta_{trav} + \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} }{\beta_{c}}
 \]
 \[
-VTTS(t_{dur,q} = t_{typ,q}) = \frac{mUTTS}{\beta_{c}} = \frac{\beta_{trav} - \beta_{dur}}{\beta_{c}}
+VTTS(t_{dur,q} = t_{typ,q}) = \frac{mUTTS}{\beta_{c}} = \frac{- \beta_{trav} + \beta_{dur}}{\beta_{c}}
 \]
 This is important for calibration of the utility function.
 
@@ -154,7 +176,42 @@ This is important for calibration of the utility function.
 \subsection{The Resulting Modeling of Schedule Delay Costs}
 \label{sec:schedule-delay-costs}
 
-\kai{todo, possibly by myself}
+\paragraph{Arriving early}
+
+In the same way as the marginal utility of travel time savings is not only given by $- \beta_{trav}$ but instead by $- \beta_{trav} + \beta_{dur}$, the marginal utility of waiting time savings is given by 
+$
+mUWTS = - \beta_{wait} + \beta_{dur}: 
+$
+Even when $\beta_{wait} = 0$, ``doing nothing'' eats into the overall time budget and thus incurs the same opportunity cost of time as traveling does.  
+%
+Intuitively, one can imagine that one has to leave the previous activity earlier in order to have a longer waiting time, thus reducing the score of the previous activity.
+
+In consequence, as long as one is not able to estimate $\beta_{wait}$ separately from $\beta_{dur}$, it is recommeded to leave $\beta_{wait}$ at zero.
+
+\paragraph{Arriving late}
+
+Arriving late incurs a marginal utility of $\beta_{late}$, typically negative.  Here, no additional opportunity cost of time is involved. Intuitively, arriving later implies having left the previous activity later.  That is, the current activity is shortened by the same amount by which the previous activity was extended, leaving the overall score unaffected (cf.\ Section \ref{ch:economicEval:valuingBehavior}). 
+
+\paragraph{The typical Vickrey parameters}
+
+In consequence, the typical Vickrey parameters of $-6$, $-12$ and $-18$ \kai{citation} are obtained from the following equations:
+\begin{equation}
+\begin{matrix}
+-\beta_{wait} + \beta_{dur} & = & 6 \\
+-\beta_{trav} + \beta_{dur} & = & 12 \\
+- \beta_{late} & = & 18 \\
+\end{matrix}
+\end{equation}
+
+This has one degree of freedom too many to be solved uniquely.  With setting $\beta_{wait} = 0$ as recommended earlier, one obtains
+\begin{equation}
+  \begin{matrix}
+    \beta_{dur} & = & 6 \\
+\beta_{trav} & = & - 6 \\
+\beta_{late} & = & - 18 \ .\\
+  \end{matrix}
+\end{equation}
+These are the \gls{matsim} default settings for these parameters.
 
 % ##################################################################################################################
 \section{Implementation of the MATSim Default Scoring Function}
@@ -197,14 +254,14 @@ For an adaptive \gls{algorithm}, such a penalty needs to guide the adaptation ba
 \section{Parameters}
 Two frequently applied starting points for utility function calibration are the parameter set proposed by \citet[][]{CharyparNagel2005ga4acts} and the estimates by \citet[][]{Kickhoefer_MastersThesis_2009}.
 
-\citet[][p.393]{CharyparNagel2005ga4acts} comes up with 
+\citet[][p.393]{CharyparNagel2005ga4acts} come up with 
 \begin{compactitem}
 \item $\beta_{dur}= 6\, utils/h$,
-\item $\beta_{trav, mode, q}= -6\, utils/h$,
-\item $S_{wait,q}=0\, utils/h$,
-\item $\beta_{short.dur,q} = 0\, utils/h$
-\item $\beta_{late.ar,q}=-18\, utils/h$,
-\item $\beta_{early.dp,q}=-18\, utils/h$.
+\item $\beta_{trav, mode(q)}= -6\, utils/h$,
+\item $\beta_{wait}=0\, utils/h$,
+\item $\beta_{short.dur} = 0\, utils/h$
+\item $\beta_{late.ar}=-18\, utils/h$,
+\item $\beta_{early.dp}=-18\, utils/h$.
 \end{compactitem}
 Parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}.
 
