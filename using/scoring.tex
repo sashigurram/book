@@ -104,16 +104,14 @@ defines the penalty for staying not long enough, where $t_{end,q}$ is the ending
 
 \kai{Andreas, the mode-dependent beta can only be specified by mode, but not by the number of the trip or leg, i.e.\ not by q.  I changed all ``q'' to $mode(q)$.}
 
-\kai{Nennen wir das jetzt doch wieder ``c''?  Wir hatten doch versucht, den Ausdruck ``cost'' loszuwerden, weil er in der Software mal als generalisierte Kosten und mal als monetäre Kosten gemeint war.  Chk}
-
 Travel disutility for a leg $q$ is given as 
 \begin{equation}
 \label{eq:tdisutility}
 \begin{matrix}
 S_{trav, q} & = & C_{mode(q)} + \beta_{trav, mode(q)} \cdot t_{trav, q} + \beta_{c} \cdot c_q  
-\\ & & + (\beta_{d, mode(q)} + \beta_{c} \gamma_{d, mode(q)}) \cdot d_{trav,q} 
+\\ & & + (\beta_{d, mode(q)} + \beta_{c} \cdot \gamma_{d, mode(q)}) \cdot d_{trav,q} 
 %
-+ \beta_{transfer} \, x_{transfer,q} \, \\
++ \beta_{transfer} \cdot x_{transfer,q} \, \\
 \end{matrix}
 \end{equation} 
 where:
@@ -126,7 +124,9 @@ where:
 \item $\beta_{d, mode(q)}$ is the  marginal utility of distance (normally negative),
 \item $\gamma_{d, mode(q)}$ is the mode-specific distance cost rate (normally negative),
 \item $d_{trav, q}$ is the distance traveled, 
-\item $\beta_{transfer, mode(q)}$ are transfer penalties in public transport (normally negative) \kai{is this mode-specific?}, and
+\item $\beta_{transfer}$ are transfer penalties in public transport (normally negative),
+%\kai{is this mode-specific?}\kai{no it is not}, 
+and
 \item $x_{transfer,q}$ is a 0/1 veriable denoting if a transfer has happend between the previous and the current leg.
 \end{compactitem}
 This is the direct utility contribution of travel; see Section~\ref{sec:opport-cost-of-time} for the the full indirect utility as well as the relation to the VTTS, and Section~\ref{ch:economicEval} for a more general discussion.
@@ -139,7 +139,15 @@ Note that the distance contributes to disutility in two ways. First, it is inclu
 
 %Ist jetzt im code nicht mehr deprecated. kai, dec'14
 
-% ============================================================================================
+\subsection{The ``wrapping around'' of the utility function}
+\label{sec:wrap-around}
+
+\kai{TODO}
+
+\kai{picture!}
+
+
+% ====================================================================================
 \subsection{MATSim Scoring, Opportunity Cost of Time, and the VTTS}
 \label{sec:opport-cost-of-time}
 
@@ -194,7 +202,7 @@ Arriving late incurs a marginal utility of $\beta_{late}$, typically negative.  
 
 \paragraph{The typical Vickrey parameters}
 
-In consequence, the typical Vickrey parameters of $-6$, $-12$ and $-18$ \kai{citation} are obtained from the following equations:
+In consequence, the typical Vickrey parameters of $6$, $12$ and $18$ \kai{citation} are consistent with the following equations:
 \begin{equation}
 \begin{matrix}
 -\beta_{wait} + \beta_{dur} & = & 6 \\
@@ -214,7 +222,7 @@ This has one degree of freedom too many to be solved uniquely.  With setting $\b
 These are the \gls{matsim} default settings for these parameters.
 
 % ##################################################################################################################
-\section{Implementation of the MATSim Default Scoring Function}
+\section{Implementation details}
 \label{sec:scoring-current}
 This section summarizes the current implementation of the default \gls{matsim} scoring function. The section can be skipped as long as it is kept in mind that what has been said before is not the full story.
 
@@ -254,7 +262,7 @@ For an adaptive \gls{algorithm}, such a penalty needs to guide the adaptation ba
 \section{Parameters}
 Two frequently applied starting points for utility function calibration are the parameter set proposed by \citet[][]{CharyparNagel2005ga4acts} and the estimates by \citet[][]{Kickhoefer_MastersThesis_2009}.
 
-\citet[][p.393]{CharyparNagel2005ga4acts} come up with 
+\citet[][p.393]{CharyparNagel2005ga4acts} use
 \begin{compactitem}
 \item $\beta_{dur}= 6\, utils/h$,
 \item $\beta_{trav, mode(q)}= -6\, utils/h$,
@@ -263,7 +271,7 @@ Two frequently applied starting points for utility function calibration are the 
 \item $\beta_{late.ar}=-18\, utils/h$,
 \item $\beta_{early.dp}=-18\, utils/h$.
 \end{compactitem}
-Parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}.
+These parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}. \kai{Andreas, wieso Chaument?}
 
 %\citet[][p.164, p.173]{ArnottEtAl_TAER_1993} defines 
 %$\alpha=5.00\ \$/h$ the shadow cost of travel time,
@@ -277,7 +285,9 @@ Parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting
 
 \citet[][]{Kickhoefer_MastersThesis_2009} added monetary variables and income to the \gls{matsim} utility function and performed a mode-specific estimation based on the survey by \citet[][]{VrticEtAl_ResRep_SVI_2007}. The utility function extended by monetary factors was linear, both in the variables and the parameters. Estimated parameters are given in Table 3 of \citet[][]{Kickhoefer_MastersThesis_2009}. The income-dependent utility function was based on \citet[][]{Franklin_PhDThesis_2006}.
 
-Note, that nowadays the utility function measures in the unit $utils$, where an earlier interpretation was based on monetary terms (e.g.,\,$\EUR$).
+%% Note, that nowadays the utility function measures in the unit $utils$, where an earlier interpretation was based on monetary terms (e.g.,\,$\EUR$).
+%
+%m.E. nicht notwendig.  kai, jan'2015
 
 % ##################################################################################################################
 \section{Applications and Extensions}

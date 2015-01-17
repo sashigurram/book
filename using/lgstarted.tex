@@ -10,9 +10,9 @@ This chapter explains how to set up and run \gls{matsim} and it describes the re
 
 Getting the source code into different computing environments and extending \gls{matsim} through the \gls{api} is described in the second part of the book in Chapter~\ref{ch:extensionpoints}.
 
-\kai{Ich würde bei den xml snippets gerne überall den header entfernen, überall eine Formulierung benuzten in etwa wie ``a minimal config file approximately looks as follows'', und überall zusätzlich eine stabile(!!) Referenz auf Versionen im Repository geben (muss noch schauen, wie wir das machen).  Z.B.\ ist config inzwischen bereits v2, und hat an manchen Stellen eine modernere Syntax; das fällt nur deshalb nicht auf, weil die alte Syntax noch überall akzeptiert wird.}
+%% \kai{Ich würde bei den xml snippets gerne überall den header entfernen, überall eine Formulierung benuzten in etwa wie ``a minimal config file approximately looks as follows'', und überall zusätzlich eine stabile(!!) Referenz auf Versionen im Repository geben (muss noch schauen, wie wir das machen).  Z.B.\ ist config inzwischen bereits v2, und hat an manchen Stellen eine modernere Syntax; das fällt nur deshalb nicht auf, weil die alte Syntax noch überall akzeptiert wird.}
 
-\ah{klingt gut.}
+%% \ah{klingt gut.}
 
 % ##################################################################################################################
 \section{Running MATSim}
@@ -24,11 +24,18 @@ Getting the source code into different computing environments and extending \gls
 
 To run \gls{matsim} you have to install the \gls{javase} that complies with the \gls{matsim} version to be run. At the time of writing this book, this is \gls{javase}~7.
 
-Furthermore you need the official \gls{matsim} release, which comes as a zip file (usually named with the version number \lstinline|matsim-yy.yy.yy.zip|) including everything that is required to run it. It can be downloaded following the ``release'' link under \url{http://matsim.org/downloads}.
+Furthermore you need the official \emph{\gls{matsim} release,} which comes as a zip file (usually named with the version number \lstinline|matsim-yy.yy.yy.zip|) including everything that is required to run it. It can be downloaded following the ``release'' link under \url{http://matsim.org/downloads}.
 %on the \gls{matsim} web page. 
 Unzipping it results in the \textbf{\gls{matsim} directory tree}.   Continue with Section~\ref{sec:runexample}.
 
-If you prefer to use the more up to date nightly builds, you need to manually download the \gls{matsim} \gls{jar} file (usually named with the revision number \lstinline|MATSim_ryyyy.jar|) and the required external \glspl{library} (\lstinline|MATSim_libs.zip|). Unzipping this collection of 3rd-party libraries, you should then get a directory \lstinline|libs| with several \gls{jar} files inside. If the directory \lstinline|libs| is in the same directory as the \gls{matsim} \gls{jar} file, the libraries are found automatically and do not have to be added to the \lstinline|classpath| manually.
+If you prefer to use the more up to date \emph{nightly builds,} you need to download
+\begin{compactitem}
+\item the \gls{matsim} \gls{jar} file (usually named with the revision number \lstinline|MATSim_ryyyy.jar|), and
+
+\item the required external \glspl{library} (\lstinline|MATSim_libs.zip|). 
+
+Unzipping this collection of 3rd-party libraries, you should then get a directory \lstinline|libs| with several \gls{jar} files inside. If the directory \lstinline|libs| is in the same directory as the \gls{matsim} \gls{jar} file, the libraries are found automatically and do not have to be added to the \lstinline|classpath| manually.
+\end{compactitem}
 
 % ================================================================================================
 \subsection{Running MATSim}
@@ -169,7 +176,9 @@ Minimally \gls{matsim} needs the files
 	\item \lstinline|network.xml|, with the description of the (road) network, and
 	\item \lstinline|population.xml|, providing information about	the travel demand, i.e.,\,the list of agents and their day plans.
 \end{compactitem}
-%
+
+\kai{Andreas, eigentlich würde ich `facilities', `vehicles', und `transit' gerne nach ``extending matsim'' verschieben: (1) `facilities' kann man nur mit core matsim und config file m.E. gar nicht benutzen, (2) schedule-based pt ist ein fehler-anfälliger plug-in, mit dem man nicht gleich ``starten'' muss.  Ok?}
+
 With this setting, \gls{matsim} agents perform their activities on a specific \gls{link}. If further information about \glspl{activitylocation} needs to be specified, this can be done in 
 \begin{compactitem}
 \item \lstinline|facilities.xml|. 
@@ -645,7 +654,15 @@ Having generated the residential population of the study area, additional demand
 
 % ----------------------------------------------------------------------------
 \subsubsection{Supply Side}
-With the exception of some experimental work \citep[][]{HorniEtAl_TechRep_IVT_2012}, supply side is not changed by \gls{matsim}. In simulation practice, two different network types are in use, planning networks and navigation networks (compare the Swiss examples in Figure~\ref{fig:planningnetwork} and Figure \ref{fig:navigationnetwork} for the Zürich region). The former are thinned out and serve for initial explorative simulation runs, while the later are used for policy runs usually offering much more details such as bike and even pedestrian links.
+With the exception of some experimental work \citep[][]{HorniEtAl_TechRep_IVT_2012}, supply side is not changed by \gls{matsim}. \kai{Andreas, what about 
+\begin{itemize}
+\item network change events
+\item signals
+\item emissions/exposure internalization druch roadpricing (m.E.\ ist die Bepreisung des supplies immer noch eine supply side decision)
+\item Andreas Neumann minibus contrib
+\item Taxis (ist das demand side oder supply side?)
+\end{itemize}
+Ich bin ja ohnehin kein großer Anhänger dieser demand/supply side Unterscheidung; sollten wir hier nicht lieber einfach ``network'' in die Überschrift schreiben?}  In simulation practice, two different network types are in use, planning networks and navigation networks (compare the Swiss examples in Figure~\ref{fig:planningnetwork} and Figure \ref{fig:navigationnetwork} for the Zürich region). The former are thinned out and serve for initial explorative simulation runs, while the later are used for policy runs usually offering much more details such as bike and even pedestrian links.
 
 Clearly, many modules require further information about the infrastructure, in particular about the activity locations, for example about open times. For the Swiss scenario the facilities are derived from a business census \citep[][]{SwissEnterpriseCensus_manual_2001}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
 %
