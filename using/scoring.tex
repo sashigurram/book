@@ -20,6 +20,7 @@ Because of the absence of complete-day-utility functions in the literature, \gls
 \label{sec:charyparnagel}
 % ============================================================================================
 \subsection{Mathematical form}
+\label{sec:mathematical-form}
 
 The first and still basic \gls{matsim} \gls{utility} function was formulated by \citet[][]{CharyparNagel2005ga4acts} from the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far indicated that the \gls{matsim} function is also appropriate for modeling 
 %the
@@ -139,34 +140,42 @@ Note that the distance contributes to disutility in two ways. First, it is inclu
 
 %Ist jetzt im code nicht mehr deprecated. kai, dec'14
 
-\subsection{The ``wrapping around'' of the utility function}
-\label{sec:wrap-around}
-
-\kai{TODO}
-
-\kai{picture!}
-
-\begin{figure}
-  \centerline{%
+\begin{figure}[!h!]
+\centerline{%
 \includegraphics[width=0.8\hsize,trim=0 0 0 0,clip]{using/figures/scoring-example}
 }
-  \caption{Illustration of the scoring function}
+  \caption{Illustration of the scoring function. TOP: Individual contributions of the activities and legs.  BOTTOM: Score accumulation over the day.}
   \label{fig:scoring-function}
 \end{figure}
 
+\subsection{Illustration}
+\label{sec:utl-fct-illustration}
+
+Figure~\ref{fig:scoring-function} illustrates the scoring function.  Time runs from left to right.  The example shows part of an executed schedule, with a home, a work, and a lunch activity, connected by a car and a walk leg.
+
+Activities are scored with concave functions, modelling decreasing returns to spending more time at the same activity.  Travel, in contrast, is modelled with downward sloping straight lines, where the slope may be different for different modes of transport, and there may be an initial offset (alternative-specific constant).  Note the delay between the arrival at the workplace and the workplace opening time, which is reflected in no score accumulation during that period.  Agents accumulate those scores over the day, reflected in the bottom graph.
+
+When one assumes that all other things (in particular travel times) are equal, then agents maximize their score when all activities have the same slope ($=$ the same marginal utility; red lines) at their end.  This follows from basic economic theory (cf.~Section~\ref{ch:economicEval:valuingBehavior}), but can also be seen intuitively: If the red lines had not the same slope, the agent could gain by extending those activities with steeper slope at the expense of the otehrs.  Clearly, this holds only when all other things remain constant, in particular the travel times.
+
+
+
+\subsection{The ``wrapping around'' of the utility function}
+\label{sec:wrap-around}
+
+The \gls{matsim} \gls{mobsim} typically starts at midnight, and runs until all plans have reached their final activity.  That is, the \gls{mobsim} by itself is not limited to a day.  However, as already stated in Section~\ref{sec:mathematical-form}, the standard scoring function assumes that plans ``wrap around'' to 24-hour days.  In consequence, the last activity is merged with the first activity into one activity.  For example, if the first activity ends at 07:00 and the last activity starts at 23:00, then it is assumed that this is the \emph{same} activity, with a duration of 8~hours.
+
+Note that scoring the two activities separately would lead to a different result, because of the nonlinear (logarithmic) form of the utility of performing. For example, $\ln(1) + \ln(7) = \ln(7) \ne \ln(1 + 7) = \ln(8)$.
 
 % ====================================================================================
 \subsection{MATSim Scoring, Opportunity Cost of Time, and the VTTS}
 \label{sec:opport-cost-of-time}
 
-\kai{check VZ}
-
-It is very important to note that travel receives an additional implicit penalty from the opportunity cost of time: If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer. The marginal utility of travel time savings is thus:
+As a result of the wrap-around concept, travel receives, beyond the typically negative direct marginal utility $\beta_{trav, mode}$, an additional implicit penalty from the marginal opportunity cost of time: If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer (effect of the so-called opportunity cost of time, cf.~Section~\ref{sec:opport-cost-of-time}). The \textbf{marginal \emph{utility} of travel time savings} is thus:
 %
 \[
-mUTTS = - \frac{\partial}{\partial t_{trav}} S_{trav} + \frac{\partial}{\partial t_{dur}}S_{dur} 
+mUTTS = - \frac{\partial}{\partial t_{trav}} S_{trav} + \frac{\partial}{\partial t_{dur}}S_{dur} \ .
 \]
-which is 
+which is
 \begin{equation}
 mUTTS = - \beta_{trav}
 %\frac{\partial}{\partial t_{trav}} S_{trav} 
@@ -175,9 +184,11 @@ mUTTS = - \beta_{trav}
 \end{equation}
 and at the typical duration of an activity
 \[
-mUTTS(t_{dur,q} = t_{typ,q}) = - \beta_{trav} + \beta_{dur}.
+mUTTS(t_{dur,q} = t_{typ,q}) = - \beta_{trav} + \beta_{dur} \ , 
 \]
-The marginal utility of travel time savings at the typical duration can be transformed to the more common value of travel time savings by division with $\beta_{c}$:
+where it can be imagined $q$ is the activity immediately following the shortened trip (cf.~Section~\ref{ch:economicEval:valuingBehavior}).
+
+The marginal utility of travel time savings at the typical duration can be transformed to the more common \textbf{value of travel time savings} by division with $\beta_{c}$:
 \[
 VTTS = \frac{mUTTS}{\beta_{c}} = \frac{- \beta_{trav} + \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} }{\beta_{c}}
 \]
@@ -245,40 +256,62 @@ The duration at which the utility of an activity is exactly zero is computed by 
 \[
 t_{0,q} := t_{typ,q} \cdot \exp\left( - \frac{10}{(t_{typ,q}/1\,h) \cdot prio} \right) \ ,
 \]
-where $prio$ is a configurable parameter. This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \cite{CharyparNagel2005ga4acts}. Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the "home" activity gets dropped first, which is clearly not plausible. See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives. In the meantime, the recommendations are:
+where $prio$ is a configurable parameter. This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \citep{CharyparNagel2005ga4acts}. Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the "home" activity gets dropped first, which is clearly not plausible. See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives. In the meantime, the recommendations are:
 \begin{compactitem}
 \item Do not set the \lstinline$priority$ value in the config away from its default value.
 \item Recognize that the current \gls{matsim} default scoring/utility function is not suitable for activity dropping.
 \end{compactitem}
 
 % -------------------------------------------------------------------------------------
+
+\begin{figure}
+  \centerline{%
+\includegraphics[width=0.8\hsize,trim=0 0 0 0,clip]{using/figures/negative-duration}
+}
+  \caption{Illustration of wrap-around scoring.  TOP: Normal situation.  BOTTOM: Situation where final activity starts at time-of-day later then when first activity ended, resulting in negative duration.}
+  \label{tab:negative-durations}
+\end{figure}
+
+\begin{figure}
+  \centerline{%
+\includegraphics[width=0.4\hsize,trim=0 0 0 0,clip]{using/figures/score-extension}
+}
+  \caption{Extending the slope when the utility function crosses the zero line to negative durations.}
+  \label{tab:score-extension}
+\end{figure}
+
 \paragraph*{Negative Durations}
 
-In \gls{matsim}, somewhat curiously it is possible to have activities with negative durations. This can happen because of the "wrap around" mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored. Note that scoring the two activities separately would lead to a different result, because of the nonlinear (logarithmic) form of the utility of performing. \kai{Dies müsste eigentlich weiter oben stehen.}
+In \gls{matsim}, somewhat curiously it is possible to have activities with negative durations. This can happen because of the ``wrap around'' mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored (cf.~Section~\ref{sec:wrap-around}). 
+%% \kai{Der Ansatz, dass man alle Aktivitäten des selben Typs erst aufsummiert, würde dies hier natürlich auch lösen.}
+In this situation,
+% \kai{und auch wenn wir es anders machen würden!!}, 
+it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration. However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration at zero cost would lead to more time elsewhere which could be used to accumulate score. This is a bit similar to the question of a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
 
-\kai{make picture}
+For an adaptive \gls{algorithm}, such a penalty needs to guide the adaptation back into the feasible region. From this, it follows that the penalty needs to become larger with growing distance from the feasible region. It also needs to be larger, i.e., more strongly negative, than any score value for a positive activity duration.  The latter is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above. The current approach is to take the slope of when the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ crosses zero, and extend this towards minus infinity.
 
-\kai{Der Ansatz, dass man alle Aktivitäten des selben Typs erst aufsummiert, würde dies hier natürlich auch lösen.}
+\paragraph*{First and last activity not the same}
 
-In that situation \kai{und auch wenn wir es anders machen würden!!}, it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration. However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration at zero cost would lead to more time elsewhere which could be used to accumulate score. This is a bit similar to the question of a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
+Clearly, the wrap-around approach fails if the first and last activity are not the same.  The present code does not look at locations, but gives a warning and problematic results when they do not have the same type.
 
-For an adaptive \gls{algorithm}, such a penalty needs to guide the adaptation back into the feasible region. From this, it follows that the penalty needs to become larger with increasing negativity. It also needs to be larger, i.e.,\,more strongly negative, than any score value for a positive activity duration---which is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above. The current approach is to take the slope of when the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ crosses zero, and extend this towards minus infinity.
 
-\kai{make picture}
 
 % ##################################################################################################################
 \section{Parameters}
 Two frequently applied starting points for utility function calibration are the parameter set proposed by \citet[][]{CharyparNagel2005ga4acts} and the estimates by \citet[][]{Kickhoefer_MastersThesis_2009}.
 
 \citet[][p.393]{CharyparNagel2005ga4acts} use
-\begin{compactitem}
-\item $\beta_{dur}= 6\, utils/h$,
-\item $\beta_{trav, mode(q)}= -6\, utils/h$,
-\item $\beta_{wait}=0\, utils/h$,
-\item $\beta_{short.dur} = 0\, utils/h$
-\item $\beta_{late.ar}=-18\, utils/h$,
-\item $\beta_{early.dp}=-18\, utils/h$.
-\end{compactitem}
+\begin{equation}
+\begin{matrix}
+\beta_{dur} & = & 6\, & utils/h \\
+\beta_{trav, mode(q)} & = & -6\, & utils/h \\
+\beta_{wait} & = & 0\, & utils/h \\
+\beta_{short.dur} & = & 0\, & utils/h \\
+\beta_{late.ar} & = & -18\, & utils/h \\
+\beta_{early.dp} & = & -18\, & utils/h & .\\
+\end{matrix}
+\label{eq:std-params}
+\end{equation}
 These parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}. \kai{Andreas, wieso Chaument?}
 
 %\citet[][p.164, p.173]{ArnottEtAl_TAER_1993} defines 
