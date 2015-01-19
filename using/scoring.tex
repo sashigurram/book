@@ -148,18 +148,18 @@ Note that the distance contributes to disutility in two ways. First, it is inclu
   \label{fig:scoring-function}
 \end{figure}
 
+% ====================================================================================
 \subsection{Illustration}
 \label{sec:utl-fct-illustration}
 
 Figure~\ref{fig:scoring-function} illustrates the scoring function.  Time runs from left to right.  The example shows part of an executed schedule, with a home, a work, and a lunch activity, connected by a car and a walk leg.
 
-Activities are scored with concave functions, modelling decreasing returns to spending more time at the same activity.  Travel, in contrast, is modelled with downward sloping straight lines, where the slope may be different for different modes of transport, and there may be an initial offset (alternative-specific constant).  Note the delay between the arrival at the workplace and the workplace opening time, which is reflected in no score accumulation during that period.  Agents accumulate those scores over the day, reflected in the bottom graph.
+Activities are scored with concave functions, modelling decreasing returns to spending more time at the same activity.  Travel, in contrast, is modeled with downward sloping straight lines, where the slope may be different for different modes of transport, and there may be an initial offset (alternative-specific constant).  Note the delay between the arrival at the workplace and the workplace opening time, which is reflected in no score accumulation during that period.  Agents accumulate those scores over the day, reflected in the bottom graph.
 
-When one assumes that all other things (in particular travel times) are equal, then agents maximize their score when all activities have the same slope ($=$ the same marginal utility; red lines) at their end.  This follows from basic economic theory (cf.~Section~\ref{ch:economicEval:valuingBehavior}), but can also be seen intuitively: If the red lines had not the same slope, the agent could gain by extending those activities with steeper slope at the expense of the otehrs.  Clearly, this holds only when all other things remain constant, in particular the travel times.
+When one assumes that all other things (in particular travel times) are equal, then agents maximize their score when all activities have the same slope ($=$ the same marginal utility; red lines) at their end.  This follows from basic economic theory (cf.~Section~\ref{ch:economicEval:valuingBehavior}), but can also be seen intuitively: If the red lines had not the same slope, the agent could gain by extending those activities with steeper slope at the expense of the others.  Clearly, this holds only when all other things remain constant, in particular the travel times.
 
-
-
-\subsection{The ``wrapping around'' of the utility function}
+% ====================================================================================
+\subsection{The "Wrapping Around" of the Utility Function}
 \label{sec:wrap-around}
 
 The \gls{matsim} \gls{mobsim} typically starts at midnight, and runs until all plans have reached their final activity.  That is, the \gls{mobsim} by itself is not limited to a day.  However, as already stated in Section~\ref{sec:mathematical-form}, the standard scoring function assumes that plans ``wrap around'' to 24-hour days.  In consequence, the last activity is merged with the first activity into one activity.  For example, if the first activity ends at 07:00 and the last activity starts at 23:00, then it is assumed that this is the \emph{same} activity, with a duration of 8~hours.
@@ -203,7 +203,7 @@ This is important for calibration of the utility function.
 \subsection{The Resulting Modeling of Schedule Delay Costs}
 \label{sec:schedule-delay-costs}
 
-\paragraph{Arriving early}
+\paragraph{Arriving Early}
 
 In the same way as the marginal utility of travel time savings is not only given by $- \beta_{trav}$ but instead by $- \beta_{trav} + \beta_{dur}$, the marginal utility of waiting time savings is given by 
 $
@@ -215,13 +215,13 @@ Intuitively, one can imagine that one has to leave the previous activity earlier
 
 In consequence, as long as one is not able to estimate $\beta_{wait}$ separately from $\beta_{dur}$, it is recommeded to leave $\beta_{wait}$ at zero.
 
-\paragraph{Arriving late}
+\paragraph{Arriving Late}
 
 Arriving late incurs a marginal utility of $\beta_{late}$, typically negative.  Here, no additional opportunity cost of time is involved. Intuitively, arriving later implies having left the previous activity later.  That is, the current activity is shortened by the same amount by which the previous activity was extended, leaving the overall score unaffected (cf.\ Section \ref{ch:economicEval:valuingBehavior}). 
 
-\paragraph{The typical Vickrey parameters}
+\paragraph{The typical Vickrey Parameters}
 
-In consequence, the typical Vickrey parameters of $6$, $12$ and $18$ \kai{citation} are consistent with the following equations:
+In consequence, the typical Vickrey parameters of $6$, $12$ and $18$ \kai{citation} \ah{siehe nächster Kommentar} are consistent with the following equations:
 \begin{equation}
 \begin{matrix}
 -\beta_{wait} + \beta_{dur} & = & 6 \\
@@ -241,7 +241,7 @@ This has one degree of freedom too many to be solved uniquely.  With setting $\b
 These are the \gls{matsim} default settings for these parameters.
 
 % ##################################################################################################################
-\section{Implementation details}
+\section{Implementation Details}
 \label{sec:scoring-current}
 This section summarizes the current implementation of the default \gls{matsim} scoring function. The section can be skipped as long as it is kept in mind that what has been said before is not the full story.
 
@@ -282,7 +282,7 @@ where $prio$ is a configurable parameter. This was originally designed such that
 
 \paragraph*{Negative Durations}
 
-In \gls{matsim}, somewhat curiously it is possible to have activities with negative durations. This can happen because of the ``wrap around'' mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored (cf.~Section~\ref{sec:wrap-around}). 
+In \gls{matsim}, somewhat curiously it is possible to have activities with negative durations. This can happen because of the "wrap around" mechanism, where the last activity of a plan is stitched together with the first activity of the plan, and only that merged activity is scored (cf.~Section~\ref{sec:wrap-around}). 
 %% \kai{Der Ansatz, dass man alle Aktivitäten des selben Typs erst aufsummiert, würde dies hier natürlich auch lösen.}
 In this situation,
 % \kai{und auch wenn wir es anders machen würden!!}, 
@@ -290,11 +290,9 @@ it can happen that an agent arrives at the last activity of the plan at a later 
 
 For an adaptive \gls{algorithm}, such a penalty needs to guide the adaptation back into the feasible region. From this, it follows that the penalty needs to become larger with growing distance from the feasible region. It also needs to be larger, i.e., more strongly negative, than any score value for a positive activity duration.  The latter is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above. The current approach is to take the slope of when the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ crosses zero, and extend this towards minus infinity.
 
-\paragraph*{First and last activity not the same}
+\paragraph*{First and Last Activity not the Same}
 
 Clearly, the wrap-around approach fails if the first and last activity are not the same.  The present code does not look at locations, but gives a warning and problematic results when they do not have the same type.
-
-
 
 % ##################################################################################################################
 \section{Parameters}
@@ -312,17 +310,23 @@ Two frequently applied starting points for utility function calibration are the 
 \end{matrix}
 \label{eq:std-params}
 \end{equation}
-These parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}. \kai{Andreas, wieso Chaument?}
+These parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}. 
+\kai{Andreas, wieso Chaument?} 
+\ah{So ganz direkt sind ja die Parameter weder von Arnott noch von Vickrey abgeleitet. Chef meinte, dass da nach langen Diskussionen, mit Chaumet (und M. Bernhard, damals am IVT) noch (nach-)kalibriert wurde. Leider lange vor meiner Zeit.
 
-%\citet[][p.164, p.173]{ArnottEtAl_TAER_1993} defines 
-%$\alpha=5.00\ \$/h$ the shadow cost of travel time,
-%$\beta=3.05\ \$/h$ the unit cost of arriving early at work, and
-%$\gamma=11.88\ \$/h$ the unit cost of arriving late based on the estimations reported by \citet[][Table 2 on p.473]{Small_AER_1982}.
-%Derived from this initial values \citet[][p.382]{CharyparNagel2005ga4acts} define the MATSim utility function as follows, where they consider the opportunity costs of $20\ EUR/h$, i.e., the costs for doing nothing. \ah{wie genau kam man auf die Werte? \\ In \citet[][p.122]{ArnottEtAl_JUE_1990}, they are defined as $\alpha=6.40\ \$/h$, $\beta=3.90\ \$/h$ and $\gamma=15.21\ \$/h$.
-%
+\citet[][p.164, p.173]{ArnottEtAl_TAER_1993} defines 
+$\alpha=5.00\ \$/h$ the shadow cost of travel time,
+$\beta=3.05\ \$/h$ the unit cost of arriving early at work, and
+$\gamma=11.88\ \$/h$ the unit cost of arriving late based on the estimations reported by \citet[][Table 2 on p.473]{Small_AER_1982}.
+Derived from this initial values \citet[][p.382]{CharyparNagel2005ga4acts} define the MATSim utility function as follows [...], where they consider the opportunity costs of $20\ EUR/h$, i.e., the costs for doing nothing. 
+
+Frage ist hier: wie genau kam man auf die Werte? 
+
+In \citet[][p.122]{ArnottEtAl_JUE_1990}, they are defined as $\alpha=6.40\ \$/h$, $\beta=3.90\ \$/h$ and $\gamma=15.21\ \$/h$.
+
 %Bernhard and Axhausen: Metaanalysis. Normwerk. Verlässlichkeit ...
-% Chaumet, R., P. Locher, F. Bruns, D. Imhof, M. Bernard and K.W.\ Axhausen (2007) Verfahren zur Berücksichtigung der Zuverlässigkeit in Evaluationen, final report for VSS 2002/002, Schriftenreihe, 1176, Bundesamt für Strassen, UVEK, Bern. 
-%}
+% Chaumet, R., P. Locher, F. Bruns, D. Imhof, M. Bernard and K.W.\ Axhausen (2007) Verfahren zur Berücksichtigung der Zuverlässigkeit in Evaluationen, final report for VSS 2002/002, Schriftenreihe, 1176, %Bundesamt für Strassen, UVEK, Bern. 
+}
 
 \citet[][]{Kickhoefer_MastersThesis_2009} added monetary variables and income to the \gls{matsim} utility function and performed a mode-specific estimation based on the survey by \citet[][]{VrticEtAl_ResRep_SVI_2007}. The utility function extended by monetary factors was linear, both in the variables and the parameters. Estimated parameters are given in Table 3 of \citet[][]{Kickhoefer_MastersThesis_2009}. The income-dependent utility function was based on \citet[][]{Franklin_PhDThesis_2006}.
 
@@ -333,7 +337,7 @@ These parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also cons
 % ##################################################################################################################
 \section{Applications and Extensions}
 \label{sec:appsExtensions}
-The default scoring function has been applied and extended for various purposes. Please be aware, that the \gls{matsim} code base and in particular the scoring functionality has changed a lot in recent years, e.g.,\,the scoring is now based on events rather than on plans as it was the case before revision r17026 in October 2011.
+The default scoring function has been applied and extended for various purposes. Please be aware, that the \gls{matsim} code base and in particular the scoring functionality has changed a lot in recent years, e.g.,\,the scoring is now based on events rather than on plans as it was the case before revision r17026 in October~2011.
 %\ah{Btw: when exactly (revision?) did we switch to events-based scoring? Is relevant in other chapters too.}
 %\kai{MZ should know this.}
 %\thibaut{plan elements from the plans stopped being passed to the scoring function from r17026 on (24 Oct 2011).}
