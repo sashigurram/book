@@ -44,16 +44,16 @@ complex adaptive systems:
 %
 \item \textbf{Microscopic modeling of traffic:} \gls{matsim} performs integral microscopic \emph{simulation of the resulting traffic flows} and the resulting congestion (see Section~\ref{sec:trafficflowmodel}).
 %
-\item \textbf{Computational phyiscs:}
+\item \textbf{Computational physics:}
 %% , in particular simple and thereby fast models of physical processes:} 
 %% Computational physics has performed simulations with $10^8$ and more particles already in the 1980s.
-\gls{matsim} performs fast microscopic simulations with $10^7$ or more ``particles''.
+\gls{matsim} performs fast microscopic simulations with $10^7$ or more "particles".
 %
-\item \textbf{Microscopic behavioral modeling of demand:}
+\item \textbf{Microscopic behavioral modeling of demand/agent-based modeling:}
 %\textbf{Agent-Based Modeling:} 
-\gls{matsim} uses a microscopic description of demand by \emph{tracing the daily schedule} and the decisions involved of the synthetic travelers.  This may be called ``agent-based'' in retrospect.
+\gls{matsim} uses a microscopic description of demand by \emph{tracing the daily schedule} and the decisions involved of the synthetic travelers.  This may be called "agent-based" in retrospect. \ah{Könnte man das agent-based modeling mit "..."/ in den Bullet-Titel nehmen, wie mal als Vorschlag eingefügt? Ist ja ein zentraler Begriff für MATSim.}
 %
-\item  \textbf{Complex acaptive systems/co-evolutionary algorithms:}
+\item  \textbf{Complex adaptive systems/co-evolutionary algorithms:}
  %% and equilibrium modeling:} 
 \gls{matsim} \emph{optimizes the experienced utilities} of the whole schedule through the co-evolutionary search for the resulting equilibrium or steady state (see Section~\ref{sec:co-ev}). 
 %
@@ -69,6 +69,7 @@ complex adaptive systems:
 
 %% \ah{moved everything from here to history}
 
+\todo{adapting this paragraph to bullets above}
 In transport modeling, these streams have evolved from the 1970's for microscopic traffic flow and agent-based demand modeling \citep[e.g.,][]{Wiedemann_PhDThesis_1974, Seddon_Simulation_1972}, while transport equilibrium modeling already started in the 1950's \citep[][]{Wardrop_PICE_1952}. At the end of 1990’s the scene was set for a merger of these strands into a computationally efficient, modular and open-source software enabling further development on travel behavior, network response and efficient computation: \gls{matsim}.
 
 % ----------------------------
@@ -125,10 +126,14 @@ In every iteration, prior to the simulation of the network loading with the \gls
 (often 10\,\%) is allowed to clone the selected plan and modify this clone (\emph{\gls{replanning}}).
 %% With the \gls{msa} usually a decreasing share of travelers is reallocated to a new plan to avoid oscillations. For \gls{matsim}, it has been shown that a variable replanning share over the course of the iterations can be productive and \emph{"increases overall performance of the system by a factor of three or more"} \citep[][p.7f]{CharyparEtAl_IATBR_2006}.
 \kai{Andreas, ich habe das mit dem ``decreasing share of travelers'' mal rausgenommen.  M.E.\ ist das weder im core noch in einer contrib implementiert.  Somit gehört es auf jeden Fall nicht nach ``using matsim''.  --  Es gibt einen MSA switch, aber der bezieht sich auf den score. --  Falls die Aussagen von DC im Buch vorkommen sollen, müssten sie wohl eher irgendwo nach ``understanding matsim''.}
-For the network loading microsimulation step multiple simulations are available and configurable \citep[][p.10f]{HorniEtAl_TechRep_IVT_2011_a}. 
+For the network loading microsimulation step multiple simulations are available and configurable \citep[][p.10f]{HorniEtAl_TechRep_IVT_2011_a,MATSim_Userguide_2015}. 
 
-Plan modification is performed by the \emph{replanning} modules. Four dimensions are usually considered for \gls{matsim} at this time: departure time (and implicitly activity duration) \citep[][]{BalmerEtAl_Timmermans_2005}, route \citep[]{LefebvreBalmer_STRC_2007}, mode, and destination. Further dimensions such as activity adding or dropping or parking and group choices are currently under development and only available experimentally. % Siehe Tabelle MATSim-Präsentationen Prof.\ Axhausen.
-\gls{matsim} replanning offers different strategies to adapt plans ranging from random mutation to approximate suggestions, to best response answers, where in every iteration the currently optimal choice is searched. Usually, routing and destination replanning are best response modifications, while time and mode replanning are random mutations. 
+Plan modification is performed by the \emph{replanning} modules. Four dimensions are usually considered for \gls{matsim} at this time: departure time (and implicitly activity duration) \citep[][]{BalmerRaneyEtAl2005act-times}, route \citep[]{LefebvreBalmer_STRC_2007}, mode \citep{GretherEtAl2009SimpleModeChoiceIPL}, and destination \citep{HorniEtc2008locachoice,HorniEtAl2011TrbLocationChoice}. Further dimensions such as activity adding or dropping or parking and group choices are currently under development and only available experimentally. % Siehe Tabelle MATSim-Präsentationen Prof.\ Axhausen.
+\gls{matsim} replanning offers different strategies to adapt plans ranging from random mutation to approximate suggestions, to best response answers where in every iteration the currently optimal choice is searched. For example, routing
+%and destination replanning are
+often is a best response modification%
+%(possibly taking into account ``frozen'' randomness)
+, while time and mode replanning are random mutations. \kai{Andreas, habe in obigem Satz locachoice rausgenommen.  (1) Echte best response ist m.E.\ technisch schwierig, weil der router nicht die genauen Reisezeiten ausspuckt.  Thibaut sieht das m.E.\ genauso.  (2) Wenn Du tatsächlich echte best response machst, dann müsste doch immer das gleiche rauskommen, es sei denn, die Reisezeiten ändern sich drastisch von einem Aufruf zum nächsten. -- Man könnte es reinnehmen, bräuchte dann aber m.E.\ auch einen Hinweis auf die frozen randomness, was für dieses frühe Kapitel vielleicht zu schwergewichtig daherkommt?}
 
 The initial day chains do not need to be very carefully defined for the replanning dimensions that are included in the optimization process. Plausible values just speed-up the optimization process. 
 
@@ -136,9 +141,12 @@ If an agent ends up with too many plans (configurable), the plan with the lowest
 
 An iteration is completed by evaluating the agents' day experience of the selected day plans (\emph{scoring}). The applied scoring function is described in detail in Chapter \ref{ch:scoring}.
 
-The iterative process is repeated until the average population score stabilizes, where the definition of the stopping criterion is subject of research initialized by \citet[][]{Meister_PhDThesis_2011, NagelFloetteroed2009IatbrResourceInBook}. The typical score development curve (Figure~\ref{fig:scoreprogress}, taken from \citet[][]{HorniEtAl_TRR_2009}) has the form of an evolutionary optimization progress \citep[][p.]{EibenSmithJE_2003}.
+The iterative process is repeated until the average population score stabilizes.
+%% , where the definition of the stopping criterion is subject of research initialized by \citet[][]{Meister_PhDThesis_2011, NagelFloetteroed2009IatbrResourceInBook}.
+The typical score development curve (Figure~\ref{fig:scoreprogress}, taken from \citet[][]{HorniEtAl_TRR_2009}) has the form of an evolutionary optimization progress \citep[][p. \kai{??}]{EibenSmithJE_2003}.  Since the simulations are stochastic, it is not possible to use convergence criteria appropriate for deterministic algorithms; for a discussion of possible approaches for the \gls{matsim} situation see Chapters~\ref{sec:score-convergence} and \ref{sec:Relaxation-as-a} as well as \citet{Meister_PhDThesis_2011}.
 
-\gls{matsim} offers considerable customizability through its modular design. Although replacing core modules, such as the network loading simulation is associated with a substantial effort \citep[][Section 2.4]{MATSim_Userguide_2015}, in principle every module of the framework can be exchanged. \gls{matsim} modules are described in Chapter \ref{ch:modules} and following.
+\gls{matsim} offers considerable customizability through its modular design. Although %replacing
+implementing alternative core modules, such as an alternative network loading simulation, may be associated with a substantial effort \citep[][Section 2.4]{MATSim_Userguide_2015}, in principle every module of the framework can be exchanged. \gls{matsim} modules are described in Chapter \ref{ch:modules} and following.
 
 \gls{matsim} is heavily based on events. Every action in the simulation generates an event, which is recorded for analysis. These event records can be aggregated to evaluate any measure at the desired resolution. The event architecture is detailed in Section~\ref{sec:events-extension-point}.
 
