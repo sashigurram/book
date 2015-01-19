@@ -2,7 +2,7 @@
 \label{ch:researchavenues}
 % ##################################################################################################################
 
-\hfill \textbf{Authors:} Kai Nagel, Kay W.\ Axhausen, Benjamin Kikchöfer, Andreas Horni
+\hfill \textbf{Authors:} Kai Nagel, Kay W.\ Axhausen, Benjamin Kickhöfer, Andreas Horni
 
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{figures/MATSimBook.png} \end{center}
 
@@ -148,17 +148,27 @@ PS: "Instabil": Sobald der Arbeitspunkt hier etwas nach rechts geht, geht die St
 % =========================================================================================
 \subsection{Estimating a Utility Function}
 \label{sec:estimation}
-As shown earlier, the commonly applied \gls{matsim} utility function parameters are derived from \citet[][]{ArnottEtAl_TAER_1993, ChaumetEtAl_2006}. \citet[][]{Kickhoefer_MastersThesis_2009} provides estimates, however, with the exception of \citet[][]{BalmerEtAl_ResRep_datapuls_2010}, they have not been considered yet for numerous projects, although representing a valuable base for further estimations. Having such a base at hand is important as estimating and applying a \gls{matsim} utility function is non-trivial due to the following. 
+As shown earlier, the commonly applied \gls{matsim} utility function parameters are derived from \citet[][]{ArnottEtAl_TAER_1993, ChaumetEtAl_2006}. \citet[][]{Kickhoefer_MastersThesis_2009} provides estimates based on data from \citet[][]{VrticEtc2008ReisekostenSVIBericht}. \citet[][]{KickhoeferEtAl2012WelfareBusCorridorKuhmoNectar} translates estimates from \citet[][]{TirachiniEtAl2012CrowdingCongestion} into \gls{matsim} values.
+%
+However, with the exception of a few studies \citet[][]{BalmerEtAl_ResRep_datapuls_2010, HuelsmannEtAl2012HotspotPricing, KickhoeferNagel2013EmissionInternalizationNETS, KaddouraEtAl2014AgentBasedPtOptimization, KaddouraEtAl2015PtMarginalSocialCostPricingJTEP}, these estimates have not been considered yet for many other projects, although they represent a valuable base for further estimations. Having such a base at hand is important as estimating and applying a \gls{matsim} utility function is non-trivial due to the following. 
 
-The agents optimize complete day plans \citep[see also][Section 6.3.1]{MATSim_Userguide_2015}. This means that the single choice dimension utility terms need to neatly fit into the complete function. It is not possible to apply available functions estimated independently for only a single choice dimensions. If, for example, all alternatives for destination choice evaluated with an inappropriate utility function generate negative utility, then the complete activity is simply dropped. This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. The inseparability of choice dimensions means that in \gls{matsim} we can only consistently handle choices if we assume an absolute utility level rather than a relative level usually assumed for discrete choice models. 
+Agents optimize complete day plans \citep[see also][Section 6.3.1]{MATSim_Userguide_2015}. This means that the single choice dimension in utility terms needs to neatly fit into the complete function. It is not possible to apply available functions estimated independently for only a single choice dimensions. If, for example, all alternatives for destination choice evaluated with an inappropriate utility function generate negative utility, then the complete activity is simply dropped.
+%
+\benjamin{I dont fully understand the above...what is an inappropriate utility function?}
+%
+This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. The inseparability of choice dimensions means that in \gls{matsim} we can only consistently handle choices if we assume an absolute utility level rather than a relative level usually assumed for discrete choice models.
+%
+\benjamin{Why? The only difference if one has more choice dimensions in the model is that utility differences resulting from some policy will be smaller than with less choice dimensions -- i.e.\ influencing the elasticity.}
 
 Incorporating a contribution, e.g.,\,for parking or destination choice, in combination with absolute utilities becomes even more tricky as the Charypar-Nagel function is non-linear, which means that available models---very often being linear---need to be incorporated by workarounds such as approximation procedures and distinction of cases as described in \citet[][p.75ff]{Horni_PhDThesis_2013}. Furthermore, \gls{matsim} utility function includes travel times, which is usually seen as an unreliable information in classical surveys; they are often distance based thus. \gls{gps} or smartphone-based surveys, however, provide this information with great precision and, thus, they are a promising means for future estimations.
 
 Furthermore, travel time and activity duration estimations including income need to carefully consider the parameters' relation to the value of travel time savings. \citet[][p.276]{MeisterEtAl_SVT_2009} for example argues that the average Swiss hourly earnings are much higher than 6\,EUR/h. However, the \gls{matsim} is measured in utils not monetary units anymore. Still, the parameters in utils and monetary terms (such as tolls, parking costs, fares etc., or income-dependent attributes) are often interacted and thus their relation needs to be consistent.
+%
+\benjamin{I dont see the problem here...parameters define the VTTS, and are dependent on the variance of the unobserved attributes, no? So measuring in utils or money does not make a difference.}
 
 A numerical problem, particularly relevant for activity choice, concerns the functional form of the utility function. As argued in Section~\ref{sec:alternative-functions}, a function offering an additional degree of freedom (the curvature at the typical duration) would be better.
 
-Estimating a utility function for \gls{matsim} is associated with another problem. The function is applied iteratively for a travel demand, which is in the beginning of the relaxation process usually not very similar to the situation where the function was estimated. In other words, the function is used for a whole range of working points, where it has been estimated for only one possibly completely different working point. The \gls{matsim} function thus must be also correct in the elasticities, to be able to efficiently drive the relaxation process toward the final relaxation point, where the estimated function is valid by construction. 
+Estimating a utility function for \gls{matsim} is associated with another problem. The function is applied iteratively for a travel demand, which is in the beginning of the relaxation process usually not very similar to the situation where the function was estimated. In other words, the function is used for a whole range of operating points, whereas it has been estimated for only one possibly completely different working point. The \gls{matsim} function thus must be also correct in the elasticities, to be able to efficiently drive the relaxation process toward the final relaxation point, where the estimated function is valid by construction. 
 
 % =========================================================================================
 \subsection{Agent-Specific Preferences:}
