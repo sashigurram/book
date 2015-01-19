@@ -3,71 +3,73 @@
 \label{sec:sochi}
 \hfill \textbf{Author:} Marcel Rieser
 
+\editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
+
 % ##################################################################################################################
-Major sport events often attract a huge crowd of spectators and media
-reporters, they need many official helpers in various locations to guide and
-support attendants, and---naturally---require all athletes to be in
+Major sport events usually attract huge crowds of spectators, as well as media
+reporters, necessitating numerous official helpers in various locations to guide and
+support attendants; naturally, all athletes must also be at
 the right place at the right time. For large, international contests like
 Olympic games or soccer championships, accommodations are rarely close to the
 event facilities, making it necessary to transport spectators, media, helpers
-and athletes efficiently over large distances. As such events typically run for
-multiple days or even weeks, with ever-changing combinations of locations and
-times where actual competitions take place, a lot of planning is required to
-ensure that all attendants can reach their event locations in time.
+and athletes efficiently over long distances. As such events typically run for
+multiple days, or even weeks, with ever-changing combinations of locations and
+times where actual competitions take place, substantial planning is required to
+ensure that all attendants and participants reach their event locations in time.
 
-Masterconcept Consulting \gls{gmbh}, an Austrian consulting company, has specialized
-itself to provide high-level concepts for large sport events as mentioned above.  In a
-move to better serve its clients, it developed \gls{itsos}, a \gls{gis}-based system to support its transport
-planners in the creation of mobility concepts for major events as well as for
-regional planning.  \gls{itsos} heavily depends on \gls{matsim} to simulate the planned
-concepts in order to verify if the special infrastructure at major events is
-capable to transport all the persons within a useful time to and from
-their specific event locations.
+Masterconcept Consulting \gls{gmbh}, an Austrian consulting company, has positioned
+itself to provide high-level concepts for large sport events. To better serve its clients, 
+it developed \gls{itsos}, a \gls{gis}-based system to support its transport
+planners in the creation of mobility concepts for major events, as well as 
+regional planning. When simulating the planned
+events, \gls{itsos} depends heavily on \gls{matsim} to verify that special infrastructure
+at major events can handle transport within required time frames, to and from
+specific event locations.
 
-\gls{senozon} was responsible to integrate \gls{matsim} with \gls{itsos} and add \gls{itsos}-specific
-functionality to \gls{matsim}. Together, a test scenario was created, depicting the
-olympic winter games 2014 in Sochi.
+\gls{senozon} was responsible for integrating \gls{matsim} with \gls{itsos} and adding \gls{itsos}-specific
+functionality to \gls{matsim}. Together, they created a test scenario depicting the
+2014 Olympic winter games in Sochi.
 
 % ========================================================================================
 \subsection{System Overview}
-\gls{itsos} uses \gls{arcgis} for storing and editing infrastructure data like road
-and train networks and event facilities. In addition, a custom plug-in provides a
+\gls{itsos} used \gls{arcgis} for storing and editing infrastructure data, like road
+and train networks and event facilities. A custom plug-in also provided a
 graphical user interface inside \gls{arcgis} to specify transit routes and schedules,
 vehicle types and their assignments to lines and departures, as well as methods
-to describe the expected travel demand. Transport planners can create and manage
-scenarios and scenario-variants directly from the custom user interface
+describing expected travel demand. Transport planners could create and manage
+scenarios and scenario variants directly from the custom user interface
 available inside \gls{arcgis}.
 
-After the successful modeling of a scenario in \gls{arcgis}, a planner can export
+After successful modeling of a scenario in \gls{arcgis}, a planner could export
 the network and transit schedule in \gls{matsim}'s \gls{xml} format directly from \gls{itsos} to a
-local directory. The travel demand information, consisting of activity-chains
-with with zone- or facility-references and the number of persons having such a
-chain, is exported as tabular information. A special program creates a \gls{matsim}
-population file out of this tabular data along with a default \gls{configfile}.
+local directory. The travel demand information, consisting of activity-chains,
+with zone- or facility-references and number of persons having such a
+chain, was exported as tabular information. A special program created a \gls{matsim}
+population file from this tabular data, along with a default \gls{configfile}.
 
-The user can then start the \gls{matsim} simulation, currently using a simple bat-file
-on Windows. After the simulation has ended, the events are preprocessed and
-imported into a database, from which they can be queried and used within \gls{arcgis}
+The user could then start the \gls{matsim} simulation, using a simple bat-file
+on Windows. After the simulation ended,  events were preprocessed and
+imported into a database, from which they could be queried and used within \gls{arcgis}
 for analysis and visualization purposes.
 
 % ========================================================================================
 \subsection{Extensions to \protect\gls{matsim}}
-At major sport events, several person groups exists that partially need to be
-handled differently: Besides athletes, there are media reporters, officials,
-helpers, caterers, and naturally a lot of spectators. Persons from different
-groups attending the same event will have different requirements regarding the
-point of time to be at the event location, the entrance to use for the event
-location, and also the means of transport to the location. For this reason,
+The various groups at major sport events require different handling;
+in addition to athletes, there are media reporters, officials,
+helpers, caterers, and, of course, many spectators. Persons from different
+groups attending the same event will have different requirements about when
+to be at the event location, what entrance to use for the event
+location and the kind of transport necessary to reach the location. For this reason,
 supporting sub-populations for \gls{replanning} and scoring was an important issue.
-Also, different transit offerings were defined for the different agent groups,
-as the mass transport of spectators usually should not mix with the
-transportation of athletes and officials.
+Different transit offerings were also defined for different agent groups,
+because spectator mass transport must usually be separate from
+athlete and official transport.
 
-In order to facilitate the work of transport planners, transit lines in
-\gls{itsos} can be defined to have an adaptive schedule: given a base headway,
-additional departures will be scheduled between iterations if high
-occupancy occurs on a line during a time of day. This adjustment occurs based
-on a rule set that ensures a minimum duration for the shorter headway, as well
+To facilitate transport planners' work, transit lines in
+\gls{itsos} were defined with adaptive schedules; given a base headway,
+additional departures were scheduled between iterations, if high
+occupancy was expected to occur on a line during specific hours. This adjustment was based
+on a rule set that ensured a minimum duration for the shorter headway, as well
 as a minimum duration for the base headway between the shorter headways.
 Figure~\ref{fig:sochi:adaptiveSchedule} shows the graphical schedule of an
 adaptive transit line after 80\,iterations.
@@ -80,40 +82,40 @@ bus line from Sochi (Central Bus Hub) to Krasnaya Polyana (Hub)}%
 {\includegraphics[width=1.\textwidth,angle=0]{./using/figures/sochi_adaptiveSchedule.pdf}}%
 {}
 
-In addition to private car traffic and schedule-based public transport, special
-transportation offerings typically exist for athletes, media and officials:
-shuttle buses or even limousine services that operate on demand only between two
+In addition to private car traffic and schedule-based public transport, 
+athletes, media and officials also use special transportation offerings:
+shuttle buses, or even limousine services operating on demand, between only two
 or more fixed locations. Termed "transit on demand" in \gls{itsos}, transit lines
-with stops along a route were defined, but without any scheduled departures. 
-Instead, a within-day like operator was implemented that scheduled vehicles
-whenever an agent of one of the agent groups wanted to depart. The
-rule-based operator had additional constraints like a minimum occupancy of
+with stops along a route were defined, but without scheduled departures. 
+Instead, a within-day-like operator was implemented, scheduling vehicles
+whenever someone from an agent group wished to depart. The
+rule-based operator had additional constraints, like minimum occupancy of
 on-demand vehicles before departure (to prevent every on-demand vehicle
-transports only a single agent) as well as a maximum waiting time before
-departure for such vehicles (to prevent agents on remote locations having to
+transporting only a single agent), as well as a maximum waiting time before
+departure for such vehicles (to prevent agents in remote locations having to
 wait forever).
 
-At sport events, a large number of spectators have to share a few common entries
-to event facilities, and share common access paths to those facilities. This
-makes it necessary to simulate pedestrian flows at least in certain places in
-more detail than just the default \gls{teleportation} approach typically used by
-\gls{matsim}. For Olympic games, this was even more a requirement due to the fact
-that in several locations security checks existed that created additional
+At sport events, large number of spectators have to share both common entrances
+to event facilities and common access paths to those facilities. This
+made it necessary to simulate more detailed pedestrian flows (in certain places) 
+than just the default \gls{teleportation} approach typically used by
+\gls{matsim}. For Olympic games, this was even more crucial because,
+in several locations, security checks created additional
 bottlenecks. This requirement was solved by implementing a special router for
-the walk mode, along with a custom departure handler. The router tries to find a
-path on the network for walk legs, taking into account how far the closest walk
-link is away from a facility to decide if the link can act as an access to the
-facility or not. If no close-by link is found, or not route is found between
-two access links, an empty route is stored in the leg. The departure handler
-checks if the route is empty or not, either teleporting the agent or putting it
+the walk mode, along with a custom departure handler. The router tried to find a
+path on the network for walk legs, assessing distance from the closest walk
+link to/from a facility to decide if the link functions as an access to the
+facility or not. If no nearby link was found, or no route found between
+two access links, an empty route was stored in the leg. The departure handler
+checked whether the route was empty or not, either teleporting the agent or putting it
 on a walk link in the network. Walk links are regular queue-based network links
-with capacity and free-speed set according to the simplified physics of
-directed pedestrians flows. This approach made it possible to model the
-bottleneck effects of security screening gates easily, as well as consider the
-available walk paths available where necessary by modeling them, leaving them
-out in other places where it doesn't matter. Figure~\ref{fig:sochi:pedestrians}
-shows an example of the simulated pedestrian movements at Krasnaya Polyana, the
-area in the mountains near Sochi where a lot of events took place.  
+with capacity and free-speed set, according to the simplified physics of
+directed pedestrian flows. This approach readily allowed modeling of security
+screening gates' bottleneck effects and considered essential
+walk path locations where necessary. These were modeled, omitting them
+on non-critical routes. Figure~\ref{fig:sochi:pedestrians}
+shows an example of simulated pedestrian movements at Krasnaya Polyana, the
+mountain area near Sochi where numerous events took place.  
 %
 \createfigure%
 {Simulated pedestrians at Krasnaya Polyana hub}%
@@ -126,25 +128,26 @@ area in the mountains near Sochi where a lot of events took place.
 
 % ========================================================================================
 \subsection{Simulation of Sochi}
-To test the applicability of \gls{itsos} for transportation planning for major events,
-a model of the Olympic winter games in Sochi (Russia) 2014 was built. Data was
-either collected by workers of Masterconcept or cooperating companies, or
+To test \gls{itsos} applicability for major events transportation planning,
+a model of the 2014 Olympic winter games in Sochi (Russia) was built. Data was
+either collected either by Masterconcept employees or cooperating companies, or
 received from Russian governmental institutions.
 
-The road and train network was modeled in \gls{arcgis} using the \gls{itsos} extensions.
+Road and train networks were modeled in \gls{arcgis}, using the \gls{itsos} extensions.
 The transit schedule included 55\,transit lines, a mix of bus lines, train lines,
-and cable cars going up into the mountain areas. 24 of those lines were
+and cable cars, going up into the mountain areas. 24 of those lines were
 defined to be adaptive, 19\,lines operated on-demand as shuttle services.
 
-Travel demand was defined for each day of the games, based on the actual schedule of the games,
-making assumptions about how many spectators visit each of the different
-competitions during the day. While the size of event facilities can be used as a
-upper limit for the number of spectators, a lot of expert knowledge available at
-Masterconcept was used to define the actual numbers of expected people at each
+Travel demand was defined for each day of the games, based on the actual schedules,
+making assumptions about how many spectators would visit each different
+competition during the day. While size of event facilities can be used as a
+upper limit for number of spectators, substantial experience and knowledge from
+Masterconcept was used to define actual numbers of people expected at each
 event.
 
-While events often start and end at different times of day, due to the fact that many event locations share at least partially a
-common route to reach them, an important aspect was to simulate if the offered transport services are able to cope with the combined travel demand generated by multiple, separate events.
+Events often start and end at different times of day, because many event locations share, at least partially, a
+common route to reach them; it was important to simulate whether the transport services offered could
+cope with the combined travel demand generated by multiple, separate events.
 
 A typical simulation run of Sochi included about 150\,000\,agents. To speed up simulations, parallel events handling and parallel qsim was used. The simulation generated around 15\,million events per iteration.
 
@@ -160,13 +163,13 @@ Figure~\ref{fig:sochi:model} shows a screenshot of the Sochi scenario, visualize
 
 % ========================================================================================
 \subsection{Outlook}
-Besides the test case of the Olympic winter games in Sochi in 2014, \gls{itsos}/\gls{matsim}
-was also used to simulate traffic in St. Johann (Pongau, Austria) with a strong
-emphasis on pupils which often need to take a combination of buses and trains to
+In addition to the test case of the 2014 Olympic winter games in Sochi, \gls{itsos}/\gls{matsim}
+was also used to simulate traffic in St. Johann (Pongau, Austria), with particular 
+emphasis on pupils, who often must take a combination of buses and trains to
 get to school.
 
-A new company, Masterconcept Mobility \gls{gmbh}, was split off Masterconcept Consulting \gls{gmbh} in 2014 
-which offers transportation planning services for major events as well as regional planning services 
+A new company, Masterconcept Mobility \gls{gmbh}, was split off from Masterconcept Consulting \gls{gmbh} in 2014; 
+this new firm offers major event transportation planning services, as well as regional planning services 
 based on the combination of \gls{itsos} and \gls{matsim}.
 
 % ##################################################################################################################
