@@ -186,6 +186,12 @@ With this setting, \gls{matsim} agents perform their activities on a specific \g
 \end{compactitem}
 %
 If \gls{matsim} \glspl{facility} are used, the agents perform their activities in a specific \gls{facility} attached to a network link.
+%
+\ah{Generierung von Facilities muss/kann dann in Part II auch noch untergebracht werden: 
+
+Clearly, many modules require further information about the infrastructure, in particular about the activity locations' open times. For the Swiss scenario the facilities are derived from a business census \citep[][]{SwissEnterpriseCensus_manual_2001}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
+}
+%
 
 In the beginning of \gls{matsim} only car mode could be simulated. With the addition of the public transport \gls{module} (Chapter~\ref{ch:pt}), with the help of two further input files public transport can just as well be simulated:
 \begin{compactitem}
@@ -314,8 +320,6 @@ Most notably, the following simplifications can be made:
 \item Legs only need a mode, but no routes.
 \end{compactitem}
 When a simulation is started, \gls{matsim}'s \lstinline|Controler| will load such a file and then automatically assign the nearest link to each activity and calculate a suitable route for each leg. This makes it easy to get started quickly. 
-
-
 
 % -----------------------------------------------------------------------
 \subsubsection{\lstinline|counts.xml|}
@@ -532,7 +536,7 @@ This allows \gls{matsim} to work with your coordinates and convert them whenever
 % ===============================================================================================
 \subsection{Data Requirements}
 % ----------------------------------------------------------------------------
-\subsubsection{Demand Side}
+\subsubsection{Population and Activity Schedules}
 Demand estimation is 
 %the main 
 an important purpose of \gls{matsim}. That means that---in theory---only these demand components have to be provided to \gls{matsim}, which in reality do \emph{not} change during the simulated average working day. Examples are the population and its residential and working locations. In practice, however, \gls{matsim} is not quite there yet to endogenously model the complete travel demand. The sequence and preferred durations of activities for example have to be provided as input. In consequence all travel demand choices, which are not covered by the \gls{matsim} loop, have to be endogenously estimated. 
@@ -546,18 +550,21 @@ A critical topic in demand and population generation is work place assignment, a
 Having generated the residential population of the study area, additional demand components might need to be added, for example cross-border and freight traffic. As these components often cannot be endogenously modeled, \gls{matsim} offers the feature to handle different subpopulations differently (Section~\ref{sec:strategymodules}). It can be specified, that border-crossing agents, for example, are not allowed to do destination choice within the study area, or that freight agents are not allowed to change their delivery activity to a leisure activity.
 
 % ----------------------------------------------------------------------------
-\subsubsection{Supply Side}
-With the exception of some experimental work \citep[][]{HorniEtAl_TechRep_IVT_2012}, supply side is not changed by \gls{matsim}. \kai{Andreas, what about 
-\begin{itemize}
-\item network change events
-\item signals
-\item emissions/exposure internalization druch roadpricing (m.E.\ ist die Bepreisung des supplies immer noch eine supply side decision)
-\item Andreas Neumann minibus contrib
-\item Taxis (ist das demand side oder supply side?)
-\end{itemize}
-Ich bin ja ohnehin kein großer Anhänger dieser demand/supply side Unterscheidung; sollten wir hier nicht lieber einfach ``network'' in die Überschrift schreiben?}  In simulation practice, two different network types are in use, planning networks and navigation networks (compare the Swiss examples in Figure~\ref{fig:planningnetwork} and Figure \ref{fig:navigationnetwork} for the Zürich region). The former are thinned out and serve for initial explorative simulation runs, while the later are used for policy runs usually offering much more details such as bike and even pedestrian links.
-
-Clearly, many modules require further information about the infrastructure, in particular about the activity locations, for example about open times. For the Swiss scenario the facilities are derived from a business census \citep[][]{SwissEnterpriseCensus_manual_2001}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
+\subsubsection{Network}
+%\subsubsection{Supply Side}
+%With the exception of some experimental work \citep[][]{HorniEtAl_TechRep_IVT_2012}, supply side is not changed by \gls{matsim}. \kai{Andreas, what about 
+%\begin{itemize}
+%\item network change events
+%\item signals
+%\item emissions/exposure internalization durch roadpricing (m.E.\ ist die Bepreisung des supplies immer noch eine supply side decision)
+%\item Andreas Neumann minibus contrib
+%\item Taxis (ist das demand side oder supply side?)
+%\end{itemize}
+%Ich bin ja ohnehin kein großer Anhänger dieser demand/supply side Unterscheidung; sollten wir hier nicht lieber einfach ``network'' in die Überschrift schreiben?}  
+%
+%\ah{Hab dann auch gleich die Facility Info verschoben}
+%
+In simulation practice, two different network types are in use, planning networks and navigation networks (compare the Swiss examples in Figure~\ref{fig:planningnetwork} and Figure~\ref{fig:navigationnetwork} for the Zürich region). The former are thinned out and serve for initial explorative simulation runs, while the later are used for policy runs usually offering much more details such as bike and even pedestrian links. Data are available from official sources like federal offices, free sources, such as \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}, and commercial sources, such as navigation network providers.
 %
 \createfigure%
 {Zürich networks}%
