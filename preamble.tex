@@ -1,19 +1,448 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Book layout:
-\input{0/style}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\mytitle}{The Multi-Agent Transport Simulation MATSim}
+%% Type of document:
+%% - Paperformat: letterpaper, a4paper, a5paper, b5paper,
+%%   executivepaper, legalpaper
+%% - Main font size: 10pt, 11pt, 12pt
+%% - Formulae setting: - (centred), fleqn (left-aligned)
+%% - Numbering of formulae: - (right-aligned), leqno (left-aligned)
+%% - New page after title: titlepage, notitlepage
+%% - Number of columns per page: onecolumn, twocolumn
+%% - Page style: oneside, twoside
+%% - Paper rotation: - (protrait), landscape
+%% - Chapter start: openright, openany
+%% - Mark overfull boxes: draft, final
+\documentclass[a4paper,12pt,fleqn,titlepage,onecolumn,twoside,openany,final]{report}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\myyear}{2014}
+%% borders, margrins and offset
+\usepackage[a4paper,left=1.0in,right=1.0in,top=0.5in,bottom=0.5in,includeheadfoot]{geometry}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% packages:
+%% providing if-then-else command:
+\usepackage{ifthen}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Header and footer definition:
+\usepackage{fancyhdr}%
+\pagestyle{fancy}%
+\fancyhf{}%
+\fancyhead[R]{\slshape \footnotesize \nouppercase{\myyear}}%
+\fancyhead[L]{\slshape \footnotesize \nouppercase{\mytitle}}%
+\fancyfoot[C]{\footnotesize \thepage}%
+\renewcommand{\headrulewidth}{0.5pt}%
+\renewcommand{\footrulewidth}{0pt}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% paragraph settings:
+\setlength{\parindent}{0in}%
+\setlength{\parskip}{10pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% caption settings:
+\usepackage[nooneline,format=hang]{caption}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Define the depth of numbering parts,chapter,sections and paragraphs:
+%%   Numbers representing the depth of sectional units:
+%%   -1 = \part    (in book or report document classes)
+%%    0 = \chapter (in book or report document classes)
+%%    0 = \part    (in article document classes)
+%%    1 = \section
+%%    2 = \subsection
+%%    3 = \subsubsection
+%%    4 = \paragraph
+%%    5 = \subparagraph
+\setcounter{secnumdepth}{3}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% citation style:
+\usepackage[round]{natbib}
+\bibliographystyle{0/template_ivt-eng}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Font:
+\usepackage{times}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% To prevent overfull boxes
+%%   it is quite nice, but in special cases, you will have too large
+%%   speaces between a two words of the same line.
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% providing umlauts:
+%\usepackage[latin1]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}
+\usepackage{ifxetex}
+\ifxetex
+  \usepackage{fontspec}
+\else
+  \usepackage[utf8]{inputenc}
+\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% use hyper-refs for URL's and citations
+\usepackage{hyperref}
+%% line breaks for URL's
+\usepackage{url}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% line spacing
+\usepackage{setspace}
+\onehalfspacing
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% letter spacing
+\usepackage{soul}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% no indentation for formulas:
+\usepackage[fleqn]{amsmath}
+\setlength\mathindent{0pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% providing graphics:
+\usepackage{graphics}
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% sideways figures and tables:
+\usepackage{rotating}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% sub-figures:
+\usepackage[FIGTOPCAP]{subfigure}
+\def\subfigtopskip{0pt}
+\def\subfigbottomskip{5pt}
+\def\subfigcapskip{0pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% figures:
+%%   The following are sometimes needed to avoid pushing
+%%   the figs to the end of the text.
+\def\textfraction{0.0}
+\def\topfraction{0.9999}
+\def\floatpagefraction{0.9}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% tables:
+\usepackage{tabularx}
+\usepackage{multirow}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{hyphenat} % for \hyp support
+\usepackage{fixltx2e} % for \textsubscript{...}
+\usepackage{booktabs}	% for \toprule. \midrule, \bottomrule in tables
+\usepackage{verbatim}
+\usepackage{amssymb}	% for \checkmark
+\usepackage{pifont}	% for \xmark and \xmark
+\newcommand{\cmark}{\ding{51}}% another checkmark symbol
+\newcommand{\xmark}{\ding{55}}% an xmark symbol
 
+\usepackage{tikz} % for diagonal line in tables
+\usepackage{afterpage} % for  \afterpage{\clearpage}
+\usepackage{paralist}	% for compactitems
+\usepackage{multicol}
+\usepackage{longtable}
+\usepackage[stable]{footmisc}
+\usepackage{algorithmic}
+\usepackage{color}
+\usepackage{marvosym}
+\usepackage{verbatim}
+\usepackage{rotating}
+\usepackage[section]{placeins}
+\usepackage{eurosym}
+\usepackage{bookmark,hyperref}
 
+\usepackage{makeidx}
+\makeindex
 
-%% adding line numbers:
-\usepackage[displaymath,mathlines]{lineno}
-%\linenumbers
+\usepackage[toc]{glossaries}
+\renewcommand*{\acronymtype}{acronym}
+\newglossary[alg]{acronym}{acr}{acn}{Acronyms}
+\makeglossaries
 
+\usepackage{csquotes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% convenient referencing:
+\usepackage[capitalize]{cleveref}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% make definition of abbreviations easier
+\usepackage{xspace}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% pretty printing:
+\usepackage{listings}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% XML code setup:
+\lstloadlanguages{XML}
+%%
+\lstset {
+  showstringspaces=false,
+  basicstyle=\ttfamily\footnotesize,
+  lineskip=0pt,
+  breaklines=true,
+  breakatwhitespace=true,
+  breakindent=12pt,
+  fontadjust=true,
+  keywordstyle=\bfseries,
+  commentstyle=\bfseries,
+  stringstyle=\bfseries,
+  xleftmargin=0mm,
+  xrightmargin=0mm,
+  tabsize=2
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% The following defines language specific words
+%%   These are internal commands. They are not used in the main file.
+%%   Langugage specific word commands always starts with '\word'
+%%
+%% Quelle/Source
+\newcommand{\wordsource}{\iflanguage{english}{Source:\ }{\iflanguage{german}{Quelle:\ }{\langerrmessage}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \internmakethreecolumns{entry1}{entry2}{entry3}
+%%   creates a table with three columns containing the given entries
+\newcommand{\internmakethreecolumns}[3]{
+  \noindent
+  \begin{tabular*}{\textwidth}{@{}l@{}l@{}l@{}}
+    #1 & #2 & #3 \\
+  \end{tabular*}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% citation
+%%   returns the language specific citation of the paper
+\newcommand{\interncitation}{%
+  \myfirstauthorREF\ (\myyear) \mytitle, \internpapertype, %
+  \iflanguage{english}{ETH-Zurich, Zurich.}%
+  {\iflanguage{german}{ETH-Z\"urich, Z\"urich.}%
+   {\langerrmessage}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Figure definition
+%%   \createfigure
+%%     {<short caption>}
+%%     {<long caption>}
+%%     {<\label{label}>}
+%%     {<\includegraphics[...]{figure}>}
+%%     {<source>or<>}
+\newcommand{\createfigure}[6][htp]{%
+\begin{figure}[#1] % do not indent this line; produces unwanted spaces.  kai, dec'14
+    \caption[#2]{#3} #4
+    \vspace{0.5em}
+    \hrule
+    \begin{center}
+      #5\\
+    \end{center}
+    \ifthenelse
+      {\equal{#6}{}}
+      {}
+      {\wordsource #6 \vspace{0.5em}}
+    \hrule
+  \end{figure}%
+}
+% The syntax "[6][htp]{...[#1]..." means that the first parameter is
+% optional. kai, dec'14 
+%
+% Kommentar Kai: Mir macht diese private
+% Definition einige Probleme, weil mein emacs syntax-parser (der
+% z.B. bei den Querverweisen hilft), damit natürlich nicht zurecht
+% kommt. :-(
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Sideways figure definition
+%%   \createfigure
+%%     {<short caption>}
+%%     {<long caption>}
+%%     {<\label{label}>}
+%%     {<\includegraphics[...]{figure}>}
+%%     {<source>or<>}
+\newcommand{\createsidewaysfigure}[5]{
+  \begin{sidewaysfigure}
+    \caption[#1]{#2} #3
+    \vspace{0.5em}
+    \hrule
+    \begin{center}
+      #4\\
+    \end{center}
+    \ifthenelse
+      {\equal{#5}{}}
+      {}
+      {\wordsource #5 \vspace{0.5em}}
+    \hrule
+  \end{sidewaysfigure}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Sub-figure:
+%%   \createsubfigure
+%%     {<caption>}
+%%     {<\includegraphics[...]{figure}>}
+%%     {<\label{label}>}
+%%     {<\\>or<>}%
+\newcommand{\createsubfigure}[4]{
+  \subfigure[#1]{%
+    #2%
+    #3%
+  }#4
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Table:
+%%   \createtable
+%%     {<short caption>}
+%%     {<long caption>}
+%%     {<\label{label}>}
+%%     {<\begin{tabular}...\end{tabular}>}
+%%     {<source>or<>}
+\newcommand{\createtable}[6][htp]{
+  \begin{table}[#1]
+    \caption[#2]{#3} #4
+    \vspace{0.5em}
+    \hrule
+    \begin{center}
+      #5\\
+    \end{center}
+    \ifthenelse
+      {\equal{#6}{}}
+      {}
+      {\wordsource #6 \vspace{0.5em}}
+    \hrule
+  \end{table}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Sideways table definition
+%%   \createsidewaystable
+%%     {<short caption>}
+%%     {<long caption>}
+%%     {<\label{label}>}
+%%     {<\begin{tabular}...\end{tabular}>}
+%%     {<source>or<>}
+\newcommand{\createsidewaystable}[5]{
+  \begin{sidewaystable}
+    \caption[#1]{#2} #3
+    \vspace{0.5em}
+    \hrule
+    \begin{center}
+      #4\\
+    \end{center}
+    \ifthenelse
+      {\equal{#5}{}}
+      {}
+      {\wordsource #5 \vspace{0.5em}}
+    \hrule
+  \end{sidewaystable}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% XML-figure
+%%   \createxmlfigure
+%%     {<short caption>}
+%%     {<long caption>}
+%%     {<\label{label}>}
+%%     {<the/file/with/the/xml/code/to/include>}
+%%     {<source>or<>}
+\newcommand{\createxmlfigure}[5]{
+  \begin{figure}
+    \caption[#1]{#2} #3
+    \vspace{0.5em}
+    \hrule
+    \lstset{language=XML}
+    \lstinputlisting{#4}
+    \ifthenelse
+      {\equal{#5}{}}
+      {}
+      {\wordsource #5 \vspace{0.5em}}
+    \hrule
+  \end{figure}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Contact
+%%   \createcontact
+%%     {<Name>}
+%%     {<andreas line 1>}
+%%     {<andreas line 1>}
+%%     {<andreas line 3>}
+%%     {<phone number>}
+%%     {<fax number>}
+%%     {<email address>}
+\newcommand{\createcontact}[7]{
+  \ifthenelse{\equal{#1}{}}{%
+    \noindent\parbox[][][l]{0.33\textwidth}{
+    }%
+  }{%
+    \noindent\parbox[][][l]{0.33\textwidth}{
+      #1\newline
+      #2\newline
+      #3\newline
+      #4\newline
+      \wordphone: #5\newline
+      \wordfax: #6\newline
+      #7\newline
+    }%
+  }%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% New titlepage definition
+\newcommand{\createtitlepage}{
+  \begin{titlepage}
+    \begin{center}
+
+      \bigskip
+      
+      \bigskip
+
+      \bigskip
+      
+		
+      {\textbf{\Large\mytitle}}
+
+      \bigskip
+
+      \bigskip
+      
+      \bigskip
+      
+      \includegraphics[width=0.8\textwidth]{figures/matsimcycle}
+
+    \end{center}
+  \end{titlepage}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\createStandardInformationBasic}[4]{{\lstset{basicstyle=\normalsize\tt}%
+%
+\textbf{Entry point to documentation:}
+\\
+#1
+
+\textbf{Invoking the module:}
+\\
+#2
+
+\textbf{Configuration:}
+\\
+#3
+
+\textbf{Selected publications:}
+\\
+#4
+%
+}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\createStandardInformation}[4]{{\lstset{basicstyle=\normalsize\tt}%
+%
+\section{Basic Information}
+\label{sec:#1-stdInfo}
+%
+\textbf{Entry point to documentation:}
+\\
+\url{http://matsim.org/javadoc} $\to$ #1
+
+\textbf{Invoking the module:}
+\\
+\url{http://matsim.org/javadoc} $\to$ #1 $\to$ #2
+
+\textbf{Configuration:}
+\\
+\lstinline{#3} section(s) of the config file (only available when the #1 extension is correctly loaded).
+
+\textbf{Selected publications:}
+\\
+#4
+%
+}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{listings}
 \lstset{language=Java,belowskip=-4pt,basicstyle=\ttfamily\lst@ifdisplaystyle\footnotesize\fi,lineskip=-1pt,keywordstyle=\bfseries\color{blue},keywordstyle={[2]\lst@ifdisplaystyle\bfseries\color{magenta}\fi},commentstyle=\bfseries\color{red},stringstyle=\bfseries\color{ForestGreen},showstringspaces=false,frame=none,string=[b]",morekeywords={},morekeywords={[2]%
 %
@@ -79,18 +508,14 @@ roadpricing,cost,
 % the "alsoletter={=}" seems to prevent that something like length="sldkfj"
 % gets colored like an element
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hyphenation{MATSim} % Word split: unknown words for latex. show how to split them.
 \setcounter{tocdepth}{2}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% The keywords (english)
-\newcommand{\mykeywordsEN}{}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Word split: unknown words for latex. show how to split them.
-\hyphenation{MATSim}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\usepackage[usenames,dvipsnames]{xcolor}
-
+\newcommand{\mytitle}{The Multi-Agent Transport Simulation MATSim}
+\newcommand{\myyear}{2015}
 \newcommand{\karen}[1]{\color{red} [\textbf{Karen Ettlin}: #1] \color{black}}
 \newcommand{\ah}[1]{\color{blue} [\textbf{ah}: #1] \color{black}}
 \newcommand{\an}[1]{\color{blue} [\textbf{an}: #1] \color{black}}
@@ -103,77 +528,18 @@ roadpricing,cost,
 \newcommand{\thibaut}[1]{\color{BrickRed} [\textbf{td}: #1] \color{black}}
 \newcommand{\mm}[1]{\color{blue} [\textbf{mm}: #1] \color{black}}
 \newcommand{\dobi}[1]{\color{blue} [\textbf{Christoph}: #1] \color{black}}
-
 \newcommand{\mnote}[1]{\medskip\centerline{\sf\footnotesize\color{blue}\hfill #1}\vspace{-.8em}}
-
 \newcommand{\editdone}[1]{\color{red} [\textbf{Edit done}: #1] \color{black}}
 \newcommand{\who}[1]{\color{red} \textit{[#1]} \color{black}}
 \newcommand{\todo}[1]{\color{ForestGreen} \textit{[TODO: #1]} \color{black}}
 \newcommand{\copied}[1]{\color{ForestGreen} \textit{[copied: #1]} \color{black}}
-%\def\benjamin#1{\textcolor{blue}{[[#1 -- bk]]}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%kai:
-
-\def\userkai{kai}
-\providecommand{\userkai}[0]{NONE} % fallback definition
-%when called with
-%   pdflatex "\def\user{kaiuser}\input{main}"
-%then allows \ifx\user\kai something \else something else \fi
-%
-% If this becomes too messy, let me know; an alternative is to pull main.tex into two
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-%% END USER DEFINED COMMANDS
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% begin Horni: -----------------------------------
-\usepackage{algorithmic}
-\usepackage{color}
-\usepackage{marvosym}
-\usepackage{verbatim}
-\usepackage{rotating}
-\usepackage[section]{placeins}
-
-\usepackage{eurosym}
-
-\usepackage{bookmark,hyperref}
-\usepackage{makeidx}
-\makeindex
-
-%\usepackage{glossaries}
-%\makeglossaries
-\usepackage[toc]{glossaries}
-\renewcommand*{\acronymtype}{acronym}
-\newglossary[alg]{acronym}{acr}{acn}{Acronyms}
-\makeglossaries
-
-\usepackage{multicol}
-\usepackage{amsmath}
-\usepackage{longtable}
-\usepackage[stable]{footmisc}
-\usepackage{soul}
 
 \newcommand*{\eg}{e.g.,~}
 \newcommand*{\ie}{i.e.,~}
 \newcommand*{\cf}{cf.~}
 
-% end Horni: -----------------------------------
-
-% begin Kickhöfer: -----------------------------------
-\usepackage{xcolor}
-\usepackage{csquotes}
-%end Kickhöfer: -----------------------------------
-
 % begin Gunnar: -----------------------------------
 \ifxetex
-
 %\usepackage{pstricks}
 %\usepackage{pst-node}
 %\usepackage{pstcol}
@@ -189,25 +555,18 @@ roadpricing,cost,
 \newtheorem{proposition}{Proposition}
 \newtheorem{definition}{Definition}
 \newcommand{\qedsymbol}{$\blacksquare$}
-
 % end Gunnar: -----------------------------------
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%kai:
 
-% Dobler: --------------------------------------------
-\usepackage{hyphenat} % for \hyp support
-\usepackage{fixltx2e} % for \textsubscript{...}
-\usepackage{booktabs}	% for \toprule. \midrule, \bottomrule in tables
-\usepackage{verbatim}
-\usepackage{amssymb}	% for \checkmark
-\usepackage{pifont}	% for \xmark and \xmark
-\newcommand{\cmark}{\ding{51}}% another checkmark symbol
-\newcommand{\xmark}{\ding{55}}% an xmark symbol
-
-\usepackage{tikz} % for diagonal line in tables
-\usepackage{afterpage} % for  \afterpage{\clearpage}
-\usepackage{soul}
-\usepackage{paralist}	% for compactitems
-% end Dobler ----------------------------------------------------
+\def\userkai{kai}
+\providecommand{\userkai}[0]{NONE} % fallback definition
+%when called with
+%   pdflatex "\def\user{kaiuser}\input{main}"
+%then allows \ifx\user\kai something \else something else \fi
+%
+% If this becomes too messy, let me know; an alternative is to pull main.tex into two
 
 % kai: ----------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
