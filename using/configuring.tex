@@ -29,12 +29,12 @@ Sinnvoll erscheint mir jedenfalls eine Auflisting wie in Table~\ref{tab:modules}
 % ===================================================================================
 \subsection{Network}
 \label{sec:using-network}
-The \gls{configfile} section \lstinline|network| amongst other specifies which network file will be used in the simulation (Section~\ref{sec:lgstarted-network-file} and \ref{sec:lgs-config}). Further configuration options, \eg specification of time-variant networks, are presented in Section~\ref{sec:extending-network}.
+The \gls{configfile} section \lstinline|network| amongst other specifies which network file will be used in the simulation (Section~\ref{sec:lgs-config} and \ref{sec:lgstarted-network-file}). Further configuration options, \eg specification of time-variant networks, are presented in Section~\ref{sec:extending-network}.
 
 % ===================================================================================
 \subsection{Population}
 \label{sec:using-population}
-The \gls{configfile} section \lstinline|plans| allows to specify the population with its day plans (Section~\ref{sec:lgstarted-population-file} and \ref{sec:lgs-config}). Further configuration options, \eg specification of arbitrary agent attributes or subpopulations, are presented in Section~\ref{sec:extending-population}.
+The \gls{configfile} section \lstinline|plans| allows to specify the population with its day plans (Section~\ref{sec:lgs-config} and \ref{sec:lgstarted-population-file}). Further configuration options, \eg specification of arbitrary agent attributes or subpopulations, are presented in Section~\ref{sec:extending-population}.
 
 Further \gls{matsim} containers are described in Section~\ref{sec:extending-data-containers}.
 
@@ -44,7 +44,17 @@ Further \gls{matsim} containers are described in Section~\ref{sec:extending-data
 % ===================================================================================
 \subsection{Controler}
 \label{sec:using-controler}
-The controler is an indispensable module for running \gls{matsim}, its parameters are set in the \lstinline|controler| \gls{configfile} section. Besides others, the \gls{matsimrun}'s output directory, its number of iterations, and the ouput interval of plans and events can be specified here. In Section~\ref{sec:extending-controler}, the possibilities to extend the \lstinline|Controler| functionality is given in Section~\ref{sec:extending-controler} and Chapter~\ref{ch:extensionpoints}.
+The controler is an indispensable module for running \gls{matsim}, its parameters are set in the \lstinline|controler| \gls{configfile} section. Besides others, the \gls{matsimrun}'s output directory, its number of iterations, and the ouput interval of plans and events can be specified here. Also, the \gls{mobsim} to be used can be defined (Section~\ref{sec:using-mobsims}). Importantly, the routing algorithm is defined here by using
+%
+\begin{lstlisting}
+<module name="controler" >
+    <param name="routingAlgorithmType" value="{Dijkstra | FastDijkstra |
+    		AStarLandmarks | FastAStarLandmarks}" />
+    [...]
+</module>
+\end{lstlisting}
+%
+. In Section~\ref{sec:extending-controler}, the possibilities to extend the \lstinline|Controler| functionality is given in Section~\ref{sec:extending-controler} and Chapter~\ref{ch:extensionpoints}.
 
 % ===================================================================================
 \subsection{Global}
@@ -73,39 +83,24 @@ An overview of \gls{matsim} mobility simulations is given in \citet[][]{Dobler_T
 % ===================================================================================
 \subsection{\protect\gls{qsim}}
 \label{sec:using-qsim}
-\begin{compactitem}
-\item Invoking the module: Set the parameter \lstinline|mobsim| of \lstinline|controler| config file section to \lstinline|qsim| provide a \lstinline|qsim| \gls{configfile} section.
-\item Configuration: \lstinline|qsim| config section
-%\item Code: \lstinline|org.matsim.core.mobsim.qsim|
-\end{compactitem}
+The queue-based and time-step based \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is \gls{matsim}'s default \gls{mobsim}. Its parameters are set in the \lstinline|qsim| \gls{configfile} section. Prominent parameters are as follows. By specifying the parameter \lstinline|numberOfThreads| \gls{qsim} can be run in parallel. Importantly, this section's parameters \lstinline|flowCapacityFactor| and \lstinline|storageCapacityFactor| need to be set accordingly, when running sample scenarios, \eg for a 10\,\% sample, these factors need to be divided by 10. The link dynamics, either \fls{fifo} or passing can be specified by the parameter \lstinline|linkDynamics|. Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) can be added with the parameter \lstinline|trafficDynamics|.
 
-At the moment, in most applications the queue-based and time-step based \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is used. 
-%% It has started as a software branch of \emph{queueSimulation} before supplanting this later simulation. 
-Through multiple engines it can be run in parallel. 
+As shown in Section~\ref{sec:multimodalsim_qsim}, \gls{qsim} can handle \gls{multimodal} scenarios.
+
+\ah{das ist jetzt nicht mehr nötig, weil default, oder?}
+To invoke \gls{qsim}, the parameter \lstinline|mobsim| of \lstinline|controler| \gls{configfile} section must be set to \lstinline|qsim| and a \lstinline|qsim| \gls{configfile} section must be provided. 
 
 % ===================================================================================
 \subsection{JDEQSim}
 \label{sec:using-jdeqsim}
-\begin{compactitem}
-\item Invoking the module: Set the parameter \lstinline|mobsim| of \lstinline|controler| config file section to \lstinline|JDEQSim| provide a \lstinline|jdeqsim| config file section.
-\item Configuration: \lstinline|jdeqsim| config file section
-\item Code: \lstinline|org.matsim.core.mobsim.jdeqsim|
-\end{compactitem}
+\gls{jdeqsim} \citep[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} was used for project \emph{KTI Frequencies} \citep[][]{BalmerEtAl_ResRep_datapuls_2010}. It is is a \gls{java} reimplementation of \gls{deqsim} \citep[][]{WaraichEtAl_STRC_2009, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009} and provides parallel event handling but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) are supported. Traffic lights, public transport and within-day replanning are not supported.
 
-\gls{jdeqsim} \citep[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} was used for project \emph{KTI Frequencies} \citep[][]{BalmerEtAl_ResRep_datapuls_2010}. It is is a \gls{java} reimplementation of \gls{deqsim} \citep[][]{WaraichEtAl_STRC_2009, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009} and provides parallel event handling but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps are supported. Traffic lights, public transport and within-day replanning are not supported.
+To run \gls{jdeqsim} the parameter \lstinline|mobsim| of \lstinline|controler| \gls{configfile} section must be set to \lstinline|JDEQSim| and a \lstinline|jdeqsim| \gls{configfile} section must be provided. 
 
 %##################################################################################################################
 \section{Scoring}
 \label{sec:using-scoring}
-\begin{compactitem}
-\item Invoking the module: add below section to config file
-\item Configuration: \lstinline|planCalcScore| config file section
-%\item Code: \lstinline|org.matsim.core.scoring|
-\end{compactitem}
-%
-The parameters related to scoring are described in Chapter~\ref{ch:scoring}.
-
-\ah{delete or extend}
+The \gls{configfile} section \lstinline|planCalcScore| specifies the parameters used for scoring agents' plans (Section~\ref{sec:lgs-config}); parameters are explained in detail in the next chapter~\ref{ch.scoring}.
 
 %##################################################################################################################
 \section{Replanning Strategies}
@@ -134,7 +129,7 @@ All strategy modules are called by configuring the strategy module in the config
 </module>
 \end{lstlisting}
 %
-Each module is given a weight which determines the probability by which the course of action represented by the module is taken. The weights of the strategy modules are renormalized in case they do not sum to one. In this example, each agent changes his leg mode with probability 0.1, its plan timing with probability 0.2. A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. In the example, the agent chooses a plan from his set of plans according to a logit model with probability 0.7. \ah{sollte man immer noch von proba reden, wo wir sie doch im Code endlich losgeworden sind? Andererseits ist es ja tatsächlich eine proba.}
+Each module is given a weight which determines the probability by which the course of action represented by the module is taken. The weights of the strategy modules are renormalized in case they do not sum to one. In this example, each agent changes his leg mode with probability~0.1, its plan timing with probability 0.2. A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. In the example, the agent chooses a plan from his set of plans according to a logit model with probability 0.7. \ah{sollte man immer noch von proba reden, wo wir sie doch im Code endlich losgeworden sind? Andererseits ist es ja tatsächlich eine proba.}
 
 By specifying the parameter \lstinline|subpopulation|, i.e.,\,\
 \begin{lstlisting}
@@ -203,49 +198,27 @@ Please note, that combining strategy modules that are \glspl{contribution} such 
 % ===================================================================================
 \subsection{Time Innovation}
 \label{sec:timechoice}
-\begin{compactitem}
-\item Invoking the module: Time choice is applied by defining its parameters in the configuration file and by adapting the configuration file strategy module as follows
+Time innovation is applied by defining its parameters in the \gls{configfile} section \lstinline|TimeAllocationMutator| and by adding 
 %
 \begin{lstlisting}
-<module name="strategy" >
-    <param name="ModuleProbability_1" value="0.x" />
-    <param name="Module_1" value="TimeAllocationMutator" />
-    [...]
-</module>
+	<param name="strategyName" value="TimeAllocationMutator" />
 \end{lstlisting}
 %
-\item Configuration: \lstinline|TimeAllocationMutator| config file section
-%\item Code: \lstinline|org.matsim.core.replanning.modules.TimeAllocationMutator|
-\end{compactitem}
+plus its weight to the strategy modules.
 
-The module shifts activity end times randomly within a configurable range as described by \citet[][]{BalmerEtAl_Timmermans_2005, Raney_PhDThesis_2005, Balmer_unpub_VSP_2004, BalmerEtAl_unpub_EIRASS_2004, BalmerEtAl_unpub_STRC_2004}. A best-reponse approach to time choice is applied by "Planomat" described in Section~\ref{sec:planomat}.
+The module shifts activity end times randomly within a configurable range as described by \citet[][]{BalmerEtAl_Timmermans_2005, Raney_PhDThesis_2005, Balmer_unpub_VSP_2004, BalmerEtAl_unpub_EIRASS_2004, BalmerEtAl_unpub_STRC_2004}. %A best-reponse approach to time choice is applied by "Planomat" described in Section~\ref{sec:planomat}.
 
 % ===================================================================================
 \subsection{Route Innovation}
 \label{sec:routechoice}
-\begin{compactitem}
-\item Invoking the module: Route choice is applied by defining its parameters in the configuration file and by adapting the configuration file strategy module as follows
+
+Route innovation is applied by defining its parameters in the \gls{configfile} section \lstinline|planscalcroute|, by adding 
 %
 \begin{lstlisting}
-<module name="strategy" >
-    <param name="ModuleProbability_1" value="0.x" />
-    <param name="Module_1" value="ReRoute" />
-    [...]
-</module>
+	<param name="strategyName" value="ReRoute" />
 \end{lstlisting}
 %
-\item Configuration: \lstinline|planscalcroute| config file section. The routing algorithm needs to be specified in the configuration file controler module
-%
-\begin{lstlisting}
-<module name="controler" >
-    <param name="routingAlgorithmType" value="{Dijkstra | FastDijkstra |
-    		AStarLandmarks | FastAStarLandmarks}" />
-    [...]
-</module>
-\end{lstlisting}
-%\item Code: \lstinline|org.matsim.core.router|
-\end{compactitem}
-%
+plus its weight to the strategy modules, and by specifying the routing algorithm in the \lstinline|controler| \gls{configfile} section (Section~\ref{sec:using-controler}).
 \gls{matsim} routing is described by \citet[]{LefebvreBalmer_STRC_2007, LefebvreBalmer_TechRep_IVT_2007}. 
 
 %The configuration necessary for public transport is shown in Chapter \ref{ch:pt}.  \kai{Da steht m.E.\ noch nichts in der Richtung.  Aber meiner Erinnerung nach ist auch gar keine Sonderkonfiguration mehr nötig.  Michael Z.?}
@@ -255,66 +228,50 @@ The module shifts activity end times randomly within a configurable range as des
 % ===================================================================================
 \subsection{Mode Innovation}
 \label{sec:modechoice}
-\begin{compactitem}
-\item Invoking the module: Mode choice is applied by defining its parameters in the configuration file and by adapting the configuration file strategy module by choosing one of the mode choice options as follows
+Mode innovation is applied by adding 
+%
 \begin{lstlisting}
-<module name="strategy" >
-    <param name="ModuleProbability_1" value="0.x" />
-    <param name="Module_1" value="{ChangeLegMode |
+	<param name="strategyName" value="{ChangeLegMode |
     		ChangeSingleLegMode | SubtourModeChoice}" />
-    [...]
-</module>
 \end{lstlisting}
 %
-\item Configuration: Corresponding with the chose type of mode choice a respective config file section needs to be added:
+plus its weight to the strategy modules. In the \gls{configfile} a section with one of the mode innovation strategies need to be added, \ie 
 %
 \begin{lstlisting}
 <module name="{changeLegMode |
 				changeLegMode | subtourModeChoice}" >
-    <param name="param0" value="value0" />
     [...]
 </module>
 \end{lstlisting}
 %
-%\item Code: \lstinline|org.matsim.core.replanning.modules| and \lstinline|org.matsim.population.algorithms|.
-\end{compactitem}
+\lstinline|ChangeLegMode| randomly picks one of the plans of a person and changes its mode of transport. By default, the supported modes are driving a car and using public transport. Only one mode of transport per plan is supported. For using different modes for sub-tours on a single day the \lstinline|SubtourModeChoice| module is required. Optionally, car availability is respected. \lstinline|ChangeSingleLegMode| randomly picks one of the plans of a person and changes the mode of transport of one single leg. The leg is picked randomly. In contrast to \lstinline|ChangeLegMode|, it allows for multiple modes in one plan. By default, the supported modes are driving a car and using public transport. Also, this module is able to (optionally) respect car-availability.
 
-\lstinline|ChangeLegMode| randomly picks one of the plans of a person and changes its mode of transport. By default, the supported modes are driving a car and using public transport. Only one mode of transport per plan is supported. For using different modes for sub-tours on a single day the \lstinline|SubtourModeChoice| module is required. Optionally, car-availability is respected. \lstinline|ChangeSingleLegMode| randomly picks one of the plans of a person and changes the mode of transport of one single leg. The leg is picked randomly. In contrast to \lstinline|ChangeLegMode|, it allows for multiple modes in one plan. By default, the supported modes are driving a car and using public transport. Also, this module is able to (optionally) respect car-availability.
-
-Mode choice is described by \citet[][]{RieserEtAl_TRR_2009, MeisterEtAl_WCTRS_2010, CiariEtAl_STRC_2008, CiariEtAl_STRC_2007}.
+Mode innovation is described by \citet[][]{RieserEtAl_TRR_2009, MeisterEtAl_WCTRS_2010, CiariEtAl_STRC_2008, CiariEtAl_STRC_2007}.
 
 % ===================================================================================
 \subsection{Selectors}
 \label{sec:selectors}
-\begin{compactitem}
-\item Invoking the module: Define one of the available selectors in the configuration file strategy module as follows
+Selectors and their weight are also added to the strategy modules
 %
 \begin{lstlisting}
-<module name="strategy" >
-    <param name="ModuleProbability_1" value="0.x" />
-    <param name="Module_1" value="{a specific selector}" />
-    [...]
-</module>
+	<param name="strategyName" value="KeepLastSelected | BestScore | SelectExpBeta
+					ChangeExpBeta | SelectRandom | SelectPathSizeLogit" />
 \end{lstlisting}
 %
-Following selectors are available in the configuration file strategy module:
+Selectors work as follows:
 %
 \begin{compactitem}
 	\item \lstinline|KeepLastSelected| keeps the plan selected in the previous iteration.
 	\item \lstinline|BestScore| selects the plan with the highest score of the previous iteration.
-	\item \lstinline|SelectExpBeta| performs \gls{mnl} selection between plans.
+	\item \lstinline|SelectExpBeta| performs \gls{mnl} selection between plans. It can be configured by the \lstinline|BrainExpBeta| parameter from the scoring group.
 	\item \lstinline|ChangeExpBeta| changes to a different plan with probability dependent on $e^{\Delta_{score}}$, where $\Delta_{score}$ is the score difference between the two plans.
 	\item \lstinline|SelectRandom| performs random selection between the plans.
 	\item \lstinline|SelectPathSizeLogit| selects an existing plan according to the path size logit described by \citet[][]{FrejingerBierlaire_TransResB_2007}.
 \end{compactitem}
 %
-\item Configuration: selectExtBeta can be configured by the \lstinline|BrainExpBeta| parameter from the scoring group.
-%\item Code: \lstinline|org.matsim.core.replanning.selectors|
-\end{compactitem}
+Note, that the \lstinline|BestScore| should be used with care as it is prone to getting stuck with sub-optimal plans. Plans that are rated bad due to a random fluctuation in one single iteration, due to \eg a rare traffic jam, will never be tested again. It is therefore recommended to use this in conjunction with \lstinline|SelectRandom| only.
 
-Note, that the \lstinline|BestScore| should be used with care as it is prone to getting stuck with sub-optimal plans. Plans that are rated bad due to a random fluctuation in one single iteration, due to e.g.,\,a rare traffic jam, will never be tested again. It is therefore recommended to use this in conjunction with \lstinline|SelectRandom| only.
-
-Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. Per default, the plan with the lowest score is removed if the agent's memory is full. In line with the requirements of e.g.,\,simulated annealing approaches, the removal of candidates will be configurable to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This will reduce the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
+Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. Per default, the plan with the lowest score is removed if the agent's memory is full. In line with the requirements of \eg simulated annealing approaches, the removal of candidates will be configurable to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This will reduce the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
 %\ah{siehe Mail by M. Zilske, August 14 "[Matsim-devel] custom plan selector for removal")}
 
 %##################################################################################################################
