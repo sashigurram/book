@@ -10,6 +10,7 @@
 In this chapter you will learn about the possibilities to extend, and customize \gls{matsim} by available functionality. In Chapter~\ref{ch:extensionpoints} you will see how you can hook in your own extensions.
 
 %%\kai{Frage mich im Moment, ob wir diejenigen ``Module'', die man per config aufrufen kann, nicht doch lieber bereits unter ``using'' beschreiben sollten.  Aber vielleicht ist das inzwischen fast egal, und wir sollten lieber Standard-MATSim komplett separat von jeder Art Variation halten.  ???}
+%\ah{see Chapter~\ref{ch:configuring}}
 
 % ##################################################################################################################
 \section{MATSim Modularity}
@@ -401,7 +402,7 @@ The population module manages transport demand, i.e.,\,the population and the ag
 \ah{das einzig relevante hier:} Optionally the path to a person attributes file in \lstinline|ObjectAttributes| format can be specified. 
 
 % ===================================================================================
-\subsection{Counts}
+\subsection{Counts: \lstinline|counts.xml|}
 \label{sec:counts}
 \begin{compactitem}
 \item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
@@ -409,22 +410,15 @@ The population module manages transport demand, i.e.,\,the population and the ag
 \item Code: \lstinline|org.matsim.counts|
 \end{compactitem}
 
-\gls{matsim} offers the possibility to perform link volume comparisons between simulated and counted value for both motorized individual traffic \citep{Horni_unpub_IVT_2007}  and public transport. The later are described in Chapter \ref{ch:pt}. The count package offers analyses for the average working day with hourly resolution. A google maps based visualization is available, showing each station with a its load curve in a pop-up window at the geographic location.
+\gls{matsim} offers the possibility to perform link volume comparisons between simulated and counted value for both motorized individual traffic \citep{Horni_unpub_IVT_2007} and public transport. The later are described in Chapter~\ref{ch:pt}. The count package offers analyses for the average working day with hourly resolution. A google maps based visualization is available, showing each station with a its load curve in a pop-up window at the geographic location.
 
 As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario link volume comparisons have been successfully performed with data based on city level, cantonal level and national level \citep[][]{ASTRA_Webpage_2006}, where an average working day (Monday to Thursday, excluding public holidays) was built. Usually it is helpful to exclude a substantial part of the outer range of the modeled study region to prevent boundary effects.
 
-\ah{merge if required:}
-\begin{compactitem}
-\item \lstinline|counts.xml| containing hourly volumes from real-world counting stations.
-\end{compactitem}
-
-\gls{matsim} provides funtionality to compare traffic volumes from your simulation to real world values. The Counts infrastructure allows to compare the traffic volumes on links on an hourly basis. The following listing shows an example of a \lstinline|counts.xml| input file required to do traffic count comparisons. 
+The following listing shows an example of a \lstinline|counts.xml| input file required to do traffic count comparisons. 
 
 \begin{xml}
-<?xml version="1.0" encoding="UTF-8"?> 
-<counts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-        xsi:noNamespaceSchemaLocation="http://matsim.org/files/dtd/counts_v1.xsd" 
-        name="test" desc="test counting stations" year="2014"> 
+%<?xml version="1.0" encoding="UTF-8"?> 
+<counts name="example" desc="example counting stations" year="2015"> 
    <count loc_id="2" cs_id="005"> 
       <volume h="1" val="10.0"></volume> 
       <volume h="2" val="1.0"></volume> 
@@ -453,16 +447,18 @@ As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario
    </count> 
 </counts>
 \end{xml}
-For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (cf.\ Section~\ref{sec:settingUpMatsim}).
+For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (\cf Section~\ref{sec:settingUpMatsim}).
 
-It starts with a header containing general descriptive information about the counts, including a year to describe how current the data is. Next, for each link having real world counts data, the hourly volumes can be specified. The network-link is referenced by the \lstinline|loc_id| attribute, in the example, it is link 2. The attribute \lstinline|cs_id| (counting station identifier) can be used to store an arbitrary description of the counting station. Most often it is used to note the original real word counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day and its value, are optional: That is, not for every hour a value must be given. If for a counting station data is only available for certain hours of the day (e.g.,\,only during peak hours) it is possible to omit the other hours from the \gls{xml} listing.  Note that the first hour of the day, from 0:00 to 1:00, is numbered as ``1'', and \emph{not} by ``0'' as is often done in computer science.
-
+It starts with a header containing general descriptive information about the counts, including a year to describe how current the data is. Next, for each link having real world counts data, the hourly volumes can be specified. The network-link is referenced by the \lstinline|loc_id| attribute, in the example, it is link 2. The attribute \lstinline|cs_id| (counting station identifier) can be used to store an arbitrary description of the counting station. Most often it is used to note the original real word counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day and its value, are optional: That is, not for every hour a value must be given. If for a counting station data is only available for certain hours of the day (\eg only during peak hours) it is possible to omit the other hours from the \gls{xml} listing.  Note that the first hour of the day, from 0:00\,am to 1:00\,am, is numbered as "1", and \emph{not} by "0" as is often done in computer science.
 
 % ===================================================================================
 % -----------------------------------------------------------------------
-\subsection{\lstinline|facilities.xml|}
+\subsection{Facilities: \lstinline|facilities.xml|}
 \label{sec:facilitiescontainer}
-In the facilities file location attributes can be specified. Importantly, open times and capacities can be added here. Facilities are not a mandatory element of core \gls{matsim}. Some \glspl{module}, such as the destination innovation module (Section~\ref{ch:destinationchoice}), use it, however.
+Facilities are an optional element of core \gls{matsim}. 
+Some \glspl{module}, such as the destination innovation module (Chapter~\ref{ch:destinationchoice}), use it, however.
+If \gls{matsim} \glspl{facility} are used, the agents perform their activities in a specific \gls{facility} attached to a network link. 
+In the facilities file location attributes can be specified. Importantly, open times and capacities can be added here. 
 
 %An example listing is as follows.
 A facilities file approximately looks as follows:
@@ -489,17 +485,7 @@ A working example facilities file can be found in the \gls{matsim} directory tre
 \item Code: \lstinline|org.matsim.core.facilities|
 \end{compactitem}
 
-Facilities are a non-mandatory element of \gls{matsim} scenarios. They identify activity locations and can hold opening hour and capacity information. facilities are mostly used in the \gls{matsim} Zürich group, in particular in the Zürich scenario, where facilities are derived from the Federal Enterprise Census 2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information and using NOGA-classification. Detailed technical description of facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008, Meister_unpub_IVT_2007}.
-
-\ah{merge the following, if needed:}
-\ah{If \gls{matsim} \glspl{facility} are used, the agents perform their activities in a specific \gls{facility} attached to a network link.
-%
-Generierung von Facilities muss/kann dann in Part II auch noch untergebracht werden: 
-
-Clearly, many modules require further information about the infrastructure, in particular about the activity locations' open times. For the Swiss scenario the facilities are derived from a business census \citep[][]{SwissEnterpriseCensus_manual_2001}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
-}
-
-% ===================================================================================
+Facilities are mostly used in the \gls{matsim} Zürich group, in particular in the Zürich scenario, where facilities are derived from the Federal Enterprise Census 2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information and using NOGA-classification. Detailed technical description of facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008, Meister_unpub_IVT_2007}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
 
 % ##################################################################################################################
 %% \subsection{Demand-Side Data Containers}
@@ -546,9 +532,12 @@ The vehicles package provides a file reader and a factory to create vehicles.
 
 \kai{convert to normal vehicles?}
 
+\ah{copied from let's get started:}
+\kai{vehicles.xml?  (without ``transit''?)} \kai{Andreas, fyi: I think we are leaning towards having separate containers vehicles.xml and transitVehicles.xml.  Not yet implemented.}
+
 To simulate public transport in \gls{matsim}, two additional input files are necessary. One is \lstinline|transitVehicles.xml|, which describes the vehicles which serve the lines: are they big buses, small buses, trains or light rail vehicles, and describes how many passengers each vehicle can transport.
 
-The description of public transport vehicles can be split into two parts: In a first part, vehicle types have to be described, specifying how many passengers such a vehicle can transport (Note that the term "vehicle" can refer to multiple vehicles in reality, e.g.,\,a train with several wagons should be specified as one long vehicle with a high number of seats). In the second part, actual vehicles have to be listed. Each vehicle has an identifier and is of a previously specified vehicle type. The following shows an example of a such a file, describing one vehicle type and two vehicles of that type. 
+The description of public transport vehicles can be split into two parts: In a first part, vehicle types have to be described, specifying how many passengers such a vehicle can transport (Note that the term "vehicle" can refer to multiple vehicles in reality, \eg a train with several wagons should be specified as one long vehicle with a high number of seats). In the second part, actual vehicles have to be listed. Each vehicle has an identifier and is of a previously specified vehicle type. The following shows an example of a such a file, describing one vehicle type and two vehicles of that type. 
 
 \begin{xml}
 <?xml version="1.0" encoding="UTF-8"?> 
@@ -629,15 +618,6 @@ java -Xmx512m -cp /path/to/matsim.jar
 \end{lstlisting}
 
 If run, this validator will print out a list of errors or warnings, if any are found, or show a message that the schedule appears to be valid.
-
-\ah{merge if required:}
-\ah{In the beginning of \gls{matsim} only car mode could be simulated. With the addition of the public transport \gls{module} (Chapter~\ref{ch:pt}), with the help of two further input files public transport can just as well be simulated:
-\begin{compactitem}
-\item \lstinline|transitVehicles.xml| providing the description of the vehicles used for public transport services. \kai{vehicles.xml?  (without ``transit''?)} \kai{Andreas, fyi: I think we are leaning towards having separate containers vehicles.xml and transitVehicles.xml.  Not yet implemented.}
-\item \lstinline|transitSchedule.xml| containing information about transit stop locations and transit services,
-\end{compactitem}
-%
-} 
 
 %##################################################################################################################
 \section{Global Modules and Global Aspects}
