@@ -85,7 +85,7 @@ Such a command consists of multiple parts:
 
 % ================================================================================================
 \subsection{Configuring \protect\gls{matsim}}
-\label{sec:config}
+\label{sec:lgs-config}
 Configuring \gls{matsim} is 
 %(at this stage) only 
 % KISS.  kai, jan'15
@@ -170,7 +170,7 @@ Minimally \gls{matsim} needs the files
 \end{compactitem}
 
 %% \kai{Andreas, eigentlich würde ich `facilities', `vehicles', und `transit' gerne nach ``extending matsim'' verschieben: (1) `facilities' kann man nur mit core matsim und config file m.E. gar nicht benutzen, (2) schedule-based pt ist ein fehler-anfälliger plug-in, mit dem man nicht gleich ``starten'' muss.  Ok?} \ah{ok}
-\kai{clean this out (facilities, pt, etc.}
+\kai{clean this out (facilities, pt, etc.} \ah{done}
 
 \lstinline|population.xml| and \lstinline|network.xml| 
 % or \lstinline|facilities.xml| \kai{chk if already known here}, \ah{cleaned}
@@ -178,17 +178,18 @@ might get quite large. To save space, \gls{matsim} supports reading and writing 
 
 % --------------------------------------------------------------------
 \subsubsection{An Outlook to Extending MATSim in Part II of this Book}
-With this setting, \gls{matsim} agents perform their activities on a specific \gls{link}. If further information about \glspl{activitylocation} needs to be specified, this can be done with facilities as shown later in Section~\ref{sec:facilitiescontainer}. Likewise, for the \emph{simulation} of public transport the base scenario needs to be extended by additional files as shown in Section~\ref{sec:inputdata:transitvehicles} and Chapter~\ref{ch:pt}. Count data are a common evaluation measure in transport planning. In \gls{matsim}, count data can be provided to the simulation as shown in Section~\ref{sec:counts}.
+\ah{nicht sicher, ob es das braucht, aber vielleicht hilft es die Ungeduld des eher fortgeschrittenen Anwenders zu kanalisieren, wenn er z.B. Pt simulieren will.}
+With this setting, \gls{matsim} agents perform their activities on a specific \gls{link}. If further information about \glspl{activitylocation} needs to be specified, this can be done with facilities as shown later in Section~\ref{sec:extending-facilities}. Likewise, for the \emph{simulation} of public transport the base scenario needs to be extended by additional files as shown in Section~\ref{sec:inputdata:transitvehicles} and Chapter~\ref{ch:pt}. Count data are a common evaluation measure in transport planning. In \gls{matsim}, count data can be provided to the simulation as shown in Section~\ref{sec:extending-counts}.
  
-In more detail, the network and population files look as follows; for the \gls{configfile}, see Section~\ref{sec:config} above.
+In more detail, the network and population files look as follows; for the \gls{configfile}, see Section~\ref{sec:lgs-config} above.
 
 \makeatletter
 \newcommand\thefontsize{{The current font size is: \f@size pt\par}}
 \makeatother
 
 % -----------------------------------------------------------------------
-\subsubsection{Network: \lstinline{network.xml}}
-\label{sec:lgstartednetwork}
+\subsubsection{\lstinline{network.xml}}
+\label{sec:lgstarted-network-file}
 The network describes the infrastructure on which the agents (or the vehicles, respectively), can move around. The network consists of \glspl{node} and \glspl{link} (in graph theory, these are typically called vertices and edges). A simple example for a description of a network in \gls{matsim}'s \gls{xml} data format 
 %can look as follows.
 approximately contains the following information:
@@ -219,7 +220,7 @@ Each element has an identifier \lstinline|id|. Nodes are described by an \lstinl
 %network:
 \begin{compactitem}
     \item the \lstinline|length| of the link, typically in meters (see Section~\ref{sec:unitsconventions}).
-    \item the flow \lstinline|capacity| of the link, i.e.,\,the number of vehicles that can pass the link, typically in vehicles per hour.
+    \item the flow \lstinline|capacity| of the link, \ie the number of vehicles that can pass the link, typically in vehicles per hour.
     \item the \lstinline|freespeed| is the maximum speed at which vehicles are allowed to travel along the link, typically in meters per seconds.
     \item the number of lanes (\lstinline|permlanes|) available in the direction specified by the from and to nodes.
     \item the list of \lstinline|modes| allowed on the link. This is a comma-separated list, e.g.,\,\lstinline|modes="car, bike, taxi"|.
@@ -228,8 +229,8 @@ Each element has an identifier \lstinline|id|. Nodes are described by an \lstinl
 All links are uni-directional. If a road can be traveled in both directions, two links have to be defined with alternating \lstinline|to| and \lstinline|from| attributes (see links with id 2 and 3 in the example given in the listing above). Thus, the network can be seen as a directed graph. 
 
 % -----------------------------------------------------------------------
-\subsubsection{Population: \lstinline|population.xml|}
-\label{sec:lgstarted-population}
+\subsubsection{\lstinline|population.xml|}
+\label{sec:lgstarted-population-file}
 % ........................................................
 \paragraph{File Format}
 
@@ -352,24 +353,18 @@ The final iteration's plans
 are also generated on the top level of the output folder.
 
 \item[Leg Histogram:]
-In every iteration, a leg histogram is plotted. A leg histogram depicts the number of agents that arrive, depart or are en route per time unit. Histograms are created for each transport mode and, additionally, for the sum of all transport modes. Each file starts with the iteration number and ends with the transport mode (e.g.,\,\lstinline|1.legHistogram_car.png| or \lstinline|1.legHistogram_all.png|). Moreover, a text file is created (e.g.,\,\lstinline|1.legHistogram.txt|) that contains the data for all transport modes.
+In every iteration, a leg histogram is plotted. A leg histogram depicts the number of agents that arrive, depart or are en route per time unit. Histograms are created for each transport mode and, additionally, for the sum of all transport modes. Each file starts with the iteration number and ends with the transport mode (\eg \lstinline|1.legHistogram_car.png| or \lstinline|1.legHistogram_all.png|). Moreover, a text file is created (\eg \lstinline|1.legHistogram.txt|) that contains the data for all transport modes.
 
 \item[Trip Durations:]
-Per iteration, a \gls{trip} durations text file (e.g.\ \lstinline|1.tripdurations.txt|) listing the number of trips and their durations on a time bin level for each activity pair (e.g.,\,from work to home or from home to shopping) is put out.
+Per iteration, a \gls{trip} durations text file (e.g.\ \lstinline|1.tripdurations.txt|) listing the number of trips and their durations on a time bin level for each activity pair (\eg from work to home or from home to shopping) is put out.
 
-\item[Link Volumes:]
-The printing of the link volume comparison (between simulated and counted volumes) needs to be triggered by a config file entry. The comparison generates overview summaries for the whole network but also analyses for individual links. A link analysis might look like Figure~\ref{fig:countcomparison}.
+\item[Link Stats:] In every iteration, a link stats file containing hourly count values and travel times on every network link is printed. Link stats are particularly important for the comparison with real-world count data as introduced in Section~\ref{sec:extending-counts}.
 
+%\item[Link Volumes:]
+%The printing of the link volume comparison (between simulated and counted volumes) needs to be triggered by a config file entry. 
+%\ah{This has to be in the extending part. Moved figure and some text there}
+%
 \end{description}
-
-% ----------
-\createfigure%
-{Example for a link volumes comparison between simulation and road count values}%
-{Example for a link volumes comparison between simulation and road count values}%
-{\label{fig:countcomparison}}%
-{\includegraphics[width=0.7\textwidth, angle=0]{using/figures/link101227.png}}%
-{}
-% ----------
 
 % ===============================================================================================
 \subsection{An Example Scenario}
@@ -397,7 +392,7 @@ The network of the scenario is shown in Figure~\ref{fig:equil}.
 {}
 % ----------
 
-The following lines explain the scenario by picking and discussing most important sections from the config file \lstinline|config.xml|.
+The following lines explain the scenario by picking and discussing most important sections from the \gls{configfile} \lstinline|config.xml|.
 
 
 \paragraph{"strategy" Section of the \protect\gls{configfile}}
@@ -429,7 +424,7 @@ research (see Section~\ref{sec:choicesets}).
 
 \paragraph{"planCalcScore" Section of the \protect\gls{configfile}}
 
-The section \lstinline|planCalcScore| defines the parameters used for scoring. The parameters are explained in Chapter~\ref{ch:scoring}. As can be seen in the example, the two activity types \lstinline|h| (home) and \lstinline|w| (work) are specified.  All activity types contained in the population file (\cf Section~\ref{sec:lgstarted-population}) need to be defined in the \lstinline{planCalcScore} section of the \gls{configfile}.
+The section \lstinline|planCalcScore| defines the parameters used for scoring. The parameters are explained in Chapter~\ref{ch:scoring}. As can be seen in the example, the two activity types \lstinline|h| (home) and \lstinline|w| (work) are specified.  All activity types contained in the population file (\cf Section~\ref{sec:lgstarted-population-file}) need to be defined in the \lstinline{planCalcScore} section of the \gls{configfile}.
 \begin{xml}
 <module name="planCalcScore" >
    <parameterset type="activityParams" >
@@ -445,7 +440,7 @@ The section \lstinline|planCalcScore| defines the parameters used for scoring. T
 
 \paragraph{"controler" Section of the \protect\gls{configfile}}
 
-The scenario is run for 10\,iterations, writes the output files to \lstinline|./output/equil| (Section~\ref{sec:outputdata}), and uses \gls{qsim} as the \gls{mobsim} (more on \glspl{mobsim} in Section~\ref{sec:trafficflowmodel} and \ref{sec:mobsims}).
+The scenario is run for 10\,iterations, writes the output files to \lstinline|./output/equil| (Section~\ref{sec:outputdata}), and uses \gls{qsim} as the \gls{mobsim} (more on \glspl{mobsim} in Section~\ref{sec:trafficflowmodel}, \ref{sec:using-mobsims} and \ref{sec:extending-mobsims}).
 \begin{xml}
 <module name="controler">
 	<param name="outputDirectory" value="./output/equil" />
@@ -491,7 +486,7 @@ Money is unit-free. The units are implicitly given by the marginal utility of mo
 \subsubsection{Coordinate Systems}
 \label{sec:coordinatesystems}
 \paragraph{Preparing Your Data in the Appropriate Coordinate System:}
-In several input files, you need to specify coordinates, e.g.,\,for the nodes of the network. It is strongly suggested not to use WGS84 coordinates (i.e.,\,\gls{gps} coordinates) or any other kind of spherical coordinates (coordinates ranging from $-180$ to $+180$ in west-east direction and from $-90$ to $+90$ in south-north direction). \gls{matsim} needs to calculate distances between two points in several places of the code. The calculation of distances between spherical coordinates is very complex and potentially slow. Instead, \gls{matsim} uses the simple Pythagoras' theorem, but this requires the coordinates to be in a Cartesian coordinate system. Thus is is strongly advised to use a Cartesian coordinate system along with \gls{matsim}, preferably one where the distance unit corresponds to one meter.
+In several input files, you need to specify coordinates, \eg for the nodes of the network. It is strongly suggested not to use WGS84 coordinates (\ie \gls{gps} coordinates) or any other kind of spherical coordinates (coordinates ranging from $-180$ to $+180$ in west-east direction and from $-90$ to $+90$ in south-north direction). \gls{matsim} needs to calculate distances between two points in several places of the code. The calculation of distances between spherical coordinates is very complex and potentially slow. Instead, \gls{matsim} uses the simple Pythagoras' theorem, but this requires the coordinates to be in a Cartesian coordinate system. Thus is is strongly advised to use a Cartesian coordinate system along with \gls{matsim}, preferably one where the distance unit corresponds to one meter.
 
 Many countries and regions have custom coordinate system defined, optimized for usages in their appropriate areas. It might be best to ask some \gls{gis} specialists in your region of interest what the most commonly used local coordinate system is and use that as well for your data.
 
@@ -572,10 +567,13 @@ In simulation practice, two different network types are in use, planning network
 {}
 
 % ===============================================================================================
-\subsection{Calibration, Verification, and Validation}
+\subsection{The Modeling Process: Implementation, Verification, Validation, and Calibration}
 
 \kai{Andreas, re Typographie: Es gibt die Theorie, dass Text bzgl.\ seiner ``grayness'' gleichmäßig aussehen sollte.  Daraus folgt, dass ``emph'' typischerweise Text in der gleichen ``Graustufe'' erzeugt wie normal. -- Ich persönlich habe es manchmal allerdings ganz gerne, wenn bestimmte Ausdrücke tatsächlich herausgehben sind ... wie im folgenden ``calibration'', ``verification'', ...  Bessere Lesbarkeit um den Preis der schlechteren Typographie.  Definiere dazu oft ``imp'', analog zu ``emph''.  Bin da allerdings nicht militant; wenn das einer Mehrheit nicht passt, ziehe ich mich hier zurück.}
 
+\ah{Finde ich gut. Einige "imp"s sind jetzt halt wieder rausgeflogen, wegen dem Einfügen von paragraphs.}
+
+% --------------------------------------
 \kai{Hallo Andreas,
 
 In Deinem Text plus dazugehörigem Bild steht, dass verification \emph{nach} calibration kommt.
@@ -602,36 +600,51 @@ Kai
 
 \kai{Go through text after above issue is resolved.}
 
-\emph{Calibration} is a necessary task of any simulation study.
-%
-The main calibration component for \gls{matsim} is the \gls{utilityfunction}; it needs to reflect the preferences of the study area's population.
-%
-A second prominent calibration screw is in particular used for sample runs: To reduce the computational effort, initial explorative simulation runs are often performed on samples of the full population. In this case, either the flow and storage capacity values of the mobility simulation or the network capacities need to be adapted accordingly. \kai{described where?}
+\ah{Obige Punkte sind jetzt berücksichtigt. Man kann wohl noch gewaltig ausdünnen und mehr auf MATSim practice zuschneiden.}
 
-\emph{Verification} and \emph{validation}, however, are of more concern for the \gls{microsimulation} developers. Given a valuable estimate for demand and supply including a properly estimated utility function, from customer's perspective the simulation can be expected to generate valuable single run results out of the box.
+% --------------------------------------
 
-The user's or customer's responsibility is asked, at another place, though. \Glspl{microsimulation} are basically a sampling tool, just as a survey (see Section~\ref{sec:variability}). A single run represents the sampling unit, the individual in surveys. This obviously means that \gls{microsimulation} results must not to be presented as single runs but with the help of the usual statistical tools, e.g.,\,by parameters with the common measures of spread or confidence intervals. That basically means that the user/customer is responsible to specify the sample size, the number of simulation runs initialized with different random seeds. 
+Designing a \gls{microsimulation} scenario requires knowledge of the general modeling process, \ie a clear understanding of the required steps. Thus, this section aims at giving the novice modeler a guide through the modeling process. It is skteched in Figure~\ref{fig:modeling}---loosely based on \citet[][Figure 10.2]{Petty_SokolowskiBanks_2010}. Modeling starts with observation and measurement of reality (in \citet[][]{Petty_SokolowskiBanks_2010} called "\emph{simuland}") for acquisition of knowledge (in \citet[][]{Petty_SokolowskiBanks_2010} called "\emph{referent}"). Model creation---in a strict sense usually referred to as \emph{modeling}---is based on the modeler's knowledge about the world. Based on a conceptual model, an executable model is implemented. The executable model is evaluated in a verification step in terms of "\emph{was the model made right?}" \citep[][p.332]{Petty_SokolowskiBanks_2010}. Validation compares results with the referent in the sense of "\emph{was the right model made?}" \citep[][p.332]{Petty_SokolowskiBanks_2010}. Transferring a model from one domain to another---in transport planning for example applying the simulation for a different population---usually requires calibration.
 
-Policy evaluations are often based on count data, usually widely available but also showing substantial temporal variability. For \gls{matsim}, the count data need to be converted to match the simulated period of the day.
+Verification and validation, are of more concern for the \gls{microsimulation} developers. Given a valuable estimate for demand and supply including a properly estimated utility function, from customer's perspective the simulation can be expected to generate valuable single run results out of the box for the design domain.
 
-As simulation practice often mixes the terms, a few more theoretical words are said hereabout calibration, verification and validation. 
+Besides possibly calibrating the model for different application domains, the user's or customer's responsibility is asked, at another place: \Glspl{microsimulation} are basically a sampling tool, just as a survey (see Section~\ref{sec:variability}). A single run represents the sampling unit, the individual in surveys. This obviously means that \gls{microsimulation} results must not to be presented as single runs but with the help of the usual statistical tools, \eg by parameters with the common measures of spread or confidence intervals. That basically means that the user/customer is responsible to specify the sample size, the number of simulation runs initialized with different random seeds. 
 
-These crucial steps are located in the modeling process as sketched in Figure~\ref{fig:modeling}, which is loosely based on \citet[][Figure 10.2]{Petty_SokolowskiBanks_2010}. 
+%Policy evaluations are often based on count data, usually widely available but also showing substantial temporal variability. For \gls{matsim}, the count data need to be converted to match the simulated period of the day.
 
-\imp{Calibration} is the process of adjusting model parameters to increase consistency of model outputs and observed target values \citep[][p.348]{HollanderLiu_Transportation_2007} \citep[see also][]{TrucanoEtAl_RESS_2006}. \citet[][Table 1]{HollanderLiu_Transportation_2007} list numerous studies that each calibrate a specific transport microsimulation. Further examples are \citet[][]{SmithEtAl_JTE_2008, KimEtAl_TRR_2005, RutterEtAl_JASA_2009}, microsimulation calibration guidelines are provided by \citet[][]{MilamChao_TRBATPM_2001, WegmannEverett_TechRep_CTRUT_2008, DowlingEtAl_manual_2002}. \citet[][Table 2]{HollanderLiu_Transportation_2007} describe measures of goodness-of-fit, that are productive for calibration. Due to the usually large number of model parameters, an automated process is favorable as far as possible. Essentially this is an optimization process \citep[][p.353]{HollanderLiu_Transportation_2007}, for which various established procedures exist \citep[e.g.,][p.41ff]{ZhangMa_ResRep_PATH_2008}. For \gls{matsim}, an automatic procedure adapting the plans to road counts was developed by \citet[][]{floetteroed-2010e}. It is unclear however, if a certain loss of behavioral soundness is caused by adapting plans according to statistical matching. On the other hand, it is unclear anyway, to date, if the \gls{matsim} relaxation transitions should be given a behavioral meaning.
+% ...................................................................
+\paragraph{Verification:}
+Verification is the procedure to test if a "\emph{product is consistent with its specifications [...]}" \citet[][p.330]{Petty_SokolowskiBanks_2010}. In verification, a perfect match can be achieved comparing the conceptual and the executable model (see Figure~\ref{fig:modeling}) in contrast to validation, where the model is always an approximation to reality \citep[][p.145]{Kleijnen_EJOR_1995}. 
 
-\imp{Verification} is the procedure to test if a "\emph{product is consistent with its specifications [...]}" \citet[][p.330]{Petty_SokolowskiBanks_2010}. In verification, a perfect match can be achieved comparing the conceptual and the executable model (see Figure \ref{fig:modeling}) in contrast to validation, where the model is always an approximation to reality \citep[][p.145]{Kleijnen_EJOR_1995}. According to \citet[][p.331]{Petty_SokolowskiBanks_2010}, "\emph{validation is the process of determining the degree to which the model is an accurate representation of the simuland.}" Validation is difficult to standardize due to the variety of models and model purposes. Some measures, tests, and applications relevant to transport modeling are given by \citet[][Table 2]{MilamChao_TRBATPM_2001}, \citet[][]{Lima_TechRep_LMPO_2006}, \citet[][p.155]{KurthEtAl_TRBTDF_2006}, \citet[][p.157]{PendyalaBhat_TRBTDF_2006}, \citet[][p.8]{WegmannEverett_TechRep_CTRUT_2008}, \citet[][]{MilamChao_TRBATPM_2001, RoordaEtAl_TransResA_2008, HawasHameed_TPT_2009, SadekEtAl_TRR_2003, GouliasKitamura_TRR_1992}, \citet[][p.25]{CambridgeSystematics_manual_2008}, \citet[][p.145]{Kleijnen_EJOR_1995} (see also \citet[][]{David_EACSSS_2009}, \citet[][p.56]{SbaytiRoden_ResRep_AASHTO_2010}, \citet[][]{SchifferRossi_TRB_2009}). While for the 4-step procedure some validation standards have emerged \citep[e.g.,][]{BartonAschmanCambridgeSystematics_manual_1997}, a lack of standardization exists for activity-based models. \citet[][]{PendyalaBhat_TRBTDF_2006} say that "\emph{despite the appeal of these models,}" [activity- and tour-based travel demand modeling systems] \emph{"their widespread implementation appears to be hindered by the absence of a detailed validation and assessment of this new wave of model systems. Many MPOs will not adopt such models until they are tested.}" \citet[][]{KurthEtAl_TRBTDF_2006} cites a statement made by Chandra Bhat and Frank Koppelman in a DRCOG e-mail discussion: "\emph{Researchers and practitioners have not thought carefully enough about the criteria for validation of models. Researchers have the habit of asking practitioners to believe that activity- based methods will produce better impact assessment and forecasts because such models more appropriately represent the actual decision process (we plead guilty to this charge). There is a good basis for this line of thought, but researchers need to go beyond this argument. They need to develop clear validation criteria and demonstrate the value of activity-based methods in ways that are easily understood.}"
+% ...................................................................
+\paragraph{Validation:}
+According to \citet[][p.331]{Petty_SokolowskiBanks_2010}, "\emph{validation is the process of determining the degree to which the model is an accurate representation of the simuland.}" Validation is difficult to standardize due to the variety of models and model purposes. Some measures, tests, and applications relevant to transport modeling are given by \citet[][Table 2]{MilamChao_TRBATPM_2001}, \citet[][]{Lima_TechRep_LMPO_2006}, \citet[][p.155]{KurthEtAl_TRBTDF_2006}, \citet[][p.157]{PendyalaBhat_TRBTDF_2006}, \citet[][p.8]{WegmannEverett_TechRep_CTRUT_2008}, \citet[][]{MilamChao_TRBATPM_2001, RoordaEtAl_TransResA_2008, HawasHameed_TPT_2009, SadekEtAl_TRR_2003, GouliasKitamura_TRR_1992}, \citet[][p.25]{CambridgeSystematics_manual_2008}, \citet[][p.145]{Kleijnen_EJOR_1995} (see also \citet[][]{David_EACSSS_2009}, \citet[][p.56]{SbaytiRoden_ResRep_AASHTO_2010}, \citet[][]{SchifferRossi_TRB_2009}). While for the 4-step procedure some validation standards have emerged \citep[e.g.,][]{BartonAschmanCambridgeSystematics_manual_1997}, a lack of standardization exists for activity-based models. \citet[][]{PendyalaBhat_TRBTDF_2006} say that "\emph{despite the appeal of these models,}" [activity- and tour-based travel demand modeling systems] \emph{"their widespread implementation appears to be hindered by the absence of a detailed validation and assessment of this new wave of model systems. Many MPOs will not adopt such models until they are tested.}" \citet[][]{KurthEtAl_TRBTDF_2006} cites a statement made by Chandra Bhat and Frank Koppelman in a DRCOG e-mail discussion: "\emph{Researchers and practitioners have not thought carefully enough about the criteria for validation of models. Researchers have the habit of asking practitioners to believe that activity- based methods will produce better impact assessment and forecasts because such models more appropriately represent the actual decision process (we plead guilty to this charge). There is a good basis for this line of thought, but researchers need to go beyond this argument. They need to develop clear validation criteria and demonstrate the value of activity-based methods in ways that are easily understood.}"
 
 Often neglected, but important, is performing \imp{sensitivity analysis} (sometimes dubbed "what-if analysis" \citep[][p.155]{Kleijnen_EJOR_1995}) \citep[][]{KurthEtAl_TRBTDF_2006, CambridgeSystematics_manual_2008, CFD_TRB_2007}. Sensitivity analysis is similar to assessing elasticity of a variable \citep[][p.3f]{WegmannEverett_TechRep_CTRUT_2008} and it tests reaction of the model to changed parameters including model input. This includes both testing the range of parameters for a given point in time, and analysis of the system's fore- and backcasting abilities \citep[e.g.,][p.56]{CFD_TRB_2007}, \citep[][]{CambridgeSystematics_manual_2008}. As forecasting is a vital objective of most transport models, this test is crucial. \citet[][p.158]{PendyalaBhat_TRBTDF_2006} puts it succinctly: "\emph{There is no doubt that any model can be adjusted, refined, tweaked, and---if all else fails---hammered to replicate base-year conditions.}" and concludes that "\emph{the quality of a travel demand model system is better judged on its ability to respond to a range of scenarios and policies of interest.}" In \gls{matsim}, a natural and interesting sensitivity test would be to compare the \gls{matsim} forecasts with the current actual state of Zürich network after addition of the bypass "Westumfahrung" in 2009 \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009, Westumfahrung_Webpage_2008}.
 
-As mentioned above, models are in general flexible enough to be calibrated to target data. Thus, \imp{validation} \emph{must} be performed using a different data set than for preceding modeling steps \citep[][p.1]{CambridgeSystematics_manual_2008}, \citep[][p.56]{CFD_TRB_2007}, \citep[][p.18]{OrtuzarWillumsen_2001}. In statistics, this is called cross-validation. It is particularly important for forecasting models, which need to be general enough to capture temporal changes. Calibration and validation should thus be strictly separated, however, in microsimulation practice, according to the author's opinion, they are (too) often mixed, sometimes due to the vast amount of data required for model implementation and calibration. In \gls{matsim}, for example, after model calibration only road count data is left for validation \citep[][]{HorniEtAl_STRC_2009}. New data sources, such as road speed analyses based on GPS \citep[][]{HackneyEtAl_JGS_2007}, should be included.
+% ...................................................................
+\paragraph{Calibration:}
+Calibration is the process of adjusting model parameters to increase consistency of model outputs and observed target values \citep[][p.348]{HollanderLiu_Transportation_2007} \citep[see also][]{TrucanoEtAl_RESS_2006}. \citet[][Table 1]{HollanderLiu_Transportation_2007} list numerous studies that each calibrate a specific transport microsimulation. Further examples are \citet[][]{SmithEtAl_JTE_2008, KimEtAl_TRR_2005, RutterEtAl_JASA_2009}, microsimulation calibration guidelines are provided by \citet[][]{MilamChao_TRBATPM_2001, WegmannEverett_TechRep_CTRUT_2008, DowlingEtAl_manual_2002}. \citet[][Table 2]{HollanderLiu_Transportation_2007} describe measures of goodness-of-fit, that are productive for calibration. 
 
-Having said that, validation of a large-scale transport simulation is very difficult. Many central and comfortable characteristics of systems known from natural sciences are only seldom available for the social science, such as path-independence, decomposability, isolation, and on top of that repeatability of experiments. As a result, there is still a debate if social science actually can provide something similar as laws. \citet[][p.107ff]{Abel_1976} lists and discusses the 12\,claims of the "\emph{Verstehen Position}"; although, he finds contrary arguments to every claim, nevertheless, something definitely remains true, making social science model validation exceptionally difficult. For microsimulation results interpretation and model validation, it helped me to visualize the following example. A microsimulation forecast (or backcast) regarding the construction of the "Westumfahrung Zürich" provides a probability distribution of scenarios, and it is essentially an exercise in Monte Carlo sampling (see also Chapter~\ref{ch:montecarlo}). 4\,years later we have exactly one actual state, and there is no way to assess the forecasted (or backcasted) probability distribution beyond checking that this actual state is contained in the probability distribution, and hopefully with high probability. There is nothing like Monte Carlo sampling when it comes to aggregate real system states. In other words the existing state is \emph{unique}. In essence, we thus compare an observed Dirac impulse with a computed probability distribution, which is a difficult undertaking.
+The main calibration component for \gls{matsim} is the \gls{utilityfunction}; it needs to reflect the preferences of the study area's population.
+
+A second prominent calibration screw is in particular used for sample runs: To reduce the computational effort, initial explorative simulation runs are often performed on samples of the full population. In this case, either the flow and storage capacity values of the mobility simulation or the network capacities need to be adapted accordingly. \kai{described where?}
+
+Due to the usually large number of model parameters, an automated process is favorable as far as possible. Essentially this is an optimization process \citep[][p.353]{HollanderLiu_Transportation_2007}, for which various established procedures exist \citep[e.g.,][p.41ff]{ZhangMa_ResRep_PATH_2008}. For \gls{matsim}, an automatic procedure adapting the plans to road counts was developed by \citet[][]{floetteroed-2010e}. It is unclear however, if a certain loss of behavioral soundness is caused by adapting plans according to statistical matching. On the other hand, it is unclear anyway, to date, if the \gls{matsim} relaxation transitions should be given a behavioral meaning.
+
+% ...................................................................
+
+As mentioned above, models are in general flexible enough to be calibrated to target data. Thus, validation \emph{must} be performed using a different data set than for creating or calibrating the model \citep[][p.1]{CambridgeSystematics_manual_2008}, \citep[][p.56]{CFD_TRB_2007}, \citep[][p.18]{OrtuzarWillumsen_2001}. In statistics, this is called cross-validation. It is particularly important for forecasting models, which need to be general enough to capture temporal changes. Calibration and validation should thus be strictly separated. Due to the vast amount of data required for model implementation and calibration this is not an easy endeavor for \gls{microsimulation} practice. In \gls{matsim}, for example, after model creation often only road count data is left for validation \citep[][]{HorniEtAl_STRC_2009}. New data sources, such as road speed analyses based on \gls{gps} \citep[][]{HackneyEtAl_JGS_2007}, should be included.
+
+Furthermore, many central and comfortable characteristics of systems known from natural sciences are only seldom available for the social science, such as path-independence, decomposability, isolation, and on top of that repeatability of experiments. As a result, there is still a debate if social science actually can provide something similar as laws. \citet[][p.107ff]{Abel_1976} lists and discusses the 12\,claims of the "\emph{Verstehen Position}"; although, he finds contrary arguments to every claim, nevertheless, something definitely remains true, making social science model validation exceptionally difficult. 
+
+%\ah{Latte zu hoch gelegt und wohl gerissen:}
+%For microsimulation results interpretation and model validation, it helps to visualize the following example. A microsimulation forecast (or backcast) regarding the construction of the "Westumfahrung Zürich" provides a probability distribution of scenarios, and it is essentially an exercise in Monte Carlo sampling (see also Chapter~\ref{ch:montecarlo}). 4\,years later we have exactly one actual state, and there is no way to assess the forecasted (or backcasted) probability distribution beyond checking that this actual state is contained in the probability distribution, and hopefully with high probability. There is nothing like Monte Carlo sampling when it comes to aggregate real system states. In other words the existing state is \emph{unique}. In essence, we thus compare an observed Dirac impulse with a computed probability distribution, which is a difficult undertaking.
 
 % ----------
 \createfigure%
 {Modeling process}%
-{Modeling process: Modeling starts with observation and measurement of reality (in \citet[][]{Petty_SokolowskiBanks_2010} called "\emph{simuland}") for acquisition of knowledge (in \citet[][]{Petty_SokolowskiBanks_2010} called "\emph{referent}"). Model creation---in a strict sense usually referred to as \emph{modeling}---is based on the modeler's knowledge about the world. Based on a conceptual model, an executable model is implemented and calibrated. The executable model is evaluated in a verification step in terms of "\emph{was the model made right?}" \citep[][p.332]{Petty_SokolowskiBanks_2010}. Validation compares results with the referent in the sense of "\emph{was the right model made?}" \citep[][p.332]{Petty_SokolowskiBanks_2010}.}%
+{Modeling process}%
 {\label{fig:modeling}}%
 {\includegraphics[width=0.8\textwidth, angle=0]{using/figures/modeling.pdf}}%
 {}
@@ -643,12 +656,14 @@ Having said that, validation of a large-scale transport simulation is very diffi
 
 \kai{Wenn wir in Teil I hinter ``scoring'' noch ein Kapitel bauen, welches sozusagen ``configurations which are not extensions'' enthält, dann könnte survival guide an dessen Ende. (??)}
 
+\ah{Chapter~\ref{ch:configuring}, ist momentan vor Scoring. Finde den MATSim Survival Guide hier eigentlich auch ganz passend.}
+
 There are already many options and possibilities available with \gls{matsim}, and finding them can be a taunting exercise.  Here are a couple of recommendations, derived from our own frequent use of the system.
 \begin{enumerate}
 
 \item Always start and test with a small example.
 
-\item Always test large scenarios with one percent runs first (e.g.,\,a randomly drawn 1\,\% subsample of your initial demand). \kai{this needs to be described somewhere.  flowcap; storcap larger (see matsim4urbansim); counts}
+\item Always test large scenarios with one percent runs first (\eg a randomly drawn 1\,\% subsample of your initial demand). \kai{this needs to be described somewhere.  flowcap; storcap larger (see matsim4urbansim); counts}
 
 \item If your set-up does not work any more, \emph{immediately} go back to a working version and proceed from there in small steps.
 

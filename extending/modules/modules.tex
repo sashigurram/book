@@ -250,28 +250,28 @@ The description of the modules in this and the following chapters is based on th
 \hline
 \endlastfoot
 	\hline
-	\textbf{MATSim Data Containers} & Section~\ref{sec:matsim-containers} \\
+	\textbf{MATSim Data Containers} & Section~\ref{sec:using-data-containers} and \ref{sec:extending-data-containers} \\
 	\hline
-	Scenario &  Section~\ref{sec:scenario} \\
-	Network  & Section~\ref{sec:lgstartednetwork} and \ref{sec:network} \\
-	Population &  Section~\ref{sec:lgstarted-population} and \ref{sec:population} \\
-	Counts  & Section~\ref{sec:counts} \\
-	Facilities & Section~\ref{sec:facilities} \\
-	Households &  Section~\ref{sec:households} \\
-	Vehicles &  Section~\ref{sec:vehicles} \\
+	Scenario &  Section~\ref{sec:extending-scenario} \\
+	Network  & Section~\ref{sec:using-network} and \ref{sec:extending-network} \\
+	Population &  Section~\ref{sec:using-population} and \ref{sec:extending-population} \\
+	Counts  & Section~\ref{sec:extending-counts} \\
+	Facilities & Section~\ref{sec:extending-facilities} \\
+	Households &  Section~\ref{sec:extending-households} \\
+	Vehicles &  Section~\ref{sec:extending-vehicles} \\
 	\hline
-	\textbf{Global Modules and Global Aspects} & Section~\ref{sec:globalmodules} \\
+	\textbf{Global Modules and Global Aspects} & Section~\ref{sec:using-globalmodules} and \ref{sec:extending-globalmodules} \\
 	\hline
-	Controler &  Section~\ref{sec:using-controler} and \ref{sec:controler} \\
-	Global &  Section~\ref{sec:global} \\
-	Parallel Computing &  Section~\ref{sec:parallelcomputing} \\
+	Controler &  Section~\ref{sec:using-controler} and \ref{sec:extending-controler} \\
+	Global &  Section~\ref{sec:using-global} \\
+	Parallel Event Handling &  Section~\ref{sec:using-paralleleventhandling} \\
 	\hline
-	\textbf{Mobsims} & Section~\ref{sec:using-mobsims} and \ref{sec:mobsims} \\
+	\textbf{Mobsims} & Section~\ref{sec:using-mobsims} and \ref{sec:extending-mobsims} \\
 	\hline
-	QSim &  Section~\ref{sec:using-qsim} and \ref{sec:qsim} \\
-	JDEQSim &  Section~\ref{sec:jdeqsim} \\
+	QSim &  Section~\ref{sec:using-qsim} and \ref{sec:extending-qsim} \\
+	JDEQSim &  Section~\ref{sec:using-jdeqsim} \\
 	\hline
-	\textbf{Scoring} & Section~\ref{sec:scoring} \\
+	\textbf{Scoring} & Section~\ref{sec:using-scoring} \\
 	\hline
 	\textbf{Strategy Modules} & Section~\ref{sec:strategymodules} \\
 	\hline
@@ -318,12 +318,12 @@ The description of the modules in this and the following chapters is based on th
 
 % ##################################################################################################################
 \section{MATSim Data Containers}
-\label{sec:matsim-containers}
+\label{sec:extending-data-containers}
 %% \subsection{Supply-Side Data Containers}
 %% \label{sec:supplysidemodules}
 % ======================================================
 \subsection{Scenario}
-\label{sec:scenario}
+\label{sec:extending-scenario}
 
 \begin{compactitem}
 \item Invoking the module: (1) if you use Controler, scenario is always there. (2) otherwise, it needs to be generated explicitly in java.  \kai{chk}
@@ -345,7 +345,9 @@ a container containing the main components of a scenario such as the \lstinline|
 
 % ===================================================================================
 \subsection{Network}
-\label{sec:network}
+\label{sec:extending-network}
+% Code: \lstinline|org.matsim.core.network|
+
 It is possible to make network attributes time-dependent, as observed in reality in case of accidents or adaptive traffic control, with varying speed limits or driving directions of lanes on multi-lane roads with heavily unbalanced load over the course of a day. Attributes that can be adapted are free speed, number of lanes and flow capacity.
 
 The adaptation can be specified by adding following two lines to the \lstinline|network| configuration file section:
@@ -390,20 +392,14 @@ Alternatively, network change events can be directly added to the code using the
 
 % ===================================================================================
 \subsection{Population}
-\label{sec:population}
-\begin{compactitem}
-\item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
-\item Configuration: \lstinline|plans| config file section. 
-\item Code: \lstinline|org.matsim.core.population|
-\end{compactitem}
-
-The population module manages transport demand, i.e.,\,the population and the agents' plans.
+\label{sec:extending-population}
+% Code: \lstinline|org.matsim.core.population|
 
 \ah{das einzig relevante hier:} Optionally the path to a person attributes file in \lstinline|ObjectAttributes| format can be specified. 
 
 % ===================================================================================
 \subsection{Counts: \lstinline|counts.xml|}
-\label{sec:counts}
+\label{sec:extending-counts}
 \begin{compactitem}
 \item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
 \item Configuration: \lstinline|counts| file section
@@ -451,10 +447,21 @@ For a working example, check the \lstinline{examples/equil} directory in the \gl
 
 It starts with a header containing general descriptive information about the counts, including a year to describe how current the data is. Next, for each link having real world counts data, the hourly volumes can be specified. The network-link is referenced by the \lstinline|loc_id| attribute, in the example, it is link 2. The attribute \lstinline|cs_id| (counting station identifier) can be used to store an arbitrary description of the counting station. Most often it is used to note the original real word counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day and its value, are optional: That is, not for every hour a value must be given. If for a counting station data is only available for certain hours of the day (\eg only during peak hours) it is possible to omit the other hours from the \gls{xml} listing.  Note that the first hour of the day, from 0:00\,am to 1:00\,am, is numbered as "1", and \emph{not} by "0" as is often done in computer science.
 
+The counts module generates overview summaries for the whole network but also analyses for individual links. A link analysis might look like Figure~\ref{fig:countcomparison}.
+
+% ----------
+\createfigure%
+{Example for a link volumes comparison between simulation and road count values}%
+{Example for a link volumes comparison between simulation and road count values}%
+{\label{fig:countcomparison}}%
+{\includegraphics[width=0.7\textwidth, angle=0]{using/figures/link101227.png}}%
+{}
+% ----------
+
 % ===================================================================================
 % -----------------------------------------------------------------------
 \subsection{Facilities: \lstinline|facilities.xml|}
-\label{sec:facilitiescontainer}
+\label{sec:extending-facilities}
 Facilities are an optional element of core \gls{matsim}. 
 Some \glspl{module}, such as the destination innovation module (Chapter~\ref{ch:destinationchoice}), use it, however.
 If \gls{matsim} \glspl{facility} are used, the agents perform their activities in a specific \gls{facility} attached to a network link. 
@@ -493,7 +500,7 @@ Facilities are mostly used in the \gls{matsim} Zürich group, in particular in t
 
 % ===================================================================================
 \subsection{Households}
-\label{sec:households}
+\label{sec:extending-households}
 \begin{compactitem}
 \item Invoking the module: Enable househlds in the \lstinline|scenario| section of the configuration file and provide the paths to a households file and another file containing the households' attributes in the configuration file section \lstinline|households|.
 \item Configuration: \lstinline|households| config file section
@@ -505,7 +512,7 @@ Similar to the vehicles module, the household module is not used by default in \
 % ===================================================================================
 %% \subsection{Data containers belonging both to demand and to supply}
 \subsection{Vehicles}
-\label{sec:vehicles}
+\label{sec:extending-vehicles}
 
 %% A private household's decision to buy a vehicle in order to satisfy one's transport needs is a demand side decision.
 %% %
@@ -621,10 +628,10 @@ If run, this validator will print out a list of errors or warnings, if any are f
 
 %##################################################################################################################
 \section{Global Modules and Global Aspects}
-\label{sec:globalmodules}
+\label{sec:extending-globalmodules}
 % ===================================================================================
 \subsection{Controler}
-\label{sec:controler}
+\label{sec:extending-controler}
 The module, can be extended by \lstinline|Events| and \lstinline|Listeners| as detailed in Chapter~\ref{ch:extensionpoints}. 
 %% Classes implementing one or more \lstinline|Listener Interfaces| and can be registered with the Controler with \lstinline|addControlerListener()|. The controler fires \lstinline|Controler Events| at specific points during the run to the registered \lstinline|Listeners|, which can then execute their own code.
 %
@@ -634,10 +641,10 @@ The module, can be extended by \lstinline|Events| and \lstinline|Listeners| as d
 
 % ##################################################################################################################
 \section{\protect\glspl{mobsim}}
-\label{sec:mobsims}
+\label{sec:extending-mobsims}
 % ===================================================================================
 \subsection{\protect\gls{qsim}}
-\label{sec:qsim}
+\label{sec:extending-qsim}
 The simulation is able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, multi-modal scenarios (Section~\ref{sec:multimodalsim_qsim}) and in an experimental manner also traffic lights \citep[][]{Neumann_MastersThesis_2008}).
 
 % --------------------------------------
@@ -652,7 +659,7 @@ Assigning vehicles of a specific type to agents is done with in the vehicles inp
 Further configuration necessary to include public transport is detailed in Chapter~\ref{ch:pt}.
 
 To model multi-modal interactions, a fully multi-modal network, i.e.,\,a network that has links being shared by different modes must be provided. 
-As shown in Section~\ref{sec:lgstartednetwork}, specification of link modes is done with the network attribute \lstinline|modes|.
+As shown in Section~\ref{sec:lgstarted-network}, specification of link modes is done with the network attribute \lstinline|modes|.
 Furthermore, the router needs to be informed about the network modes by the \lstinline|planscalcroute| parameter \lstinline|<param name="networkModes" value="car,ride" />|.
 \ah{is this a double configuration, qsim and planscalcroute? can we merge them?}
 

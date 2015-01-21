@@ -8,7 +8,7 @@
 
 % ##################################################################################################################
 
-\section{Introduction: good plans and bad plans, score and utility}
+\section{Introduction: Good Plans and Bad Plans, Score and Utility}
 
 \kai{im folgenden habe ich noch ein paar Absätze neu geschrieben, muss daher doppelt gründlich durchgeschaut werden}
 
@@ -36,11 +36,11 @@ The plans of an agent in a given iteration may be considered the agent's \imp{ch
 %
 Choice is typically based on the score, with plans with a higher score having a higher probability of being selected.  
 %
-This is dicussed in more detail in Chapter~\ref{ch:abta}.  For the time being, note that the three steps of replanning need to cooperate for the approach to work: The plans removal step should remove ``bad'' plans, and the innovation step should generate ``good'' plans, where in both cases ``good'' means ``being able to obtain a high score in the mobsim/scoring''.  Fortunately, the approach, due to its evolutionary concept, is fairly robust: The innovation step does not always have to generate good solutions; it is sufficient if \emph{some} of the solutions are good ones that lead to a high score.
+This is dicussed in more detail in Chapter~\ref{ch:abta}.  For the time being, note that the three steps of replanning need to cooperate for the approach to work: The plans removal step should remove "`bad" plans, and the innovation step should generate "good" plans, where in both cases "good" means "being able to obtain a high score in the mobsim/scoring".  Fortunately, the approach, due to its evolutionary concept, is fairly robust: The innovation step does not always have to generate good solutions; it is sufficient if \emph{some} of the solutions are good ones that lead to a high score.
 
-However, from the above it should become clear that scoring is a central element of \gls{matsim}.  Only solutions that obtain a high score will be selected by the agent, and will survive the plans removal step.  In consequence, the scoring function needs to be ``correct'' for a given scenario, which roughly means that plans ``perform well'' obtain a higher score than plans that do ``not perform well''.  And if a performance is good or not is in the end decided by the persons living in a region -- some persons may prefer a congested car trip to a destination, some others may prefer a crowded but affordable trip by public transit, while even others may prefer using the bicycle even in bad weather.
+However, from the above it should become clear that scoring is a central element of \gls{matsim}.  Only solutions that obtain a high score will be selected by the agent, and will survive the plans removal step.  In consequence, the scoring function needs to be "correct" for a given scenario, which roughly means that plans "perform well" obtain a higher score than plans that do "not perform well".  And if a performance is good or not is in the end decided by the persons living in a region -- some persons may prefer a congested car trip to a destination, some others may prefer a crowded but affordable trip by public transit, while even others may prefer using the bicycle even in bad weather.
 
-The typical way to bridge this gap is to use econometric \imp{\gls{utility}} functions, for example from random utility models \citep[e.g.][]{BenAkivaLerman_1985,Train_2003} for the score.  However, in \gls{ai} utility may also be used in a more general way, as the score that either each individual agent or the system as a whole wants to or should optimize \citep{RusselNorvig2010ArtificialIntelligence}.  \kai{Etwas davon sollte wohl auch ins Glossar.} For those reasons, the terms ``score'' and ``utility'' are mostly interchangeable in the \gls{matsim} context.  Since at some places we will need the concept of a marginal utility, this chapter will mostly speak of utility since it feels a bit unusual to speak of marginal score.
+The typical way to bridge this gap is to use econometric \imp{\gls{utility}} functions, for example from random utility models \citep[e.g.][]{BenAkivaLerman_1985,Train_2003} for the score.  However, in \gls{ai} utility may also be used in a more general way, as the \gls{score} that either each individual agent or the system as a whole wants to or should optimize \citep{RusselNorvig2010ArtificialIntelligence}.  \kai{Etwas davon sollte wohl auch ins Glossar.} For those reasons, the terms "\gls{score}" and "\gls{utility}" are mostly interchangeable in the \gls{matsim} context.  Since at some places we will need the concept of a marginal utility, this chapter will mostly speak of utility since it feels a bit unusual to speak of marginal score.
 
 The user has the possibility to configure numerous parameters to calibrate the
 %choice behavior.
@@ -62,7 +62,7 @@ started with the so-called Charypar-Nagel scoring or \gls{utility} function (Sec
 \section{The Current Charypar-Nagel Utility Function}
 \label{sec:charyparnagel}
 % ============================================================================================
-\subsection{Mathematical form}
+\subsection{Mathematical Form}
 \label{sec:mathematical-form}
 
 The first and still basic \gls{matsim} scoring function was formulated by \citet[][]{CharyparNagel2005ga4acts} loosely based on the \emph{Vickrey} model for road congestion as described in \citet[][]{Vickrey_TAER_1969} and \citet[][]{ArnottEtAl_TAER_1993}. Originally, this formulation was established for departure time choice. However, all studies performed so far indicate that the \gls{matsim} function is also appropriate for modeling 
@@ -94,7 +94,7 @@ with $N$ as the number of activities. Trip $q$ is the trip that follows activity
 % -------------------------------------------------------------------------------------
 \paragraph{Activities}
 
-\kai{Andreas, there are no separate beta params per activity type.  maybe it would make sense to have them in some cases, but this would be a somewhat larger software change since at this point we cannot attach them to the activity types.}
+\kai{Andreas, there are no separate beta parameters per activity type.  maybe it would make sense to have them in some cases, but this would be a somewhat larger software change since at this point we cannot attach them to the activity types.}
 
 The utility of an activity $q$ is defined as follows \citep[see also][p.377ff]{CharyparNagel2005ga4acts}:
 \begin{equation}
@@ -171,7 +171,7 @@ where:
 \item $\beta_{transfer}$ are transfer penalties in public transport (normally negative),
 %\kai{is this mode-specific?}\kai{no it is not}, 
 and
-\item $x_{transfer,q}$ is a 0/1 veriable denoting if a transfer has happend between the previous and the current leg.
+\item $x_{transfer,q}$ is a 0/1 variable denoting if a transfer has happend between the previous and the current leg.
 \end{compactitem}
 This is the direct utility contribution of travel; see Section~\ref{sec:opport-cost-of-time} for the the full indirect utility as well as the relation to the VTTS, and Section~\ref{ch:economicEval} for a more general discussion.
 
@@ -199,7 +199,7 @@ Figure~\ref{fig:scoring-function} illustrates the scoring function.  Time runs f
 
 Activities are scored with concave functions, modeling decreasing returns to spending more time at the same activity.  Travel, in contrast, is modeled with downward sloping straight lines, where the slope may be different for different modes of transport, and there may be an initial offset (alternative-specific constant).  Note the delay between the arrival at the workplace and the workplace opening time, which is reflected in no score accumulation during that period.  Agents accumulate those scores over the day, reflected in the bottom graph.
 
-When one assumes that all other things (in particular travel times) are equal, then agents maximize their score when the activity durations are such that all activities have the same slope ($=$ the same marginal utility; red lines).  This follows from basic economic theory (cf.~Section~\ref{ch:economicEval:valuingBehavior}), but can also be seen intuitively: If the red lines did not have the same slope, the agent could gain by extending those activities with steeper slope at the expense of the others.  Clearly, this holds only when all other things remain constant, in particular the travel times.
+When one assumes that all other things (in particular travel times) are equal, then agents maximize their score when the activity durations are such that all activities have the same slope ($=$ the same marginal utility; red lines).  This follows from basic economic theory (\cf Section~\ref{ch:economicEval:valuingBehavior}), but can also be seen intuitively: If the red lines did not have the same slope, the agent could gain by extending those activities with steeper slope at the expense of the others.  Clearly, this holds only when all other things remain constant, in particular the travel times.
 
 % ====================================================================================
 \subsection{The "Wrapping Around" of the Utility Function}
