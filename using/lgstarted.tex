@@ -40,14 +40,9 @@ Unzipping this collection of 3rd-party libraries, you should then get a director
 % ================================================================================================
 \subsection{Running MATSim}
 \label{sec:runexample}
-
-%% \kai{note: inzwischen kann man auch einfach auf das matsim jar draufklicken. :--)  Das sollten wir unbedingt nochmal testen, und dann beschreiben.  (Geht nicht mit dem derzeitigen release 6, aber im HEAD und nightly builds geht es schon.)}
-
-%% \ah{hab den Text entsprechend angepasst.}
-
 At the time of writing this book, the nightly built \gls{matsim} \gls{jar} file is executable by double-clicking. A minimal \gls{gui} as shown in Figure~\ref{fig:matsimgui} opens and the \gls{matsimrun} can be configured and started. 
 This feature is expected to be in the releases starting with version 0.7.
-
+%
 % ----------
 \createfigure[!h!]%
 {Minimal MATSim GUI}%
@@ -88,7 +83,6 @@ Such a command consists of multiple parts:
 
 }
 
-
 % ================================================================================================
 \subsection{Configuring \protect\gls{matsim}}
 \label{sec:config}
@@ -101,13 +95,13 @@ done via the \gls{configfile}. It builds the connection between the user and \gl
 % (2) Wir packen Dinge, die über die config ansprechbar sind, aber zusätzliche Dateien benötigen, nach ``extending'', alles andere nach ``using''.  
 % (3) Wir packen \emph{nur} die Dinge, bei denen man programmieren muss, nach ``extending''. --  Im Moment ist es m.E.\ (1).  -- Wenn es (1) oder (2) sind/werden, müsste man obigen Satz anpassen.}
 %
-\kai{Habe einen Satz, der eine Vorschau auf Part~II gibt, mal rausgestrichen.  Part~II enthält auf jeden Fall auch (viele) Dinge, die man machen kann, ohne dass man programmiert.}
-\ah{Die nur grob definierte Einteilung machte mir im Modules-Chapter auch schon grosse Bauchschmerzen.
-
-Grundidee war mal (3). Doch dann landet viel zu viel, was den Anfänger überfordert in Teil I. Das Modules-Kapitel müsste komplett auseinandergerissen werden.
-(1) ist noch keine klare Grenze, was wir im Moment ja auch nicht haben. 
-So was wie (2) müsste es m.E. sein, um eine didaktisch sinnvolle Einteilung zu haben. Aber auch hier, muss das Modules-Kapitel auseinandergerissen werden. Wir sollten wohl noch ein Using-Kapitel einfügen mit dem Titel "Configuring MATSim" o.ä., und da alles reinpacken, was momentan im Modules-Kapitel nur über Config angesprochen werden kann.
-}
+%\kai{Habe einen Satz, der eine Vorschau auf Part~II gibt, mal rausgestrichen.  Part~II enthält auf jeden Fall auch (viele) Dinge, die man machen kann, ohne dass man programmiert.}
+%\ah{Die nur grob definierte Einteilung machte mir im Modules-Chapter auch schon grosse Bauchschmerzen.
+%
+%Grundidee war mal (3). Doch dann landet viel zu viel, was den Anfänger überfordert in Teil I. Das Modules-Kapitel müsste komplett auseinandergerissen werden.
+%(1) ist noch keine klare Grenze, was wir im Moment ja auch nicht haben. 
+%So was wie (2) müsste es m.E. sein, um eine didaktisch sinnvolle Einteilung zu haben. Aber auch hier, muss das Modules-Kapitel auseinandergerissen werden. Wir sollten wohl noch ein Using-Kapitel einfügen mit dem Titel "Configuring MATSim" o.ä., und da alles reinpacken, was momentan im Modules-Kapitel nur über Config angesprochen werden kann.
+%} \ah{Kaüitel eingefügt}
 
 All configuration parameters are simple pairs of a \gls{parameter} \lstinline|name| and a \gls{parameter} \lstinline|value|. The \glspl{parameter} are grouped into logical groups. For example, there is a group with settings related to the \lstinline|Controler| like the number of \glspl{iteration}, or there is another group with settings related to the \gls{simulation}, e.g.,\,the end time of the simulation. As shown in Chapter~\ref{ch:modules}, a whole bunch of \gls{matsim} modules can be added to \gls{matsim} and configured by specifying the respective section of the configuration file.
 
@@ -147,8 +141,7 @@ A fairly minimal \gls{configfile} approximately contains the following informati
 </module>
 \end{xml}
 A working example can be found in the \gls{matsim} directory tree (cf.~\ref{sec:settingUpMatsim}) under \lstinline{examples/tutorial/config/example1-config.xml}.
-
-%% A minimal \gls{configfile} is shown below, specifying the minimal information that \gls{matsim} needs about demand and supply. 
+ 
 In the example, supply is given by 
 the network and demand is given in the plans file (typical input data produced is described in Section~\ref{sec:inputdata}). 
 %
@@ -159,24 +152,6 @@ What \emph{is} executed is the \gls{mobsim} (Figure~\ref{fig:matsimcycle}), foll
 The scoring, in order to work, minimally needs to know all activity types that are used in the plans, and the typical duration for each such activity type.
 
 Further configuration possibilities are described in Chapter~\ref{ch:configuring}.
-
-%% \kai{Andreas, hast Du das getestet?  Wenn ich das mache, bekomme ich eine Exception \lstinline{java.lang.IllegalArgumentException: acttype "w" is not known in utility parameters (module name="planCalcScore" in the config file)}, was dann zwar formal tatsächlich kein replanning ist, aber auch kein sauberer Abbruch.}
-
-
-%% \begin{xml}
-%% <?xml version="1.0" ?> 
-%% <!DOCTYPE config SYSTEM "http://www.matsim.org/files/dtd/config_v1.dtd"> 
-%% <config> 
- 
-%%    <module name="network"> 
-%%       <param name="inputNetworkFile" value="example/network.xml" /> 
-%%    </module> 
- 
-%%    <module name="plans"> 
-%%       <param name="inputPlansFile" value="example/population.xml.gz" /> 
-%%    </module> 
-%% </config>
-%% \end{xml}
 
 % ##################################################################################################################
 \section{Building and Running a Basic Scenario}
@@ -197,35 +172,15 @@ Minimally \gls{matsim} needs the files
 %% \kai{Andreas, eigentlich würde ich `facilities', `vehicles', und `transit' gerne nach ``extending matsim'' verschieben: (1) `facilities' kann man nur mit core matsim und config file m.E. gar nicht benutzen, (2) schedule-based pt ist ein fehler-anfälliger plug-in, mit dem man nicht gleich ``starten'' muss.  Ok?} \ah{ok}
 \kai{clean this out (facilities, pt, etc.}
 
-With this setting, \gls{matsim} agents perform their activities on a specific \gls{link}. If further information about \glspl{activitylocation} needs to be specified, this can be done in 
-\begin{compactitem}
-\item \lstinline|facilities.xml|. 
-\end{compactitem}
-%
-If \gls{matsim} \glspl{facility} are used, the agents perform their activities in a specific \gls{facility} attached to a network link.
-%
-\ah{Generierung von Facilities muss/kann dann in Part II auch noch untergebracht werden: 
+\lstinline|population.xml| and \lstinline|network.xml| 
+% or \lstinline|facilities.xml| \kai{chk if already known here}, \ah{cleaned}
+might get quite large. To save space, \gls{matsim} supports reading and writing the data in a compressed format. \gls{matsim} uses GZIP-compression for this. Thus, in many cases, the file names have the additional suffix \lstinline|.gz|, as in \lstinline|population.xml.gz|. \gls{matsim} automatically detects if files are compressed or should be written compressed based on the file name.
 
-Clearly, many modules require further information about the infrastructure, in particular about the activity locations' open times. For the Swiss scenario the facilities are derived from a business census \citep[][]{SwissEnterpriseCensus_manual_2001}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
-}
-%
-
-In the beginning of \gls{matsim} only car mode could be simulated. With the addition of the public transport \gls{module} (Chapter~\ref{ch:pt}), with the help of two further input files public transport can just as well be simulated:
-\begin{compactitem}
-\item \lstinline|transitVehicles.xml| providing the description of the vehicles used for public transport services. \kai{vehicles.xml?  (without ``transit''?)} \kai{Andreas, fyi: I think we are leaning towards having separate containers vehicles.xml and transitVehicles.xml.  Not yet implemented.}
-\item \lstinline|transitSchedule.xml| containing information about transit stop locations and transit services,
-\end{compactitem}
-%
-For the handling of other modes please refer to Chapter~\ref{ch:multimodalsim}.
-
-Count data are a common evaluation measure in transport planning. In \gls{matsim}, count data can be integrated with the file
-\begin{compactitem}
-\item \lstinline|counts.xml| containing hourly volumes from real-world counting stations.
-\end{compactitem}
-
-Some of the files, especially \lstinline|population.xml|, but also \lstinline|network.xml| or \lstinline|facilities.xml| \kai{chk if already known here}, might get quite large. To save space, \gls{matsim} supports reading and writing the data in a compressed format. \gls{matsim} uses GZIP-compression for this. Thus, in many cases, the file names have the additional suffix \lstinline|.gz|, as in \lstinline|population.xml.gz|. \gls{matsim} automatically detects if files are compressed or should be written compressed based on the file name.
+% --------------------------------------------------------------------
+\subsubsection{An Outlook to Extending MATSim in Part II of this Book}
+With this setting, \gls{matsim} agents perform their activities on a specific \gls{link}. If further information about \glspl{activitylocation} needs to be specified, this can be done with facilities as shown later in Section~\ref{sec:facilitiescontainer}. Likewise, for the \emph{simulation} of public transport the base scenario needs to be extended by additional files as shown in Section~\ref{sec:inputdata:transitvehicles} and Chapter~\ref{ch:pt}. Count data are a common evaluation measure in transport planning. In \gls{matsim}, count data can be provided to the simulation as shown in Section~\ref{sec:counts}.
  
-In more detail, the input files look as follows. For the config file, see Section~\ref{sec:config} above. 
+In more detail, the network and population files look as follows; for the \gls{configfile}, see Section~\ref{sec:config} above.
 
 \makeatletter
 \newcommand\thefontsize{{The current font size is: \f@size pt\par}}
@@ -234,9 +189,6 @@ In more detail, the input files look as follows. For the config file, see Sectio
 % -----------------------------------------------------------------------
 \subsubsection{\lstinline{network.xml}}
 \label{sec:lgstartednetwork}
-
-
-
 The network describes the infrastructure on which the agents (or the vehicles, respectively), can move around. The network consists of \glspl{node} and \glspl{link} (in graph theory, these are typically called vertices and edges). A simple example for a description of a network in \gls{matsim}'s \gls{xml} data format 
 %can look as follows.
 approximately contains the following information:
@@ -278,8 +230,8 @@ All links are uni-directional. If a road can be traveled in both directions, two
 % -----------------------------------------------------------------------
 \subsubsection{\lstinline|population.xml|}
 \label{sec:lgstarted-population}
-
-\paragraph{File format}
+% ........................................................
+\paragraph{File Format}
 
 The travel demand for \gls{matsim} is described by the agents' day plans. The full set of agents is typically the population, hence the file name \lstinline|population.xml|. Alternatively, \lstinline|plans.xml| is also commonly used in \gls{matsim}, as the population file essentially contains a list of day plans.
 
@@ -320,6 +272,7 @@ A \gls{leg} describes how agents plan to travel from one location to the next on
 
 An agent starts a leg directly after the previous activity (or leg) has ended. Depending on the mode, the \gls{mobsim} might handle the agent differently. By default, car- and transit-legs are well-supported by the \gls{mobsim}. If the \gls{mobsim} encounters a mode it does not know, it defaults to \gls{teleportation}: In this case, the agent is removed from the simulated reality, and after the leg's expected travel time has passed, re-inserted at the agent's target location.
 
+% ........................................................
 \paragraph{A minimal populations file}
 
 The population data format is one of the most central data structures in \gls{matsim} and might be a bit overwhelming at first. Luckily, to get started, only a small subset must be known of it.  A population file approximately needs the following information:
@@ -342,7 +295,7 @@ The population data format is one of the most central data structures in \gls{ma
    </person> 
 </population>
 \end{xml}
-For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (cf.\ Section~\ref{sec:settingUpMatsim}).
+For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (\cf Section~\ref{sec:settingUpMatsim}).
 
 Notably, the following simplifications can be made:
 \begin{compactitem}
@@ -353,47 +306,6 @@ Notably, the following simplifications can be made:
 \item Legs only need a mode, but no routes.
 \end{compactitem}
 When a simulation is started, \gls{matsim}'s \lstinline|Controler| will load such a file and then automatically assign the nearest link to each activity and calculate a suitable route for each leg. This makes it easy to get started quickly. 
-
-% -----------------------------------------------------------------------
-\subsubsection{\lstinline|counts.xml|}
-\gls{matsim} provides funtionality to compare traffic volumes from your simulation to real world values. The Counts infrastructure allows to compare the traffic volumes on links on an hourly basis. The following listing shows an example of a \lstinline|counts.xml| input file required to do traffic count comparisons. 
-
-\begin{xml}
-<?xml version="1.0" encoding="UTF-8"?> 
-<counts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-        xsi:noNamespaceSchemaLocation="http://matsim.org/files/dtd/counts_v1.xsd" 
-        name="test" desc="test counting stations" year="2014"> 
-   <count loc_id="2" cs_id="005"> 
-      <volume h="1" val="10.0"></volume> 
-      <volume h="2" val="1.0"></volume> 
-      <volume h="3" val="2.0"></volume> 
-      <volume h="4" val="3.0"></volume> 
-      <volume h="5" val="4.0"></volume> 
-      <volume h="6" val="5.0"></volume> 
-      <volume h="7" val="6.0"></volume> 
-      <volume h="8" val="7.0"></volume> 
-      <volume h="9" val="8.0"></volume> 
-      <volume h="10" val="9.0"></volume> 
-      <volume h="11" val="10.0"></volume> 
-      <volume h="12" val="11.0"></volume> 
-      <volume h="13" val="12.0"></volume> 
-      <volume h="14" val="13.0"></volume> 
-      <volume h="15" val="14.0"></volume> 
-      <volume h="16" val="15.0"></volume> 
-      <volume h="17" val="16.0"></volume> 
-      <volume h="18" val="17.0"></volume> 
-      <volume h="19" val="18.0"></volume> 
-      <volume h="20" val="19.0"></volume> 
-      <volume h="21" val="20.0"></volume> 
-      <volume h="22" val="21.0"></volume> 
-      <volume h="23" val="22.0"></volume> 
-      <volume h="24" val="23.0"></volume> 
-   </count> 
-</counts>
-\end{xml}
-For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (cf.\ Section~\ref{sec:settingUpMatsim}).
-
-It starts with a header containing general descriptive information about the counts, including a year to describe how current the data is. Next, for each link having real world counts data, the hourly volumes can be specified. The network-link is referenced by the \lstinline|loc_id| attribute, in the example, it is link 2. The attribute \lstinline|cs_id| (counting station identifier) can be used to store an arbitrary description of the counting station. Most often it is used to note the original real word counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day and its value, are optional: That is, not for every hour a value must be given. If for a counting station data is only available for certain hours of the day (e.g.,\,only during peak hours) it is possible to omit the other hours from the \gls{xml} listing.  Note that the first hour of the day, from 0:00 to 1:00, is numbered as ``1'', and \emph{not} by ``0'' as is often done in computer science.
 
 % ===============================================================================================
 \subsection{Typical Output Data}
@@ -472,7 +384,7 @@ The \gls{matsim} release is shipped with an example scenario named \lstinline|eq
 There is also a file with a demand of 
 %exactly 
 % KISS.  kai, jan'15
-100~\emph{trips} (\lstinline|plans100trips.xml|), i.e.,\,demand just going from one location to another, using a \lstinline$dummy$ activity type at each end.  This is provided to show that \gls{matsim} can also be run as a fully trip-based approach, i.e.\ completely without considering activities. Clearly, it loses some of its expressiveness, but the basic concepts, including route and even departure time adaptation, still work in exactly the same way.
+100~\emph{trips} (\lstinline|plans100trips.xml|), \ie demand just going from one location to another, using a \lstinline$dummy$ activity type at each end.  This is provided to show that \gls{matsim} can also be run as a fully trip-based approach, \ie completely without considering activities. Clearly, it loses some of its expressiveness, but the basic concepts, including route and even departure time adaptation, still work in exactly the same way.
 
 The network of the scenario is shown in Figure~\ref{fig:equil}.
 
@@ -488,7 +400,7 @@ The network of the scenario is shown in Figure~\ref{fig:equil}.
 The following lines explain the scenario by picking and discussing most important sections from the config file \lstinline|config.xml|.
 
 
-\paragraph{``strategy'' section of the config file}
+\paragraph{"strategy" Section of the \gls{configfile}}
 
 As shown in the listing below, this scenario uses replanning. 10\,\% of the agents reroute their current route (module \lstinline|ReRoute|). The remaining 90\,\% select their highest score plan for re-execution in the current iteration (module \lstinline|BestScore|). Plans get deleted from the agent's memory if it is full defined by \lstinline|maxAgentPlanMemorySize|. By default, the plan with the lowest score is removed, while this is configurable and currently subject of
 %intense % kein funding. kai, jan'15
@@ -515,9 +427,9 @@ research (see Section~\ref{sec:choicesets}).
 %% \kai{I think there is a better syntax for the above now (without the numbering); should we use that?}
 %% \ah{ersetzt}
 
-\paragraph{``planCalcScore'' section of the config file}
+\paragraph{"planCalcScore" Section of the \gls{configfile}}
 
-The section \lstinline|planCalcScore| defines the parameters used for scoring. The parameters are explained in Chapter~\ref{ch:scoring}. As can be seen in the example, the two activity types \lstinline|h| (home) and \lstinline|w| (work) are specified.  All activity types contained in the population file (cf.~Section~\ref{sec:lgstarted-population}) need to be defined in the \lstinline{planCalcScore} section of the config file.
+The section \lstinline|planCalcScore| defines the parameters used for scoring. The parameters are explained in Chapter~\ref{ch:scoring}. As can be seen in the example, the two activity types \lstinline|h| (home) and \lstinline|w| (work) are specified.  All activity types contained in the population file (\cf Section~\ref{sec:lgstarted-population}) need to be defined in the \lstinline{planCalcScore} section of the \gls{configfile}.
 \begin{xml}
 <module name="planCalcScore" >
    <parameterset type="activityParams" >
@@ -531,7 +443,7 @@ The section \lstinline|planCalcScore| defines the parameters used for scoring. T
 </module>
 \end{xml}
 
-\paragraph{``controler'' section of the config file}
+\paragraph{``controler'' Section of the \gls{configfile}}
 
 The scenario is run for 10\,iterations, writes the output files to \lstinline|./output/equil| (Section~\ref{sec:outputdata}), and uses \gls{qsim} as the mobility simulation (more on \glspl{mobsim} in Section~\ref{sec:trafficflowmodel} and \ref{sec:mobsims}).
 \begin{xml}
@@ -547,7 +459,7 @@ The scenario is run for 10\,iterations, writes the output files to \lstinline|./
 
 \paragraph{Visualization}
 
-Simulation results can be comfortably analyzed using one of the visualizers, via (Chapter~\ref{ch:via}) or OTFVis (Chapter~\ref{ch:otfvis}).
+Simulation results can be comfortably analyzed using one of the visualizers, via (Chapter~\ref{ch:via}) or \gls{otfvis} (Chapter~\ref{ch:otfvis}).
 
 % ===============================================================================================
 \subsection{Units, Conventions, and Coordinate Systems}
@@ -587,7 +499,7 @@ If you do not
 %have any clue about what
 know which coordinate system is used in your region, it might be best to use the \gls{utm} coordinate system. This coordinate system divides the world into multiple bands, each six degrees wide, and separated into a northern and southern part, which it calls \gls{utm} zones. For each zone, an optimized coordinate system is defined. Choose the \gls{utm} zone which covers your region (Wikipedia has a nice map showing the zones) and use its coordinate system. 
 
-\paragraph{Telling MATSim about Your Coordinate System:}
+\paragraph{Telling \gls{matsim} about Your Coordinate System:}
 
 For some operations, \gls{matsim} must know the coordinate system your data is in. For example, some analyses may create output to be visualized in \gls{googleearth} or by \gls{qgis}.
 %, where the coordinates need to be converted back to WGS84.
@@ -599,10 +511,12 @@ The coordinate system used by your data can be specified in the \gls{configfile}
 \end{xml}
 This allows \gls{matsim} to work with your coordinates and convert them whenever needed. 
 
-You have multiple ways to specify the coordinate system you use. The easiest one is to use the so-called "\gls{epsg} codes". Most of the commonly used coordinate systems got standardized and numbered. The \gls{epsg} code uniquely identifies a coordinate system and can be directly used by \gls{matsim}. As an alternative, \gls{matsim} can also parse the description of a coordinate system in the so-called \gls{wkt} format. As the \gls{wkt} format is more error prone \kai{Andreas, gibt es eine Referenz oder einen anderen Grund dafür?  Falls nicht, dann können wir vielleicht ohne diese Empfehlung auskommen?} it is suggested to use \gls{epsg} codes whenever possible.
+You have multiple ways to specify the coordinate system you use. The easiest one is to use the so-called "\gls{epsg} codes". Most of the commonly used coordinate systems got standardized and numbered. The \gls{epsg} code uniquely identifies a coordinate system and can be directly used by \gls{matsim}. To find the correct \gls{epsg} code for your coordinate system (\eg for one of the \gls{utm} zones), the website \url{http://www.spatialreference.org} is of great use. Search on this website for your coordinate system, \eg for "WGS84 / \gls{utm} Zone 8N" (for the northern-hemisphere \gls{utm} Zone 8) to find a list of matching coordinate systems along with their \gls{epsg} codes.
 
-To find the correct EPSG code for your coordinate system (e.g.,\,for one of the \gls{utm} zones), the website \url{http://www.spatialreference.org} is of great use. Search on this website for your coordinate system, e.g.,\,for "WGS84 / \gls{utm} Zone 8N" (for the northern-hemisphere \gls{utm} Zone 8) to find a list of matching coordinate systems along with their \gls{epsg} codes.
-
+As an alternative, \gls{matsim} can also parse the description of a coordinate system in the so-called \gls{wkt} format. 
+% As the \gls{wkt} format is more error prone 
+% \kai{Andreas, gibt es eine Referenz oder einen anderen Grund dafür?  Falls nicht, dann können wir vielleicht ohne diese Empfehlung auskommen?} \ah{grosse Teile dieses Kapitels sind - in Absprache mit Marcel - aus Userguide übernommen. Diese Empfehlung auch.} 
+%it is suggested to use \gls{epsg} codes whenever possible.
 
 % ===============================================================================================
 \subsection{Data Requirements}
