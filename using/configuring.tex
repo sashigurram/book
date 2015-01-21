@@ -13,28 +13,18 @@ In this chapter, configurations are described that are exclusively done by the \
 \section{MATSim Data Containers}
 \label{sec:using-matsim-containers}
 
-\kai{Eigentlich steht das alles schon in Section \ref{sec:inputdata}.  Ist es wirklich sinnvoll, das zu doppeln?  Oder schreiben wir hier halt die ``weiteren'' Container rein (dann sollten wir aber einiges weitere von oben hier runter holen).}
+\kai{Eigentlich steht das alles schon in Section \ref{sec:inputdata}.  Ist es wirklich sinnvoll, das zu doppeln?  Oder schreiben wir hier halt die "weiteren" Container rein (dann sollten wir aber einiges weitere von oben hier runter holen).}
+\ah{Korrektur begonnen. Tabelle~\ref{tab:modules} Referenzen angepasst und Population wegen \lstinline|ObjectAttributes| nach Extending verfrachtet.}
 
 % ===================================================================================
-\subsection{Network}
-\label{sec:using-network}
-%
-\begin{compactitem}
-\item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
-\item Configuring: \lstinline|network| config file section
-\item Code: \lstinline|org.matsim.core.network|
-\end{compactitem}
-
-% ===================================================================================
-\subsection{Population}
-\label{sec:population}
-\begin{compactitem}
-\item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
-\item Configuration: \lstinline|plans| config file section. Optionally the path to a person attributes file in \lstinline|ObjectAttributes| format can be specified.
-\item Code: \lstinline|org.matsim.core.population|
-\end{compactitem}
-
-The population module manages transport demand, i.e.,\,the population and the agents' plans.
+%\subsection{Network}
+%\label{sec:using-network}
+%%
+%\begin{compactitem}
+%\item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
+%\item Configuring: \lstinline|network| config file section
+%\item Code: \lstinline|org.matsim.core.network|
+%\end{compactitem}
 
 %##################################################################################################################
 \section{Global Modules and Global Aspects}
@@ -46,10 +36,12 @@ The population module manages transport demand, i.e.,\,the population and the ag
 \begin{compactitem}
 \item Invoking the module: Run \lstinline|org.matsim.run.Controler|
 \item Configuration: \lstinline|controler| configuration file section
-\item Code: \lstinline|org.matsim.core.controler|
+%\item Code: \lstinline|org.matsim.core.controler|
 \end{compactitem}
 
 The controler is an indispensable module for running \gls{matsim}.
+
+\ah{delete or extend}
 
 % ===================================================================================
 \subsection{Global}
@@ -57,7 +49,7 @@ The controler is an indispensable module for running \gls{matsim}.
 \begin{compactitem}
 \item Invoking the module: The module is very sparse and only used to transfer some parameters to the simulation. Add a respective config file section.
 \item Configuration: \lstinline|global| config file section. Arguably, this section should be merged with the controler section.
-\item Code: \lstinline|org.matsim.core.config.groups.GlobalConfigGroup|
+%\item Code: \lstinline|org.matsim.core.config.groups.GlobalConfigGroup|
 \end{compactitem}
 
 The replanning modules get their information about number of threads from this module. \kai{nicht unter parallel computing?  Wäre meiner Erfahrung nach tatsächlich hilfreich, die paralellen Aspekte zusammenzufassen.}
@@ -70,7 +62,7 @@ The replanning modules get their information about number of threads from this m
 \begin{compactitem}
 \item Invoking the module: Define the number of threads in the \lstinline|qsim| and the \lstinline|parallelEventHandling| section
 \item Configuration: \lstinline|parallelEventHandling| and \lstinline|qsim| configuration file section
-\item Code: mainly \lstinline|org.matsim.core.events.ParallelEventsManagerImpl| for parallel event handling. See qsim for parallel mobsim running.
+%\item Code: mainly \lstinline|org.matsim.core.events.ParallelEventsManagerImpl| for parallel event handling. See qsim for parallel mobsim running.
 \end{compactitem}
 
 As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in \gls{matsim} simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. 
@@ -93,7 +85,7 @@ An overview of \gls{matsim} mobility simulations is given in \citet[][]{Dobler_T
 \begin{compactitem}
 \item Invoking the module: Set the parameter \lstinline|mobsim| of \lstinline|controler| config file section to \lstinline|qsim| provide a \lstinline|qsim| \gls{configfile} section.
 \item Configuration: \lstinline|qsim| config section
-\item Code: \lstinline|org.matsim.core.mobsim.qsim|
+%\item Code: \lstinline|org.matsim.core.mobsim.qsim|
 \end{compactitem}
 
 At the moment, in most applications the queue-based and time-step based \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is used. 
@@ -117,10 +109,12 @@ Through multiple engines it can be run in parallel.
 \begin{compactitem}
 \item Invoking the module: add below section to config file
 \item Configuration: \lstinline|planCalcScore| config file section
-\item Code: \lstinline|org.matsim.core.scoring|
+%\item Code: \lstinline|org.matsim.core.scoring|
 \end{compactitem}
 %
 The parameters related to scoring described in Chapter~\ref{ch:scoring}.
+
+\ah{delete or extend}
 
 %##################################################################################################################
 \section{Strategy Modules}
@@ -230,7 +224,7 @@ Please note, that combining strategy modules that are \glspl{contribution} such 
 \end{lstlisting}
 %
 \item Configuration: \lstinline|TimeAllocationMutator| config file section
-\item Code: \lstinline|org.matsim.core.replanning.modules.TimeAllocationMutator|
+%\item Code: \lstinline|org.matsim.core.replanning.modules.TimeAllocationMutator|
 \end{compactitem}
 
 The module shifts activity end times randomly within a configurable range as described by \citet[][]{BalmerEtAl_Timmermans_2005, Raney_PhDThesis_2005, Balmer_unpub_VSP_2004, BalmerEtAl_unpub_EIRASS_2004, BalmerEtAl_unpub_STRC_2004}. A best-reponse approach to time choice is applied by "Planomat" described in Section~\ref{sec:planomat}.
@@ -258,7 +252,7 @@ The module shifts activity end times randomly within a configurable range as des
     [...]
 </module>
 \end{lstlisting}
-\item Code: \lstinline|org.matsim.core.router|
+%\item Code: \lstinline|org.matsim.core.router|
 \end{compactitem}
 %
 \gls{matsim} routing is described by \citet[]{LefebvreBalmer_STRC_2007, LefebvreBalmer_TechRep_IVT_2007}. 
@@ -291,7 +285,7 @@ The configuration necessary for public transport is shown in Chapter \ref{ch:pt}
 </module>
 \end{lstlisting}
 %
-\item Code: \lstinline|org.matsim.core.replanning.modules| and \lstinline|org.matsim.population.algorithms|.
+%\item Code: \lstinline|org.matsim.core.replanning.modules| and \lstinline|org.matsim.population.algorithms|.
 \end{compactitem}
 
 \lstinline|ChangeLegMode| randomly picks one of the plans of a person and changes its mode of transport. By default, the supported modes are driving a car and using public transport. Only one mode of transport per plan is supported. For using different modes for sub-tours on a single day the \lstinline|SubtourModeChoice| module is required. Optionally, car-availability is respected. \lstinline|ChangeSingleLegMode| randomly picks one of the plans of a person and changes the mode of transport of one single leg. The leg is picked randomly. In contrast to \lstinline|ChangeLegMode|, it allows for multiple modes in one plan. By default, the supported modes are driving a car and using public transport. Also, this module is able to (optionally) respect car-availability.
@@ -324,7 +318,7 @@ Following selectors are available in the configuration file strategy module:
 \end{compactitem}
 %
 \item Configuration: selectExtBeta can be configured by the \lstinline|BrainExpBeta| parameter from the scoring group.
-\item Code: \lstinline|org.matsim.core.replanning.selectors|
+%\item Code: \lstinline|org.matsim.core.replanning.selectors|
 \end{compactitem}
 
 Note, that the \lstinline|BestScore| should be used with care as it is prone to getting stuck with sub-optimal plans. Plans that are rated bad due to a random fluctuation in one single iteration, due to e.g.,\,a rare traffic jam, will never be tested again. It is therefore recommended to use this in conjunction with \lstinline|SelectRandom| only.
