@@ -48,15 +48,15 @@ Further \gls{matsim} containers are described in Section~\ref{sec:extending-data
 \label{sec:using-controler}
 The controler is an indispensable module for running \gls{matsim}, its parameters are set in the \lstinline|controler| \gls{configfile} section. Besides others, the \gls{matsimrun}'s output directory, its number of iterations, and the ouput interval of plans and events can be specified here. Also, the \gls{mobsim} to be used can be defined (Section~\ref{sec:using-mobsims}). Importantly, the routing algorithm is defined here by using
 %
-\begin{lstlisting}
+\begin{xml}
 <module name="controler" >
     <param name="routingAlgorithmType" value="{Dijkstra | FastDijkstra |
     		AStarLandmarks | FastAStarLandmarks}" />
     [...]
 </module>
-\end{lstlisting}
+\end{xml}
 %
-. In Section~\ref{sec:extending-controler}, the possibilities to extend the \lstinline|Controler| functionality is given in Section~\ref{sec:extending-controler} and Chapter~\ref{ch:extensionpoints}.
+In Section~\ref{sec:extending-controler}, the possibilities to extend the \lstinline|Controler| functionality is given in Section~\ref{sec:extending-controler} and Chapter~\ref{ch:extensionpoints}.
 
 % ===================================================================================
 \subsection{Global}
@@ -112,7 +112,7 @@ The replanning strategy modules are the basic innovation modules available in \g
 
 All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
 %
-\begin{lstlisting}
+\begin{xml}
 <module name="strategy" >
 	<parameterset type="strategysettings" >
 		<param name="strategyName" value="ChangeLegMode" />
@@ -129,38 +129,47 @@ All strategy modules are called by configuring the strategy module in the config
 		<param name="weight" value="0.7" />
 	</parameterset>
 </module>
-\end{lstlisting}
+\end{xml}
 %
 Each module is given a weight which determines the probability by which the course of action represented by the module is taken. The weights of the strategy modules are renormalized in case they do not sum to one. In this example, each agent changes his leg mode with probability~0.1, its plan timing with probability 0.2. A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. In the example, the agent chooses a plan from his set of plans according to a logit model with probability 0.7. 
 \ah{sollte man immer noch von proba reden, wo wir sie doch im Code endlich losgeworden sind? Andererseits ist es ja am Ende des Tages tatsächlich eine proba.}
 
-By specifying the parameter \lstinline|subpopulation|, i.e.,\,\
-\begin{lstlisting}
-<param name="subpopulation" value="externalAgent"/>
-\end{lstlisting}
+By specifying the parameter \lstinline|subpopulation|, e.g.,
+\begin{xml}
+	<parameterset type="strategysettings" >
+		<param name="strategyName" value="ChangeLegMode" />
+		<param name="weight" value="0.1" />
+                <param name="subpopulation" value="urbanTravelers"/>
+	</parameterset>
+\end{xml}
 replanning strategies can be applied to distinct sub-populations.
 
-In older versions of the \gls{configfile} you will find following deprecated configuration using numbered strategy modules.
+In older versions of the \gls{configfile} you will find following deprecated configuration syntax using numbered strategy modules:
 %
-\begin{lstlisting}
+\begin{xml}
 <module name="strategy" >
-    <param name="ModuleProbability_1" value="0.1" />
+    <!-- NOTE: The following is deprecated syntax. -->
+    <param name="ModuleProbability_1" value="0.1" /> 
     <param name="Module_1" value="ChangeLegMode" />
     <param name="ModuleProbability_2" value="0.2" />
     <param name="Module_2" value="TimeAllocationMutator" />
     <param name="ModuleProbability_3" value="0.7" />
     <param name="Module_3" value="SelectExpBeta" />
 </module>
-\end{lstlisting}
+\end{xml}
 %
-\kai{Hier gibt es eine neue, bessere Syntax.  NB dass wir da gerade noch am ``Verhandeln'' sind!}
-\ah{angepasst}
+%% \kai{Hier gibt es eine neue, bessere Syntax.  NB dass wir da gerade noch am ``Verhandeln'' sind!}
+%% \ah{angepasst}
 %
-By specifying the parameter \lstinline|ModuleSubpopulation_X|, i.e.,\,
-\begin{lstlisting}
-<param name="ModuleSubpopulation_1" value="externalAgent"/>
-\end{lstlisting}
-replanning strategies can be applied to distinct sub-populations.
+%% By specifying the parameter \lstinline{ModuleSubpopulation_X}, i.e.,
+%% \begin{xml}
+%%     <!-- NOTE: The following is deprecated syntax. -->
+%%     <param name="ModuleSubpopulation_1" value="externalAgent"/>
+%% \end{xml}
+%% replanning strategies can be applied to distinct sub-populations.
+%
+% brauchen wir m.E. nicht. kai, jan'15
+
 
 Please note, that combining strategy modules that are \glspl{contribution} such as destination innovation and public transport is not straight forward. Combine them with care and contact the mailing list in case you are unsure.
 
@@ -203,9 +212,9 @@ Please note, that combining strategy modules that are \glspl{contribution} such 
 \label{sec:timechoice}
 Time innovation is applied by defining its parameters in the \gls{configfile} section \lstinline|TimeAllocationMutator| and by adding 
 %
-\begin{lstlisting}
+\begin{xml}
 	<param name="strategyName" value="TimeAllocationMutator" />
-\end{lstlisting}
+\end{xml}
 %
 plus its weight to the strategy modules.
 
@@ -217,9 +226,9 @@ The module shifts activity end times randomly within a configurable range as des
 
 Route innovation is applied by defining its parameters in the \gls{configfile} section \lstinline|planscalcroute|, by adding 
 %
-\begin{lstlisting}
+\begin{xml}
 	<param name="strategyName" value="ReRoute" />
-\end{lstlisting}
+\end{xml}
 %
 plus its weight to the strategy modules, and by specifying the routing algorithm in the \lstinline|controler| \gls{configfile} section (Section~\ref{sec:using-controler}).
 \gls{matsim} routing is described by \citet[]{LefebvreBalmer_STRC_2007, LefebvreBalmer_TechRep_IVT_2007}. 
@@ -233,19 +242,20 @@ plus its weight to the strategy modules, and by specifying the routing algorithm
 \label{sec:modechoice}
 Mode innovation is applied by adding 
 %
-\begin{lstlisting}
+\begin{xml}
 	<param name="strategyName" value="{ChangeLegMode |
     		ChangeSingleLegMode | SubtourModeChoice}" />
-\end{lstlisting}
+\end{xml}
 %
 plus its weight to the strategy modules. In the \gls{configfile} a section with one of the mode innovation strategies need to be added, \ie 
 %
-\begin{lstlisting}
+\begin{xml}
 <module name="{changeLegMode |
 				changeLegMode | subtourModeChoice}" >
     [...]
 </module>
-\end{lstlisting}
+\end{xml}
+\kai{obiges hat jetzt 2x ``changeLegMode''.  Kann zwar sein, dass das tatsächlich so ist, aber falls ja, sollten wir explizit sagen, dass das kein Tippfehler ist.}
 %
 \lstinline|ChangeLegMode| randomly picks one of the plans of a person and changes its mode of transport. By default, the supported modes are driving a car and using public transport. Only one mode of transport per plan is supported. For using different modes for sub-tours on a single day the \lstinline|SubtourModeChoice| module is required. Optionally, car availability is respected. \lstinline|ChangeSingleLegMode| randomly picks one of the plans of a person and changes the mode of transport of one single leg. The leg is picked randomly. In contrast to \lstinline|ChangeLegMode|, it allows for multiple modes in one plan. By default, the supported modes are driving a car and using public transport. Also, this module is able to (optionally) respect car-availability.
 
@@ -256,10 +266,10 @@ Mode innovation is described by \citet[][]{RieserEtAl_TRR_2009, MeisterEtAl_WCTR
 \label{sec:selectors}
 Selectors and their weight are also added to the strategy modules
 %
-\begin{lstlisting}
+\begin{xml}
 	<param name="strategyName" value="KeepLastSelected | BestScore | SelectExpBeta
 					ChangeExpBeta | SelectRandom | SelectPathSizeLogit" />
-\end{lstlisting}
+\end{xml}
 %
 Selectors work as follows:
 %
