@@ -26,26 +26,17 @@ Sinnvoll erscheint mir jedenfalls eine Auflisting wie in Table~\ref{tab:modules}
 %##################################################################################################################
 \section{MATSim Data Containers}
 \label{sec:using-data-containers}
-
 % ===================================================================================
 \subsection{Network}
 \label{sec:using-network}
-%
-\begin{compactitem}
-\item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
-\item Configuring: \lstinline|network| config file section
-\end{compactitem}
+The \gls{configfile} section \lstinline|network| amongst other specifies which network file will be used in the simulation (Section~\ref{sec:lgstarted-network-file} and \ref{sec:lgs-config}). Further configuration options, \eg specification of time-variant networks, are presented in Section~\ref{sec:extending-network}.
 
 % ===================================================================================
 \subsection{Population}
 \label{sec:using-population}
-\begin{compactitem}
-\item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
-\item Configuration: \lstinline|plans| config file section. 
-\end{compactitem}
+The \gls{configfile} section \lstinline|plans| allows to specify the population with its day plans (Section~\ref{sec:lgstarted-population-file} and \ref{sec:lgs-config}). Further configuration options, \eg specification of arbitrary agent attributes or subpopulations, are presented in Section~\ref{sec:extending-population}.
 
-The population module manages transport demand, i.e.,\,the population and the agents' plans.
-
+Further \gls{matsim} containers are described in Section~\ref{sec:extending-data-containers}.
 
 %##################################################################################################################
 \section{Global Modules and Global Aspects}
@@ -53,40 +44,19 @@ The population module manages transport demand, i.e.,\,the population and the ag
 % ===================================================================================
 \subsection{Controler}
 \label{sec:using-controler}
-%
-\begin{compactitem}
-\item Invoking the module: Run \lstinline|org.matsim.run.Controler|
-\item Configuration: \lstinline|controler| configuration file section
-%\item Code: \lstinline|org.matsim.core.controler|
-\end{compactitem}
-
-The controler is an indispensable module for running \gls{matsim}.
-
-\ah{delete or extend}
+The controler is an indispensable module for running \gls{matsim}, its parameters are set in the \lstinline|controler| \gls{configfile} section. Besides others, the \gls{matsimrun}'s output directory, its number of iterations, and the ouput interval of plans and events can be specified here. In Section~\ref{sec:extending-controler}, the possibilities to extend the \lstinline|Controler| functionality is given in Section~\ref{sec:extending-controler} and Chapter~\ref{ch:extensionpoints}.
 
 % ===================================================================================
 \subsection{Global}
 \label{sec:using-global}
-\begin{compactitem}
-\item Invoking the module: The module is very sparse and only used to transfer some parameters to the simulation. Add a respective config file section.
-\item Configuration: \lstinline|global| config file section. Arguably, this section should be merged with the controler section.
-%\item Code: \lstinline|org.matsim.core.config.groups.GlobalConfigGroup|
-\end{compactitem}
-
-The replanning modules get their information about number of threads from this module. \kai{nicht unter parallel computing?  Wäre meiner Erfahrung nach tatsächlich hilfreich, die paralellen Aspekte zusammenzufassen.}
-
-\ah{\url{https://matsim.atlassian.net/browse/MATSIM-310}} 
+In the \gls{configfile} section \lstinline|global| the simulation's random seed, the number of \gls{java} threads assigned to the replanning modules, and the coordinate system to be applied (\cf Section~\ref{sec:unitsconventions}), can be defined. 
+\kai{number of threads: nicht unter parallel computing?  Wäre meiner Erfahrung nach tatsächlich hilfreich, die paralellen Aspekte zusammenzufassen.} \ah{\url{https://matsim.atlassian.net/browse/MATSIM-310}}.
 
 % ===================================================================================
-\subsection{Parallel Computing}
-\label{sec:using-parallelcomputing}
-\begin{compactitem}
-\item Invoking the module: Define the number of threads in the \lstinline|qsim| and the \lstinline|parallelEventHandling| section
-\item Configuration: \lstinline|parallelEventHandling| and \lstinline|qsim| configuration file section
-%\item Code: mainly \lstinline|org.matsim.core.events.ParallelEventsManagerImpl| for parallel event handling. See qsim for parallel mobsim running.
-\end{compactitem}
-
-As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in \gls{matsim} simulation runs. Amongst others, in the \lstinline|parallelEventHandling| configuration file section, the number of threads to be used can be specified. 
+\subsection{Parallel Event Handling}
+\label{sec:using-paralleleventhandling}
+The \gls{configfile} section \lstinline|parallelEventHandling| is used to define the number of threats used for event handling. 
+As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in \gls{matsim} simulation runs.
 % Clearly, the number of threads should correspond with available processor cores.  \kai{Meine Erfahrung ist eine andere, und je nach Maschine kann man das manchmal überauslasten und manchmal sollte man es eher unterauslasten.}  
 According to our experiences the optimal degree of capacity utilization (threads versus cores) is highly machine-dependent.
 As mentioned above, the \gls{mobsim} \gls{qsim} is running parallel by default.
@@ -133,15 +103,15 @@ Through multiple engines it can be run in parallel.
 %\item Code: \lstinline|org.matsim.core.scoring|
 \end{compactitem}
 %
-The parameters related to scoring described in Chapter~\ref{ch:scoring}.
+The parameters related to scoring are described in Chapter~\ref{ch:scoring}.
 
 \ah{delete or extend}
 
 %##################################################################################################################
-\section{Strategy Modules}
+\section{Replanning Strategies}
 \label{sec:strategymodules}
 %\kai{Habe ``strategy'' ans Ende gezogen, weil ein matsim run so auch tatsächlich losgeht: erst mobsim, dann scoring, dann replanning.  Gibt es Argumente für andere Reihenfolgen?} \ah{nein, super Punkt!}
-The strategy modules are the basic innovation modules available in \gls{matsim}. We do not call them \emph{choice} modules although they are involved in people's choice making. The choice process, however, is performed over the iterations with an \emph{implicit} choice set and it is not based on explicit probability function drawing. Usually, innovation modules also do no define their own utility function. This is particularly true for random mutation modules, where best response modules such as destination innovation are closer to the standard procedure of choice modeling but still not full-blown choice models. For a detailed discussion of \gls{matsim} in choice modeling context see Chapter~\ref{ch:discretechoice}.
+The replanning strategy modules are the basic innovation modules available in \gls{matsim}. We do not call them \emph{choice} modules although they are involved in people's choice making. The choice process, however, is performed over the iterations with an \emph{implicit} choice set and it is not based on explicit probability function drawing. Usually, innovation modules also do no define their own utility function. This is particularly true for random mutation modules, where best response modules such as destination innovation are closer to the standard procedure of choice modeling but still not full-blown choice models. For a detailed discussion of \gls{matsim} in choice modeling context see Chapter~\ref{ch:discretechoice}.
 
 All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
 %
