@@ -353,24 +353,18 @@ The final iteration's plans
 are also generated on the top level of the output folder.
 
 \item[Leg Histogram:]
-In every iteration, a leg histogram is plotted. A leg histogram depicts the number of agents that arrive, depart or are en route per time unit. Histograms are created for each transport mode and, additionally, for the sum of all transport modes. Each file starts with the iteration number and ends with the transport mode (e.g.,\,\lstinline|1.legHistogram_car.png| or \lstinline|1.legHistogram_all.png|). Moreover, a text file is created (e.g.,\,\lstinline|1.legHistogram.txt|) that contains the data for all transport modes.
+In every iteration, a leg histogram is plotted. A leg histogram depicts the number of agents that arrive, depart or are en route per time unit. Histograms are created for each transport mode and, additionally, for the sum of all transport modes. Each file starts with the iteration number and ends with the transport mode (\eg \lstinline|1.legHistogram_car.png| or \lstinline|1.legHistogram_all.png|). Moreover, a text file is created (\eg \lstinline|1.legHistogram.txt|) that contains the data for all transport modes.
 
 \item[Trip Durations:]
-Per iteration, a \gls{trip} durations text file (e.g.\ \lstinline|1.tripdurations.txt|) listing the number of trips and their durations on a time bin level for each activity pair (e.g.,\,from work to home or from home to shopping) is put out.
+Per iteration, a \gls{trip} durations text file (e.g.\ \lstinline|1.tripdurations.txt|) listing the number of trips and their durations on a time bin level for each activity pair (\eg from work to home or from home to shopping) is put out.
 
-\item[Link Volumes:]
-The printing of the link volume comparison (between simulated and counted volumes) needs to be triggered by a config file entry. The comparison generates overview summaries for the whole network but also analyses for individual links. A link analysis might look like Figure~\ref{fig:countcomparison}.
+\item[Link Stats:] In every iteration, a link stats file containing hourly count values and travel times on every network link is printed. Link stats are particularly important for the comparison with real-world count data as introduced in Section~\ref{sec:extending-counts}.
 
+%\item[Link Volumes:]
+%The printing of the link volume comparison (between simulated and counted volumes) needs to be triggered by a config file entry. 
+%\ah{This has to be in the extending part. Moved figure and some text there}
+%
 \end{description}
-
-% ----------
-\createfigure%
-{Example for a link volumes comparison between simulation and road count values}%
-{Example for a link volumes comparison between simulation and road count values}%
-{\label{fig:countcomparison}}%
-{\includegraphics[width=0.7\textwidth, angle=0]{using/figures/link101227.png}}%
-{}
-% ----------
 
 % ===============================================================================================
 \subsection{An Example Scenario}
@@ -398,7 +392,7 @@ The network of the scenario is shown in Figure~\ref{fig:equil}.
 {}
 % ----------
 
-The following lines explain the scenario by picking and discussing most important sections from the config file \lstinline|config.xml|.
+The following lines explain the scenario by picking and discussing most important sections from the \gls{configfile} \lstinline|config.xml|.
 
 
 \paragraph{"strategy" Section of the \protect\gls{configfile}}
@@ -492,7 +486,7 @@ Money is unit-free. The units are implicitly given by the marginal utility of mo
 \subsubsection{Coordinate Systems}
 \label{sec:coordinatesystems}
 \paragraph{Preparing Your Data in the Appropriate Coordinate System:}
-In several input files, you need to specify coordinates, e.g.,\,for the nodes of the network. It is strongly suggested not to use WGS84 coordinates (i.e.,\,\gls{gps} coordinates) or any other kind of spherical coordinates (coordinates ranging from $-180$ to $+180$ in west-east direction and from $-90$ to $+90$ in south-north direction). \gls{matsim} needs to calculate distances between two points in several places of the code. The calculation of distances between spherical coordinates is very complex and potentially slow. Instead, \gls{matsim} uses the simple Pythagoras' theorem, but this requires the coordinates to be in a Cartesian coordinate system. Thus is is strongly advised to use a Cartesian coordinate system along with \gls{matsim}, preferably one where the distance unit corresponds to one meter.
+In several input files, you need to specify coordinates, \eg for the nodes of the network. It is strongly suggested not to use WGS84 coordinates (\ie \gls{gps} coordinates) or any other kind of spherical coordinates (coordinates ranging from $-180$ to $+180$ in west-east direction and from $-90$ to $+90$ in south-north direction). \gls{matsim} needs to calculate distances between two points in several places of the code. The calculation of distances between spherical coordinates is very complex and potentially slow. Instead, \gls{matsim} uses the simple Pythagoras' theorem, but this requires the coordinates to be in a Cartesian coordinate system. Thus is is strongly advised to use a Cartesian coordinate system along with \gls{matsim}, preferably one where the distance unit corresponds to one meter.
 
 Many countries and regions have custom coordinate system defined, optimized for usages in their appropriate areas. It might be best to ask some \gls{gis} specialists in your region of interest what the most commonly used local coordinate system is and use that as well for your data.
 
