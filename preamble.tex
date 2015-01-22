@@ -117,31 +117,44 @@
 %\linenumbers
 
 \usepackage{listings}
-\lstset{language=Java,basicstyle=\ttfamily\footnotesize,lineskip=-1pt,keywordstyle=\bfseries\color{blue},keywordstyle={[2]\bfseries\color{magenta}},commentstyle=\bfseries\color{red},stringstyle=\bfseries\color{ForestGreen},showstringspaces=false,frame=none,string=[b]",morekeywords={},morekeywords={[2]%
-%
-Config,ConfigUtils,
-%
-Id,Coord,Scenario,ScenarioUtils,
-%
-Controler,EventsManager,
-%
-RoadPricing,
-%
-Population,Person,Plan,Activity,Leg,PlanElement,MobsimDriverPassengerAgent,PersonDriverAgentImpl,ActivityEngine,AgentSource,TeleportationEngine,
-%
-DynAgent,DynAgentLogic,RandomDynLeg,RandomDynActivity,DynActivity,DynLeg,DriverDynLeg,PTPassengerDynLeg,PlanToDynAgentLogicAdapter,DynActivityEngine,DynAgentLauncherUtils,RandomDynActivity,RandomDynLeg,
-%
-MobSim,QSim,MobsimAgent,
+\lstset{language=Java,belowskip=-4pt,basicstyle=\ttfamily\footnotesize,lineskip=-1pt,keywordstyle=\bfseries\color{blue},keywordstyle={[2]\bfseries\color{magenta}},commentstyle=\bfseries\color{red},stringstyle=\bfseries\color{ForestGreen},showstringspaces=false,frame=none,string=[b]",morekeywords={},morekeywords={[2]%
 %
 Comparator,String,
 %
 List,ArrayList,Map,TreeMap,HashMap,LinkedList,Set,Comparable,Collection,
 %
+% config and related:
+Config,ConfigUtils,ConfigGroup,ReflectiveConfigGroup,
+%
+% scenario and related:
+Id,Coord,Scenario,ScenarioUtils,
+%
+Population,Person,Plan,Activity,Leg,PlanElement,
+%
 Network,Link,Node,
 %
-Vehicle}}
+Vehicle,
+%
+% controler and related:
+Controler,EventsManager,StartupListener,
+%
+% mobsim and related:
+MobsimDriverPassengerAgent,PersonDriverAgentImpl,ActivityEngine,AgentSource,TeleportationEngine,
+%
+MobSim,QSim,MobsimAgent,DriverAgent,
+%
+TransitSchedule,
+%
+% important contribs (debatable if this should be highlighted):
+RoadPricing,
+%
+DynAgent,DynAgentLogic,RandomDynLeg,RandomDynActivity,DynActivity,DynLeg,DriverDynLeg,PTPassengerDynLeg,PlanToDynAgentLogicAdapter,DynActivityEngine,DynAgentLauncherUtils,RandomDynActivity,RandomDynLeg,
+%
+}}
 
-\lstnewenvironment{xml}{\lstset{language=XML,basicstyle=\ttfamily\footnotesize,lineskip=-1pt,commentstyle=\bfseries\color{red},stringstyle=\bfseries\color{ForestGreen},showstringspaces=false,frame=none,string=[b]",morekeywords={[2]
+%I don't know why one needs a negative belowskip to get the space symmetric to the aboveskip.  Maybe this happens as long as one has parskip > 0?? kai, jan'15
+
+\lstnewenvironment{xml}{\lstset{belowskip=-4pt plus 1em,language=XML,basicstyle=\ttfamily\footnotesize,lineskip=-1pt,commentstyle=\bfseries\color{red},stringstyle=\bfseries\color{ForestGreen},showstringspaces=false,frame=none,string=[b]",morekeywords={[2]
 %
 description,
 %
@@ -159,7 +172,7 @@ transitLine,transitRoute,routeProfile,departures,departure,stop,
 %
 counts,count,volume,
 %
-config,module,param,
+config,module,param,parameterset,
 %
 roadpricing,cost,
 %
@@ -317,13 +330,15 @@ roadpricing,cost,
 \newcommand{\gunnar}[1]{\color{blue} [\textbf{gf}: #1] \color{black}}
 \newcommand{\benjamin}[1]{\color{red} [\textbf{bk}: #1] \color{black}}
 \newcommand{\michaz}[1]{\color{green} [\textbf{michaz}: #1] \color{black}}
-\newcommand{\kai}[1]{\color{orange} [\textbf{kn}: #1] \color{black}}
-\newcommand{\thibaut}[1]{\color{blue} [\textbf{td}: #1] \color{black}}
+\newcommand{\joschka}[1]{{\color{red} [\textbf{jb}: #1]}}
+\newcommand{\kai}[1]{{\color{orange} [\textbf{kn}: #1]}}
+\newcommand{\thibaut}[1]{\color{BrickRed} [\textbf{td}: #1] \color{black}}
 \newcommand{\mm}[1]{\color{blue} [\textbf{mm}: #1] \color{black}}
 \newcommand{\dobi}[1]{\color{blue} [\textbf{Christoph}: #1] \color{black}}
 
 \newcommand{\mnote}[1]{\medskip\centerline{\sf\footnotesize\color{blue}\hfill #1}\vspace{-.8em}}
 
+\newcommand{\editdone}[1]{\color{red} [\textbf{Edit done}: #1] \color{black}}
 \newcommand{\who}[1]{\color{red} \textit{[#1]} \color{black}}
 \newcommand{\todo}[1]{\color{ForestGreen} \textit{[TODO: #1]} \color{black}}
 \newcommand{\copied}[1]{\color{ForestGreen} \textit{[copied: #1]} \color{black}}
@@ -375,6 +390,7 @@ roadpricing,cost,
 \usepackage{amsmath}
 \usepackage{longtable}
 \usepackage[stable]{footmisc}
+\usepackage{soul}
 
 % end Horni: -----------------------------------
 
@@ -395,6 +411,8 @@ roadpricing,cost,
 \newcommand{\MyEqRef}[1]{(\ref{#1})}
 \newcommand{\note}[1]{\hl{[#1]}}
 \newcommand{\Note}[1]{\note{#1}}
+\renewcommand{\gunnar}[1]{\note{Gunnar: #1}}
+\newcommand{\Gunnar}[1]{\gunnar{#1}}
 
 \newtheorem{proposition}{Proposition}
 \newtheorem{definition}{Definition}
@@ -420,11 +438,16 @@ roadpricing,cost,
 % end Dobler ----------------------------------------------------
 
 % kai: ----------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{algorithm}
 \makeatletter \renewcommand\thealgorithm{\thechapter.\arabic{algorithm}} \@addtoreset{algorithm}{chapter} \makeatother
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage[sf,bf]{titlesec}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\vec#1{\boldsymbol{#1}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % end kai ----------------------------------------------------

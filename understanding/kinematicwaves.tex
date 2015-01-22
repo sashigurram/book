@@ -7,10 +7,9 @@
 \begin{center} \includegraphics[width=0.4\textwidth, angle=0]{understanding/figures/waves/fig0.pdf} \end{center}
 
 % ##################################################################################################################
-
 \section{\label{sec:Introduction}Introduction}
 
-MATSim comes with a number of {}``mobsims''. These differ from the
+MATSim comes with a number of \glspl{mobsim}. These differ from the
 implementation perspective (time-stepping vs. event-based, degree
 of parallelism), but they constitute all (at least approximate) solvers
 of the same underlying traffic flow model. The present chapter attempts
@@ -19,11 +18,10 @@ obvious) fact and clarifies (the implications of) currently made simplifications
 
 At the heart of MATSim's traffic flow model is the flow-density relationship
 (also called fundamental diagram) shown in Figure~\ref{fig:Fundamental-diagram}
-and subsequently abbreviated as {}``FD''. Given a long, homogeneous
+and subsequently abbreviated as {}"FD". Given a long, homogeneous
 road it predicts the average flow $q$ (in vehicles per time unit)
 through any cross-section of that road, given an average vehicle density
 $\varrho$ (in vehicles per length unit) on that road. 
-
 
 % ----------
 \createfigure%
@@ -33,7 +31,6 @@ $\varrho$ (in vehicles per length unit) on that road.
 {\includegraphics[width=0.99\textwidth, angle=0]{understanding/figures/waves/fig0.pdf}}%
 {}
 % ----------
-
 
 The FD is defined as the minimum of a sending function $S(\varrho)$
 (solid) and a receiving function $R(\varrho)$ (dashed), resulting
@@ -86,9 +83,8 @@ in terms of the sending and receiving function framework of the KWM.
 Some technical detail is omitted from the presentation for the sake
 of readability; pointers to the literature are provided.
 
-
+% ##################################################################################################################
 \section{\label{sec:Link-model}Link model}
-
 To compute the flows entering and leaving a link, one needs to know
 how much flow can at most enter the link and how much flow can at
 most leave the link. Both constraints depend on the internal (congestion)
@@ -100,8 +96,8 @@ the maximum number of vehicles that can enter and leave the link,
 respectively.
 
 MATSim also needs to compute these quantities. The way in which it
-does so is rooted in Newell's {}``simplified theory of kinematic
-waves'' \citep{newell-1993}, which provides a simple recipe for
+does so is rooted in Newell's {}"simplified theory of kinematic
+waves" \citep{newell-1993}, which provides a simple recipe for
 computing the flow and the density anywhere inside of a link given
 that one keeps track of the cumulative flow at the link's up- and
 downstream interface. In terms of the continuum model (i.e. one that
@@ -166,7 +162,7 @@ is allowed to enter the link is given by the space in its UQ, and
 the amount of flow that is allowed to leave the link is given by the
 number of vehicles in its DQ. \note{Is this description compatible with the actual implementation?}
 
-A mobsim that implements the rules \MyEqRef{eq:UQ-rek}, \MyEqRef{eq:DQ-rek}
+A \gls{mobsim} that implements the rules \MyEqRef{eq:UQ-rek}, \MyEqRef{eq:DQ-rek}
 and \MyEqRef{eq:R-matsim}, \MyEqRef{eq:S-matsim} implements a KWM-consistent
 link model. This is almost the case for the \note{REF double-queue mobsim},
 which, in its implementation as of December 2014, has the sole deficiency
@@ -184,12 +180,12 @@ where the inflow to a link is limited only by the available space
 in the link as a whole. Letting $\left|w\right|=L/\delta$ means that
 the \note{REF single-queue mobsim(s)} behave like a KWM with an extremely
 high backward shockwave speed, which physically means that a queue
-on the link does not dissolve from its downstream end but moves {}``en
-block'' over the link.
+on the link does not dissolve from its downstream end but moves {}"en
+block" over the link.
 
+% ##################################################################################################################
 \section{\label{sec:Node-model}Node model}
-
-All mobsims in MATSim implement the same node model. Somewhat surprisingly,
+All \glspl{mobsim} in MATSim implement the same node model. Somewhat surprisingly,
 this node model can be traced back at least to \note{when?}, whereas
 the literature based on which its consistency with the KWM can be
 established is only a few years old \citep{tampere-2010b,floetteroed-2011a,corthout-2012}. 
@@ -228,7 +224,7 @@ transfer, and it terminates only once no more flow can be moved. In
 consequence, the ultimately moved flows also comply with all constraints,
 and they are maximal. 
 
-Now consider the code documentation of MATSim's \texttt{queuesim.QueueNode.moveNode}
+Now consider the code documentation of MATSim's \lstinline|queuesim.QueueNode.moveNode|
 (as of December 2014):
 \begin{quote}
 \noindent \texttt{Moves vehicles from the inlinks' buffer to the outlinks
@@ -269,11 +265,23 @@ The present node model is, due to its simplicity, guaranteed to yield
 unique node flows. This property should be revisited when turning
 to more complicated specifications \citep{corthout-2012}.
 
-
+% ##################################################################################################################
 \section{\label{sec:Summary}Summary}
-
 This chapter demonstrated that MATSim's mobility simulation is already
 very close to implementing a particle-discretized instance of the
 KWM. For full consistency, one needs to (i) use the \note{REF double-queue mobsim}
 and to (ii) limit the inflow of a link by its flow capacity (which
-corresponds to the maximum of its triangular FD). \note{Is this correct? Or is there already ``full consistency'' with the KWM?.}
+corresponds to the maximum of its triangular FD). \note{Is this correct? Or is there already "full consistency" with the KWM?.}
+
+\kai{Folgend einige Sätze von AH, die eingearbeitet oder verworfen werden müssten.  M.E.\ interessant vor allem im Hinblick auf MFD.}
+
+\subsection{Aggregate Traffic Flow Characteristics}
+MATSim's aggregate traffic flow characteristics were analyzed in the common form of the macroscopic fundamental diagram. Some investigations additionally derived MATSim's (implicit) volume-delay function \citep[][]{HorniMontini_STRC_2013}.
+
+Some simulation investigations had problems to reproduce the complete MFD (project NetCap, personal communication, 2014), in particular, the high density region. They used mobsim versions without the backward moving gaps feature. Other studies, based on DEQSim and JDEQSim respectively, which both \emph{do} include \emph{back moving gaps}, were able to generate realistic MFDs. \kai{Das ist natürlich kein Wunder.}
+
+\citet[p.81ff][]{Simoni_MastersThesis_2013} investigates MATSim's ability to model macroscopic characteristics with a four link ring scenario. He found considerable influence of the backward moving gaps speed on the form of the MFD. \citet[][]{CharyparEtAl_TRB_2009} also use a circular toy scenario. They also found the typical trapezoidal form for a broad range of network resolutions.
+
+Natural conclusion here is, that back moving gaps are essential for generating a realistic MFD \kai{bis hier hin stimme ich zu}, in other words to realistically model the complete range of traffic conditions \kai{hier eigentlich nicht wirklich.}. Backward moving gaps are re-included in the default MATSim mobsim (qsim). 
+
+% ##################################################################################################################

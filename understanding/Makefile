@@ -1,8 +1,11 @@
+kai:
+	cd .. ; ${MAKE} kai
+
 clean:
 	cd .. ; ${MAKE} clean
 
-kai:
-	cd .. ; ${MAKE} kai
+localbib:
+	cd .. ; ${MAKE} localbib
 
 kaibib:
 	cd .. ; ${MAKE} kaibib

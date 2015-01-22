@@ -21,7 +21,8 @@ kai: kai.aux
 kai.aux:
 	pdflatex kai
 
-#	pdflatex kai
+#	pdflatex -interaction=nonstopmode kai
+
 
 kaibib:
 	pdflatex kai

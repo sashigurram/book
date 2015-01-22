@@ -23,10 +23,15 @@
 % ##################################################################################################################
 \section{Introduction}
 
-{}``Agents'' that {}``learn'' in a {}``synthetic reality'' do
+{}``Agents'' that {}``learn'' in a {}``synthetic reality'' is common language 
+in Artificial Intelligence \citep{RusselNorvig2010ArtificialIntelligence} and/or 
+Multi-Agent simulation~\citep{FerberBook}, but it does
 not belong to the standard terminology of transport modeling. This
-chapter phrases the functioning of MATSim in terms of more standard
-and well-understood modeling and simulation concepts.
+chapter phrases the functioning of MATSim in terms of modeling and simulation concepts
+that are more established in the transportation field.
+% \kai{Gunnar, habe an obigem Satz ein wenig gebastelt.  Wir haben uns diese Sprache 
+% ja nicht selbst ausgedacht; sie war immer nur eine Reaktion auf Dinge, die wir 
+% anderswo gelesen haben, und die u.E.\ besser passten als die etabliertere Terminologie.}
 
 It is important to distinguish between a \gls{model} and a \gls{simulation}. A
 model describes certain aspects of a \gls{system}. A simulation evaluates
@@ -61,13 +66,13 @@ from a certain travel behavior are statistically equal to the network
 conditions that caused this behavior.
 
 Simulation addresses the question of how to identify this state of
-mutual demand/supply consistency, i.e. it solves the model. The model
+mutual demand/supply consistency, i.e.\ it solves the model. The model
 system shown in Figure~\ref{fig:Demand/supply-perspective-on} is
 complicated -- it nonlinear, stochastic, and extremely high-dimensional.
 The only known technique to solve it exploits an additional modeling
 assumption that justifies the real occurrence of demand/supply consistency:
 Travelers adjust their behavior for their own benefit, and they only
-stop doing that only when further improvement is insubstantial. Demand/supply
+stop doing that when further improvement is insubstantial. Demand/supply
 consistency characterizes the outcome of this process jointly for
 all travelers.
 
@@ -110,11 +115,12 @@ that the there is more than a superficial resemblance between the
 processes of real humans. If the notion of {}``learning'' has to
 be used at all when interpreting Algorithm~\ref{alg:Iterative-scheme-to},
 it should be understood as {}``moving a MATSim model closer to its
-solution point''. 
+solution point''.  Also see Sec.~\ref{sec:transients-vs-learning}.
+% \kai{Gunnar, I hope that this is ok.}
 
-The remainder of this chapter phrases these statements more technically
-and explains its implications for the interpretation of MATSim outputs.
-This presentation is in parts a more technical reformulation of Chapter~\note{Agent-based DTA}.
+The remainder of this chapter phrases these statements more technically and explains 
+its implications for the interpretation of MATSim outputs.  This presentation is in parts a 
+more technical reformulation of Chapter~\ref{ch:abta}.
 
 
 \section{\label{sec:Relaxation-as-a}Relaxation as a Stochastic Process}
@@ -140,8 +146,11 @@ The variables $D$ and $Z$ apply to the population as a whole, comprising
 all agents. Similarly, the variable $S$ represents the network conditions
 for an entire day and for the entire physical system. Given MATSim's
 high level of detail, one hence may think of $D$, $S$ and $Z$ as
-simple placeholders for arbitrarily large data and complex structures.
-\note{Refer to corresponding data containers in MATSim?}
+placeholders for arbitrarily large data and complex structures.
+%\note{Refer to corresponding data containers in MATSim?}\kai{done, see next.}  
+Under standard conditions, $D$ corresponds to the set of selected plans, 
+$S$ corresponds to the collection of all events, 
+and $Z$ corresponds to the full plans file including the scores.
 
 Step~\ref{enu:Every-traveler-chooses} evaluates the (stochastic)
 travel behavior model of each agent. Technically, this comprises (i)
@@ -174,9 +183,9 @@ of the current network conditions $S^{k}$ but may also be based on
 the previously available information $Z^{k-1}$.
 
 The conditional distributions \MyEqRef{eq:choice-model}-\MyEqRef{eq:learning-model}
-are detailed elsewhere in this book: Chapter~\note{Choice models in MATSim}
+are detailed elsewhere in this book: Chapter~\ref{ch:discretechoice} 
 describes the plan selection mechanisms leading to $P(D\mid S^{k-1})$,
-Chapter~\note{Kinematic waves} explains the physical processes underlying
+Chapter~\ref{ch:kinematicwaves} explains the physical processes underlying
 $P(S\mid D^{k})$, and Chapter~\note{REF?} specifies the information
 update logic behind $P(Z\mid S^{k})$. A greater level of detail is,
 however, not needed for the purposes of the present chapter.
@@ -190,7 +199,7 @@ iteration to iteration; stochastic because it evaluates stochastic
 models. Further, one iteration of this process only requires information
 about the outcome of the previous iteration. This allows to express
 Algorithm~\ref{alg:Iterative-scheme-to} in terms of a {}``Markov
-chain''. \note{Give textbook reference.}
+chain''. \gunnar{Find textbook reference.}
 
 In symbols, let $X^{k}$ be the stochastic state in which the Markov
 chain is during stage $k$, and let $P(X^{k}=x)$ be the probability
@@ -209,7 +218,7 @@ Markov chains tend, under certain assumptions that are sketched in
 the next section, to stabilize after sufficiently many iterations,
 in the sense that there exits a long-term probability $\Pi(x$) of
 encountering the process in state $x$. This stationary distribution
-is defined by
+satisfies
 \begin{eqnarray}
 \Pi(x) & = & \sum_{y}\Pi(y)\cdot T_{y}^{x},\label{eq:mc-stationary}
 \end{eqnarray}
@@ -236,32 +245,31 @@ conditions $S^{k+1}$, and to finally use both $S^{k+1}$ and $Z^{k}$
 to obtain an updated $Z^{k+1}$ through \MyEqRef{eq:learning-model}.
 This last step is what disqualifies $D$ and $S$ as state variables
 because an evaluation of \MyEqRef{eq:learning-model} is not possible
-without knowing $Z$.
+without having $Z$ in the state space.
 
 Letting $X^{k}=Z^{k}$, the transition distribution hence needs to
 express how the information $Z^{k}$ available to the population in
 iteration $k$ carries over to the information $Z^{k+1}$ that is
 available in iteration $k+1$. This relationship is given by
 \begin{eqnarray}
-T_{y}^{x} & = & \sum_{d}\sum_{s}P(Z^{k+1}=x\mid S^{k}=s,Z^{k}=y)P(S^{k}=s\mid D^{k}=d)P(D^{k}=d\mid Z^{k}=y).\label{eq:matsim-transition-distr}
+T_{y}^{x} & = & \sum_{s}\sum_{d}P(Z^{k+1}=x\mid S^{k}=s,Z^{k}=y)P(S^{k}=s\mid D^{k}=d)P(D^{k}=d\mid Z^{k}=y).\label{eq:matsim-transition-distr}
 \end{eqnarray}
 Each argument of the double sum represents the probability of one
 particular sequence of given information $y$, resulting travel demand
-$D$, resulting network conditions $S$, and updated information $x$.
+$d$, resulting network conditions $s$, and updated information $x$.
 The double sum over all possible travel demand realizations $d$ and
 network conditions $s$ then accounts for the fact that there are
 many different such sequences through which one can start out at $y$
 and end up at $x$.
 
 This completes the representation of MATSim in terms of a Markov chain.
-The next section gives gives some examples of how this representation
-can be put to practical use.
+The next section puts this representation to practical use.
+% gives some examples of how this representation
+% can be put to practical use.
 
 
-\section{Application of the Stochastic Process Perspective}
-
-
-\subsection{\label{sub:Existence-and-uniqueness}Existence and Uniqueness of
+%\section{Application of the Stochastic Process Perspective}
+\section{\label{sec:Existence-and-uniqueness}Existence and Uniqueness of
 MATSim Solutions}
 
 The long-term (stationary) behavior of a Markov chain can be derived
@@ -306,9 +314,10 @@ its initial state.
 \item It is feasible to compute statistics of the stationary distribution
 from a single simulation run, meaning that it is not necessary to
 run replications.
+\label{it:self-averaging}
 \end{enumerate}
 MATSim in its {}``standard configuration'' is likely to be have
-these properties -- if the plan choice sets of all agents are a priori
+these properties if the plan choice sets of all agents are a priori
 defined, meaning technically that all {}``plan innovation'' modules
 are switched off and that only {}``plan selection'' modules are
 used. This is only {}``likely'' because there notion of a {}``standard
@@ -317,129 +326,253 @@ behind this follow \citet{cascetta-1989}, who presents a related
 result for a much simpler, trip-based traffic simulation that only
 allows for route choice. Observing that travel plans are, technically,
 paths in a rather complicated decision network then allows to carry
-this result over to MATSim. See also \citet{nagel-1998} and \citep{floetteroed-2010e}.
+this result over to MATSim. See also \citet{NagelEtc2000tristan-succ} and \citep{floetteroed-2010e}.
+Intuitively:
+%  \kai{gunnar, pls chk next paragraphs} 
+\begin{itemize}
 
-MATSim with variable plan choice sets, is unlikely to have these properties,
-at least if the currently used {}``plan innovation'' modules are
-used. The reason for this is that plan innovation is at least in parts
-based on best response behavior, which may limit behavioral variability
-to the extent that irreducibility is destroyed. (Section~\note{Choice models in MATSim}
-discusses this in greater detail and also suggests a cure to this
-problem.) This means, that MATSim with plan innovation turned on (i)
-may yield different simulation results depending on how the simulation
-process is initialized (empirical evidence for this is indicated in
-Chapter~\note{REF: Kai mentioned this in the past; is it documented somewhere?})
-and that (ii) statistics of interest cannot be obtained from a single
-MATSim run.
+\item 
 
-\note{Mention broken ergodicity?}
+Periodicy is broken if there exists a nonzero probability of staying in
+the same state. This is possible in MATSim if agents have a finite memory
+because the following sequence of events may occur by chance as often as the 
+agent memory is long: 
+(i) no agent uses a plan mutator, 
+(ii) all agents select the same plan as in the previous iteration, 
+(iii) the mobility simulation creates identical congestion and travel time patterns as in the previous iteration.
+
+\gunnar{Kai, Du hattest Folgendes geschrieben: ``Periodicity is easily broken by stochasticity.  
+Given the many sources of stochasticity in MATSim, it is improbable that deterministic cycles exist.''
+Ich finde das problematisch, weil MCs ``by design'' stochastisch sind; periodicity und stochasticity
+schliessen einander nicht aus.}
+
+\item 
+
+\gunnar{Kai, Du hattest Folgendes geschrieben:
+``The reducible state of Figure (\ldots) 
+%Figure~\ref{fig:Example-of-(ir)reducibility}~left 
+will eventually become irreducible when the system moves from high traffic 
+to gridlock, since then it cannot go back.  One can therefore argue that 
+reducibility is related to transients, and the problem is that one does 
+not know when the transients are over.'' 
+Das verstehe ich nicht. (Ir)reducibility ist eine Eigenschaft der MC an sich.
+Eventuell meinst Du, dass die transients bestimmen, in welchem 
+``irreducible set'' die MC landet, und dass es mehrere solcher sets geben
+mag?}
+
+The MATSim property that causes problems when it comes to irreducibility 
+are the changes to the set of possible plans per agent: 
+Every time a new plan is added somewhere, the previous subspace of the state space where the plan 
+was not available \emph{cannot} be reached any more until that plan is removed; similarly, every time 
+a plan is removed, the previous subspace of the state space where the plan was available cannot be 
+reached any more until the plan is re-created again. (Chapter~\ref{ch:discretechoice}
+discusses this in greater detail and also suggests a cure to this problem.)
+
+Even if plans creation and removal could be modelled such that irreducibility was guaranteed, 
+the dynamics of this process would, due to the size of the state space, be so slow that it would be 
+impractial to sample over the resulting iterations. Thus, although the above item~\ref{it:self-averaging} 
+would be formally correct, one would never have enough iterations to put it to practical use.
+\gunnar{Sind wir da sicher? Wenn wir uns nur f\"ur niedrigdimensionale projections interessieren,
+dann mag es durchaus sein, dass sich diese projections hinreichend schnell durchmischen. Ich bin
+zumindest nicht daf\"ur, die M\"oglichkeit von vorneherein auszuschliessen.}
+
+\end{itemize}
+
+% MATSim with variable plan choice sets, is unlikely to have these properties,
+% at least if the currently used {}``plan innovation'' modules are
+% used. The reason for this is that plan innovation is at least in parts
+% based on best response behavior, which may limit behavioral variability
+% to the extent that irreducibility is destroyed. (Chapter~\ref{ch:discretechoice}
+% discusses this in greater detail and also suggests a cure to this
+% problem.) This means, that MATSim with plan innovation turned on (i)
+% may yield different simulation results depending on how the simulation
+% process is initialized (empirical evidence for this is indicated in
+% Chapter~\note{REF: Kai mentioned this in the past; is it documented somewhere?} 
+
+% \kai{Nein, eigentlich hatten wir das nie.  Effekte, an die ich mich erinnern kann 
+% (nicht notwendigerweise verbunden mit obiger Aussage), sind:
+% \begin{itemize}
+% %
+% \item Wenn man den scale parameter zu groß macht (also stark deterministische best response Reaktion) 
+% \emph{und} TimeMutation verwendet, dann kann es Periodizitäten geben \citep{RaneyNagel2006traf-framework}. 
+% -- Ich habe immer spekuliert, dass das reine route assignment problem auch bei uns die 
+% Stabilitätseigenschaften von static asssignment irgendwie erbt.
+% %
+% \item Network breakdowns \emph{in aufeinanderfolgenden Iterationen} kommen vor allem aus der 
+% (best reply) innovation. Wenn man Innovation abschaltet, verschwinden sie ganz; wenn man die Mobsim 
+% mit immer den gleichen Plänen startet, verschwinden sie \emph{nicht}, sind aber nicht 
+% mehr über die Iterationen korreliert (was ja auch kein Wunder ist).  
+% Siehe \citep{RieserNagel2008NetworkBreakdown}. -- Leider sagt das Paper nicht genau, 
+% ob es mit \lstinline{ChangeExpBeta} oder mit \lstinline{SelectExpBeta} gerechnet wurde. :--(
+% %
+% \item Die network breakdowns verschwinden auch, wenn man die storage capacity auf den Kanten hochdreht.  
+% Das kam mal von David Charypar, aber der hat das leider nie aufgeschrieben.  
+% Hat was damit zu tun, dass bei hoher storage capacity die queue, die nötig ist, um eine schnelle Kante 
+% mit einer langsameren zu balancieren, dann in die Kante selber reinpasst, damit keinen spill-back mehr 
+% bildet, und damit keinen network breakdown mehr auslöst.
+% \end{itemize}
+% %
+% })
+% and that (ii) statistics of interest cannot be obtained from a single
+% MATSim run.
+
+% \note{Mention broken ergodicity?}
+
+In summary, there exists a mathematical framework that allows to somewhat
+rigorously characterize the outcome of MATSim's relaxation process.
+It turns out that MATSim in its current form is not necessarily a ``well-behaved''
+stochastic process, but casting it into this framework also enables a structured
+approach of developing the simulation logic further. An example of how to go
+about this is given Chapter~\ref{ch:discretechoice}.
 
 
-\subsection{Avoiding Network Breakdowns}
-
-\note{Please scrutinize this! The idea is just a few hours hold.}
-
-Chapter~\note{Agent-based DTA} presents the \texttt{ExpBetaPlanChanger}
-as a cure to the network breakdowns that often impair simulation convergence
-when using the \texttt{ExpBetaPlanSelector}. However, if the \texttt{ExpBetaPlanChanger}
-implements by design the same stationary choice model as the \texttt{ExpBetaPlanSelector},
- how can it then avoid network breakdowns?
-
-To keep the presentation tractable, it is assumed that a network breakdown
-occurs if and only if a sufficiently large number of agents selects
-a {}``critical travel plan''. It further is assumed that the probability
-of selecting a critical plan is zero unless a {}``critical path''
-of events has occurred in the past. The recent occurrence of such
-a path is instantaneously reflected by the system being in a {}``critical
-state''. Formally, the probability of a breakdown given that the
-system is in a critical state can be written as
-\begin{eqnarray}
-P(\text{breakdown}\mid Z^{\text{crit}}) & = & P\left(\frac{1}{N}\sum_{n=1}^{N}\mathbf{1}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\geq\phi^{\text{crit}}\right)
-\end{eqnarray}
-where $Z^{\text{crit}}$ is the event of the system being in a critical
-state, $C_{n}^{\text{crit}}$ is the set of critical plans of agent
-$n$ and $\mathbf{1}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})$
-indicates if agent $n$ selects a critical plan $i_{n}$ given that
-the system is currently in a critical state. Letting $N$ be the total
-number of agents, $\frac{1}{N}\sum_{n=1}^{N}\mathbf{1}(\cdot)$ represents
-the fraction of agents selecting a critical plan. The breakdown probability
-is then given by the probability that this fraction is larger than
-a critical value $\phi^{\text{crit}}$. As $N$ gets larger, the variance
-of the average value $\frac{1}{N}\sum_{n=1}^{N}(\cdot)$ gets smaller.
-This means that for a large agent population it is reasonable to approximate
-this quantity by its expectation. Observing further that $\text{E}\{\mathbf{1}(\text{event }X\text{ happens})\}=P(X)$,
-one obtains
-\begin{eqnarray}
-P(\text{breakdown}\mid Z^{\text{crit}}) & \approx & \mathbf{1}\left(\frac{1}{N}\sum_{n=1}^{N}P(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\geq\phi^{\text{crit}}\right),\label{eq:breakdown-indicator}
-\end{eqnarray}
-meaning that if the system is currently in a critical state then a
-breakdown is guaranteed if and only if the average probability of
-selecting a critical plan over all agents in the population exceeds
-$\phi^{\text{crit}}$.
-
-Denote the probability that agent $n$ selects plan $i$ given the
-information $Z$ by $P_{n}(i\mid Z)$. Assume that this choice distribution
-can lead to breakdowns. Now consider a modification of the plan choice
-mechanism that selects, for each agent, with probability $\alpha$
-a plan according to $P_{n}(i\mid Z)$ and otherwise according to $P_{n}(i\mid\tilde{Z})$,
-with $\tilde{Z}$ being the simulator state (information) from a randomly
-selected previous iteration. Assuming stationarity, this yields
-\begin{eqnarray}
-\tilde{P}_{n}(i\mid Z) & = & \alpha P_{n}(i\mid Z)+(1-\alpha)\sum_{\tilde{Z}}P_{n}(i\mid\tilde{Z})\Pi(\tilde{Z})\label{eq:modifed-choice}
-\end{eqnarray}
-with $\Pi(\tilde{Z})$ being the stationary distribution of the simulator
-states. This resembles the \texttt{ExpBetaPlanChanger} in the sense
-that past iterations are recycled: Here, this happens by using past
-information whereas the \texttt{ExpBetaPlanChanger} realizes a similar
-effect by increasing the number of iterations during a previously
-selected plan is maintained. Another similarity is that (\ref{eq:modifed-choice})
-does, just like the \texttt{ExpBetaPlanChanger}, not change the agent's
-stationary choice distribution:
-\begin{eqnarray}
-\tilde{\Pi}_{n}(i) & = & \sum_{Z}\tilde{P}_{n}(i\mid Z)\Pi(Z)\\
- & = & \sum_{Z}\left[\alpha P_{n}(i\mid Z)+(1-\alpha)\sum_{\tilde{Z}}\alpha P_{n}(i\mid\tilde{Z})\Pi(\tilde{Z})\right]\Pi(Z)\\
- & = & \alpha\sum_{Z}P_{n}(i\mid Z)\Pi(Z)+(1-\alpha)\sum_{\tilde{Z}}P_{n}(i\mid\tilde{Z})\Pi(\tilde{Z})\sum_{Z}\Pi(Z)\\
- & = & \sum_{Z}P_{n}(i\mid Z)\Pi(Z).
-\end{eqnarray}
+\gunnar{Ich habe die ``breakdown''-Diskussion jetzt rausgenommen; alles was ich da ausprobiert habe, war zu
+technische und konstruiert, als dass es dem Kapitel weiterhelfen w\"urde.}
 
 
-Now the effect of inserting this model into the simulation as a whole
-is considered. For this, recall that $P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z)$
-is nonzero only for $Z=Z^{\text{crit}}$, implying
-\begin{eqnarray}
-\tilde{P}_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}}) & = & \alpha P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})+(1-\alpha)\sum_{\tilde{Z}}P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid\tilde{Z})\Pi(\tilde{Z})\\
- & = & \alpha P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})+(1-\alpha)P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\Pi(Z^{\text{crit}})\\
- & = & [\alpha+(1-\alpha)\Pi(Z^{\text{crit}})]P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}}).
-\end{eqnarray}
-Inserting this into (\ref{eq:breakdown-indicator}) results in the
-modified breakdown probability
-\begin{eqnarray}
-\tilde{P}(\text{breakdown}\mid Z^{\text{crit}}) & \approx & \mathbf{1}\left(\frac{1}{N}\sum_{n=1}^{N}\tilde{P}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\geq\phi^{\text{crit}}\right),\\
- & = & \mathbf{1}\left(\frac{1}{N}\sum_{n=1}^{N}P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\geq\frac{\phi^{\text{crit}}}{\alpha+(1-\alpha)\Pi(Z^{\text{crit}})}\right).
-\end{eqnarray}
-This expression looks like (\ref{eq:breakdown-indicator}), only that
-the threshold value $\phi^{\text{crit}}$ is now divided by $\alpha+(1-\alpha)\Pi(Z^{\text{crit}})$.
-This denominator ranges from $\Pi(Z^{\text{crit}})$ (for $\alpha=0$)
-to one (for $\alpha=1$), meaning that the breakdown threshold is
-increased by decreasing $\alpha$.
+%\subsection{Reducing variability \textcolor{gray}{Avoiding Network Breakdowns}}
 
-Intuitively: For a breakdown to happen, enough agents must simultaneously
-select a critical plan. The unmodified simulation synchronizes the
-plan choices by conditioning all of them on the current system state:
-If the system can break down at all, then according to (\ref{eq:breakdown-indicator})
-it will do so once a critical state is reached. The modified plan
-choice logic breaks this synchronization, in the sense that the occurrence
-of a critical state alone is no more sufficient to trigger plan choices
-that lead to a breakdown. Additionally, enough agents must base their
-replanning on past state that was by chance also critical.
-
-Even though this analysis does not fully represent the \texttt{ExpBetaPlanChanger}
-(which would be more involved because then further complications such
-as score difference thresholds would enter the picture), it offers
-an intuitive explanation of its stabilizing effect. The perhaps surprising
-effect of unchanged stationary choice distributions at the individual
-level leading to a change in the overall system's state can be explained
-by the different ways in which agent behavior can be synchronized.
+% \subsection{The effect of (implicitly) synchronized agent behavior}
+% 
+% % \kai{Vermeidet nicht network breakdown (siehe Zusammenfassung oben) ... 
+% % bzw.\ es ist zumindestens unklar.  Meiner Erinnerung nach hatte ich \lstinline{ChangeExpBeta} 
+% % eingeführt, weil das equil net scenario sehr schlecht konvergierte.  Und das ist ja auch klar: 
+% % Wenn $N$ Agenten die selben zwei gleich gute Optionen haben, dann ist die Amplitude der 
+% % Fluktuationen auf einer Option $\sim \sqrt{N}$.  -- Ob das allerdings so funktioniert wie gedacht, 
+% % weiß ich nicht.  Wenn man die scores zum Konvergieren bringt, kann es ja keinen Unterschied 
+% % mehr machen.  Also muss es, wenn überhaupt, etwas damit zu tun haben, dass die scores nur 
+% % die letzte Planausführung reflektieren. -- Aber da das mit der switching proba auch einfacher 
+% % und eleganter ist, bin ich dabei geblieben. } 
+% 
+% % \kai{Ich habe hier irgendwie kein gutes Gefühl bei.  ERSTENS ist unklar, ob es wirklich
+% %  mit dem network breakdown etwas zu tun hat.  Da kannst Du jetzt schimpfen, dass wir das 
+% %  unsauber aufgeschrieben haben, aber es hilft nichts.  ZWEITENS kann es ja nicht sein, dass wir 
+% %  die gleiche stationäre Verteilung bekommen, aber eine geringere breakdown proba.  
+% %  Ich denke auch, dass wir dann doch eine andere Verteilung der $Z$ bekommen.  Aber ich habe keine 
+% %  Intuition, was das bzgl.\ breakdown tut ... z.B.\ könnte das System auch einfach mehr 
+% %  Iterationen brauchen, um sich an den kritischen Zustand heranzutasten, und dann dauert die 
+% %  ``Lawine'' auch länger, um davon wieder wegzukommen.  (Dann würde sich wohl das $Z^{crit}$ verändern.)}
+% 
+% % \kai{Irgendwie müssen wir dringend mal einen Antrag schreiben, der diese Dynamiken untersucht, 
+% % und dafür jemanden einstellen, den das interessiert.  Derzeit habe ich die Situation, dass das sogar 
+% % aus Anträgen immer wieder rausfliegt, weil keiner außer mir die entsprechenden work packages schreiben kann.}
+% 
+% 
+% Section~\ref{sec:ag-based-assignment-selection}presents the \texttt{ExpBetaPlanChanger}
+% as an alternative to the \texttt{ExpBetaPlanSelector} that offers (i) better convergence
+% properties (smoother transients) and (ii) identical stationary plan choice distributions 
+% at the individual-agent level. 
+% 
+% System modifications that exclusively affect the transients are uncritical from the modeling
+% perspective, which is exclusively concerned with the simulation behavior in stationary
+% conditions. In this regard, the \texttt{ExpBetaPlanChanger} is nothing but a computationally
+% advantageous simulation scheme. 
+% 
+% The following presentations deploys the MC perspective on MATSim in order to analyze
+% the effect of using the \texttt{ExpBetaPlanChanger} on the stationary behavior of the
+% simulation as a whole -- which turns out to be potentially different from the stationary 
+% behavior of a set of independent agents.
+% 
+% % \kai{Kann es (natürlich) nur, wenn es eben doch nicht das gleiche stationäre Modell ist.}
+% 
+% \gunnar{(to self) Continue here.}
+% 
+% To keep the presentation tractable, it is assumed that a network breakdown
+% occurs if and only if a sufficiently large number of agents selects
+% a {}``critical travel plan''. It further is assumed that the probability
+% of selecting a critical plan is zero unless a {}``critical path''
+% of events has occurred in the past. The recent occurrence of such
+% a path is instantaneously reflected by the system being in a {}``critical
+% state''. Formally, the probability of a breakdown given that the
+% system is in a critical state can be written as
+% \begin{eqnarray}
+% P(\text{breakdown}\mid Z^{\text{crit}}) & = & P\left(\left[\frac{1}{N}\sum_{n=1}^{N}\mathbf{1}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\right]\geq\phi^{\text{crit}}\right)
+% \end{eqnarray}
+% \kai{habe da noch eine weitere Klammer reingebaut}
+% where $Z^{\text{crit}}$ is the event of the system being in a critical
+% state, $C_{n}^{\text{crit}}$ is the set of critical plans of agent
+% $n$ and $\mathbf{1}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})$
+% indicates if agent $n$ selects a critical plan $i_{n}$ given that
+% the system is currently in a critical state. Letting $N$ be the total
+% number of agents, then $\frac{1}{N}\sum_{n=1}^{N}\mathbf{1}(\cdot)$ represents
+% the fraction of agents selecting a critical plan. The breakdown probability
+% is then given by the probability that this fraction is larger than
+% a critical value $\phi^{\text{crit}}$. As $N$ gets larger, the variance
+% of the average value $\frac{1}{N}\sum_{n=1}^{N}(\cdot)$ gets smaller.
+% This means that for a large agent population it is reasonable to approximate
+% this quantity by its expectation. Observing further that $\text{E}\{\mathbf{1}(\text{event }X\text{ happens})\}=P(X)$,
+% one obtains
+% \begin{eqnarray}
+% P(\text{breakdown}\mid Z^{\text{crit}}) & \approx & \mathbf{1}\left(\frac{1}{N}\sum_{n=1}^{N}P(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\geq\phi^{\text{crit}}\right),\label{eq:breakdown-indicator}
+% \end{eqnarray}
+% meaning that if the system is currently in a critical state then a
+% breakdown is guaranteed if and only if the average probability of
+% selecting a critical plan over all agents in the population exceeds
+% $\phi^{\text{crit}}$.
+% 
+% Denote the probability that agent $n$ selects plan $i$ given the
+% information $Z$ by $P_{n}(i\mid Z)$. Assume that this choice distribution
+% can lead to breakdowns. Now consider a modification of the plan choice
+% mechanism that selects, for each agent, with probability $\alpha$
+% a plan according to $P_{n}(i\mid Z)$ and otherwise according to $P_{n}(i\mid\tilde{Z})$,
+% with $\tilde{Z}$ being the simulator state (information) from a randomly
+% selected previous iteration. Assuming stationarity, this yields
+% \begin{eqnarray}
+% \tilde{P}_{n}(i\mid Z) & = & \alpha P_{n}(i\mid Z)+(1-\alpha)\sum_{\tilde{Z}}P_{n}(i\mid\tilde{Z})\Pi(\tilde{Z})\label{eq:modifed-choice}
+% \end{eqnarray}
+% with $\Pi(\tilde{Z})$ being the stationary distribution of the simulator
+% states. This resembles the \texttt{ExpBetaPlanChanger} in the sense
+% that past iterations are recycled: Here, this happens by using past
+% information whereas the \texttt{ExpBetaPlanChanger} realizes a similar
+% effect by increasing the number of iterations during a previously
+% selected plan is maintained. Another similarity is that (\ref{eq:modifed-choice})
+% does, just like the \texttt{ExpBetaPlanChanger}, not change the agent's
+% stationary choice distribution:
+% \begin{eqnarray}
+% \tilde{\Pi}_{n}(i) & = & \sum_{Z}\tilde{P}_{n}(i\mid Z)\Pi(Z)\\
+%  & = & \sum_{Z}\left[\alpha P_{n}(i\mid Z)+(1-\alpha)\sum_{\tilde{Z}}\alpha P_{n}(i\mid\tilde{Z})\Pi(\tilde{Z})\right]\Pi(Z)\\
+%  & = & \alpha\sum_{Z}P_{n}(i\mid Z)\Pi(Z)+(1-\alpha)\sum_{\tilde{Z}}P_{n}(i\mid\tilde{Z})\Pi(\tilde{Z})\sum_{Z}\Pi(Z)\\
+%  & = & \sum_{Z}P_{n}(i\mid Z)\Pi(Z).
+% \end{eqnarray}
+% 
+% 
+% Now the effect of inserting this model into the simulation as a whole
+% is considered. For this, recall that $P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z)$
+% is nonzero only for $Z=Z^{\text{crit}}$, implying
+% \begin{eqnarray}
+% \tilde{P}_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}}) & = & \alpha P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})+(1-\alpha)\sum_{\tilde{Z}}P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid\tilde{Z})\Pi(\tilde{Z})\\
+%  & = & \alpha P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})+(1-\alpha)P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\Pi(Z^{\text{crit}})\\
+%  & = & [\alpha+(1-\alpha)\Pi(Z^{\text{crit}})]P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}}).
+% \end{eqnarray}
+% Inserting this into (\ref{eq:breakdown-indicator}) results in the
+% modified breakdown probability
+% \begin{eqnarray}
+% \tilde{P}(\text{breakdown}\mid Z^{\text{crit}}) & \approx & \mathbf{1}\left(\frac{1}{N}\sum_{n=1}^{N}\tilde{P}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\geq\phi^{\text{crit}}\right),\\
+%  & = & \mathbf{1}\left(\frac{1}{N}\sum_{n=1}^{N}P_{n}(i_{n}\in C_{n}^{\text{crit}}\mid Z^{\text{crit}})\geq\frac{\phi^{\text{crit}}}{\alpha+(1-\alpha)\Pi(Z^{\text{crit}})}\right).
+% \end{eqnarray}
+% This expression looks like (\ref{eq:breakdown-indicator}), only that
+% the threshold value $\phi^{\text{crit}}$ is now divided by $\alpha+(1-\alpha)\Pi(Z^{\text{crit}})$.
+% This denominator ranges from $\Pi(Z^{\text{crit}})$ (for $\alpha=0$)
+% to one (for $\alpha=1$), meaning that the breakdown threshold is
+% increased by decreasing $\alpha$.
+% 
+% Intuitively: For a breakdown to happen, enough agents must simultaneously
+% select a critical plan. The unmodified simulation synchronizes the
+% plan choices by conditioning all of them on the current system state:
+% If the system can break down at all, then according to (\ref{eq:breakdown-indicator})
+% it will do so once a critical state is reached. The modified plan
+% choice logic breaks this synchronization, in the sense that the occurrence
+% of a critical state alone is no more sufficient to trigger plan choices
+% that lead to a breakdown. Additionally, enough agents must base their
+% replanning on past state that was by chance also critical.
+% 
+% Even though this analysis does not fully represent the \texttt{ExpBetaPlanChanger}
+% (which would be more involved because then further complications such
+% as score difference thresholds would enter the picture), it offers
+% an intuitive explanation of its stabilizing effect. The perhaps surprising
+% effect of unchanged stationary choice distributions at the individual
+% level leading to a change in the overall system's state can be explained
+% by the different ways in which agent behavior can be synchronized.
 
 
 
@@ -447,6 +580,8 @@ by the different ways in which agent behavior can be synchronized.
 \section{\label{sec:Statistical-analysis-of}Analyzing Simulation Outputs}
 
 \note{I don't know how useful this is. Perhaps move it to an earlier chapter with a more practical focus?}
+
+\kai{Würde es erstmal hier lassen.  Man kann ja drauf verweisen.  Wir können es ggf.\ immer noch später umstellen.}
 
 Many of the models used in MATSim are stochastic, for instance random
 utility models for plan choice or the randomized selection of the
@@ -470,14 +605,14 @@ stands here are numerical in in the majority of applications.
 Given that one has used different random seeds, $y_{1},\ldots,y_{R}$
 constitute independent draws from a distribution $\Pi(y)$. This means
 that if one performed a huge number of simulation runs and plotted
-a (possibly multidimensional) histogram of the $y$ values then this
+a (possibly multidimensional) histogram of the $y$ values, then this
 histogram would eventually attain the shape of $\Pi(y)$. It is important
 to acknowledge that stochastic simulation outputs are a desirable
 consequence of the stochasticity inserted elsewhere in the simulation:
 Just as the output of a deterministic model is a truthful representation
 of the consequences of its input, a stochastic model output contains
 a truthful representation of the prediction uncertainty that results
-from uncertainties in its input and its specification.
+from uncertainties in its input and its process specification.
 
 To help intuition, one may think in the following of $y_{r}$ as a
 large vector that contains the travel times on all links in all one-hour
@@ -547,9 +682,9 @@ a sample converges to its expectation as the number of samples grows
 \begin{eqnarray}
 \text{E}\{m(y)\} & = & \sum_{y}m(y)\cdot\Pi(y)\label{eq:define-question}\\
  & = & \lim_{R\rightarrow\infty}\frac{1}{R}\sum_{r=1}^{R}m(y_{r})\\
- & \approx & \frac{1}{R}\sum_{r=1}^{R}m(y_{r})\,\,\text{for a finite }R,\label{eq:approximate-answer}
+ & \approx & \frac{1}{R}\sum_{r=1}^{R}m(y_{r})\qquad\text{for a finite }R,\label{eq:approximate-answer}
 \end{eqnarray}
-where the simulation outputs $y_{r}$, $r=1\ldots R$ are independent
+where the simulation outputs $y_{r}$, $r=1\ldots R$, are independent
 draws from $\Pi(y)$.
 
 Now recall the original problem of asking certain questions about
@@ -581,11 +716,11 @@ that in practice $\text{E}\{y\}$ needs to be replaced by its estimator.)
 \text{Pr}(y\geq\theta) & \approx & \frac{1}{R}\sum_{r=1}^{R}\mathbf{1}(y_{r}\geq\theta)
 \end{eqnarray}
 This divides the number of times the threshold was exceeded by the
-total number of experiments, i.e. it yields the frequency of the event
+total number of experiments, i.e.\ it yields the frequency of the event
 of interest.
 \item ...
 \end{itemize}
-Revisiting Section~(\ref{sub:Existence-and-uniqueness}), it may
+Revisiting Section~\ref{sec:Existence-and-uniqueness}, it may
 be possible to make these computations more efficient. If (i) there
 is no uncertainty in the model inputs and (ii) the simulation uses
 fixed choice sets, then its likely to be feasible to compute the above
@@ -595,8 +730,8 @@ to convergence.
 
 Practically, all of this is just a starting point. Important questions,
 such as how precise these estimates are, how many runs one needs to
-obtain a certain level of precision, etc. are not answered here; the
-reader is referred to, for instance, \citet{ross-2006}. 
+obtain a certain level of precision, etc. are not answered here; 
+\citet{ross-2006} is a good starting point for further reading. 
 
 
 \section{\label{sec:Summary}Summary}
@@ -611,11 +746,12 @@ behavior of the process.
 This long-term behavior was then related to properties of the iteration
 logic using the the Markov chain formalism. MATSim was phrased as
 such a chain, with its state space being comprised of the information
-available for replanning. This representation was exploited to (i)
+available for replanning. This representation was exploited to
 observe that the long-term distribution of MATSim is likely to exist
-and be unique if the plan choice sets are a priori fixed; and to (ii)
-provide insights into how the \texttt{ExpBetaPlanChanger} avoids network
-breakdowns. 
+and be unique if the plan choice sets are a priori fixed.
+% ; and to (ii)
+% provide insights into how the \texttt{ExpBetaPlanChanger} avoids network
+% breakdowns. 
 
 It further was explained that (i) there are good reasons for the stochasticity
 both in MATSim's inputs and outputs; and that (ii) instead of avoiding
@@ -623,3 +759,11 @@ stochasticity where it constitutes a truthful representation of uncertainty
 one should access adequate statistical techniques to make sense of
 it. 
 
+% Local Variables:
+% mode: latex
+% mode: reftex
+% mode: visual-line
+% TeX-master: "../main"
+% comment-padding: 1
+% fill-column: 9999
+% End: 

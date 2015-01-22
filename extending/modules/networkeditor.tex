@@ -1,4 +1,3 @@
-% !TeX root = ../../main.tex
 \chapter{Network Editors}
 \label{ch:networkeditor}
 % ##################################################################################################################
@@ -7,9 +6,11 @@
 
 \begin{center} \includegraphics[width=0.4\textwidth, angle=0]{extending/figures/networkeditor/josm_screenshot} \end{center}
 
+\createStandardInformationBasic{networkEditor}{start the plugin from JOSM directly}{todo}{todo}
+
 % ##################################################################################################################
-\section{JOSM Network Editor}
-This is a plug-in for \citet[][]{JOSM2014}, the Java OpenStreetMap editor, which simplifies the process of creating and editing MATSim networks. The plug-in fully integrates with JOSM and thus benefits from its build-in functionality.
+\section{MATSim JOSM Network Editor}
+A plugin for the JOSM (Java OpenStreetMap Editor) network editor \citep[][]{JOSM2014}, is available simplifying the process of creating and editing MATSim networks. This plugin fully integrates with JOSM and thus benefits from its build-in functionality.
 %
 % -------------------
 \createfigure
@@ -22,26 +23,26 @@ This is a plug-in for \citet[][]{JOSM2014}, the Java OpenStreetMap editor, which
 
 % ===========================================================================================
 \subsection{Features}
-It lets you preview, edit and save a MATSim network directly from the map. Basic support for converting and editing public transport networks is implemented. The plug-in allows to automatically post-process a network by removing unnecessary intermediate nodes and links.
+The MATSim JOSM network editor lets you preview, edit and save a MATSim network directly from the map. Basic support for converting and editing public transport networks is implemented. The plug-in allows to automatically post-process a network by removing unnecessary intermediate nodes and links.
 \begin{description}
-\item[Convert] MATSim networks from OpenStreetMapData. Load map data for a selected area directly from the Internet or load it from a local osm file. Specify conversion parameters and save a MATSim network.
+\item[Convert] MATSim networks from \gls{osm}. Load map data for a selected area directly from the Internet or load it from a local osm file. Specify conversion parameters and save a MATSim network.
 \item[Visualize] an existing or newly converted MATSim network along with other data like satellite imagery or other JOSM-supported layers.
-\item[Edit] an existing or newly converted MATSim network with the available JOSM tools you know. Use the build-in undo and search functions of JOSM. Changes to the underlying OpenStreetMap data are instantly reflected by the converted MATSim network. Use MATSim-specific presets to minimize errors.
+\item[Edit] an existing or newly converted MATSim network with the available JOSM tools you know. Use the build-in undo and search functions of JOSM. Changes to the underlying \gls{osm} data are instantly reflected by the converted MATSim network. Use MATSim-specific presets to minimize errors.
 \item[Validate] an existing or newly converted MATSim network with respect to the requirements of the MATSim network file description. Visualize the errors and fix them (automatically). 
 \end{description}
 The next version will support public transit networks.
 
 % ===========================================================================================
 \subsection{Installing the Plug-In}
-You do not need to download the source to use it. It is in the JOSM plug-in repository. Just start JOSM and look for the MATSim plug-in under Edit$>$Preferences$>$Plugins. Download the list of available plug-ins and search for "matsim". Tick the box, press \lstinline|ok| and restart JOSM.
+You do not need to download the source to use it. It is in the JOSM plug-in repository. Just start JOSM and look for the MATSim plug-in under \lstinline|Edit...Preferences...Plugins|. Download the list of available plug-ins and search for "matsim". Tick the box, press \lstinline|ok| and restart JOSM.
 
 % ===========================================================================================
 \subsection{Getting the Code}
-The source code is hosted on github (\url{https://github.com/matsim-org/josm-matsim-plugin}). Unlike MATSim, the build is not based on Maven, but on Gradle. The reason is that there are some things to do (like editing the Manifest, downloading JOSM for compilation, and building a flat jar) for which we found a good example in Gradle. Use your favorite IDE to import the Gradle project and/or see the comments in build.gradle for details. You can run JOSM and the plug-in in the debugger.
+The source code is hosted on github (\url{https://github.com/matsim-org/josm-matsim-plugin}). Unlike MATSim, the build is not based on Maven, but on Gradle. Editing the Manifest, downloading JOSM for compilation, and building a flat jar are easier in Gradle. Use your favorite IDE to import the Gradle project and/or see the comments in build.gradle for details. You can run JOSM and the plug-in in the debugger.
  
 % ##################################################################################################################
 \section{Map-to-Map Matching Editors in Singapore}
-\citet[][]{Ordonez_Webpage_2011_3}
+\label{sec:networkeditor-singapore}
 For the Singapore scenario, and concerning the supply data, a high resolution network was obtained from the NAVTEQ company. These network consists of a graph which represent every road in the island, which results very convenient for a high resolution model like MATSim. However, the information of travel capacities and free speeds of the network links is not accurate. On the other hand, local authorities provided the network model used for planning. This network does not represent minor roads and intersections are simplified, but capacities and free speed are accurately estimated. Figure~\ref{fig:Capacities} shows lower travel capacities of many primary roads in the navigation model (right) than in the planning model (left).
 
 % -------------------
@@ -53,14 +54,14 @@ For the Singapore scenario, and concerning the supply data, a high resolution ne
 {}
 % -------------------
 
-This section describes a semi-automatic tool developed to match these two network models. Thus, the capacities and free speeds of the main links of the navigation network (high-res network) can be updated with the ones of the planning network (low-res network).
+This section describes a semi-automatic tool developed to match these two network models \citep[][]{Ordonez_Webpage_2011_3}. Thus, the capacities and free speeds of the main links of the navigation network (high-res network) can be updated with the ones of the planning network (low-res network).
 
 % ===========================================================================================
 \subsection{General Procedure}
-Although many works focus on try to solve the matching problem of two networks in a formal way, this work follows a semi-automatic approach. This means that automatic algorithms will try to solve the problem, but the user knows the solution won't be perfect and some manual work is expected to be done. Hence, interactive tools are also provided to the user to manually improve the solutions.
+Although many authors focus on try to solve the matching problem of two networks in a formal way, this work follows a semi-automatic approach. This means that automatic algorithms will try to solve the problem, but the user knows the solution won't be perfect and some manual work is expected to be done. Hence, interactive tools are also provided to the user to manually improve the solutions.
 
 The map-to-map procedure is based on the algorithm developed by \citet{BalmerEtAl_STRC_2005}. It consists of the following steps:
-
+%
 \begin{enumerate}
 \item Classify the nodes according to their topology (e.g.,\,source, sink, one way start, crossing) in both networks.
 \item Reduce the networks according to the previous classification, and saving the relations to the original nodes.
@@ -70,7 +71,7 @@ The map-to-map procedure is based on the algorithm developed by \citet{BalmerEtA
 \item \textbf{Assuming not all links or paths found in the previous step are correct, use the link-link matching interactive tool shown in the Figure~\ref{fig:Links}, to find or modify links or sequences of links which join the crossings}
 \item Update capacities and free speeds of the matched links found in (5) and (6)
 \end{enumerate}
-
+%
 \createfigure
 {Crossing-crossing matching application}
 {Crossing-crossing matching application. A second node, matching the pink node o the low-res network on the left, is being selected from the high-res network on the right}
@@ -80,8 +81,8 @@ The map-to-map procedure is based on the algorithm developed by \citet{BalmerEtA
 
 % ===========================================================================================
 \subsection{Interactive Tools Characteristics}
-As shown in Figure \ref{fig:Nodes} the application allows to interactively modify crossing-crossing relationships. A very similar interactive tool was develop to also modify link-link relationships between the high resolution network and the low resolution one. They can be found at the package \lstinline|playground.sergioo.networksMatcher2012| in the playgrounds project of MATSim. To run the graphic interface of the crossings-crossing application use the class \lstinline|gui.DoubleNetworkMatchingWindow|, and use the class gui.DoubleNetworkCapacitiesWindow for the link-link application. These applications write simple text files of the relationships found. The program found at the class \lstinline|ApplyCapacities| overwrites the capacities and/or free speeds according to the simple text files, and writes the new Xml file of the resulting network. This multiple-steps design allows to run the interactive applications several times or in parallel. Developed functional requirements and quality attributes of the interactive tools are described as follows:
-
+As shown in Figure~\ref{fig:Nodes} the application allows to interactively modify crossing-crossing relationships. A very similar interactive tool was develop to also modify link-link relationships between the high resolution network and the low resolution one. They can be found at the package \lstinline|playground.sergioo.networksMatcher2012| in the playgrounds project of MATSim. To run the graphic interface of the crossings-crossing application use the class \lstinline|gui.DoubleNetworkMatchingWindow|, and use the class \lstinline|gui.DoubleNetworkCapacitiesWindow| for the link-link application. These applications write simple text files of the relationships found. The program found at the class \lstinline|ApplyCapacities| overwrites the capacities and/or free speeds according to the simple text files, and writes the new XML file of the resulting network. This multiple-steps design allows to run the interactive applications several times or in parallel. Developed functional requirements and quality attributes of the interactive tools are described as follows:
+%
 \createfigure
 {Link-link matching application}
 {Link-link matching application. A shortest path algorithm to select a sequence of links of the network on the right will be executed when clicking the destination node}
@@ -89,20 +90,19 @@ As shown in Figure \ref{fig:Nodes} the application allows to interactively modif
 {\includegraphics[width=1.0\textwidth]{extending/figures/netEdSing/Links.png}}
 {}
 
-\begin{itemize}
+\begin{compactitem}
 \item Visualization: Two navigation networks are displayed in two modes. The first mode splits the window in two, showing each network at one side and maintaining them at the same geographical position and zoom when navigating. The second superimposes both networks in the same window, but only one is active. Selected elements are drawn in different colors. Everything is displayed in a bi-dimensional interactive way, displaying the location of the cursor in the working coordinates, and including panning, zoom and view-all options. The crossing-crossing application displays matched set of nodes (crossings) with the same color in both networks. The link-link application tool also allows to visualize the value of the capacity property (or the free speed property) of the links in both networks using a color scale, as shown in Figure~\ref{fig:Links}.
-\item Selection: The applications allow to select links and nodes from both networks. The crossing-crossing one just allows to select set of nodes. The link-link application allows to select sequence of links. This can be do directly or selecting an origin node, a destination node and running a "select shortest path algorithm tool". It's also possible to select the opposite link to the one which is selected.
-\item Matching: The applications allow to create a similarity relationship between the elements selected in both networks, set of nodes or sequence of links.
-\item Deletion: The applications allow to delete a similarity relationship between the elements selected in both networks, set of nodes or sequence of links.
+\item Selection: The applications allow to select links and nodes from both networks. The crossing-crossing one just allows to select set of nodes. The link-link application allows to select sequence of links. This can be do directly or selecting an origin node, a destination node and running a "select shortest path algorithm tool". It is also possible to select the opposite link to the one which is selected.
+\item Matching and Deletion: The applications allow to create a similarity relationship between the elements selected in both networks, set of nodes or sequence of links.
 \item Saving: The applications allow to save the relationships found.
 \item Loading: The applications allow to load previous relationships found.
 \item Others: The crossing-crossing application executes and automatic verification of the currently found matching, to avoid repeated nodes. It also allows to clear the current selection. The link-link application allows to automatically navigate to a link or node specified by the user using its id. It also allows to undo previous matching. 
-\end{itemize}
+\end{compactitem}
 
 % ===========================================================================================
 \subsection{Results}
 All the links of the low-res network were matched to links of the high-res network, updating the corresponding link properties. Figure~\ref{fig:Results} shows the differences in travel capacities between the original navigation network values and the final version. Eight hours of manual work was necessary to match crossings and ten hours of manual work was necessary to match links. Obviously, improvements in the accuracy and completeness of the automatic matching algorithms reduce the manual work time.
-
+%
 \createfigure
 {Resulting changes in the travel capacity property of the navigation network}
 {Resulting changes in the travel capacity property of the navigation network}
