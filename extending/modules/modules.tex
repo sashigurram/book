@@ -20,7 +20,7 @@ In this chapter you will learn about the possibilities to extend, and customize 
 % ====================================================================================================
 \subsection{Levels of Access}
 \label{sec:levels-of-access}
-\gls{matsim} currently provides four levels of access: using the core only, using core and \glspl{contribution}, writing "scripts in \gls{java}", and finally writing your own \glspl{extension}.
+\gls{matsim} currently provides four levels of access: using the core only, using core and \glspl{contribution}, writing ``scripts in \gls{java}'', and finally writing your own \glspl{extension}.
 
 % --------------------------------------------------------------------------------------
 \subsubsection{Using the Core Only}
@@ -34,7 +34,7 @@ In order to use the core only, one needs to do the following (see Section~\ref{s
 \url{http://matsim.org/downloads}.
 \item Minimally obtain a network file and an initial plans file.  Small versions can be typed by hand; larger versions should be generated automatically by some computational method.
 \item Write or edit a config file.
-\item Click on the \gls{matsim} jar file\footnote{This works since winter 2014/15 and should be in the 0.7.0 release.} and follow the instructions. 
+\item Click on the \gls{matsim} jar file\footnote{This works since winter 2014/15 and should be in the 0.7.0~release.} and follow the instructions. 
 \end{compactitem}
 We think that the \gls{matsim} core is already quite powerful; for example, the synthetic persons already follow full daily plans with a full daily scoring function and in consequence opening times for activity types, departure time choice, and schedule delay can be investigated. Also, schedule-based public transit assignment is contained in the core.
 
@@ -59,13 +59,13 @@ where
 \item \lstinline$MATSim.jar$ needs to be replaced by a relative or absolute path to the \gls{matsim} jar to be used
 \item \lstinline$contrib/contrib.jar$ needs to be replaced by a relative or absolute path to the \gls{contribution} jar to be used
 \item \lstinline$org.matsim.contrib.run.Main$ needs to be replaced by full \gls{java} class name containing the desired main method (given by the \gls{contribution} documentation)
-\item \lstinline$config.xml$ needs to be replaced by a relative or absolute path to a config file, which may contain additional sections specifically for the \gls{contribution}
+\item \lstinline$config.xml$ needs to be replaced by a relative or absolute path to a \gls{configfile}, which may contain additional sections specifically for the \gls{contribution}
 \end{compactitem}
 
 It is possible to combine several \glspl{contribution} in this way, provided someone has made available a corresponding main method.  This can in principle be done relatively quickly, so persons who want to run studies with combinations of existing \glspl{contribution} but without programming skills can ask someone with those skills and with access to the repository to help.
 
 % --------------------------------------------------------------------------------------
-\subsubsection{Writing "Scripts in Java"}
+\subsubsection{Writing ``Scripts in Java''}
 \label{sec:writing-scripts-java}
 The \glspl{contribution} are written in a style that they can be plugged into core \gls{matsim} via extension points (see Chapter~\ref{ch:extensionpoints}). If a specific combination or configuration of modules is not (yet) available, one can write it for oneself. The syntax roughly is
 \begin{lstlisting}
@@ -103,19 +103,19 @@ If the existing \glspl{contribution} are not sufficient to plug your own study t
 \subsection{The Ideas Behind this Setup}
 The setup as described above came out of the observation that an ever growing monolithic \gls{matsim} would eventually overwhelm the core team. Therefore, a set-up was searched where the core team could concentrate on central infrastructure, while specific functionality such as road pricing, multi-modal simulations, signals, additional choice dimensions, or analysis modules could be written and contributed by other people. Clearly, a plug-in architecture had to be the solution, but it took (and still takes) time and effort to make the extension points sufficiently capable and sufficiently robust.  
 
-At the same time, \gls{matsim} is a research platform, and a trait of research is that it investigates innovative questions, which often means that the questions were not foreseen by the designs of the code.  Quite often, scripting languages are the solution to such problems; for example, QGIS or VISUM allows python \cite{...} for plug-ins; EMME allows ???; SUMO allows ??? \kai{traci}.  Scala \cite{...} was discussed for \gls{matsim}, but in the end it was decided to just use Java itself as the scripting language. This has the advantage that persons who are in between core development and \gls{matsim} application do not need to learn two languages, and in addition the TUB team can continue to teach \gls{java} both as an entry point to \gls{matsim} and as a general professional skill.
+At the same time, \gls{matsim} is a research platform, and a trait of research is that it investigates innovative questions, which often means that the questions were not foreseen by the designs of the code.  Quite often, scripting languages are the solution to such problems; for example, QGIS or \gls{visum} allows python \cite{...} for plug-ins; \gls{emme} allows ???; SUMO allows ??? \kai{traci}.  Scala \cite{...} was discussed for \gls{matsim}, but in the end it was decided to just use Java itself as the scripting language. This has the advantage that persons who are in between core development and \gls{matsim} application do not need to learn two languages, and in addition the TUB team can continue to teach \gls{java} both as an entry point to \gls{matsim} and as a general professional skill.
 
 % ====================================================================================================
 \subsection{MATSim Modules}
 According to the Merriam-Webster (\url{http://www.merriam-webster.com}), a module is
 %
-"one of a set of parts that can be connected or combined to build or complete something" 
+``one of a set of parts that can be connected or combined to build or complete something'' 
 %
 or more specifically
 %
-"a part of a computer or computer program that does a particular job". 
+``a part of a computer or computer program that does a particular job''. 
 %
-That is, "module" is not a very specific term, and in consequence modules exist in \gls{matsim} at many levels. Metaphorically speaking, the term module can thus be seen as the greatest common divisor (gcd) of different functionality as listed below.
+That is, ``module'' is not a very specific term, and in consequence modules exist in \gls{matsim} at many levels. Metaphorically speaking, the term module can thus be seen as the greatest common divisor (gcd) of different functionality as listed below.
 %% , so to say, a module is the \lstinline|AbstractClass| of \gls{matsim} functionality. 
 %
 % Eine abstrakte Klasse im Java-Sinne ist ein nicht einfaches Software design Konzept; das würde ich hier nur ungern nennen. kai, jan'15
@@ -187,7 +187,7 @@ public final String findParam(final String moduleName, final String paramName)|
 \end{lstlisting}
 Note, that here, the user's input is not checked while reading in the \gls{configfile} but much later, possibly in the external module.
 
-\kai{MZ, wollen wir dieses findParam eigentlich noch "advertisen"?  Bisher ist es immer darauf hinausgelaufen, dass ich das irgendwann durch eine "typisierte" config group ersetzt habe.  M.E.\ könnte man zukünftig auch gleich mit einer typisierten config group anfangen.  Oder?}
+\kai{MZ, wollen wir dieses findParam eigentlich noch ``advertisen''?  Bisher ist es immer darauf hinausgelaufen, dass ich das irgendwann durch eine "typisierte" config group ersetzt habe.  M.E.\ könnte man zukünftig auch gleich mit einer typisierten config group anfangen.  Oder?}
 \ah{Hab mal beides hingeschrieben. Michael: Ist eines von beidem immerhin empfohlen? ;)}
 
 % ...........................................................................
@@ -213,11 +213,11 @@ Also the standalone tools referencing \gls{matsim} as a library, such as the net
 
 % ##################################################################################################################
 \section{An Overview of Existing Modules}
-Figure~\ref{fig:matsimmodules} shows where in the \gls{matsim} loop, common \gls{matsim} modules are plugged in. Some modules are already presented in Chapter~\ref{ch:configuring}, while here, it is shown how functionality can be extended beyond using the \gls{configfile}, population and a network only. The technical details for module usage, in particular the parameter sets are described in \citep[][]{MATSim_Userguide_2015} and in the javadoc.
+Figure~\ref{fig:matsimmodules} shows where in the \gls{matsim} loop, common \gls{matsim} modules are plugged in. Some modules are already presented in Chapter~\ref{ch:configuring}, while here, it is shown how functionality can be extended beyond using the \gls{configfile}, population and a network only. The technical details for module usage, in particular the parameter sets are described in \citep[][]{MATSim_Userguide_2015} and in the \gls{javadoc}.
 
-For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be "mode choice" instead of the atomic categories, where we use terms "functionality" for the larger categories and "module" for the atomic components. %\kai{adapt table structure to revised chapter structure} \ah{erledigt}
+For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be ``mode choice'' instead of the atomic categories, where we use terms ``functionality'' for the larger categories and ``module'' for the atomic components. %\kai{adapt table structure to revised chapter structure} \ah{erledigt}
 
-Due to the distributed and project- and dissertation-driven \gls{matsim} contribution process (see Chapter~\ref{ch:developmentprocess}) modules are usually implemented for a specific practical purpose leading to various limitations of the respective module, e.g., modules might only work for a specific mode or for a defined calling order. Before, an additional effort is undertaken to generalize the module toward its embedding in the complete framework, the combination of a specific module with other functionality remains a non-straight-forward task. This means, that the user is in charge of systematically testing a specific modules combination before productively applying it.
+Due to the distributed and project- and dissertation-driven \gls{matsim} contribution process (see Chapter~\ref{ch:developmentprocess}) modules are usually implemented for a specific practical purpose leading to various limitations of the respective module, \eg modules might only work for a specific mode or for a defined calling order. Before, an additional effort is undertaken to generalize the module toward its embedding in the complete framework, the combination of a specific module with other functionality remains a non-straight-forward task. This means, that the user is in charge of systematically testing a specific modules combination before productively applying it.
 
 \createfigure%
 {MATSim functionality}%
@@ -307,10 +307,10 @@ The description of the modules in this and the following chapters is based on th
 	\hline
 	\textbf{Standalone Tools} & \\ % Out-Of-The-Loop Tools
 	\hline
-	Senozon via Visualizer & Chapter~\ref{ch:via} \\
-	OTFVis Visualizer & Chapter~\ref{ch:otfvis} \\
+	\gls{senozon} via Visualizer & Chapter~\ref{ch:via} \\
+	\gls{otfvis} Visualizer & Chapter~\ref{ch:otfvis} \\
 	Cadyts & Chapter~\ref{ch:cadyts} \\
-	\gls{matsim} For UrbanSim & Chapter~\ref{ch:matsim4urbansim} \\	
+	\gls{matsim} for UrbanSim & Chapter~\ref{ch:matsim4urbansim} \\	
 	Network Editors &  Chapter~\ref{ch:networkeditor} \\
 	Interactive Analysis and Decision Support & Chapter~\ref{ch:businessanalytics} \\
 \end{longtable}
@@ -329,12 +329,7 @@ The description of the modules in this and the following chapters is based on th
 \item Invoking the module: (1) if you use Controler, scenario is always there. (2) otherwise, it needs to be generated explicitly in java.  \kai{chk}
 \kai{Wir sind uns nicht im klaren darüber, was diese switches genau bedeuten, siehe \url{https://matsim.atlassian.net/browse/MATSIM-320}.  $\to$ weglassen.}
 
-\item Configuration: There is a \lstinline|scenario| config file section, but we don't know what it means. \kai{chk}
-%% \ah{Hier haben wir doch eine kleine Inkonsistenz zwischen Container und Configuration Section, oder?}
-
-\item Configuration: \lstinline|scenario| config file section \ah{Hier haben wir doch eine kleine Inkonsistenz zwischen Container und Configuration Section. Config section definiert lanes, signals, households, vehicles, transit. Scenario hat aber z.B. facilities und population drin. Man sollte diese config section evtl. umbenennen in sowas wie optional\_scenario\_elements oder ähnlich. \url{https://matsim.atlassian.net/browse/MATSIM-320}}
-
-\item Code: \lstinline|org.matsim.core.scenario|
+\item Configuration: There is a \lstinline|scenario| config file section, but we don't know what it means. \kai{chk} \ah{Hier haben wir doch eine kleine Inkonsistenz zwischen Container und Configuration Section. Config section definiert lanes, signals, households, vehicles, transit. Scenario hat aber z.B. facilities und population drin. Man sollte diese config section evtl. umbenennen in sowas wie optional\_scenario\_elements oder ähnlich. \url{https://matsim.atlassian.net/browse/MATSIM-320}}
 \end{compactitem}
 
 The \lstinline|scenario| module is
@@ -343,14 +338,14 @@ a container containing the main components of a scenario such as the \lstinline|
 
 %% The config file section is, on the other hand, used in a slightly different manner. It defines the usage of lanes, signal systems, road pricing, agent knowledges, vehicles, households and public transport. Still a respective config file section is required for every additional functionality. \kai{Ist das genau so?  Ich habe da ehrlich gesagt das genaue Design nie verstanden.  Oft für ein Eintrag in der scenario config group nur dafür, dass die Daten gelesen werden, und sonst passiert gar nichts.  Hm ...  Geradeziehen???}
 
+% Code: \lstinline|org.matsim.core.scenario|
+
 % ===================================================================================
 \subsection{Network}
 \label{sec:extending-network}
-% Code: \lstinline|org.matsim.core.network|
+An important feature of the network module is using time-dependent network attributes. Network state changes can thus be considered, as \eg implied by accidents, and adaptive traffic control, with varying speed limits or driving directions of lanes on multi-lane roads with heavily unbalanced load over the course of a day. Attributes that can be adapted are ``free speed'', ``number of lanes'' and ``flow capacity''.
 
-It is possible to make network attributes time-dependent, as observed in reality in case of accidents or adaptive traffic control, with varying speed limits or driving directions of lanes on multi-lane roads with heavily unbalanced load over the course of a day. Attributes that can be adapted are free speed, number of lanes and flow capacity.
-
-The adaptation can be specified by adding following two lines to the \lstinline|network| configuration file section:
+The adaptation can be specified by adding following two lines to the \lstinline|network| \gls{configfile} section:
 \begin{lstlisting}
 <param name="timeVariantNetwork" value="true" />
 <param name="inputChangeEventsFile" value="path_to_change_events_file" />
@@ -377,7 +372,7 @@ An example snippet setting the free speed of three network links to zero approxi
 \kai{add reference to real file}
 \ah{no suitable one found :(}
 
-Alternatively, network change events can be directly added to the code using the method \lstinline|createNetworkChangeEvent| in class \lstinline|NetworkFactoryImpl|. An example can be found under \lstinline|org.matsim.integration.timevariantnetworks.QSimIntegrationTest| class. \ah{unfortunately no javadoc}
+Alternatively, network change events can be directly added to the code using the method \lstinline|createNetworkChangeEvent| in class \lstinline|NetworkFactoryImpl|. An example can be found under \lstinline|org.matsim.integration.timevariantnetworks.QSimIntegrationTest| class. %\ah{unfortunately no javadoc}
 %
 %\begin{lstlisting}
 %networkChangeEvent =
@@ -390,26 +385,21 @@ Alternatively, network change events can be directly added to the code using the
 %
 %\kai{lieber ein Verweis auf ein code snippet?  U.a. muss man auf NetworkImpl casten, was wir gerne irgendwann loswerden wollen und daher nicht im Buch haben wollen.}
 
+% Code: \lstinline|org.matsim.core.network|
+
 % ===================================================================================
 \subsection{Population}
 \label{sec:extending-population}
-% Code: \lstinline|org.matsim.core.population|
+An powerful extension of a standard population can be achieved by specifying further agent attributes in a \lstinline|ObjectAttributes| file input to \gls{matsim} by parameter \lstinline|inputPersonAttributesFile|. Furthermore, subpopualtions can be defined by parameter \lstinline|subpopulation|.
 
-\ah{das einzig relevante hier:} Optionally the path to a person attributes file in \lstinline|ObjectAttributes| format can be specified. 
+% Code: \lstinline|org.matsim.core.population|
 
 % ===================================================================================
 \subsection{Counts: \lstinline|counts.xml|}
 \label{sec:extending-counts}
-\begin{compactitem}
-\item Invoking the module: By adding the respective configuration file section, the module is invoked automatically.
-\item Configuration: \lstinline|counts| file section
-\item Code: \lstinline|org.matsim.counts|
-\end{compactitem}
+By providing a counts input file and configuring the \lstinline|counts| \gls{configfile} section \gls{matsim} plots link volume comparisons between hourly simulated and counted values for motorized individual traffic \citep{Horni_unpub_IVT_2007}. 
 
-\gls{matsim} offers the possibility to perform link volume comparisons between simulated and counted value for both motorized individual traffic \citep{Horni_unpub_IVT_2007} and public transport. The later are described in Chapter~\ref{ch:pt}. The count package offers analyses for the average working day with hourly resolution. A google maps based visualization is available, showing each station with a its load curve in a pop-up window at the geographic location.
-
-As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario link volume comparisons have been successfully performed with data based on city level, cantonal level and national level \citep[][]{ASTRA_Webpage_2006}, where an average working day (Monday to Thursday, excluding public holidays) was built. Usually it is helpful to exclude a substantial part of the outer range of the modeled study region to prevent boundary effects.
-
+\paragraph{Input:}
 The following listing shows an example of a \lstinline|counts.xml| input file required to do traffic count comparisons. 
 
 \begin{xml}
@@ -445,32 +435,34 @@ The following listing shows an example of a \lstinline|counts.xml| input file re
 \end{xml}
 For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (\cf Section~\ref{sec:settingUpMatsim}).
 
-It starts with a header containing general descriptive information about the counts, including a year to describe how current the data is. Next, for each link having real world counts data, the hourly volumes can be specified. The network-link is referenced by the \lstinline|loc_id| attribute, in the example, it is link 2. The attribute \lstinline|cs_id| (counting station identifier) can be used to store an arbitrary description of the counting station. Most often it is used to note the original real word counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day and its value, are optional: That is, not for every hour a value must be given. If for a counting station data is only available for certain hours of the day (\eg only during peak hours) it is possible to omit the other hours from the \gls{xml} listing.  Note that the first hour of the day, from 0:00\,am to 1:00\,am, is numbered as "1", and \emph{not} by "0" as is often done in computer science.
+It starts with a header containing general descriptive information about the counts, including a year to describe how current the data is. Next, for each link having real world counts data, the hourly volumes can be specified. The network-link is referenced by the \lstinline|loc_id| attribute, in the example, it is link~2. The attribute \lstinline|cs_id| (counting station identifier) can be used to store an arbitrary description of the counting station. Most often it is used to note the original real word counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day and its value, are optional: That is, not for every hour a value must be given. If for a counting station data is only available for certain hours of the day (\eg only during peak hours) it is possible to omit the other hours from the \gls{xml} listing. Note that the first hour of the day, from 0:00\,am to 1:00\,am, is numbered as ``1'', and \emph{not} by ``0'' as is often done in computer science.
 
-The counts module generates overview summaries for the whole network but also analyses for individual links. A link analysis might look like Figure~\ref{fig:countcomparison}.
+\paragraph{Output:}
+The counts module prints overview summaries for the whole network but also analyses for individual links, \ie a google maps based visualization is available, showing each station with a its load curve (see the example in Figure~\ref{fig:countcomparison}) in a pop-up window at the geographic location shown .
 
 % ----------
 \createfigure%
 {Example for a link volumes comparison between simulation and road count values}%
 {Example for a link volumes comparison between simulation and road count values}%
 {\label{fig:countcomparison}}%
-{\includegraphics[width=0.7\textwidth, angle=0]{using/figures/link101227.png}}%
+{\includegraphics[width=0.7\textwidth, angle=0]{extending/figures/link101227.png}}%
 {}
 % ----------
 
-% ===================================================================================
-% -----------------------------------------------------------------------
-\subsection{Facilities: \lstinline|facilities.xml|}
-\label{sec:extending-facilities}
-Facilities are an optional element of core \gls{matsim}. 
-Some \glspl{module}, such as the destination innovation module (Chapter~\ref{ch:destinationchoice}), use it, however.
-If \gls{matsim} \glspl{facility} are used, the agents perform their activities in a specific \gls{facility} attached to a network link. 
-In the facilities file location attributes can be specified. Importantly, open times and capacities can be added here. 
+Public transport counts are described in Chapter~\ref{ch:pt}. \ah{check}
 
-%An example listing is as follows.
-A facilities file approximately looks as follows:
-%% <?xml version="1.0" encoding="UTF-8"?>
-%% <!DOCTYPE facilities SYSTEM "http://www.matsim.org/files/dtd/facilities_v1.dtd">
+As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario link volume comparisons have been successfully performed with data based on city level, cantonal level and national level \citep[][]{ASTRA_Webpage_2006}, where an average working day (Monday to Thursday, excluding public holidays) was built. Usually it is helpful to exclude a substantial part of the outer range of the modeled study region to prevent boundary effects.
+
+% Code: \lstinline|org.matsim.counts|
+
+% ===================================================================================
+\subsection{Facilities}
+\label{sec:extending-facilities}
+Facilities are an optional element of \gls{matsim}, some \glspl{module}, such as the destination innovation module (Chapter~\ref{ch:destinationchoice}), use it, however.
+If \gls{matsim} \glspl{facility} are used, the agents perform their activities in a specific \gls{facility} attached to a network link. 
+
+Facilities are included in the scenario by defining the \lstinline|facilities| \gls{configfile} section and providing a facilities file, approximately looking as follows.
+%
 \begin{xml}
 ...
 <facilities name="test facilities for triangle network">
@@ -482,17 +474,13 @@ A facilities file approximately looks as follows:
 	</facility>
 </facilities>
 \end{xml}
+%
+Besides activities, that can be done in the facility, further location attributes, such as open times, can be specified. 
 A working example facilities file can be found in the \gls{matsim} directory tree in the \lstinline{examples/siouxfalls-2014} directory.
 
-\subsection{Facilities}
-\label{sec:facilities}
-\begin{compactitem}
-\item Invoking the module: By adding the respective configuration file section, the module is invoked automatically. Please make sure, that added modules can manage facilities.
-\item Configuration: \lstinline|facilities| configuration file section
-\item Code: \lstinline|org.matsim.core.facilities|
-\end{compactitem}
+Facilities are mostly used in the \gls{matsim} Zürich group, in particular in the Zürich scenario, where facilities are derived from the Federal Enterprise Census~2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information and using NOGA-classification. Detailed technical description of facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008, Meister_unpub_IVT_2007}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
 
-Facilities are mostly used in the \gls{matsim} Zürich group, in particular in the Zürich scenario, where facilities are derived from the Federal Enterprise Census 2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information and using NOGA-classification. Detailed technical description of facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008, Meister_unpub_IVT_2007}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
+% Code:\lstinline|org.matsim.core.facilities|
 
 % ##################################################################################################################
 %% \subsection{Demand-Side Data Containers}
@@ -501,13 +489,11 @@ Facilities are mostly used in the \gls{matsim} Zürich group, in particular in t
 % ===================================================================================
 \subsection{Households}
 \label{sec:extending-households}
-\begin{compactitem}
-\item Invoking the module: Enable househlds in the \lstinline|scenario| section of the configuration file and provide the paths to a households file and another file containing the households' attributes in the configuration file section \lstinline|households|.
-\item Configuration: \lstinline|households| config file section
-\item Code: \lstinline|org.matsim.households|
-\end{compactitem}
+Households are another optional element of \gls{matsim}. To load households into a scenario, the \lstinline|useHouseholds| parameter in the \lstinline|scenario| \gls{configfile} section must be set to true. Furthermore the \gls{configfile} must contain a section \lstinline|households|. This section should specify the paths to a file containing households (parameter \lstinline|inputFile|) and a file containing further household attributes (parameter \lstinline|inputHouseholdAttributesFile|).
 
-Similar to the vehicles module, the household module is not used by default in \gls{matsim}.
+\ah{households file listing?}
+
+% Code: \lstinline|org.matsim.households|
 
 % ===================================================================================
 %% \subsection{Data containers belonging both to demand and to supply}
@@ -520,7 +506,7 @@ Similar to the vehicles module, the household module is not used by default in \
 
 \begin{compactitem}
 \item Invoking the module: Vehicles need to be enabled in the \lstinline|scenario| configuration file section.
-\item Configuration: At the moment vehicles are only used for public transport (Chapter~\ref{ch:pt}), i.e., motorized individual traffic vehicles are not used in \gls{matsim} nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section. 
+\item Configuration: At the moment vehicles are only used for public transport (Chapter~\ref{ch:pt}), \ie motorized individual traffic vehicles are not used in \gls{matsim} nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section. 
 \ah{Klären, ob man diese kleine Inkonsistenz beheben möchte.}  
 \kai{Ist das nicht schon erledigt?}
 \ah{final String vehiclesFile = this.config.transit().getVehiclesFile();}
@@ -528,10 +514,11 @@ Similar to the vehicles module, the household module is not used by default in \
 \ah{\url{https://matsim.atlassian.net/browse/MATSIM-314}}
 %
 This might change one day when the parking module will start to use vehicles. \citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households.
-\item Code: \lstinline|org.matsim.vehicles|
 \end{compactitem}
 
 The vehicles package provides a file reader and a factory to create vehicles.
+
+% Code: \lstinline|org.matsim.vehicles|
 
 % -----------------------------------------------------------------------
 \subsubsection{\lstinline|transitVehicles.xml|}
@@ -544,7 +531,7 @@ The vehicles package provides a file reader and a factory to create vehicles.
 
 To simulate public transport in \gls{matsim}, two additional input files are necessary. One is \lstinline|transitVehicles.xml|, which describes the vehicles which serve the lines: are they big buses, small buses, trains or light rail vehicles, and describes how many passengers each vehicle can transport.
 
-The description of public transport vehicles can be split into two parts: In a first part, vehicle types have to be described, specifying how many passengers such a vehicle can transport (Note that the term "vehicle" can refer to multiple vehicles in reality, \eg a train with several wagons should be specified as one long vehicle with a high number of seats). In the second part, actual vehicles have to be listed. Each vehicle has an identifier and is of a previously specified vehicle type. The following shows an example of a such a file, describing one vehicle type and two vehicles of that type. 
+The description of public transport vehicles can be split into two parts: In a first part, vehicle types have to be described, specifying how many passengers such a vehicle can transport (Note that the term ``vehicle'' can refer to multiple vehicles in reality, \eg a train with several wagons should be specified as one long vehicle with a high number of seats). In the second part, actual vehicles have to be listed. Each vehicle has an identifier and is of a previously specified vehicle type. The following shows an example of a such a file, describing one vehicle type and two vehicles of that type. 
 
 \begin{xml}
 <?xml version="1.0" encoding="UTF-8"?> 
@@ -569,7 +556,7 @@ The description of public transport vehicles can be split into two parts: In a f
 \label{sec:inputdata:transitschedule}
 The second file that is required to simulate public transport is \lstinline|transitSchedule.xml|, a rather complex file. It contains information about stop facilities (these can be bus stops, train stations or other stop locations) and transit services.
 
-In the first part, the stop facilities need to be defined, giving each one a coordinate, an identifier and a reference to a link in the network. The stop can only be served by vehicles driving on that specified link. Optionally, it is possible to specify a name for the stop and if other vehicles are blocked when a transit vehicle is waiting at a stop. This last attribute is useful to model e.g., the difference of bus stops, where one bus stop has a bay, while at another stop, the bus has to stop on the actual road.
+In the first part, the stop facilities need to be defined, giving each one a coordinate, an identifier and a reference to a link in the network. The stop can only be served by vehicles driving on that specified link. Optionally, it is possible to specify a name for the stop and if other vehicles are blocked when a transit vehicle is waiting at a stop. This last attribute is useful to model \eg the difference of bus stops, where one bus stop has a bay, while at another stop, the bus has to stop on the actual road.
 
 After the stop facilities, the transit lines, their routes and schedules are described. This is a hierarchical data structure: Each line can have one or more routes, each route has a route profile, a network route and a list of departures. The following listing represents an example of a minimalistic but complete transit schedule.
 %
@@ -612,7 +599,7 @@ After the stop facilities, the transit lines, their routes and schedules are des
 
 Each transit line must have a unique id. Each transit route has an id which must be unique within that one line, so the same route id can be used with different lines. The \lstinline|transportMode| describes on which links in the network the line runs (Actually, this is currently not yet enforced. It would be possible to let a bus run on train links in the simulation. It might be enforced in the future).
 
-The \lstinline|routeProfile| describes the stops this route serves, while route itself describes the series of links in the network the transit vehicle's driver has to drive along (thus often referred to as network route. Note that the complete route, i.e., all links the vehicle drives along, must be listed in the route, and not only the ones where stops are located. All the specified stops should occur along this route in the specified order. The time offsets given for each stop in the \lstinline|routeProfile| describe the relative time offset to an actual departure time. If a bus is to depart at 7\,am, and stop 2 has a \lstinline|departureOffset| 3\,minutes, this must be read that the bus is expected to depart at 7:03\,am at the specific stop. All stops in the route profile must have a departure offset defined, except the last one. All stops, except the first one, can optionally have an arrival offset defined. This is mostly useful for large trains that stop for several minutes at a station to help the routing algorithm to find connecting services at the correct time, namely the expected arrival time of the train.
+The \lstinline|routeProfile| describes the stops this route serves, while route itself describes the series of links in the network the transit vehicle's driver has to drive along (thus often referred to as network route. Note that the complete route, \ie all links the vehicle drives along, must be listed in the route, and not only the ones where stops are located. All the specified stops should occur along this route in the specified order. The time offsets given for each stop in the \lstinline|routeProfile| describe the relative time offset to an actual departure time. If a bus is to depart at 7\,am, and stop~2 has a \lstinline|departureOffset| 3\,minutes, this must be read that the bus is expected to depart at 7:03\,am at the specific stop. All stops in the route profile must have a departure offset defined, except the last one. All stops, except the first one, can optionally have an arrival offset defined. This is mostly useful for large trains that stop for several minutes at a station to help the routing algorithm to find connecting services at the correct time, namely the expected arrival time of the train.
 
 As last part of the description of a transit route, the list of departures should be given. Each departure has an id, which must be unique within the route, and gives the departure time at the first stop of the specified route profile. In addition, the departure specifies with which vehicle the service should be run. This vehicle must be defined in the aforementioned list of transit vehicles. 
 
@@ -632,7 +619,7 @@ If run, this validator will print out a list of errors or warnings, if any are f
 % ===================================================================================
 \subsection{Controler}
 \label{sec:extending-controler}
-The module, can be extended by \lstinline|Events| and \lstinline|Listeners| as detailed in Chapter~\ref{ch:extensionpoints}. 
+The controler module, can be extended by \lstinline|Events| and \lstinline|Listeners| as detailed in Chapter~\ref{ch:extensionpoints}. 
 %% Classes implementing one or more \lstinline|Listener Interfaces| and can be registered with the Controler with \lstinline|addControlerListener()|. The controler fires \lstinline|Controler Events| at specific points during the run to the registered \lstinline|Listeners|, which can then execute their own code.
 %
 %Das ist nur ein Ausschnitt von dem, was der Controler kann.  Da es im entsprechenden Kap. ja beschrieben wird, brauchen wir das hier m.E. nicht nochmal. kai, dec'14
@@ -645,35 +632,37 @@ The module, can be extended by \lstinline|Events| and \lstinline|Listeners| as d
 % ===================================================================================
 \subsection{\protect\gls{qsim}}
 \label{sec:extending-qsim}
-The simulation is able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, multi-modal scenarios (Section~\ref{sec:multimodalsim_qsim}) and in an experimental manner also traffic lights \citep[][]{Neumann_MastersThesis_2008}).
+The simulation is able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, and in an experimental manner traffic lights \citep[][]{Neumann_MastersThesis_2008}).
+
+The next section shows the necessary steps to enable \gls{qsim} handling \gls{multimodal} scenarios.
 
 % --------------------------------------
 \subsubsection{Multi-Modal Simulation With QSim}
 \label{sec:multimodalsim_qsim}
-\gls{qsim} can simulate \gls{multimodal} traffic. Congested modes, i.e., modes simulated not only teleported, are specified by the parameter \lstinline|mainMode|. Technically, these are the modes that the departure handler of the \lstinline|netsimengine| handles 
+\gls{qsim} can simulate \gls{multimodal} traffic. Congested modes, \ie modes simulated not only teleported, are specified by the parameter \lstinline|mainMode|. Technically, these are the modes that the departure handler of the \lstinline|netsimengine| handles 
 \footnote{Effective cell size, effective lane width, flow capacity factor, and storage capacity factor need to be set with diligence.}. 
-Theoretically also pedestrians can be included, however, only vehicular modes actually make sense, i.e., car, bike, and public transport, in particular buses. 
+Theoretically also pedestrians can be included, however, only vehicular modes actually make sense, \ie car, bike, and public transport, in particular buses. 
 \ah{Is that true with pt? Do we actually have all the vehicular traffic interactions in \gls{qsim}?}. 
 Assigning vehicles of a specific type to agents is done with in the vehicles input file \lstinline|<param name="vehiclesFile" value="..." />|. 
 \ah{is that the only place necessary?}. 
 Further configuration necessary to include public transport is detailed in Chapter~\ref{ch:pt}.
 
-To model multi-modal interactions, a fully multi-modal network, i.e., a network that has links being shared by different modes must be provided. 
+To model multi-modal interactions, a fully multi-modal network, \ie a network that has links being shared by different modes must be provided. 
 As shown in Section~\ref{sec:lgstarted-network}, specification of link modes is done with the network attribute \lstinline|modes|.
 Furthermore, the router needs to be informed about the network modes by the \lstinline|planscalcroute| parameter \lstinline|<param name="networkModes" value="car,ride" />|.
 \ah{is this a double configuration, qsim and planscalcroute? can we merge them?}
 
 The mode interactions can be further specified by \gls{qsim} parameter \lstinline|linkDynamics|. 
 This parameter is also productive for car mode only, but it is particularly important for multi-modal scenarios. 
-Dynamics either follow strict \gls{fifo} or include passing, i.e., \lstinline$<param name="linkDynamics" value="FIFO|PassingQ" />$. 
-Passing is all-or-none, i.e., either every vehicle type can pass every other type or none can pass none. 
-However, in reality, there usually is something between \gls{fifo} and free passing, e.g., a bus might not be able to pass a car, although being faster, whereas bikes might always be able to slip by cars. Such more fine-grained rules about passing do not yet exist at the time of writing this book. 
+Dynamics either follow strict \gls{fifo} or include passing, \ie \lstinline$<param name="linkDynamics" value="FIFO|PassingQ" />$. 
+Passing is all-or-none, \ie either every vehicle type can pass every other type or none can pass none. 
+However, in reality, there usually is something between \gls{fifo} and free passing, \eg a bus might not be able to pass a car, although being faster, whereas bikes might always be able to slip by cars. Such more fine-grained rules about passing do not yet exist at the time of writing this book. 
 
-Simulation experiments for \gls{qsim}'s relatively new multi-modal feature have been performed for the Patna scenario as reported in Section~\ref{sec:patna}.
+Simulation experiments for \gls{qsim}'s relatively new \gls{multimodal} feature have been performed for the Patna scenario as reported in Section~\ref{sec:patna}.
 
-An earlier multi-modal approach targeted at overcoming the teleportation estimates of non-motorized modes, particularly focused on pedestrians, is presented in Chapter~\ref{ch:multimodalsim}.
+An earlier \gls{multimodal} approach targeted at overcoming the teleportation estimates of non-motorized modes, particularly focused on pedestrians, is presented in Chapter~\ref{ch:multimodalsim}.
 
-\ah{Please check all of that. Thanks.}
+\ah{Please check this section. Thanks.}
 
 % ##################################################################################################################
 % Local Variables:
