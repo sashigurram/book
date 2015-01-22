@@ -8,40 +8,46 @@
 
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
-\createStandardInformation{multimodal}{\lstinline|RunMultimodalExample| class}{multimodal}{\citet{DoblerLaemmel_PED_2012}}
-
-% ##################################################################################################################
-
-\textit{Parts of this chapter are based on work published at the 6th International Conference on Pedestrian and Evacuation Dynamics in Zürich  \citep{DoblerLaemmel_PED_2012}}.
+\createStandardInformation{multimodal}{\lstinline|RunMultimodalExample| class}{multimodal}{\citet{00DoblerLaemmelAxhausen2012PedMultiModal}}
 
 % ##################################################################################################################
 \section{Introduction}
-There are two basic types of simulation models available in today's agent-based transport simulations. The first type was developed for large-scale scenarios with hundreds of thousands or even several million entities. To keep the computational effort acceptable, this type is based on simplified physical traffic flow representations as identified in a dynamic \gls{trafficassignment} field. In contrast, the second model type offers high detail and a microscopic underlying physics modeling for small scenarios with several hundred or a few thousand agents. While the first type deals only with vehicular traffic, the second generally also deals with pedestrians and cyclists.
+%There are two basic types of simulation models available in today's agent-based transport simulations. The first type was developed for large-scale scenarios with hundreds of thousands or even several million entities. To keep the computational effort acceptable, this type is based on simplified physical traffic flow representations as identified in a dynamic \gls{trafficassignment} field. In contrast, the second model type offers high detail and a microscopic underlying physics modeling for small scenarios with several hundred or a few thousand agents. While the first type deals only with vehicular traffic, the second generally also deals with pedestrians and cyclists.
+%
+%A way to reduce the gap between these two simulation types is presented in the following. 
 
-A way to reduce the gap between these two simulation types is presented in the following. The proposed \gls{multimodal} simulation model adds support for ride trips and non-motorized (i.e.,\,walk and bike) traffic to a framework for large-scale simulations. The next section discusses the requirements of these \gls{multimodal} extensions. Then, modeling approaches for non-motorized and ride trips, as well as their implementation in \gls{matsim}, are described.
+\gls{matsim}'s standard \gls{mobsim}, \gls{qsim}, has recently been enabled to model \gls{multimodal} scenarios as shown in Section~\ref{sec:multimodalsim_qsim}. 
+
+In this chapter \footnote{Parts of this chapter are based on work published at the 6th International Conference on Pedestrian and Evacuation Dynamics in Zürich \cite{00DoblerLaemmelAxhausen2012PedMultiModal}.},
+ an earlier approach to handle \gls{multimodal} scenarios, the \gls{multimodal} link extension, is presented. As shown below, it is a very efficient approach, that considers persons' biking and walking speeds to improve the teleportation estimates for these modes, whereas mode interactions are not taken into account. 
+
+%The proposed \gls{multimodal} simulation model adds support for ride trips and non-motorized (i.e.,\,walk and bike) traffic to a framework for large-scale simulations. The next section discusses the requirements of these \gls{multimodal} extensions. Then, modeling approaches for non-motorized and ride trips, as well as their implementation in \gls{matsim}, are described.
 %Finally, the implementations are tested by conducting experiments with a sample scenario.
 
-% ##################################################################################################################
-\section{Requirements}
-Common micro-simulations focusing on vehicular traffic do not provide detailed information about the agents' positions when walking or biking. They either totally ignore non-motorized trips or \gls{teleport} agents from their trips' origins to destinations. When using the latter approach, as \gls{matsim} does so far, travel times are often determined using simple estimation rules, e.g.,\,using an average travel speed and an estimated traveled distance based on the trip's crow-fly distance.
-
-An application's required level of detail strongly influences the modeling approach selection. A simple model including agents' age and gender, but not incorporating agent-agent interactions, might be detailed enough for some studies (e.g.,\,e-bikes or public transport). However, for other studies, a more detailed model, also simulating agent interactions, might be necessary (e.g.,\,evacuation of crowded pedestrian areas).
-
-A model's computational effort increases with its level of detail. Therefore, to keep computation times short, a model should only be as detailed as necessary. One solution is to provide several models with various levels of detail and selecting an appropriate one. On the other hand, a flexible model with an adaptive level of detail can be used. While the latter are more complex, they can provide more detail where needed and can be more aggregated where possible.
-
-One of few implementations of a model with different detail levels of detail is presented by \citet{SewallJEtAl_ACMTG_2011}. They use a hybrid model of both continuum and agent-based methods for vehicular traffic simulations. In regions of interest, the simulation uses an agent-based approach, in other areas a faster continuum model.
-
-For some applications, it is necessary for agents using different transport modes to interact. When modeling such interactions, it is important that infrastructure which would be shared in the real world is also shared in the simulation, to keep the simulation's behavior consistent. An example is shared trip simulation. When sharing infrastructure, an agent performing a ride trip physically enters a vehicle and reduces its free capacity. Therefore, the agent has to wait until the vehicle has arrived and then check whether it has free capacity left. Moreover, the vehicle can wait at the meeting point if the agent to be picked up has not yet arrived.
-
-When not sharing infrastructure, the simulation module for ride trips has to observe all vehicles and track their passengers and capacities. However, a vehicle will not recognize when a passenger has not yet arrived, because it does not communicate with the ride simulation module. As a result, the vehicle will depart and the passenger will not be able to perform its scheduled ride trip. An advantage of this approach is that a ride simulation module could be developed without changing code in the vehicular simulation module.
-
-Compared to vehicular traffic flow simulations, non-vehicular simulations require different input data. An agent's age and gender, for example, strongly influence its walk speed, but this is not taken into account by vehicular traffic flows models. Models including agent-agent or agent-environment interactions also need detailed information about a road network's geometry (e.g.,\,shape, width and height profile of links), as well as buildings and other obstacles in the simulated area.
+%% ##################################################################################################################
+%\section{Requirements}
+%Common micro-simulations focusing on vehicular traffic do not provide detailed information about the agents' positions when walking or biking. They either totally ignore non-motorized trips or \gls{teleport} agents from their trips' origins to destinations. When using the latter approach, as \gls{matsim} does so far, travel times are often determined using simple estimation rules, e.g., using an average travel speed and an estimated traveled distance based on the trip's crow-fly distance.
+%
+%An application's required level of detail strongly influences the modeling approach selection. A simple model including agents' age and gender, but not incorporating agent-agent interactions, might be detailed enough for some studies (e.g., e-bikes or public transport). However, for other studies, a more detailed model, also simulating agent interactions, might be necessary (e.g., evacuation of crowded pedestrian areas).
+%
+%A model's computational effort increases with its level of detail. Therefore, to keep computation times short, a model should only be as detailed as necessary. One solution is to provide several models with various levels of detail and selecting an appropriate one. On the other hand, a flexible model with an adaptive level of detail can be used. While the latter are more complex, they can provide more detail where needed and can be more aggregated where possible.
+%
+%One of few implementations of a model with different detail levels of detail is presented by \citet{SewallJEtAl_ACMTG_2011}. They use a hybrid model of both continuum and agent-based methods for vehicular traffic simulations. In regions of interest, the simulation uses an agent-based approach, in other areas a faster continuum model.
+%
+%For some applications, it is necessary for agents using different transport modes to interact. When modeling such interactions, it is important that infrastructure which would be shared in the real world is also shared in the simulation, to keep the simulation's behavior consistent. An example is shared trip simulation. When sharing infrastructure, an agent performing a ride trip physically enters a vehicle and reduces its free capacity. Therefore, the agent has to wait until the vehicle has arrived and then check whether it has free capacity left. Moreover, the vehicle can wait at the meeting point if the agent to be picked up has not yet arrived.
+%
+%When not sharing infrastructure, the simulation module for ride trips has to observe all vehicles and track their passengers and capacities. However, a vehicle will not recognize when a passenger has not yet arrived, because it does not communicate with the ride simulation module. As a result, the vehicle will depart and the passenger will not be able to perform its scheduled ride trip. An advantage of this approach is that a ride simulation module could be developed without changing code in the vehicular simulation module.
+%
+%Compared to vehicular traffic flow simulations, non-vehicular simulations require different input data. An agent's age and gender, for example, strongly influence its walk speed, but this is not taken into account by vehicular traffic flows models. Models including agent-agent or agent-environment interactions also need detailed information about a road network's geometry (e.g., shape, width and height profile of links), as well as buildings and other obstacles in the simulated area.
 
 % ##################################################################################################################
 \section{Modeling Approach and Implementation}
+% =========================================================================
 \subsection{Multi-modal Link Extension} 
 \label{sec:Multi-modalSimulation}
-For the simulation of non-motorized trips a new simulation module has been developed for \gls{matsim}'s \gls{qsim}. Figure~\ref{fig:multi-modal-link-extension} shows the implementation's basic concept---a \gls{multimodal} extension is added to each link object in the \gls{mobsim}. The existing network infrastructure is re-used, which---as discussed before---simplifies the realization of interactions between agents using different transport modes.
+%For the simulation of non-motorized trips a new simulation module has been developed for \gls{matsim}'s \gls{qsim}. 
+Figure~\ref{fig:multi-modal-link-extension} shows the implementation's basic concept---a \gls{multimodal} extension is added to each link object in the \gls{mobsim}. 
+% The existing network infrastructure is re-used, which---as discussed before---simplifies the realization of interactions between agents using different transport modes. \ah{But we do not do taht, right?}
 
 %---------------------------------------------------------------------
 \createfigure%
@@ -65,13 +71,7 @@ Each \gls{multimodal} link extension uses a priority queue to manage all agents 
 {}
 %---------------------------------------------------------------------
 
-To increase the simulation's accuracy in crowded regions, models able to simulate interactions between agents and their environment (other agents, but also other obstacles like buildings or parked vehicles) can be applied. A large group of models operating in this way make up a force-based approach, where, agents' movement is based on additive attracting and repelling forces, which ``push''  agents through the environment.
-
-In recent years, many different force-based models have been introduced and discussed; \citet{OlesonEtAl_BazzanKluegl_2009} give one overview. Most of those models are build on the so-called social force model, introduced by \citet{HelbingMolnar_PhysRevE_1995}. Collision avoiding behavior---as it can be observed in real-world situations---is implicitly reproduced by the basic social force model. The model works particularly well in high density conditions, such as those observed in evacuation situations \citep{HelbingEtAl_Nature_2000}.
-
-\citet{LaemmelPlaue_PED_2012} present an experimental implementation of a pedestrian simulation module for \gls{matsim} based on a force-base model. The agents' high-level planning (i.e.,\,route and destination choice) is performed on a graph representing the transport system (e.g.,\,a \gls{matsim} network), while the low level behavior (i.e.,\,physical interaction between the participants) is simulated with a force-based model. In addition to agent-agent interactions, interactions between agents and other obstacles are simulated. To do so, additional input data, like the road network's geometry and building limits, is required. Unfortunately, the scenario size is limited to a few thousand agents due to the model's high computational effort. An attempt to bypass this limitation is presented by \citet{DoblerLaemmel_PED_2012}. They combine the force-based pedestrian simulation module with the multi-modal link extension, creating the opportunity to simulate large-scale scenarios, while staying highly resolved where needed and being more aggregated where possible.
-
-%---------------------------------------------------------------------
+% =========================================================================
 \subsection{Travel Times} 
 \label{sec:TravelTimes}
 Walk travel time calculation is based on results of a comprehensive literature review by \citet{Weidmann_TechRep_IVT_1992}. Starting point is a normally distributed reference speed of 1.34\,meters per second with a standard deviation of 0.26\,meters per second, which leads to an individual reference speed for each person. \citet{HBS_2009} and \citet{HCM_2010} report comparable, but less detailed data. If a trip's purpose is known, a person's reference value can be adjusted \citep[commuting 1.49\,meters per second, shopping 1.16\,meters per second, leisure 1.10\,meters per second; see][]{HBS_2009}. Using the reference speed and referencing a person's age, gender and statistical spreading, a personalized speed is calculated (see Figure~\ref{fig:labelPedestriansAge}). Finally, to calculate the person's travel time on a specific link, influence of the link's steepness on the person's speed is taken into account (see Figure~\ref{fig:labelPedestriansSteepness}). The combination of person-specific attributes and link steepness is shown in Figure~\ref{fig:labelPedestriansAgeSteepness3d}.
@@ -164,9 +164,11 @@ When calculating the steepness factor, one must define whether a link goes uphil
 Another parameter affecting pedestrian and cyclist speed is the crowd density of the link where they are physically present. Data to take this effect into account is, again, presented by \citet{Weidmann_TechRep_IVT_1992}. However, to calculate crowd density of a link, its geometry has to be taken into account, as \,discussed by \citet{Laemmel_PhDThesis_2011}. 
 
 % ##################################################################################################################
-\section{Conclusions}
-This chapter introduced an extension of \gls{matsim}'s transport micro-simulation that adds support non-motorized trips to the framework. It allows the tracking an agent's movement in detail, essential for studies related to topics like evacuations, e-bikes, car sharing or public transport. Experiments testing the implementation and demonstrating its capabilities are described by \citet{Dobler_PhDThesis_2013}.
+\section{Conclusions and Future Work}
+The \gls{multimodal} \gls{extension} allows the tracking an agent's movement in detail, essential for studies related to topics like evacuations, e-bikes, car sharing or public transport. Experiments testing the implementation and demonstrating its capabilities are described by \citet{Dobler_PhDThesis_2013}.
 
-A first implementation of a pedestrian simulation module for \gls{matsim}, which also supports agent-agent interactions, was presented by \citet{LaemmelPlaue_PED_2012}. Due to the intense computational effort of the underlying physical model, the scenario size was limited to a few thousand agents. An experimental combination of their implementation and the module for non-vehicular traffic is described by \citet{DoblerLaemmel_PED_2012}. This combined implementation allowed simulation of regions within a multi-pedestrian scenario with a high resolution model; other regions were simulated with the faster, but less detailed approach.
+An application's required level of detail strongly influences the modeling approach selection. A simple model including agents' age and gender, but not incorporating agent-agent interactions, might be detailed enough for some studies (e.g.,\ e-bikes or public transport). However, for other studies, a more detailed model, also simulating agent interactions, might be necessary. 
+
+A first implementation of a pedestrian simulation module for \gls{matsim}, which also supports agent-agent interactions, was presented by \citet{00LaemmelPlaue2012CollisionAvoidingModels} introducing a force-base model. The agents' high-level planning (i.e.,\ route and destination choice) was performed on a graph representing the transport system (e.g.,\ a \gls{matsim} network), while the low level behavior (i.e.,\ physical interaction between the participants) was simulated with a force-based model. Due to the intense computational effort of the underlying physical model, the scenario size was limited to a few thousand agents. An attempt to bypass this limitation was presented by \citet{00DoblerLaemmel2012MultiModalEvac}. They combined the force-based pedestrian simulation module with the \gls{multimodal} link extension, creating the opportunity to simulate \gls{largescale} scenarios, by staying highly resolved where needed and being more aggregated where possible.
 
 % ##################################################################################################################

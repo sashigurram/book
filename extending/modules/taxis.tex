@@ -31,14 +31,14 @@ The \gls{dvrp} extension models both supply and demand, as well as optimizing fl
 \begin{compactitem}
 	\item Modeling the \gls{dvrp} domain
 	\item Listening to simulation events
-	\item Monitoring the simulation state (e.g.,\,movement of vehicles)
+	\item Monitoring the simulation state (e.g., movement of vehicles)
 	\item Finding least-cost paths
 	\item Computing schedules for drivers/vehicles
 	\item Binding drivers' behavior to their schedules
 	\item Coordinating interaction/cooperation between drivers, passengers and dispatchers
 \end{compactitem}
 
-Dynamic transport services are simulated in \gls{matsim} as one component of the overall transport system. The optimizer plugged into the \gls{dvrp} extension reacts to selected events generated during simulation, which could be: request submissions, vehicle departures or arrivals, etc. Additionally, it can monitor the movement of individual vehicles, as well as query other sources of online information, e.g.,\,current traffic conditions. In response to changes in the system, the optimizer may update drivers' schedules, either by applying smaller modifications or re-optimizing them from scratch. Drivers are notified about changes in their schedules and adjust to them as soon as possible, including immediate diversion from their current destinations. For passenger transport, such as taxi or demand-responsive transport services, interactions between drivers, passengers and the dispatcher are simulated in detail, including calling a ride or picking up and dropping off passengers.
+Dynamic transport services are simulated in \gls{matsim} as one component of the overall transport system. The optimizer plugged into the \gls{dvrp} extension reacts to selected events generated during simulation, which could be: request submissions, vehicle departures or arrivals, etc. Additionally, it can monitor the movement of individual vehicles, as well as query other sources of online information, e.g., current traffic conditions. In response to changes in the system, the optimizer may update drivers' schedules, either by applying smaller modifications or re-optimizing them from scratch. Drivers are notified about changes in their schedules and adjust to them as soon as possible, including immediate diversion from their current destinations. For passenger transport, such as taxi or demand-responsive transport services, interactions between drivers, passengers and the dispatcher are simulated in detail, including calling a ride or picking up and dropping off passengers.
 
 % ##################################################################################################################
 \section{DVRP Model}
@@ -64,7 +64,7 @@ In the most basic setup, there are only two types of entities, namely \lstinline
 % ========================================================================================
 \subsection{Schedule}
 \label{sec:VRP-schedule}
-Each \lstinline$Vehicle$ has a \lstinline$Schedule$, a sequence of different \lstinline$Task$s, such as driving from one location to another (\lstinline$DriveTask$), or staying at a given location (e.g.,\,serving a customer or waiting;  \lstinline$StayTask)$%.
+Each \lstinline$Vehicle$ has a \lstinline$Schedule$, a sequence of different \lstinline$Task$s, such as driving from one location to another (\lstinline$DriveTask$), or staying at a given location (e.g., serving a customer or waiting;  \lstinline$StayTask)$%.
 \footnote{
 Package \lstinline$org.matsim.contrib.dvrp.schedule$.
 }. A \lstinline$Schedule$ is where supply and demand are coupled. All schedules are calculated by an online optimization algorithm (see Section~\ref{sec:VRP-optimizer}) representing the fleet's dispatcher. Each task is in one of the following states (defined in the \lstinline$Task.TaskStatus$ enum): \lstinline$PLANNED$, \lstinline$STARTED$, \lstinline$PERFORMED$ or \lstinline$CANCELLED$; each schedule's status is one of the following:
@@ -87,7 +87,7 @@ Package \lstinline$org.matsim.contrib.dvrp.tracker$.
 }.
 In the most basic version, trackers predict only the end time of the current task. More complex trackers also provide detailed information on the current state of task execution. \lstinline$OnlineDriveTaskTracker$, for example, offers functionality similar to GPS navigation, such as monitoring the movement of a vehicle, predicting its arrival time and even diverting its path.
 
-\lstinline$ScheduleImpl$, along with \lstinline$DriveTaskImpl$ and \lstinline$StayTaskImpl$, is the default implementation of \lstinline$Schedule$ and offers several additional features, such as data validation or automated task handling. It also serves as the starting point when implementing domain-specific schedules or tasks (e.g.,\,\lstinline$ChargeTask$ in the electric VRP model mentioned above).
+\lstinline$ScheduleImpl$, along with \lstinline$DriveTaskImpl$ and \lstinline$StayTaskImpl$, is the default implementation of \lstinline$Schedule$ and offers several additional features, such as data validation or automated task handling. It also serves as the starting point when implementing domain-specific schedules or tasks (e.g., \lstinline$ChargeTask$ in the electric VRP model mentioned above).
 
 \subsection{Least-cost Paths}
 \label{sec:VRP-router}
@@ -109,7 +109,7 @@ To reduce computational burden, the already calculated paths can be cached for f
 \label{sec:dynAgent}
 Contrary to the standard day-to-day learning in \gls{matsim} (but see also Section~\ref{sec:transients-vs-learning}), in the \gls{dvrp} extension, each driver behaves dynamically and follows orders coming continuously from the dispatcher. The \lstinline$DynAgent$ class, along with the \lstinline$org.matsim.contrib.dynagent$ package, provides the foundation for simulating dynamically behaving agents. Although created for DVRP extension needs, \lstinline$DynAgent$ is not limited to this context and can be used in a wide range of different simulation scenarios where agent dynamism is required.
 
-\lstinline$DynAgent$'s main concept assumes an agent can actively decide what to do at each simulation step instead of using a pre-computed (and occasionally re-computed; see \ref{sec:impl-plan-based}) plan. It is up to the agent whether decisions are made spontaneously or (re-)planned in advance. In some applications, a \lstinline$DynAgent$ may represent a fully autonomous agent acting according to his/her desires, beliefs and intentions, whereas in other cases, it may be a non-autonomous agent following orders systematically issued from the outside (e.g.,\,a driver receiving tasks from a centralized vehicle dispatching system).
+\lstinline$DynAgent$'s main concept assumes an agent can actively decide what to do at each simulation step instead of using a pre-computed (and occasionally re-computed; see \ref{sec:impl-plan-based}) plan. It is up to the agent whether decisions are made spontaneously or (re-)planned in advance. In some applications, a \lstinline$DynAgent$ may represent a fully autonomous agent acting according to his/her desires, beliefs and intentions, whereas in other cases, it may be a non-autonomous agent following orders systematically issued from the outside (e.g., a driver receiving tasks from a centralized vehicle dispatching system).
 
 % ==================================================================================================
 \subsection{Main Interfaces and Classes}
@@ -123,9 +123,9 @@ The \lstinline$DynAgent$ class is a dynamic implementation of \lstinline$MobsimD
 	\item Dynamic legs and activities fully define the agent's low-level behavior, down to the level of a single simulation step.
 \end{compactitem}
 %
-At the higher level, the \lstinline$DynAgent$  dynamism results from the fact that dynamic activities and legs are usually created on the fly by the agent's \lstinline$DynAgentLogic$; thus, the agent does not have to plan future actions in advance. When the agent has a roughly detailed legs and activities plan, he/she does not have to adhere to it and may modify his/her plan at any time (e.g.,\,change the mode or destination of a future leg, or include or omit a future activity).
+At the higher level, the \lstinline$DynAgent$  dynamism results from the fact that dynamic activities and legs are usually created on the fly by the agent's \lstinline$DynAgentLogic$; thus, the agent does not have to plan future actions in advance. When the agent has a roughly detailed legs and activities plan, he/she does not have to adhere to it and may modify his/her plan at any time (e.g., change the mode or destination of a future leg, or include or omit a future activity).
 
-Low-level dynamism is provided by the execution of dynamic activities and legs. As for the currently executed activity, the agent can shorten or lengthen its duration at any time. Additionally, at each time step, the agent may decide what to do right now (e.g.,\,communicate with other agents, re-plan the next activity or leg, and so on). When driving a car (\lstinline$DriverDynLeg$), the agent can change the route, destination or even decide about picking up or dropping off somebody on the way. When using public transport (\lstinline$PTPassengerDynLeg$), the agent chooses which bus to get on and at which stop to exit.
+Low-level dynamism is provided by the execution of dynamic activities and legs. As for the currently executed activity, the agent can shorten or lengthen its duration at any time. Additionally, at each time step, the agent may decide what to do right now (e.g., communicate with other agents, re-plan the next activity or leg, and so on). When driving a car (\lstinline$DriverDynLeg$), the agent can change the route, destination or even decide about picking up or dropping off somebody on the way. When using public transport (\lstinline$PTPassengerDynLeg$), the agent chooses which bus to get on and at which stop to exit.
 
 Incidentally, the behavior of \gls{matsim}'s default plan-based agent, \lstinline$PersonDriverAgentImpl$, can be simulated by \lstinline$DynAgent$, combined with the \lstinline$PlanToDynAgentLogicAdapter$ logic. This adapter class creates a series of dynamic activities and legs that mimics a given \lstinline$Plan$ of static \lstinline$Activity$s and \lstinline$Leg$s.
 
@@ -227,7 +227,7 @@ Like in within-day replanning (see Chapter~\ref{ch:withinday}), dynamic transpor
 %
 \begin{enumerate}
 	\item Create a \lstinline$Scenario$ (\gls{matsim}'s domain data) and \lstinline$VrpData$ (VRP's domain data)	
-	\item Create a \lstinline$VrpOptimizer$; this includes instantiation of a least-cost path/tree calculator, e.g.,\,\lstinline$VrpPathCalculator$.
+	\item Create a \lstinline$VrpOptimizer$; this includes instantiation of a least-cost path/tree calculator, e.g., \lstinline$VrpPathCalculator$.
 	\item Call \lstinline$DynAgentLauncherUtils$' \lstinline$initQSim(Scenario scenario)$ method to create and initialize a \lstinline$QSim$; this includes creating a series of objects, such as an \lstinline$EventsManager$, \lstinline$DynActivityEngine$, or \lstinline$TeleportationEngine$
 	
 	\item When simulating passenger services, add a \lstinline$PassengerEngine$ to the \lstinline$QSim$; this includes instantiation of a \lstinline$PassengerRequestCreator$ that converts calls/orders into \lstinline$PassengerRequest$s; otherwise (i.e.,\,non-passenger services), add an appropriate source of requests to the \lstinline$QSim$, either as a \lstinline$MobsimEngine$ or \lstinline$MobsimListener$
