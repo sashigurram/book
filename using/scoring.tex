@@ -8,7 +8,7 @@
 
 % ##################################################################################################################
 
-\section{Introduction: Good Plans and Bad Plans, Score and Utility}
+\section{Good Plans and Bad Plans, Score and Utility}
 
 \kai{im folgenden habe ich noch ein paar Absätze neu geschrieben, muss daher doppelt gründlich durchgeschaut werden}
 
@@ -330,9 +330,9 @@ In \gls{matsim}, somewhat curiously it is possible to have activities with negat
 %% \kai{Der Ansatz, dass man alle Aktivitäten des selben Typs erst aufsummiert, würde dies hier natürlich auch lösen.}
 In this situation,
 % \kai{und auch wenn wir es anders machen würden!!}, 
-it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration. However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration without a penalty would lead to more time elsewhere, which the agent could used to accumulate score. %% This is a bit similar to the question if a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
+it can happen that an agent arrives at the last activity of the plan at a later time-of-day than when the first activity ended.  Originally, a score of zero was assigned to such activities of negative duration. However, the adaptive agents quickly found out that they could use this to their advantage: Expanding this negative duration without a penalty would lead to more time elsewhere, which the agent could use to accumulate score. %% This is a bit similar to the question if a search algorithm should allow infeasible solutions during search, and in an adaptive algorithm needs to be penalized high enough so that does not occur.
 %
-For an adaptive \gls{algorithm}, such a penalty needs to be defined such that it guides the adaptation back into the feasible region. From this, it follows that the penalty needs to become larger with increasing negativity of the duration. It also needs to be larger, \ie more strongly negative, than any score value for a positive activity duration.  The latter is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above. The current approach is to take the slope of the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ when it crosses zero, and extend this towards minus infinity (Figure~\ref{fig:score-extension}).
+For an adaptive \gls{algorithm}, such a penalty needs to be defined such that it guides the adaptation back into the feasible region. From this, it follows that the penalty needs to become larger with increasing negativity of the duration. It also needs to be larger, \ie more strongly negative, than any score value for a positive activity duration.  The latter is, however, impossible to achieve with a logarithmic form which tends to $-\infty$ as $t_{dur,q}$ approaches zero from above. The current approach is to take the slope of the expression $\beta_{dur} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$ when it crosses zero, and extend this towards minus infinity (Figure~\ref{tab:score-extension}).
 
 \paragraph*{First and Last Activity not the Same}
 
@@ -411,7 +411,7 @@ In \citet[][p.122]{ArnottEtAl_JUE_1990}, they are defined as $\alpha=6.40\ \$/h$
 \section{Applications and Extensions}
 \label{sec:appsExtensions}
 
-\kai{do we need the change to events-based scoring here?  revise ...}
+\kai{do we need to mention the change to events-based scoring here?  revise ...}
 The default scoring function has been applied and extended for various purposes. Please be aware, that the \gls{matsim} code base and in particular the scoring functionality has changed a lot in recent years, \eg the scoring is now based on events rather than on plans as it was the case before revision r17026 in October~2011.
 %\ah{Btw: when exactly (revision?) did we switch to events-based scoring? Is relevant in other chapters too.}
 %\kai{MZ should know this.}
