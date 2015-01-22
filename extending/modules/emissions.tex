@@ -14,11 +14,11 @@
 % ##################################################################################################################
 This chapter presents the emission modeling tool developed and tested by \citet{HuelsmannEtAl_LAS_2011} and further improved by \citet{KickhoeferEtAl_VanoutriveVerhetsel_2013}. The text in this chapter is a slightly updated version of the emission modeling tool description in \citet{Kickhoefer_PhDThesis_2014}.
 %
-The tool calculates warm and cold-start exhaust emissions for private cars and freight vehicles by linking \gls{matsim} simulation output to the detailed "\gls{hbefa}"  database, available for many European countries.
+The tool calculates warm and cold-start exhaust emissions for private cars and freight vehicles by linking \gls{matsim} simulation output to the detailed ``\gls{hbefa}'' database, available for many European countries.
 
 The chapter is structured as follows:
 %
-Section ~\ref{ch:emissions:relatedWork} reviews literature for other attempts to model transport-related emissions. Section~\ref{ch:emissions:overview} presents an overview of the "\gls{emt}" and Section ~\ref{ch:emissions:structure} shows how the tool is embedded in \gls{matsim}'s software structure.
+Section~\ref{ch:emissions:relatedWork} reviews literature for other attempts to model transport-related emissions. Section~\ref{ch:emissions:overview} presents an overview of the ``\gls{emt}'' and Section~\ref{ch:emissions:structure} shows how the tool is embedded in \gls{matsim}'s software structure.
 
 % ##################################################################################################################
 \section{Integrated Approaches for Modeling Transport and Emissions}
@@ -31,7 +31,7 @@ externalities has received increasing attention in transportation science.
 %
 The following paragraphs briefly present some recent 
 work in the exhaust emission modeling area; additionally, they 
-highlight differences to the \gls{emt} , which will then be described in 
+highlight differences to the \gls{emt}, which will then be described in 
 subsequent sections.
 
 \citet{CreutzigHe_TransResD_2009} and \citet{MichielsEtAl_TransResD_2012} use very 
@@ -45,7 +45,7 @@ this thesis, and a comparison does not seem constructive.
 \citet{BeckxEtAl_EnvPlannB_2009} use a sophisticated 
 activity-based model to simulate activity schedules for roughly 30\,\% of all 
 households in the Netherlands. Traffic assignment for passenger cars is 
-performed by using an aggregated `all-or-nothing' assignment approach, 
+performed by using an aggregated ``all-or-nothing'' assignment approach, 
 resulting in hourly aggregated traffic flows on the network. Based on the 
 average speed for a trip, the \gls{mimosa} then 
 calculates emission and fuel consumption rates, possibly dependent on vehicle 
@@ -57,8 +57,8 @@ Additionally, similar macroscopic emission models are typically unable to
 capture certain microscopic behavior accurately 
 \citep[see, e.g.,][]{AhnRakha_TransResD_2008}. 
 
-\citet{HirschmannEtAl_ITSC_2010} link the microscopic traffic flow simulator "\gls{vissim}" with the instantaneous 
-emission model "\gls{phem}"%
+\citet{HirschmannEtAl_ITSC_2010} link the microscopic traffic flow simulator ``\gls{vissim}'' with the instantaneous 
+emission model ``\gls{phem}''%
 %
 \footnote{
 %
@@ -74,15 +74,15 @@ suitable for large-scale scenarios due to the computational complexity of
 %
 In \citet{Kraschl-HirschmannEtAl_FISTS_2011}, the same authors attempt to 
 develop a parametrization of fuel consumption based on average speeds of 
-vehicles. Such parametrization could be helpful--- in the future--- to replace 
-time-consuming lookups in large databases (e.g., \gls{hbefa}). However, the 
-model would need to allow for more input variables (e.g., vehicle category, 
-traffic state, etc.) and provide more differentiated outputs, e.g., 
+vehicles. Such parametrization could be helpful---in the future---to replace 
+time-consuming lookups in large databases (\eg \gls{hbefa}). However, the 
+model would need to allow for more input variables (\eg vehicle category, 
+traffic state, etc.) and provide more differentiated outputs, \eg 
 different emission types.
 
-In a similar study, \citet{SongEtAl_TRR_2012} couples \gls{vissim} with the emission modeling tool "\gls{moves}". They find 
+In a similar study, \citet{SongEtAl_TRR_2012} couples \gls{vissim} with the emission modeling tool ``\gls{moves}''. They find 
 that the \gls{vissim}-simulated, vehicle-specific power distribution for 
-passenger cars deviates significantly from the observed distribution, meaning that  the estimated emissions also contain significant errors. Here 
+passenger cars deviates significantly from the observed distribution, meaning that the estimated emissions also contain significant errors. Here 
 again, the proposed model cannot be used for large-scale scenarios. Additionally, it seems questionable whether such detailed 
 modeling will prove to be superior to less detailed models like \gls{emt} in 
 this thesis.
@@ -98,7 +98,7 @@ hotspots are, in consequence, also predicted at the wrong locations and/or
 with the wrong amplitude.
 %
 To counter these disadvantages, they couple a static and a dynamic traffic assignment model with 
-the exhaust emission model "\gls{artemis}". Large differences in air 
+the exhaust emission model ``\gls{artemis}''. Large differences in air 
 pollutant emissions are found and hotspot locations differ.
 
 \citet{HatzopoulouMiller_TransResD_2010} develop a methodology for 
@@ -107,7 +107,7 @@ model. The approach is therefore fairly similar to the \gls{emt} of this thesis.
 %
 In contrast to that study, the \gls{emt} does not assume fixed exhaust 
 emissions per time unit. It uses a more detailed calculation of emissions based 
-on the two different traffic states: "free flow" and "stop\&go". It is, thus, 
+on the two different traffic states: ``free flow'' and ``stop\&go''. It is, thus, 
 able to capture congestion effects that emerge, as well as the time spent 
 in traffic jam. 
 Furthermore, the \gls{emt} calculates exhaust emissions for passenger cars 
@@ -143,8 +143,8 @@ The calculation of warm emissions is composed of two steps:
 In the first step, driving speed, as well as stop duration (and possibly an 
 approximation of acceleration/deceleration patterns), is captured by a 
 mapping of \gls{matsim}'s dynamic traffic flows to \gls{hbefa} traffic states. 
-These traffic states, namely "free flow", "heavy", "saturated", and "stop\&go", 
-have been derived from typical driving cycles, i.e., time-velocity profiles. 
+These traffic states, namely ``free flow'', ``heavy'', ``saturated'', and ``stop\&go'', 
+have been derived from typical driving cycles, \ie time-velocity profiles. 
 A parametrization of these profiles led to the definition of these traffic 
 states, which depend on speed limit, average speed, and road type. Thus, 
 typical emission factors for a specific traffic state on a specific road segment 
@@ -164,7 +164,7 @@ two traffic states: free flow and stop\&go.%
 \footnote{
 %
 Simplified because the difference between 
-traffic states---free flow, heavy, and saturated--- emission factors are 
+traffic states---free flow, heavy, and saturated---emission factors are 
 only marginal. In contrast, emission factors for 
 stop\&go are roughly twice as high.
 %
@@ -179,11 +179,11 @@ l_s = \frac{l \ v_s  (v_f-v)}{v (v_f - v_s)} \ ,
 \label{ch:emissions:eq:linkLengthStopGo}
 \end{equation}
 %
-where $l$ is the link length in kilometers from the network, $v_s$ is the stop\&go speed in $km/h$ for the \gls{hbefa} road type, $v_f$ is the free flow speed in $km/h$ from the network, and $v=\frac{l}{t}$ is the average speed on the link for the vehicle, $t$ being the link travel time of the vehicle in the simulation. For the derivation of Equation~\ref{ch:emissions:eq:linkLengthStopGo}, please refer to \citet{Kickhoefer_PhDThesis_2014}. The distance that the car is driving in free flow traffic state is then simply the remaining link length $l_f = l - l_s$.
+where $l$ is the link length in kilometers from the network, $v_s$ is the stop\&go speed in $km/h$ for the \gls{hbefa} road type, $v_f$ is the free flow speed in $km/h$ from the network, and $v=\frac{l}{t}$ is the average speed on the link for the vehicle, $t$ being the link travel time of the vehicle in the simulation. For the derivation of Equation~(\ref{ch:emissions:eq:linkLengthStopGo}), please refer to \citet{Kickhoefer_PhDThesis_2014}. The distance that the car is driving in free flow traffic state is then simply the remaining link length $l_f = l - l_s$.
 %
 The interpretation of this approach:
 %
-Cars drive in free flow until they have to wait in a queue.  Stop\&go traffic state applies only in the queue. According to the \gls{matsim} queue model presented in Section~\ref{sec:trafficflowmodel}
+Cars drive in free flow until they have to wait in a queue. Stop\&go traffic state applies only in the queue. According to the \gls{matsim} queue model presented in Section~\ref{sec:trafficflowmodel}
 %
 %\benjamin{Some pointer to the MATSim traffic flow model. Andi, can you do that?}
 %
@@ -226,7 +226,7 @@ are differentiated by parking duration in one hour time steps from 1\,hour to
 %
 The accumulated distance refers to the distance a vehicle travels \emph{after} 
 a cold start. According to \gls{hbefa}, there are different cold-start 
-emissions for short trips less than 1\,kilometer and and for longer trips equal to or greater than  1\,kilometer.
+emissions for short trips less than 1\,kilometer and and for longer trips equal to or greater than 1\,kilometer.
 %
 In reality, cold-start emissions are emitted along the route after a cold start;
 at this time, the emission modeling tool maps the short trip emissions to the road
@@ -263,12 +263,12 @@ refer to \lstinline|package-info.java| in the corresponding package.%
 %
 \footnote{
 %
-This information can also be accessed via the javadoc page for the emissions contribution; see \url{http://matsim.org/javadoc}.
+This information can also be accessed via the \gls{javadoc} page for the emissions contribution; see \url{http://matsim.org/javadoc}.
 %
 }
 %
 
-Figure~\ref{ch:emissions:fig:emissionTool} shows the simplified software structure of the emission modeling tool. The core of the tool is the \lstinline|EmissionModule| which needs to be created before the simulation starts.There are also two public methods that must be called: \lstinline|createLookupTables()| and \lstinline|createEmissionHandler()|.
+Figure~\ref{ch:emissions:fig:emissionTool} shows the simplified software structure of the emission modeling tool. The core of the tool is the \lstinline|EmissionModule| which needs to be created before the simulation starts. There are also two public methods that must be called: \lstinline|createLookupTables()| and \lstinline|createEmissionHandler()|.
 %
 % ------------
 \createfigure%
