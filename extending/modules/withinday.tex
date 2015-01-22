@@ -160,7 +160,7 @@ In this loop, each agent has the chance to deliberate in every time step. Clearl
 
 Such an approach does, however, lead to computational challenges. Going through all links and nodes in every time step is already an expensive operation and a number of efficiency improvements (such as "switching off non-active links") are contained in the code.  Also, the number of links or nodes is typically an order of magnitude smaller than the number of synthetic persons in a scenario. Thus, some massive optimization would have to be undertaken in order to make the above approach computationally efficient.
 
-An alternative approach to the above is to ask each agent only when a decision needs to be made. The most important decision for a driver is to chose the next link, i.e.,\,\begin{lstlisting}
+An alternative approach to the above is to ask each agent only when a decision needs to be made. The most important decision for a driver is to chose the next link, i.e., \begin{lstlisting}
 class MyDriverAgent implements DriverAgent {
    ...
    @Override
@@ -197,7 +197,7 @@ If there are relatively few times when agents should re-plan, and these times ca
 %
 If, on the other hand, an agent goes into the simulation mostly or entirely without a plan, like an entirely reactive taxi driver, then this speaks for replacing the agent.
 
-\gls{matsim} provides infrastructure for both approaches. The plan-based approach currently provides more support infrastructure, i.e.,\,many important use cases can be implemented by re-using existing methods. The approach that replaces the agent, in contrast, provides more flexibility. In particular, it allows agents to make decisions at the latest possible time without additional computational overhead.  While this is not entirely realistic behaviorally, such an approach is often desirable from a simulation perspective, where one does not want reproducibility of simulations depend on, e.g., random elements such as how far an agent plans ahead.
+\gls{matsim} provides infrastructure for both approaches. The plan-based approach currently provides more support infrastructure, i.e., many important use cases can be implemented by re-using existing methods. The approach that replaces the agent, in contrast, provides more flexibility. In particular, it allows agents to make decisions at the latest possible time without additional computational overhead.  While this is not entirely realistic behaviorally, such an approach is often desirable from a simulation perspective, where one does not want reproducibility of simulations depend on, e.g., random elements such as how far an agent plans ahead.
 
 % ============================================================================================
 \subsection{Implementation Alternative 1: Plan-Based Implementation}
@@ -236,7 +236,7 @@ In the present implementation, their \emph{random number generator} is re-initia
 
 Running the \lstinline{Identifier(s)} to select those agents who have to adapt their plans is performed sequentially. On one hand, an \lstinline{Identifier}'s runtime is typically very short and therefore no significant performance losses are expected. On the other hand, 
 %it is a robust design which 
-this makes the design robust so it cannot produce race conditions which could occur if multiple instances of an \lstinline{Identifier} run concurrently. An example would be an \lstinline{Identifier}, which selects agents on household level, i.e.,\,if a member of a household is identified, also all other members are added to the list of agents who have to be replanned. In an approach with parallel running instances of an \lstinline{Identifier}, an instance could identify member A of a household while concurrently another instance could identify member B of the same household. As a result, the household's members would be duplicated in the list of agents to be replanned---once added by each \lstinline{Identifier} instance.
+this makes the design robust so it cannot produce race conditions which could occur if multiple instances of an \lstinline{Identifier} run concurrently. An example would be an \lstinline{Identifier}, which selects agents on household level, i.e., if a member of a household is identified, also all other members are added to the list of agents who have to be replanned. In an approach with parallel running instances of an \lstinline{Identifier}, an instance could identify member A of a household while concurrently another instance could identify member B of the same household. As a result, the household's members would be duplicated in the list of agents to be replanned---once added by each \lstinline{Identifier} instance.
 %
 %\mnote{different basic replanners for current/future trips/acts}
 
@@ -318,7 +318,7 @@ The current \gls{matsim} code differentiates between \lstinline$Person$ and \lst
 %
 %\mnote{Which plan to modify}
 
-This leads to a question; should within-day adaptations to the \lstinline$Plan$ be passed through to the \lstinline$Person$? Let us call the actual trajectory through the system the "executed plan"'. This can be different from the original plan, i.e.,\,a different route, different departure times, different modes, etc. The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output. In consequence, it is not possible to treat the executed plan together with the just-obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
+This leads to a question; should within-day adaptations to the \lstinline$Plan$ be passed through to the \lstinline$Person$? Let us call the actual trajectory through the system the "executed plan"'. This can be different from the original plan, i.e., a different route, different departure times, different modes, etc. The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output. In consequence, it is not possible to treat the executed plan together with the just-obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
 
 As a result, the code uses a copy of the original plan and modifies the copy. The score, however, is given to the original plan. The implementation is able to 
 %% \kai{"is able to"? (existiert das derzeit als Option?}
@@ -367,7 +367,7 @@ According to \cite{RussellNorvigBook}, an agent is "anything that can be viewed 
 	\item \lstinline$MobsimAgent$ is a reactive agent that only exists during the \gls{mobsim}.
 \end{compactitem}
 
-For the Q-learning agent, perception works through the events; i.e.,\,events are used to compute the score, build mental models to generate alternatives, etc. Acting on the environment works through plan selection.
+For the Q-learning agent, perception works through the events; i.e., events are used to compute the score, build mental models to generate alternatives, etc. Acting on the environment works through plan selection.
 
 For the reactive agent, perception works more directly through callback methods, such as the simulation notifying the agent it has just moved through an intersection. Acting on the environment works through making decisions at decision points, e.g., about turning directions at intersections, or whether to board a certain bus.
 
