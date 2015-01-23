@@ -70,7 +70,7 @@ As discussed earlier, traditional simulation approaches (used in default-\gls{ma
 \label{sec:IterativeSimulationApproaches}
 %The starting point of an iterative simulation approach, as it is used in agent-based traffic flow micro-simulations like DYNEMO \citep{Schwerdtfeger_VolmulerHamerslag_1984, NoekelSchmidt_NSE_2002}, MATSim \citep{Balmer_PhDThesis_2007, BalmerEtAl_HEUREKA_2008} or TRANSIMS \citep{SmithEtAl_NTRPAC_1995, NagelRickert_ParComp_2001},  is the generation of an initial plan for each agent (e.g., based on census and~/~or travel diary data). A plan contains an agent's intended schedule of activities and the trips that connect them. For each activity, its type (e.g., \emph{work}, \emph{leisure} or \emph{shopping}), its location and the expected start and end time are given. A transport mode and a route specify a trip. The iterative optimization process consists of three steps. First, a mobility simulation executes the plans which are then evaluated using a fitness function. Finally, agents must select plans to be executed in the next iteration. Each agent can keep several plans in its memory. Bad plans can be deleted and new plans created by cloning and adapting existing ones using information (e.g., travel times) from one or more previous iterations. The allowed adaption operations define the optimization search space (e.g., routes, location and start / end times of activities). This iterative optimization can be seen as a period-to-period replanning strategy. Since one day is a commonly used duration, it is often called day-to-day replanning strategy.
 
-An iterative day-to-day replanning approach is appropriate as long as the scenario describes a \emph{typical} situation or day. For such scenarios, it is feasible to assume that agents are familiar with typically occurring events like traffic jams during peak hours. Therefore, they try to avoid driving during those times, or use alternative routes with less traffic. However, if the scenario contains unexpected events that the agents cannot foresee (e.g., accidents or heavy weather conditions), using an iterative approach is not an appropriate choice. First, user equilibrium will not be reached in such a scenario because agents do not have enough information to choose optimal routes and daily activity plans. Another problem is the optimization process itself. Even if an agent chooses its routes randomly due to a lack of information, it will eventually find a good route if it tries enough different routes.
+An iterative day-to-day replanning approach is appropriate as long as the scenario describes a \emph{typical} situation or day. For such scenarios, it is feasible to assume that agents are familiar with typically occurring events like traffic jams during peak hours. Therefore, they try to avoid driving during those times, or use alternative routes with less traffic. However, if the scenario contains unexpected events that the agents cannot foresee (\eg accidents or heavy weather conditions), using an iterative approach is not an appropriate choice. First, user equilibrium will not be reached in such a scenario because agents do not have enough information to choose optimal routes and daily activity plans. Another problem is the optimization process itself. Even if an agent chooses its routes randomly due to a lack of information, it will eventually find a good route if it tries enough different routes.
 
 %---------------------------------------------------------------------
 \createfigure%
@@ -117,7 +117,7 @@ Therefore, the decision-making process of an agent becomes an important topic. I
 
 Each within-day replanning action is categorized by two parameters---the replanned element of the plan (an activity or a trip) and the point in time when the replanned plan element is executed (right now or at a future point in time). If an activity is replanned, several changes are possible. Its start and end time can be adapted, its location can be changed, it can be dropped, or created new from scratch. For a trip, origin and destination, route, mode of transport and departure time can be replanned. Often replanning one single plan element results in a chain reaction that forces replanning of other plan elements. If, for example, an activity is dropped, the trips from and to this activity have to be merged.
 
-The second parameter categorizing a replanning action depends on when the replanned plan element is executed. This could be either the currently performed plan element or one being performed in the future. Clearly, in a currently performed plan element, not all previously mentioned replanning actions could be conducted. e.g., start time of an activity or transport mode of a trip currently being performed can no longer be adapted.
+The second parameter categorizing a replanning action depends on when the replanned plan element is executed. This could be either the currently performed plan element or one being performed in the future. Clearly, in a currently performed plan element, not all previously mentioned replanning actions could be conducted, \eg start time of an activity or transport mode of a trip currently being performed can no longer be adapted.
 
 Due to the limited available information, a within-day replanning approach will, in contrast to an iterative approach, not converge to a user equilibrium. Decisions made during the simulated time period may seem to be optimal when they are made. However, evaluated retrospectively, an agent might realize that they were not.
 
@@ -158,9 +158,11 @@ Within-day or en-route replanning means that travelers replan during the day or 
 \end{lstlisting}
 In this loop, each agent has the chance to deliberate in every time step. Clearly, the agent can decide that he/she has nothing to deliberate and return immediately.
 
-Such an approach does, however, lead to computational challenges. Going through all links and nodes in every time step is already an expensive operation and a number of efficiency improvements (such as "switching off non-active links") are contained in the code.  Also, the number of links or nodes is typically an order of magnitude smaller than the number of synthetic persons in a scenario. Thus, some massive optimization would have to be undertaken in order to make the above approach computationally efficient.
+Such an approach does, however, lead to computational challenges. Going through all links and nodes in every time step is already an expensive operation and a number of efficiency improvements (such as ``switching off non-active links'') are contained in the code.  Also, the number of links or nodes is typically an order of magnitude smaller than the number of synthetic persons in a scenario. Thus, some massive optimization would have to be undertaken in order to make the above approach computationally efficient.
 
-An alternative approach to the above is to ask each agent only when a decision needs to be made. The most important decision for a driver is to chose the next link, i.e., \begin{lstlisting}
+An alternative approach to the above is to ask each agent only when a decision needs to be made. The most important decision for a driver is to chose the next link, \ie 
+%
+\begin{lstlisting}
 class MyDriverAgent implements DriverAgent {
    ...
    @Override
@@ -193,11 +195,11 @@ For such applications, the plan-based approach (Section~\ref{sec:impl-plan-based
 
 Overall, implementers and users will have to balance their needs.  
 %
-If there are relatively few times when agents should re-plan, and these times can be easily identified by, i.e., corresponding to an emergency signal, then this is an indicator for the plan-based approach.  
+If there are relatively few times when agents should re-plan, and these times can be easily identified by, \ie corresponding to an emergency signal, then this is an indicator for the plan-based approach.  
 %
 If, on the other hand, an agent goes into the simulation mostly or entirely without a plan, like an entirely reactive taxi driver, then this speaks for replacing the agent.
 
-\gls{matsim} provides infrastructure for both approaches. The plan-based approach currently provides more support infrastructure, i.e., many important use cases can be implemented by re-using existing methods. The approach that replaces the agent, in contrast, provides more flexibility. In particular, it allows agents to make decisions at the latest possible time without additional computational overhead.  While this is not entirely realistic behaviorally, such an approach is often desirable from a simulation perspective, where one does not want reproducibility of simulations depend on, e.g., random elements such as how far an agent plans ahead.
+\gls{matsim} provides infrastructure for both approaches. The plan-based approach currently provides more support infrastructure, \ie many important use cases can be implemented by re-using existing methods. The approach that replaces the agent, in contrast, provides more flexibility. In particular, it allows agents to make decisions at the latest possible time without additional computational overhead.  While this is not entirely realistic behaviorally, such an approach is often desirable from a simulation perspective, where one does not want reproducibility of simulations depend on, \eg random elements such as how far an agent plans ahead.
 
 % ============================================================================================
 \subsection{Implementation Alternative 1: Plan-Based Implementation}
@@ -229,14 +231,14 @@ Figure~\ref{fig:labelWithinDayEngine} shows the structure of the \lstinline{With
 
 Responsibilities are divided between \lstinline{Replanners} and \lstinline{Identifiers}. The first ones are responsible for adapting the agents' plans, but they should not check whether an agent should be replanned or not. If, for example, a \lstinline{Replanner} updates an agent's route, it has to be ensured by the \lstinline{Identifiers} that only agents who are currently performing a leg are replanned. In turn, \lstinline{Identifiers} should select agents who have to be replanned but should not change their plans. As a result of this division, the often time-consuming replanning of the agents' plans can be performed using parallel threads, which leads to an almost linear speed-up. In general, simulation results do not depend on the order in which agents are replanned. \emph{Replanners} which use random numbers are a special case. 
 %They have to ensure that 
-In the present implementation, their \emph{random number generator} is re-initialized for every replanned agent, using a deterministic value (e.g., a combination of the agent's ID and the current time step). On one hand, this ensures that an agent's decisions can be reproduced even when the global sequence of random numbers changes. On the other hand, the simulation outcomes do not change if the number of threads used for the replanning is changed.
+In the present implementation, their \emph{random number generator} is re-initialized for every replanned agent, using a deterministic value (\eg a combination of the agent's \lstinline|ID| and the current time step). On one hand, this ensures that an agent's decisions can be reproduced even when the global sequence of random numbers changes. On the other hand, the simulation outcomes do not change if the number of threads used for the replanning is changed.
 % \kai{Christoph, ist es das?  ``have to'' (wie Du es vorher hattest), erscheint mir auf jeden Fall zu stark.  Oder hat es etwas mit multi-threading zu tun?}
 %
 %\mnote{identifiers run sequentially}
 
 Running the \lstinline{Identifier(s)} to select those agents who have to adapt their plans is performed sequentially. On one hand, an \lstinline{Identifier}'s runtime is typically very short and therefore no significant performance losses are expected. On the other hand, 
 %it is a robust design which 
-this makes the design robust so it cannot produce race conditions which could occur if multiple instances of an \lstinline{Identifier} run concurrently. An example would be an \lstinline{Identifier}, which selects agents on household level, i.e., if a member of a household is identified, also all other members are added to the list of agents who have to be replanned. In an approach with parallel running instances of an \lstinline{Identifier}, an instance could identify member A of a household while concurrently another instance could identify member B of the same household. As a result, the household's members would be duplicated in the list of agents to be replanned---once added by each \lstinline{Identifier} instance.
+this makes the design robust so it cannot produce race conditions which could occur if multiple instances of an \lstinline{Identifier} run concurrently. An example would be an \lstinline{Identifier}, which selects agents on household level, \ie if a member of a household is identified, also all other members are added to the list of agents who have to be replanned. In an approach with parallel running instances of an \lstinline{Identifier}, an instance could identify member ``A'' of a household while concurrently another instance could identify member ``B'' of the same household. As a result, the household's members would be duplicated in the list of agents to be replanned---once added by each \lstinline{Identifier} instance.
 %
 %\mnote{different basic replanners for current/future trips/acts}
 
@@ -262,11 +264,11 @@ Additionally, four basic \lstinline{Identifiers} have been implemented so far. T
 %
 %\mnote{AgentFilters (e.g., for spatial areas)}
 
-Often, identifiers have to handle only a subset of the population, e.g., only male agents, or agents currently traveling in a car. To prevent that the same functionality having to be implemented multiple times, so-called \lstinline{AgentFilters} are introduced. Their task is to remove agents not meeting the filter criteria from an agent set. Using \lstinline{AgentFilters} not only avoids duplicated code, but can also reduce computation effort: for example, two \lstinline{Identifiers} which should identify only agents currently traveling in a certain part of the network. Without \lstinline{AgentFilters}, each of them would have to track all traveling agents and their current positions. When this functionality is moved to an \lstinline{AgentFilter}, the two \lstinline{Identifiers} can share a single instance of that filter.
+Often, identifiers have to handle only a subset of the population, \eg only male agents, or agents currently traveling in a car. To prevent that the same functionality having to be implemented multiple times, so-called \lstinline{AgentFilters} are introduced. Their task is to remove agents not meeting the filter criteria from an agent set. Using \lstinline{AgentFilters} not only avoids duplicated code, but can also reduce computation effort: for example, two \lstinline{Identifiers} which should identify only agents currently traveling in a certain part of the network. Without \lstinline{AgentFilters}, each of them would have to track all traveling agents and their current positions. When this functionality is moved to an \lstinline{AgentFilter}, the two \lstinline{Identifiers} can share a single instance of that filter.
 %
 %\mnote{filters: simple and re-usable; identifiers: complex and include decision-making}
 
-Basically, simple and re-usable functionality should be implemented as \lstinline{AgentFilters}, while more complex and/or decision-making functionality should be part of an \lstinline{Identifier}. Again, an example: e.g., a scenario modeling the search for a parking space: a filter can be utilized to take only agents currently traveling by car into account. The \lstinline{Identifier} solves the more complex tasks, such as deciding when the agent starts its search, or selecting the searching strategy to be applied.
+Basically, simple and re-usable functionality should be implemented as \lstinline{AgentFilters}, while more complex and/or decision-making functionality should be part of an \lstinline{Identifier}. Again, an example: \eg a scenario modeling the search for a parking space: a filter can be utilized to take only agents currently traveling by car into account. The \lstinline{Identifier} solves the more complex tasks, such as deciding when the agent starts its search, or selecting the searching strategy to be applied.
 %
 %\mnote{basic AgentFilters}
 
@@ -312,13 +314,13 @@ Because it does not factor in such features, it is very robust, even in scenario
 
 The current \gls{matsim} code differentiates between \lstinline$Person$ and \lstinline$MobsimAgent$.  
 %
-\lstinline$Person$ can be seen as a very simple Q-learning entity, possessing multiple \lstinline$Plan$s ("actions"), each with an expected score updated with every plan run. Thus, a \lstinline$Person$ is consistent over the iterations; in fact, the internal state of each \lstinline$Person$ is written to file at the end of the iterations.
+\lstinline$Person$ can be seen as a very simple Q-learning entity, possessing multiple \lstinline$Plan$s (``actions''), each with an expected score updated with every plan run. Thus, a \lstinline$Person$ is consistent over the iterations; in fact, the internal state of each \lstinline$Person$ is written to file at the end of the iterations.
 %
 \lstinline$MobsimAgent$, in contrast, is instantiated every time the \gls{qsim} is called, and does not exist beyond the \gls{qsim} running time. A \lstinline$MobsimAgent$ is essentially reactive, queried by the framework about decisions when approaching intersections, arrival points, or public transit stops. In the standard implementation, these queries are answered by the plan, but other implementations can be used and/or additional \lstinline$MobsimAgent$s can be added which do not correspond to \lstinline$Person$s.
 %
 %\mnote{Which plan to modify}
 
-This leads to a question; should within-day adaptations to the \lstinline$Plan$ be passed through to the \lstinline$Person$? Let us call the actual trajectory through the system the "executed plan"'. This can be different from the original plan, i.e., a different route, different departure times, different modes, etc. The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output. In consequence, it is not possible to treat the executed plan together with the just-obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
+This leads to a question; should within-day adaptations to the \lstinline$Plan$ be passed through to the \lstinline$Person$? Let us call the actual trajectory through the system the ``executed plan''. This can be different from the original plan, \ie a different route, different departure times, different modes, etc. The original plan cannot just be replaced by the executed plan, since it is not clear that the executed plan, when used as input, will have itself as expected output. In consequence, it is not possible to treat the executed plan together with the just-obtained score as an action-value pair in the sense of Q-learning, since the score was obtained from the \emph{original} plan, not from the executed plan.
 
 As a result, the code uses a copy of the original plan and modifies the copy. The score, however, is given to the original plan. The implementation is able to 
 %% \kai{"is able to"? (existiert das derzeit als Option?}
@@ -360,16 +362,16 @@ The second set of experiments uses within-day replanning to create agents' initi
 \subsection{Implementation Alternative~2: Replacing the Agent}
 \label{sec:impl-repl-the-ag}
 %% \kai{go through following and make consistent!!!}
-According to \cite{RussellNorvigBook}, an agent is "anything that can be viewed as perceiving its environment through sensors and acting upon that environment through effectors."  As stated above, \gls{matsim} has agents on two levels:
+According to \cite{RussellNorvigBook}, an agent is ``anything that can be viewed as perceiving its environment through sensors and acting upon that environment through effectors.''  As stated above, \gls{matsim} has agents on two levels:
 %
 \begin{compactitem}
 	\item \lstinline$Person$ is a Q-learning agent that is persistent over the iterations.
 	\item \lstinline$MobsimAgent$ is a reactive agent that only exists during the \gls{mobsim}.
 \end{compactitem}
 
-For the Q-learning agent, perception works through the events; i.e., events are used to compute the score, build mental models to generate alternatives, etc. Acting on the environment works through plan selection.
+For the Q-learning agent, perception works through the events; \ie events are used to compute the score, build mental models to generate alternatives, etc. Acting on the environment works through plan selection.
 
-For the reactive agent, perception works more directly through callback methods, such as the simulation notifying the agent it has just moved through an intersection. Acting on the environment works through making decisions at decision points, e.g., about turning directions at intersections, or whether to board a certain bus.
+For the reactive agent, perception works more directly through callback methods, such as the simulation notifying the agent it has just moved through an intersection. Acting on the environment works through making decisions at decision points, \eg about turning directions at intersections, or whether to board a certain bus.
 
 As discussed, the approach described in Section~\ref{sec:impl-plan-based} assumes that the reactive agent still has followed (and generally follows) a plan. There may, however, be situations where this is inappropriate: for example, when the agent makes up the route as it goes, or when one wants to investigate models where each agent has its own perception and deliberation, rather than some external algorithm modifying its plan. As also mentioned earlier, there is no clear rule governing when and where an approach is better; it depends both on both project requirements and on the developer's personal preferences.
 %
@@ -508,7 +510,7 @@ ctrl.setMobsimFactory(new MobsimFactory(){
 ...
 ctrl.run() ;
 \end{lstlisting}
-The above "script" uses an anonymous class for the \lstinline$MobsimFactory$. This method of writing code is quite convenient for adapting \gls{matsim} to individual needs, also see Chapter~\ref{ch:extensionpoints}.
+The above ``script'' uses an anonymous class for the \lstinline$MobsimFactory$. This method of writing code is quite convenient for adapting \gls{matsim} to individual needs, also see Chapter~\ref{ch:extensionpoints}.
 
 For working code, see \url{http://matsim.org/javadoc} $\to$ core $\to$ \lstinline{RunOwnMobsimAgentUsingRouter} class and related.
 
