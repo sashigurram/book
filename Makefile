@@ -1,6 +1,14 @@
-.PHONY: pdf clean quick veryclean kai kai.aux
+.PHONY: pdf xepdf clean quick veryclean kai kai.aux
 
 NAME=main
+
+newpdf:
+	-xelatex  -interaction=nonstopmode ${NAME}
+	makeglossaries ${NAME}
+	makeindex ${NAME}
+	bibtex ${NAME}
+	xelatex -interaction=nonstopmode ${NAME}
+	xelatex -interaction=nonstopmode ${NAME}
 
 pdf:
 	-pdflatex  -interaction=nonstopmode ${NAME}
