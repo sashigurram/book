@@ -1,15 +1,15 @@
 % ##################################################################################################################
-\section{Singapore}
-\label{sec:singapore}
+\chapter{Singapore}
+\label{ch:singapore}
 \hfill \textbf{Authors:} Alexander Erath, Artem Chakirov
 
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
 % ##################################################################################################################
-The \gls{matsim} Singapore scenario \citet[][]{ErathEtAl_TechRep_FCL_forth} was implemented and is maintained at the \gls{fcl}, a research program of the \gls{sec} and part of Singapore's National Research Foundation \gls{create}. The scenario covered the whole Singapore area, with a population of approximately 5\,million and included traffic  to and from neighboring Malaysia. Singapore provides an excellent study case for an agent- and activity-based modeling approach: a fairly densely populated city, with an extensive public transport infrastructure and advanced transportation and pricing policies. 
+The \gls{matsim} Singapore scenario \citet[][]{ErathEtAl_TechRep_FCL_forth} was implemented and is maintained at the \gls{fcl}, a research program of the \gls{sec} and part of Singapore's National Research Foundation \gls{create}. The scenario covered the whole Singapore area, with a population of approximately five million and included traffic to and from neighboring Malaysia. Singapore provides an excellent study case for an agent- and activity-based modeling approach: a fairly densely populated city, with an extensive public transport infrastructure and advanced transportation and pricing policies. 
 
 % ====================================================================================================
-\subsection{Demand}
+\section{Demand}
 In the absence of a full-population census for Singapore, a synthetic population was generated based on data from the \gls{hits}~2008 \citep[][]{Choi_JOUR_2010} and population breakdowns of Singapore’s population census~2010. The synthetic population was derived using the fitting and sampling method \citep{MuellerKAxhausen_TRB_2011}, where a reference sample of household and person records was weighted, using an \gls{ipf} technique, until the weighted sample matched marginal census control totals. In our case, the reference sample was from travel survey records; fitting technique was the entropy optimization method proposed by \citet[][]{BarGeraEtAl_TRB_2009} and implemented by Kirill Müller, IVT, \gls{eth} Zürich. Then, the reference sample records were replicated through weighted sampling until the population total was met. 
  
 Car ownership was modeled on a household level and driving licenses were assigned to individuals, using discrete choice methods. Given the high car tax in Singapore, the model reflected lower car ownership level than in other developed nations. The model presented in \citet[][]{VanEggermondEtAl_IATBR_2012} included not only socio-economic, but also spatial variables and proved to be essential to the \gls{matsim} Singapore model, leading to accurate mode choice and mode share predictions. 
@@ -20,21 +20,21 @@ Assignment of households to buildings was performed using detailed information o
 Freight and cross border traffic, as well as tourist travel demand, were derived based on a set of origin destination matrices provided by the \gls{lta}. These matrices were converted into special daily plans. Information on the temporal distribution of freight trips was derived from loop detector data for freight and temporal attraction profiles of major tourist sites.
 
 % ====================================================================================================
-\subsection{Supply}
+\section{Supply}
 Using a semi-automatic map-matching algorithm~\ref{sec:networkeditor-singapore}, a high-resolution navigation network provided by \gls{navteq} was map-matched to, and enhanced with, \gls{lta}'s planning network lane and capacity information. Without access to traffic signal cycle time data, traffic lights were not specifically modeled. Extensive attention was paid to public transport modeling; interaction between private and public transport with Singapore’s high density and limited space was very important. Simulating dynamic effects, such as bus bunching, was crucial for obtaining realistic travel times and mode shares. Public transport network and schedule data provided by \gls{lta} included bus and train routes, as well as stop and station location. This information was matched to the road network, using yet another map-matching algorithm presented by \citet[][]{Ordonez_HKSTS_2011, Ordonez_Webpage_2011_4}. Recently, the scenario was updated using public transport schedule data derived from public transport smart card data records \citet[][]{Fourie_TechRep_FCL_2014}. Such schedule information provided actual vehicle dispatch frequencies and headways, which are continuously adjusted and, in some cases, can substantially deviate from published schedules. Additional features of public transport simulation in Singapore’s model included advanced bus dwell time model \citep[][]{SunEtAl_TransResA_2014}, as well as an approximation of the distance-based public transport fare scheme.
 
 Other modes, specifically walking and cycling, were ``teleported'' with constant travel speeds without any interaction with other users. 
 
 % ====================================================================================================
-\subsection{Behavioral parameters}
+\section{Behavioral Parameters}
 Behavioral parameters specific to Singapore's context were borrowed from \citet[][]{LTA_unpub_2009} and used with the widely applied Charypar-Nagel function for activity scoring \citet[][]{CharyparNagel2005ga4acts}. Thus, the same parameters were used for all agents, ignoring user preferences heterogeneity and time values in the initial scenario implementation. Furthermore, no additional crowding penalties (impacting travelers' discomfort) were considered at this stage; public transport overcrowding effects were taken into account only with physical vehicle capacity limitations, as well as their implications for dwell time and the bus bunching phenomenon. 
 
 % ====================================================================================================
-\subsection{Policy}
+\section{Policy}
 The \gls{matsim} model for Singapore also included \gls{erp} scheme, featuring time and vehicle-dependent road pricing. Based on two data sets, with location and time-dependent price levels, prevailing tolls were specified for 73\,network links where toll gantries had been installed, as of February, 2012. To account for the numerous dedicated bus lanes, additional links attributed to exclusive bus use were added to the network. The existing links' capacity was reduced accordingly, even if, in some cases, dedicated exclusive bus lanes by buses existed only during peak hours. Such a simplified setup, insensitive to the time-dynamic operation of dedicated lanes, led to actual road capacity underestimation during periods when bus lanes were also open to other motorized traffic. However, as most links featuring bus lanes consisted of three or more lanes, the effect on modeled traffic conditions during off-peak hours appeared to be low.
 
 % ====================================================================================================
-\subsection{Calibration and validation}
+\section{Calibration and Validation}
 Road usage data is available for around 200\, 
 %\textbf{EXACT 200?} 
 count stations at hourly intervals. Public transport smart card data availability provides an additional validation dimension. For the future,the opening of new \gls{mrt} lines---since setting up the model in 2012---presents a unique opportunity for comparing observed ridership with predicted ridership in the model. However, systematic calibration and detailed validation have not yet been conducted.
