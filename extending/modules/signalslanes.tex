@@ -24,7 +24,7 @@ Before we go into detail on motivating traffic signals with \gls{matsim}, a case
 
 % ========================================================================================
 \subsection{Case Study}
-The Cottbus scenario presented in Section~\ref{ch:scenarios:cottbus} is applied to illustrate the influence of traffic signal control. 
+The Cottbus scenario presented in Chapter~\ref{ch:cottbus} is applied to illustrate the influence of traffic signal control. 
 This section summarizes results published in~\citet{GretherBischoffNagel2011CottbusSylviaEventAbstract,Grether2014PhD}. Readers interested in details are referred to these publications. 
 
 The runs sequence is performed with three different signal control strategies:
@@ -41,29 +41,29 @@ If vehicles are still approaching at the end of this reduced green time, it is e
 {\label{fig:results_histogram}}
 {%
   \createsubfigure%
-  {No vs.~fixed-time vs.~traffic-actuated signal control, commuter traffic, iteration 1000}%
+  {No vs.~fixed-time vs.~traffic-actuated signal control, commuter traffic, iteration~1\,000}%
 	{\includegraphics[width=0.48\linewidth]{extending/figures/signalslanes/leg_histogram_cottbus_1292_1293_1291_it_1000_book.pdf}}
   {\label{fig:commuter_traffic}}%
   \createsubfigure%
-	{Average travel time for unexpected event traffic, iteration 1000}
+	{Average travel time for unexpected event traffic, iteration~1\,000}
 	{\includegraphics[width=0.48\linewidth]{extending/figures/signalslanes/average_travel_time_1220_1222_book.pdf}}
 	{\label{fig:unexpected_event}}
 }%
 {\citet{Grether2014PhD}}
 
-Simulation results for iteration 1000 of the Cottbus commuter scenario are depicted in Figure~\ref{fig:commuter_traffic}. The number of vehicles simultaneously on the road is plotted over the time-of-day. The results are quite similar for all signal control strategies; differences are small because of the lack of heavy congestion in the Cottbus scenario. 
+Simulation results for iteration~1\,000 of the Cottbus commuter scenario are depicted in Figure~\ref{fig:commuter_traffic}. The number of vehicles simultaneously on the road is plotted over the time-of-day. The results are quite similar for all signal control strategies; differences are small because of the lack of heavy congestion in the Cottbus scenario. 
 
-A change of signal control has more effect if unexpected traffic occurs in the network. It is assumed that the local soccer club, "FC Energie Cottbus", has a tournament taking place on a normal weekday, interfering with regular commuter traffic. In iteration 1000 of the commuter scenario, in addition to the commuters 0 to 2000\,vehicles drive to the Cottbus soccer stadium during the evening peak. It is assumed that 25\,\% of these fans come from Cottbus, while the other 75\,\% come from the "Spree-Nei{\ss}e" area around Cottbus, and that all fans start their trips between 17:00 and 18:00. 
+A change of signal control has more effect if unexpected traffic occurs in the network. It is assumed that the local soccer club, ``FC Energie Cottbus'', has a tournament taking place on a normal weekday, interfering with regular commuter traffic. In iteration~1\,000 of the commuter scenario, in addition to the commuters 0 to 2\,000\,vehicles drive to the Cottbus soccer stadium during the evening peak. It is assumed that 25\,\% of these fans come from Cottbus, while the other 75\,\% come from the "Spree-Nei{\ss}e" area around Cottbus, and that all fans start their trips between 5\,pm and 6\,pm. 
 
-Figure~\ref{fig:unexpected_event} plots the number of soccer fans on the x-axis, and the average travel time of all travelers on the y-axis. Without any additional vehicles, the traffic-actuated signal control leads to a gain of approximately 1\,minute per traveler. The more additional traffic approaches the stadium, the more the traffic-actuated control saves travel time. When 2000\,additional vehicles are on the road, travel time savings reach ca.~15\,minutes per traveler. 
+Figure~\ref{fig:unexpected_event} plots the number of soccer fans on the x-axis, and the average travel time of all travelers on the y-axis. Without any additional vehicles, the traffic-actuated signal control leads to a gain of approximately 1\,minute per traveler. The more additional traffic approaches the stadium, the more the traffic-actuated control saves travel time. When 2\,000\,additional vehicles are on the road, travel time savings reach ca.~15\,minutes per traveler. 
 
-Summarizing: Slightly jammed commuter scenarios, where a change in traffic signal control leads to noticeably decreased overall travel time, have not yet been simulated with \gls{matsim}. Looking at different objectives with more fine-grained analysis tools can reveal network wide effects~\citep[e.g., see the analysis using macroscopic fundamental diagrams][pp.114]{Grether2014PhD}, but this is work in progress. More heavily jammed scenarios can increase the overall traffic impact of a change in traffic signal control. Nevertheless, the case study shows significant effects of traffic-responsive signal control when something unexpected happens and travelers do not react.  
+Summarizing: Slightly jammed commuter scenarios, where a change in traffic signal control leads to noticeably decreased overall travel time, have not yet been simulated with \gls{matsim}. Looking at different objectives with more fine-grained analysis tools can reveal network wide effects~\citep[\eg see the analysis using macroscopic fundamental diagrams][pp.114]{Grether2014PhD}, but this is work in progress. More heavily jammed scenarios can increase the overall traffic impact of a change in traffic signal control. Nevertheless, the case study shows significant effects of traffic-responsive signal control when something unexpected happens and travelers do not react.  
 
 % ========================================================================================
 \subsection{Overview MATSim \& Traffic Signals}
 This case study highlights some previously researched \gls{matsim} traffic signals simulations aspects. 
-\gls{matsim} is not always the traffic signal control "tool of choice" for all questions. 
-The code base, however, can help simulate other use cases, e.g., evacuation or air transport scenarios; 
+\gls{matsim} is not always the traffic signal control ``tool of choice'' for all questions. 
+The code base, however, can help simulate other use cases, \eg evacuation or air transport scenarios; 
 \gls{matsim}'s open source nature provides hooks and interfaces for extension. 
 But one must consider the amount of work required, the current state of development and specific project planning. 
 The rest of the chapter goes into more detail.  
@@ -71,7 +71,7 @@ Section~\ref{sec:signals_traffic_signal_control} provides some traffic signal co
 Technical details can be found in the traffic signals user guide.  
 Section~\ref{sec:signals_network_traffic_flow} goes into details on network and traffic flow modeling. 
 Iterations and learning are discussed in Section~\ref{sec:signals_iterations_learning}. 
-When it comes to agent based learning, \gls{matsim} is very fast---the presented case study requires, on average, 17\,seconds computation time per iteration---for scoring, replanning, and output. One complete run sequence: (1000\,iterations, single core mobility simulation, multi-core replanning) was simulated in 9\,hours and 12\,minutes. 
+When it comes to agent based learning, \gls{matsim} is very fast---the presented case study requires, on average, 17\,seconds computation time per iteration---for scoring, replanning, and output. One complete run sequence: (1\,000\,iterations, single core mobility simulation, multi-core replanning) was simulated in 9\,hours and 12\,minutes. 
 The simulation speed allows exploration of network-wide behavioral reactions to  traffic signal control changes and 
 the resource efficient simulation enables the joint simulation of several policies. 
 Before publishing results, one should consider several specific aspects of evaluation and simulation results interpretation. 
@@ -86,7 +86,7 @@ Fixed-time traffic signal control periodically assigns green times for each junc
 Cycle time and green split are not modified within short time periods. 
 To establish green waves between adjacent junctions, the green light start for approaches within the cycle can be adjusted by a global timer; 
 these shifts are referred to as coordination offsets. 
-For optimization of fixed-time signals, different equilibrium traffic flow regimes are determined for several periods of time, e.g.: weekday morning, midday, evening and night plus a separate estimate for weekends. Optimization may target all signalized junction parameters---green split, cycle, offsets, and phase composition,  
+For optimization of fixed-time signals, different equilibrium traffic flow regimes are determined for several periods of time, \eg weekday morning, midday, evening and night plus a separate estimate for weekends. Optimization may target all signalized junction parameters---green split, cycle, offsets, and phase composition,  
 but it is not possible to react to current changes in equilibrium traffic flows. 
 
 Traffic-responsive control reacts to current traffic patterns, adjusting traffic signal control parameters on the fly. 
