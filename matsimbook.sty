@@ -1,0 +1,180 @@
+\ProvidesPackage{matsimbook}
+
+% I (mr) tried to integrate the following lines somehow into preamble.tex,
+% but then e.g. the customized chapter heads didn't work, it seemed as if
+% they just got ignored. I gave up after some while, and just include this
+% style file instead...
+
+\usepackage[sf,bf]{titlesec}
+\usepackage{titling}
+
+
+\ifdefined\XeTeXversion
+  % some special features if xetex is available
+
+\usepackage[math]{iwona}% use a math font matching our main font coming up
+
+
+%%%%%%% CUSTOM FONTS
+\setmainfont[Path = fonts/, Mapping=tex-text, UprightFont = *-Roman, BoldFont = *-Bold, ItalicFont = *-Italic]{Delicious}
+\setmonofont[Scale=0.9, Path = fonts/]{Inconsolata}
+
+%\newfontfamily\headingfont[Path = fonts/, UprightFont = *-Roman, BoldFont = *-Bold, ItalicFont = *-Italic]{Delicious}
+\newfontface\headingfont[Path = fonts/]{Delicious-Bold}
+
+\titleformat*{\section}{\LARGE\headingfont}
+\titleformat*{\subsection}{\Large\headingfont}
+\titleformat*{\subsubsection}{\large\headingfont}
+\titleformat*{\paragraph}{\headingfont}
+\renewcommand{\maketitlehooka}{\headingfont}
+
+
+
+\else
+
+\newcommand{\headingfont}{\sffamily\bfseries}
+
+\fi
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CHAPTER HEADER STYLING
+
+
+\newcommand{\chptNumFont}{\fontsize{76}{80}\headingfont}
+\newcommand{\chptFont}{\Huge\bfseries\headingfont}
+
+\newlength{\chptTitleWidth}
+\newlength{\chptPadding}
+\newlength{\chptNoPos}
+
+\setlength{\chptPadding}{10pt}         % Space between gray box border and text
+\setlength{\chptTitleWidth}{\textwidth}
+\addtolength{\chptTitleWidth}{-2\chptPadding}
+
+
+% the chapter head consists of 3 parts:
+% - the number
+% - an upper gray box
+% - a lower gray box containing the title
+\def\@makechapterhead#1{%
+  % based on fncychap style ``Bjornstrup''
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne%%%% if show chapter number%
+     % show chapter number and upper box    
+      \if@mainmatter%%%%% only in mainmatter
+        \settowidth{\chptNoPos}{\chptNumFont\thechapter}
+	    	\addtolength{\chptNoPos}{+10pt}  % Amount of space by which the number is shifted right
+		    \fboxsep=0pt%
+		    \colorbox[gray]{.85}{%
+		    \rule{0pt}{40pt}\parbox[b]{\textwidth}{\hfill}%
+		    }%
+		    \kern-\chptNoPos\raise50pt%
+		    \hbox{\color[gray]{0}\chptNumFont{\thechapter}}\\%
+      \fi
+    \fi
+    \interlinepenalty\@M
+    \if@mainmatter%%%%% if in mainmatter%
+     % show lower box with chapter title
+      \nointerlineskip\raggedright%
+      \fboxsep=\chptPadding%
+      \vskip-1ex%
+      \colorbox[gray]{.85}{%
+      \parbox[t]{\chptTitleWidth}{\chptFont{#1}}%
+      }\par\nobreak%
+      \vskip 40\p@%
+    \else%
+%     % show upper and lower box, without number
+      \fboxsep=0pt
+      \colorbox[gray]{.85}{%
+      \rule{0pt}{40pt}\parbox[b]{\textwidth}{\hfill}%
+      }\\%
+      \nointerlineskip\raggedright%
+      \fboxsep=\chptPadding%
+      \colorbox[gray]{.85}{%
+      \parbox[t]{\chptTitleWidth}{\chptFont{#1}}%
+      }\par\nobreak%
+      \vskip 40\p@%
+    \fi
+  }  
+}
+
+\def\@makeschapterhead#1{%design the chapter head for \chapter*{}
+  \thispagestyle{plain}
+  % based on fncychap style ``Bjornstrup''
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont
+%   % show upper and lower box, without number
+    \fboxsep=0pt
+    \colorbox[gray]{.85}{\rule{0pt}{40pt}\parbox[b]{\textwidth}{\hfill}}\\%
+    \interlinepenalty\@M
+    \nointerlineskip\raggedright%
+    \fboxsep=\chptPadding%
+    \vskip-1ex
+    \colorbox[gray]{.85}{\parbox[t]{\chptTitleWidth}{\chptFont{#1}}}\par\nobreak%
+    \vskip 40\p@%
+  }  
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PART PAGE STYLING
+
+\newcommand{\partNumFont}{\fontsize{30}{36}\headingfont}
+\newcommand{\partFont}{\fontsize{48}{72}\headingfont}
+
+
+\def\@makeparthead#1{
+  \vspace*{50\p@}%
+  \colorbox{white}{%
+    \parbox[b]{\textwidth}{%
+      \ifnum \c@secnumdepth >\m@ne \partNumFont{Part \thepart} \fi%
+    }%
+  }%
+  
+  \colorbox{white}{%
+    \parbox[b]{\textwidth}{%
+    \partFont{\expandafter{#1}}\par%
+    }%
+  }%
+ }
+
+\def\@makesparthead#1{
+  \vspace*{50\p@}%
+  \colorbox{white}{%
+    \parbox[b]{\textwidth}{%
+    \partFont{\expandafter{#1}}\par%
+    }%
+  }%
+
+ }
+
+\def\part{%
+   \thispagestyle{empty}
+   \global\@topnum\z@
+   \@afterindenttrue
+   % \let\\\relax
+   \secdef\@part\@spart}
+
+\def\@part[#1]#2{
+  \ifnum \c@secnumdepth >\m@ne
+    \refstepcounter{part}
+    \addcontentsline{toc}{part}{\protect\numberline{Part\ \thepart:}#1}
+  \else
+    \addcontentsline{toc}{part}{#1}
+  \fi
+  \addtocontents{lof}{\protect\addvspace{5\p@}}
+  \addtocontents{lot}{\protect\addvspace{5\p@}}
+  \@makeparthead{#2}
+  \@afterheading
+}
+
+\def\@spart#1{\@makesparthead{#1}\@afterheading}
+
