@@ -16,3 +16,17 @@ This agreement is *only* for the free fonts that can be downloaded *directly* fr
 
 ---------------
 retrieved January 23, 2015 // mrieser
+
+
+
+Inconsolata
+================================================================
+
+This font is an open source font from http://levien.com/type/myfonts/inconsolata.html
+
+The font is released under the Open Font License of SIL, see
+http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&item_id=OFL
+
+---------------
+retrieved January 23, 2015 // mrieser
+
