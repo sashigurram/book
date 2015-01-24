@@ -1,4 +1,4 @@
-.PHONY: pdf xepdf clean quick veryclean kai kai.aux
+.PHONY: pdf newpdf clean quick veryclean kai kai.aux
 
 NAME=main
 
