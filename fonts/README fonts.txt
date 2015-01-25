@@ -27,6 +27,10 @@ This font is an open source font from http://levien.com/type/myfonts/inconsolata
 The font is released under the Open Font License of SIL, see
 http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&item_id=OFL
 
+The actual font files are from googlefonts:
+https://code.google.com/p/googlefontdirectory/source/browse/ofl/#ofl%2Fakronim%253Fstate%253Dclosed
+which also provides a bold variant
+
 ---------------
-retrieved January 23, 2015 // mrieser
+retrieved January 25, 2015 // mrieser
 
