@@ -1,2 +1,2 @@
-pdflatex main
+xelatex main
 

@@ -1,10 +1,10 @@
-pdflatex main
+xelatex main
 bibtex main
 makeglossaries main
-pdflatex main
+xelatex main
 bibtex main
 makeglossaries main
 makeindex main
-pdflatex main
-pdflatex main
+xelatex main
+xelatex main
 
