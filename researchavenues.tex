@@ -1,4 +1,4 @@
-\chapter{Research Avenues \who{Axhausen, Nagel}}
+\chapter{Research Avenues}
 \label{ch:researchavenues}
 % ##################################################################################################################
 
@@ -45,24 +45,22 @@
 
 % 20.6 Learning an action-value function (Q values, Q-learning)
 
-The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the so-called field of Complex Adaptive Systems (CAS).  
+The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the so-called field of \glspl{cas}.  
 %
-\cite{ArthurBar} addresses a coordination problem, where agents receive a payoff only when less than 60 out of 100 go to an event.  He addresses this by first generating a large number of heuristic predictors for the next round's attendance, such as "same as in last round" or "trend of last four rounds".  He next gives each agent a randomly selected handful of these strategies, so that agents in general have different sets of predictors.  Then, many rounds of the game are played, where the score of each predictor is updated based on its prediction quality, and agents act based on their currently best predictor.  Simulations demonstrate that the approach leads to successful coordination, i.e., around 60\,agents show up in every round.
+\cite{ArthurBar} addresses a coordination problem, where agents receive a payoff only when less than 60 out of 100 go to an event.  He addresses this by first generating a large number of heuristic predictors for the next round's attendance, such as ``same as in last round'' or ``trend of last four rounds''.  He next gives each agent a randomly selected handful of these strategies, so that agents in general have different sets of predictors.  Then, many rounds of the game are played, where the score of each predictor is updated based on its prediction quality, and agents act based on their currently best predictor.  Simulations demonstrate that the approach leads to successful coordination, \ie around 60\,agents show up in every round.
 %
-That approach in turn builds on work by \cite{PalmerEtAl_PhysicaD_1994}, who simulate a stock market,  \citet{Holland_1992}, whose classifier systems have more structure than Arthur's model but have a similar model of performance learning, or \cite{AxelrodBook}, who investigates adaptive agent in the face of repeated non-cooperative games.  
+That approach in turn builds on work by \cite{PalmerEtAl_PhysicaD_1994}, who simulate a stock market, \citet{Holland_1992}, whose classifier systems have more structure than Arthur's model but have a similar model of performance learning, or \cite{AxelrodBook}, who investigates adaptive agent in the face of repeated non-cooperative games.  
 
 \citet{ArthurBar} kept each agent's predictors fixed after initialization.  In contrast,
 \citet{HraberJonesForrestEcho} simulate an artificial ecosystem, where the individual agent strategies are based on so-called genes, which are adapted over the rounds/iterations by a genetic algorithms \citep{Goldberg_1989}.
 
-The focus of CAS is on many agents, agent interaction, and emergence. Artificial intelligence (AI) in contrast concentrated on single agents. In AI terms, the original \gls{matsim} agents (those that do day-to-day learning) are very simple active reinforcement learning agents \citep[][Chapter 21.3]{RusselNorvig2010ArtificialIntelligence}. Since these \gls{matsim} have only one state and each plan is simply an action, the distinction between Q-learning and utility learning actually collapses, and what remains is the temporal difference learning scheme for the utility, which translated to the \gls{matsim} situation updates the score/performance/utility value of each plan every time it is selected.
+The focus of \gls{cas} is on many agents, agent interaction, and emergence. \Gls{ai} in contrast concentrated on single agents. In \gls{ai} terms, the original \gls{matsim} agents (those that do day-to-day learning) are very simple active reinforcement learning agents \citep[][Chapter 21.3]{RusselNorvig2010ArtificialIntelligence}. Since these \gls{matsim} have only one state and each plan is simply an action, the distinction between Q-learning and utility learning actually collapses, and what remains is the temporal difference learning scheme for the utility, which translated to the \gls{matsim} situation updates the score/performance/utility value of each plan every time it is selected.
 
-That is, overall, the original \gls{matsim} system has inherited the focus on large systems, interaction, and emergence as well as the approach to strategy innovation from CAS, while the score updating rather comes from the field of AI.
+That is, overall, the original \gls{matsim} system has inherited the focus on large systems, interaction, and emergence as well as the approach to strategy innovation from \gls{cas}, while the score updating rather comes from the field of \gls{ai}.
 
-In the meantime, both AI and the field of transport simulation have moved on, increasingly looking at agents that can react immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}.
+In the meantime, both \gls{ai} and the field of transport simulation have moved on, increasingly looking at agents that can react immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}.
 
 \kai{to do more}
-
-
 
 % ##################################################################################################################
 \section{Within-Day Replanning and the User Equilibrium}
@@ -81,16 +79,16 @@ a horni
 
 \kai{in particular plans removal!! From Benjamin's diss:}
 
-In the plans innovation process of the simulation, the plan with the lowest utility is removed whenever the maximum number of plans are reached for an agent. In consequence, this decreases the probability that heterogeneous plans survive and increases the probability of very similar plans. This, again, increases the likelihood that the final choice set is correlated, i.e., containing only plans that are very similar to the best plan \citep[see][for a review on correlation of 
+In the plans innovation process of the simulation, the plan with the lowest utility is removed whenever the maximum number of plans are reached for an agent. In consequence, this decreases the probability that heterogeneous plans survive and increases the probability of very similar plans. This, again, increases the likelihood that the final choice set is correlated, \ie containing only plans that are very similar to the best plan \citep[see][for a review on correlation of 
  routes]{Prato2009ChoiceModellingSurvey}.%
  %
  \footnote{
  %
  A possible solution to this problem is most likely composed of two steps:
  %
- First, more heterogeneity needs to be introduced into the choice set generation, e.g., by producing very different plans.
+ First, more heterogeneity needs to be introduced into the choice set generation, \eg by producing very different plans.
  %
- Second, the method for plans removal needs to be based on an \gls{mnl} model where the difference in utility enters, similar to the approach of selecting plans for execution. This could be done by an implementation of a method called "pathsize logit" which uses similarity measures for plans \citep[see][for a possible solution in route choice]{FrejingerBierlaire2007PathSizeLogit, BenAkivaBierlaiere1999DiscreteChoice}.
+ Second, the method for plans removal needs to be based on an \gls{mnl} model where the difference in utility enters, similar to the approach of selecting plans for execution. This could be done by an implementation of a method called \gls{pathsizelogitmodel} which uses similarity measures for plans \citep[see][for a possible solution in route choice]{FrejingerBierlaire2007PathSizeLogit, BenAkivaBierlaiere1999DiscreteChoice}.
  %
  }
 
@@ -98,9 +96,9 @@ In the plans innovation process of the simulation, the plan with the lowest util
 
 To give recommendations to other researchers: the bias in choice set generation of \gls{matsim} needs to be fixed in the near future in order to obtain valid choice sets.
 %
-This requires (i) the generation of more heterogeneous plans \citep[see, e.g.,][for such attempts in the \acrshort{pt} and in the car mode, respectively]{Moyo2013PhD, NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}; and (ii) the implementation of a pathsize logit model in the plans removal process \citep[see, e.g.,][]{Grether2014PhD}.
+This requires (i) the generation of more heterogeneous plans \citep[see, e.g.,][for such attempts in the \acrshort{pt} and in the car mode, respectively]{Moyo2013PhD, NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}; and (ii) the implementation of a \gls{pathsizelogitmodel} in the plans removal process \citep[see, e.g.,][]{Grether2014PhD}.
 %
-Having obtained these valid choice sets \citep{NagelFloetteroed2009IatbrResourceInBook}, the calculation of user benefits based on the logsum formulation is preferable.
+Having obtained these valid choice sets \citep{NagelFloetteroed2009IatbrResourceInBook}, the calculation of user benefits based on the \gls{logsum} formulation is preferable.
 %
 \benjamin{Well, here it now depends on how we write the previous section...}
 %
@@ -108,7 +106,7 @@ Using the logsum formulation with correlated choice sets requires a careful inte
 %
 \benjamin{If we iterate the base case to the same iteration number as the policy case, the former will be more correlated. This would result in a underestimation of the utility changes.}
 %
-In that sense, one could include some approximation of the error into the analysis of results, possibly similar to Eq.~\ref{eq:ch:economicEval:logsumMaxError}. If the differences in utility levels between the two states are in the same magnitude as $\ln(P)$, it is possible that the signal of the policy effect is smaller than the noise of randomness.
+In that sense, one could include some approximation of the error into the analysis of results, possibly similar to Equation~(\ref{eq:ch:economicEval:logsumMaxError}). If the differences in utility levels between the two states are in the same magnitude as $\ln(P)$, it is possible that the signal of the policy effect is smaller than the noise of randomness.
 
 % ##################################################################################################################
 \section{Utility Function}
@@ -160,13 +158,13 @@ Agents optimize \emph{complete day plans} \citep[see also][Section 6.3.1]{MATSim
 %
 This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. The inseparability of choice dimensions means that in \gls{matsim} we can only consistently handle choices if we assume an absolute utility level rather than a relative level usually assumed for discrete choice models.
 %
-\benjamin{Why? The only difference if one has more choice dimensions in the model is that utility differences resulting from some policy will be smaller than with less choice dimensions -- i.e.\ influencing the elasticity.}
+\benjamin{Why? The only difference if one has more choice dimensions in the model is that utility differences resulting from some policy will be smaller than with less choice dimensions---\ie influencing the elasticity.}
 
-Incorporating a contribution, e.g., for parking or destination choice, in combination with absolute utilities becomes even more tricky as the Charypar-Nagel function is non-linear, which means that available models---very often being linear---need to be incorporated by workarounds such as approximation procedures and distinction of cases as described in \citet[][p.75ff]{Horni_PhDThesis_2013}. Furthermore, \gls{matsim} utility function includes travel times, which is usually seen as an unreliable information in classical surveys; they are often distance based thus. \gls{gps} or smartphone-based surveys, however, provide this information with great precision and, thus, they are a promising means for future estimations.
+Incorporating a contribution, \eg for parking or destination choice, in combination with absolute utilities becomes even more tricky as the Charypar-Nagel function is non-linear, which means that available models---very often being linear---need to be incorporated by workarounds such as approximation procedures and distinction of cases as described in \citet[][p.75ff]{Horni_PhDThesis_2013}. Furthermore, \gls{matsim} utility function includes travel times, which is usually seen as an unreliable information in classical surveys; they are often distance based thus. \gls{gps} or smartphone-based surveys, however, provide this information with great precision and, thus, they are a promising means for future estimations.
 
 Furthermore, travel time and activity duration estimations including income need to carefully consider the parameters' relation to the value of travel time savings. \citet[][p.276]{MeisterEtAl_SVT_2009} for example argues that the average Swiss hourly earnings are much higher than 6\,EUR/h. However, the \gls{matsim} is measured in utils not monetary units anymore. Still, the parameters in utils and monetary terms (such as tolls, parking costs, fares etc., or income-dependent attributes) are often interacted and thus their relation needs to be consistent.
 %
-\benjamin{I dont see the problem here...parameters define the VTTS, and are dependent on the variance of the unobserved attributes, no? So measuring in utils or money does not make a difference.}
+\benjamin{I dont see the problem here...parameters define the \gls{vtts}, and are dependent on the variance of the unobserved attributes, no? So measuring in utils or money does not make a difference.}
 
 A numerical problem, particularly relevant for activity choice, concerns the functional form of the utility function. As argued in Section~\ref{sec:alternative-functions}, a function offering an additional degree of freedom (the curvature at the typical duration) would be better.
 
@@ -177,17 +175,17 @@ Estimating a utility function for \gls{matsim} is associated with another proble
 \label{sec:agent-specific-prefs}
 Consideration of agent-specific preferences is one of the corner-stones of \glspl{microsimulation}. \gls{matsim} scenarios so far consider a relatively small set of agent attributes, essentially due to missing suitable data to derive detailed attributes for large populations. Some studies, however, used larger sets of attributes. \citet{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome} estimated individual income-contingent utility functions. \citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014} incorporated agent-specific travel preferences and individual income-dependent marginal utilities of money; the preference values however, were assigned randomly.
 
-%\benjamin{Das haben wir auch gemacht -- vielleicht sogar noch ein bisschen genauer (mit HH-Einkommen und Lorenzkurve). Siehe \cite{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome}. Da das früher war, vielleicht hier reinnehmen?}
+%\benjamin{Das haben wir auch gemacht -- vielleicht sogar noch ein bisschen genauer (mit HH-Einkommen und Lorenzkurve). Siehe \cite{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome}. Da das früher war, vielleicht hier reinnehmen?} \ah{done}
 
 \vfill\eject
 % ##################################################################################################################
 \section{Results Variability}
 \label{sec:variability}
-Microsimulation system design as well as concrete microsimulation studies require specification of the measures \kai{quantities?} of interest.\footnote{%
-Formal system specification (and verification) is discussed e.g., in \citet[][]{FisherWooldridge_IJCIS_1997, BourahlaBenmohamed_ENTCS_2005}. 
-} For microsimulation design, they need to be general and broadly available, count data are an example. For specific experiments and purposes other measures might be added; \citet[][]{Kitamura_TMIP_1996}, for example, lists measures relevant for emissions modeling. Considering their scale is important for model development, but a certain lack of research exists in this regard. \citet[][Section 2.2]{NagelAxhausen200Xiatbr00-report}, for example, say: "Another question regarding scales is which scale is necessary to answer which question. There is wide-spread intuition but currently little hard knowledge. Rules-of-thumb, such as to include one level of resolution below the level of interest, are just rule-of-thumb." 
+\Gls{microsimulation} system design as well as concrete \gls{microsimulation} studies require specification of the quantities of interest.\footnote{%
+Formal system specification (and verification) is discussed, \eg in \citet[][]{FisherWooldridge_IJCIS_1997, BourahlaBenmohamed_ENTCS_2005}. 
+} For microsimulation design, they need to be general and broadly available, count data are an example. For specific experiments and purposes other measures might be added; \citet[][]{Kitamura_TMIP_1996}, for example, lists measures relevant for emissions modeling. Considering their scale is important for model development, but a certain lack of research exists in this regard. \citet[][Section 2.2]{NagelAxhausen200Xiatbr00-report}, for example, say: ``Another question regarding scales is which scale is necessary to answer which question. There is wide-spread intuition but currently little hard knowledge. Rules-of-thumb, such as to include one level of resolution below the level of interest, are just rule-of-thumb.'' 
 
-Scale of the measures of interest is also relevant for results production, as different scales or resolution levels usually lead to different levels of \emph{variability} and, thus, to different study costs in terms of required computation effort. Transport microsimulations are usually stochastic. Randomness is, for example, introduced by the error terms of discrete choice models, a common component in utility-based microsimulations. This leads to random variability in results. Parameters or population statistics, such as averages, thus, need to be estimated by random sampling. Microsimulations are thus essentially a sampling tool \citep[][]{WolfDA_CSP_2001}, where one run represents one sample unit (in statistical terms one \emph{realization of a random variable}). This makes clear, that the whole toolbox used for other statistical methods, must be applied also here. As a first step, required sample size---here, the number of runs---to ensure a given confidence in the calculated averages needs to be calculated. In this context, variability is often seen as something tedious, because higher variability leads to larger minimal sample sizes, with usually relatively high costs per sample point. But, this view falls short. Clearly, unobserved variability---modeled as random variability---should be replaced to the extent possible (by explaining it). However, when looking at the very large proportion of temporal variability actually present in reality (Figure \ref{fig:counts}), a substantial part of this variability is---even if it was actually explicable---much more efficiently handled by including randomness, as model complexity would be prohibitively large otherwise. In this sense, microsimulations are a tool to capture these real-world fluctuations \citep[][p.11]{NewmanMEJBarkema_1999}, \citep[][p.704]{EsserNagel2001iatbr00-book}. This means also that the focus should not only be on averages, but also on variance incorporated in the calculations of statistical confidence. The following sections broaden the microsimulation variability analysis.
+Scale of the measures of interest is also relevant for results production, as different scales or resolution levels usually lead to different levels of \emph{variability} and, thus, to different study costs in terms of required computation effort. Transport microsimulations are usually stochastic. Randomness is, for example, introduced by the error terms of discrete choice models, a common component in utility-based \glspl{microsimulation}. This leads to random variability in results. Parameters or population statistics, such as averages, thus, need to be estimated by random sampling. \Glspl{microsimulation} are thus essentially a sampling tool \citep[][]{WolfDA_CSP_2001}, where one run represents one sample unit (in statistical terms one \emph{realization of a random variable}). This makes clear, that the whole toolbox used for other statistical methods, must be applied also here. As a first step, required sample size---here, the number of runs---to ensure a given confidence in the calculated averages needs to be calculated. In this context, variability is often seen as something tedious, because higher variability leads to larger minimal sample sizes, with usually relatively high costs per sample point. But, this view falls short. Clearly, unobserved variability---modeled as random variability---should be replaced to the extent possible (by explaining it). However, when looking at the very large proportion of temporal variability actually present in reality (Figure \ref{fig:counts}), a substantial part of this variability is---even if it was actually explicable---much more efficiently handled by including randomness, as model complexity would be prohibitively large otherwise. In this sense, \glspl{microsimulation} are a tool to capture these real-world fluctuations \citep[][p.11]{NewmanMEJBarkema_1999}, \citep[][p.704]{EsserNagel2001iatbr00-book}. This means also that the focus should not only be on averages, but also on variance incorporated in the calculations of statistical confidence. The following sections broaden the microsimulation variability analysis.
 
 \createfigure[!t!]%
 {Measured volumes}%
@@ -209,7 +207,7 @@ Falls wir es genauer wissen wollen, kann ich das überprüfen/reproduzieren; ist
   {}%
 % ---
 	\createsubfigure%
-  {Simulated Daily Volumes: Inter-run Variability, Runs 0-29, Iteration 200}%
+  {Simulated Daily Volumes: Inter-run Variability, runs~0-29, iteration~200}%
 	{\includegraphics[height=0.3\textwidth]{understanding/figures/var/linkVolumesInterAWTV200.pdf}}%
 	{\label{fig:linkVolumesInterAWTV200}}%
   {}%
@@ -221,7 +219,7 @@ Falls wir es genauer wissen wollen, kann ich das überprüfen/reproduzieren; ist
   {}%
 % ---
 	\createsubfigure%
-  {Simulated Hourly Volumes: Inter-run Variability, Runs 0-29, Iteration 200}%
+  {Simulated Hourly Volumes: Inter-run Variability, runs~0-29, iteration~200}%
 	{\includegraphics[height=0.3\textwidth]{understanding/figures/var/linkVolumesInter200.pdf}}%
 	{\label{fig:linkVolumesInter200}}%
   {}%
@@ -233,7 +231,7 @@ Falls wir es genauer wissen wollen, kann ich das überprüfen/reproduzieren; ist
   {}%
 % ---
 	\createsubfigure%
-  {Simulated Hourly Volumes: Inter-run Variability, Runs 0-29, Iteration 200}%
+  {Simulated Hourly Volumes: Inter-run Variability, runs~0-29, iteration~200}%
 	{\includegraphics[height=0.3\textwidth]{understanding/figures/var/linkVolumesInter200.pdf}}%
 	{\label{fig:linkVolumesInter200}}%
   {}%
@@ -279,7 +277,7 @@ Further MATSim investigations are reported by \citet[][]{Hackney_PhDThesis_2009,
 
 \vfill\eject
 % ##################################################################################################################
-\section{Transients Versus the Notion of "Learning"}
+\section{Transients Versus the Notion of ``Learning''}
 \label{sec:transients-vs-learning}
 
 As in many other simulations of similar kind, the interpretation of the relaxation procedure (iterations) of \gls{matsim} is unclear. 
