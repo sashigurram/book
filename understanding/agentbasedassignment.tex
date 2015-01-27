@@ -12,21 +12,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \kai{Anfrage an Verlag, sobald wir mal Zeit haben.}
 
-% ##################################################################################################################
-
-%\ah{Gunnars Relaxation-Mail, 26.11.}
-%\kai{what is this???}
-
 %##################################################################################################################
-
-
 \section{Introduction}
 \label{sec:agenbased-dta-intro}
 
-This chapter presents MATSim from a dynamic traffic assignment (DTA) perspective. 
+This chapter presents \gls{matsim} from a \gls{dta} perspective. 
 The following material is an abridged and edited version of \citet{NagelFloetteroed2009IatbrResourceInBook}.
 
-\kai{how much of this introductions should stay?  Intuitively, we should justify matsim elsewhere.}
+\kai{how much of this introductions should stay?  Intuitively, we should justify \gls{matsim} elsewhere.}
 
 \gunnar{Ich habe jetzt erstmal ziemlich viel auskommentiert.}
 
@@ -223,17 +216,17 @@ way of calculating an equilbrium by alternately evaluating the demand
 model and the supply model. If these iterations stabilize then a fixed 
 point is attained that solves the traffic assignment problem.
 
-The remainder of this chapter casts MATSim into this DTA framework.
+The remainder of this chapter casts \gls{matsim} into this \gls{dta} framework.
 Section~\ref{sec:agent-based-DTA-from-routes-to-agents} starts out from the
 static and macroscopic route flow assignment and incrementally enriches this 
 formulation into a dynamic and fully disaggregate agent-based assignment problem.
 Section~\ref{sec:agent-based-simul} then turns to the problem of how to
-simulate (solve) this model system, with a particular focus on MATSim's
+simulate (solve) this model system, with a particular focus on \gls{matsim}'s
 coevolutionary approach. Section~\ref{sec:agentbased-dta-conclusion} concludes
 the presentation.
 
 
-\section{\label{sec:agent-based-DTA-from-routes-to-agents}From route swapping to agent plan choice}
+\section{\label{sec:agent-based-DTA-from-routes-to-agents}From Route Swapping to Agent Plan Choice}
 
 In the following, an increasingly comprehensive specification of the traffic 
 assignment problem is given that starts from the classical static user 
@@ -241,12 +234,12 @@ equilibrium model and ends with a fully dynamic model that captures
 arbitrary travel demand dimensions at the individual level. Computationally, 
 the iterative fixed point solution procedure is carried throughout the 
 entire development. Not by chance, this solution method also has a behavioral 
-interpretation as a model of day-to-day replanning; see also Chapter~\note{REF: research avenues}.
+interpretation as a model of day-to-day replanning; see also Chapter~\ref{sec:transients-vs-learning}.
 
 We start by considering route assignment only. The generalization towards further 
 choice dimensions will turn out to be a natural generalization of the route assignment problem.
 
-\subsection{\label{static-macro-assignment}Static traffic assignment}
+\subsection{\label{static-macro-assignment}Static Traffic Assignment}
 
 Consider a network of nodes and links, where some or all of the nodes are demand origins, 
 denoted by $o$, and/or demand destinations, denoted by $d$. 
@@ -286,7 +279,7 @@ which typically involves the following steps \citep{sheffi-1985}:
 \begin{enumerate}
 
 \item \textbf{Initial conditions:} Compute some initial routes
-  (e.g., best path on empty network for every OD pair).
+  (\eg best path on empty network for every OD pair).
 
 \item \textbf{Iterations:} Repeat the following many times.
 
@@ -331,7 +324,7 @@ The \textbf{iterations} are repeated until some stopping criterion is
 fulfilled that indicates that a fixed point is attained.
 %Optimally, the iterations reach a fixed point. 
 In the best reply situation, the fixed point implies that no shift
-between routes takes place, i.e., what comes out as the best reply to
+between routes takes place, \ie what comes out as the best reply to
 the previous iteration is either the same or at least of the same
 performance as what was used in the previous iteration.
 Since in this situation no OD pair can unilaterally improve
@@ -353,7 +346,7 @@ rephrased as generalized routing problems on an extended network
 %%  nicht in Reichweite... Gunnar}
 
 
-\subsection{Dynamic traffic assignment}
+\subsection{Dynamic Traffic Assignment}
 
 As is well known, the above also works for \emph{dynamic} traffic
 assignment \citep[DTA; see][]{peeta-2001}, where both the demand and the 
@@ -369,7 +362,7 @@ The structure of the algorithm does not change. The individual steps now look as
 
 \begin{enumerate}
 
-\item \textbf{Initial conditions:} Compute some initial routing (e.g., best path on empty network
+\item \textbf{Initial conditions:} Compute some initial routing (\eg best path on empty network
   for every OD pair and departure time).
 
 \item \textbf{Iterations:} Repeat the following many times.
@@ -392,7 +385,7 @@ The structure of the algorithm does not change. The individual steps now look as
 
 \end{algorithm}
 
-Once more, \emph{if} the new routes are best replies (i.e., best paths
+Once more, \emph{if} the new routes are best replies (\ie best paths
 based on the last iteration), \emph{if} demand is shifted towards
 these new routes, and \emph{if} these iterations reach a fixed point,
 then this is a dynamic UE since the best reply dynamics means that no
@@ -407,7 +400,7 @@ because departure time choice can be translated into route choice in a
 time-expanded version of the original network \citep{vanderzijpp-2001}.
 
 
-\subsection{Individual travelers}
+\subsection{Individual Travelers}
 \label{sec:indiv-trav}
 
 Both in the static and in the dynamic case, it is possible to
@@ -473,19 +466,19 @@ destination.
 %
 %Habe den Eindruck, dass obiger Absatz nicht mehr nötig ist.  25oct09, kai
 
-For a finite population of heterogenous travelers, every single
+For a finite population of heterogeneous travelers, every single
 traveler constitutes an integer commodity, and the \textbf{choice}
 step hence needs to be changed from "gradually shift the route flows
 towards something that is consistent with the behavioral model" into
-"for a \emph{fraction} of travelers, assign a \emph{single}
-behaviorally plausible route to each of these travelers". The gradual shift that
+``for a \emph{fraction} of travelers, assign a \emph{single}
+behaviorally plausible route to each of these travelers''. The gradual shift that
 helps to stabilize the iterations in the continuous assignment carries
 over here to an equally stabilizing "inert shift" in that not all travelers
 change their routes at once. This is a consistent reformulation: If
 one reduces the traveler size to $\varepsilon \rightarrow 0$ and
 increases the number of travelers by a factor of $1/\varepsilon$,
 a 10\% chance of
-changing routes in the disaggregate case carries over to shifting 10\%
+changing routes in the disaggregate case carries over to shifting 10\,\%
 of all flows to new routes in the aggregate case (``\textbf{continuous
 limit}'').
 
@@ -499,7 +492,7 @@ has been said before:
 
 \begin{enumerate}
 
-\item \textbf{Initial conditions:} Compute some initial routing (e.g., best path on empty network
+\item \textbf{Initial conditions:} Compute some initial routing (\eg best path on empty network
   for every traveler).
 
 \item \textbf{Iterations:} Repeat the following many times.
@@ -685,7 +678,7 @@ the averaging, rather than the other way around.
 This is especially true if day-to-day replanning is modeled where
 the draws from the choice distribution have a
 behavioral interpretation as the actual choices of the trip makers
-in a given day (but see also Chapter~\note{REF: research avenues}).
+in a given day (but see also Chapter~\ref{sec:transients-vs-learning}).
 %\yyyy{Streng genommen brauchen wir hierfuer die definition von day-to-day replanning,
 %allerdings finde ich es recht selbsterklaerend wie es jetzt ist. Gunnar}
 %This is especially
@@ -722,7 +715,7 @@ some average.
 %%network loading that goes to zero at the same time.
 
 
-\subsection{Extending the route assignment loop to other choice dimensions}
+\subsection{Extending the Route Assignment Loop to Other Choice Dimensions}
 \label{sec:extend-route-assignm}
 
 Given the above behavioral interpretation, it is now straightforward
@@ -742,9 +735,9 @@ daily plans.
 %    ...
 % </plan>
 % \end{lstlisting}
-MATSim plans maintain the structure of DTA in terms of the triple
+\gls{matsim} plans maintain the structure of \gls{dta} in terms of the triple
 (origin, departure time, destination); see Section~\note{REF} for an
-example. However, different from DTA, all activities are chained together.
+example. However, different from \gls{dta}, all activities are chained together.
 
 This widens the behavioral modeling scope dramatically in that all
 choice dimensions of a daily travel plan can now be jointly
@@ -822,7 +815,7 @@ for arbitrary behavioral dimensions.
 %%\vfill\eject
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Agent-based simulation}
+\section{Agent-Based Simulation}
 \label{sec:agent-based-simul}
 
 The conceptual validity of the agent-based traffic assignment model is fairly intuitive. 
@@ -848,13 +841,13 @@ reasonable computation time on the network.
 % This \emph{is} now possible if one carefully balances the model resolution against computational considerations.
 
 The following sections describe how these problems can be resolved. Concrete instances
-of much of this material are implemented within MATSim.
-% The presentation draws heavily from the design of the MATSim
+of much of this material are implemented within \gls{matsim}.
+% The presentation draws heavily from the design of the \gls{matsim}
 % simulation system \citep{RaneyNagel2006traf-framework, matsim}, in which most of the the outlined 
 % procedures have been implemented and tested.
 
 
-\subsection{Agent-based UE; one plan per traveler}
+\subsection{Agent-Based UE; One Plan per Traveler}
 \label{sec:agent-based-ue}
 
 The simulation of an agent-based UE is possible by the following 
@@ -877,7 +870,7 @@ implementation of the behavioral elements.
 \textbf{Choice set generation:} For every agent,
   generate what would have been best in the previous iteration.
   This does not only concern the route,
-  but all considered choice dimensions, e.g., departure times and/or
+  but all considered choice dimensions, \eg departure times and/or
   mode choice. \todoNextRevision{transims?}
 
 \textbf{Choice:} Switch to the new plan with a
@@ -891,7 +884,7 @@ computationally manageable, the identification of optimal plans is far more diff
 This constitutes an important technical motivation to switch to an agent-based SUE, 
 where optimality is not required (see below).
 
-Even in the manageable cases of, e.g., shortest paths, 
+Even in the manageable cases of, \eg shortest paths, 
 %in computational practice 
 any best reply computation is an approximation.  
 %For example,
@@ -951,11 +944,11 @@ source of multiple Nash equilibria \citep[][]{daganzo-1998}.
 %%\cite{MartinezFixedPointStability} for a similar case in land-use
 %%modelling.
 
-Alternatively, some MSA ("method of sucessive averages")-like scheme
-may be used \citep{liu-2007}.  A disadvantage is that, with MSA, the
+Alternatively, some \gls{msa}-like scheme
+may be used \citep{liu-2007}.  A disadvantage is that, with \gls{msa}, the
 switching rate does not depend on the magnitude of the expected
 improvement, which possibly means slow(er) convergence.  An advantage
-of MSA is that one does not need to find out a good value for the
+of \gls{msa} is that one does not need to find out a good value for the
 proportionality factor ($\mu$ in the above example).  
 
 Yet another approach would be to use a ``gap'' function that measures the
@@ -988,7 +981,7 @@ representation of the imprecisions in the behavioral model.
 These considerations do not only lead naturally to the agent-based SUE;
 they also motivate an additional behavioral component that captures
 the explorative learning of real travelers. Similarly to the symmetry
-between day-to-day replanning and the iterative solution of the traffic assigment
+between day-to-day replanning and the iterative solution of the traffic assignment
 problem, an explorative learning algorithm can be motivated either as
 a model of real learning or as a computational method to solve a stochastic
 assignment problem. The following section presents a possible implementation
@@ -1064,13 +1057,13 @@ of such an algorithm.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Agent-based SUE; multiple plans per traveler}
+\subsection{Agent-Based SUE; Multiple Plans per Traveler}
 \label{sec:agent-based-sue}
 
-This section discusses MATSim's co-evolutionary algorithm for simulating
-plan choices. An alternative perspective on MATSim's plan choice mechanisms
+This section discusses \gls{matsim}'s co-evolutionary algorithm for simulating
+plan choices. An alternative perspective on \gls{matsim}'s plan choice mechanisms
 in terms of mainstream discrete choice theory \citep{ben-akiva-1985} is
-provided in Chapters~\ref{ch:discretechoice} and \ref{ch:economicEval}.
+provided in Chapters~\ref{ch:discretechoice} and~\ref{ch:economicEval}.
 
 % In order to put the proposed method for the simulation of an agent-based
 % SUE into a somewhat broader perspective, the problem
@@ -1147,11 +1140,11 @@ follows:
 Regarding the construction of new solutions, two operators are often
 used in genetic algorithms: \textbf{Mutation} -- which takes a
 candidate solution and performs small modifications to it; and
-\textbf{crossover} -- which takes \emph{two} candidate solutions and
+\textbf{crossover}---which takes \emph{two} candidate solutions and
 constructs a new one from those.  Since mutation takes one existing
 solution and crossover takes two, it makes sense to also move in the
 opposite direction and define an operator that takes zero solutions as
-input, i.e., generates \textbf{solutions from scratch} -- a
+input, \ie generates \textbf{solutions from scratch}---a
 ``best-reply to last iteration'' would, for example, be such an
 operator.
 
@@ -1216,7 +1209,7 @@ follows \citep[see, e.g.,][for similar
 \item \textbf{Generation of new plans (innovation)/Choice set
   generation:} For some of the persons, generate new plans, for
   example as ``best replies'' or as mutations of existing plans
-  (e.g.\ small departure time changes).
+  (\eg small departure time changes).
 
 \end{enumerate} %\item \textbf{Iterations:} Goto 2.
 
@@ -1244,12 +1237,11 @@ interpreted as the choice set.  As in SUE, the choice set may be
 generated while the iterations run or before the iterations start.
 Every person selects between the plans, where one can attach to
 every plan a score-based probability to be selected, 
-in the end similar to Eq.~(\ref{stoch-equil}).
+in the end similar to Equation~(\ref{stoch-equil}).
 Clearly, a relevant research topic in this regards is to specify 
 an evolutionary dynamic that can be shown to converge to choice sets
 that are generated consistently with the requirements of discrete
-choice theory; see Chapters~\ref{ch:discretechoice} and 
-\note{REF research avenues}.
+choice theory; see Chapters~\ref{ch:discretechoice} and Section~\ref{sec:choicesets}.
 %%\todoKai{Der letzte Satz ersetzt einen anderen, der m.E.
 %%an dieser Stelle keine neue Information mehr liefert. Gunnar}
 %The main
@@ -1281,15 +1273,15 @@ this approach.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Selection (choice)}
+\subsubsection{Selection (Choice)}
 \label{sec:ag-based-assignment-selection}
 
 %For choice, one can start with a logit model:
 %\textbf{Selection/Choice:} 
 A possible choice algorithm is the following: For persons with
 unscored plans, select an unscored plan.  For all other persons,
-select between existing plans with some SUE model, e.g.,\ a logit
-model, i.e.,
+select between existing plans with some SUE model, \eg a logit
+model, \ie
 \begin{equation}
 P(i) = \frac{e^{\mu S_i}}{\sum_j e^{\mu S_j}} \
 \label{eq:2}
@@ -1298,11 +1290,11 @@ where $S_i$ is the score of plan $i$ and $\mu$ models the
 travelers' ability to distinguish between plans of different
 scores.
 %
-This is implemented in MATSim by \lstinline{SelectExpBeta}.
+This is implemented in \gls{matsim} by \lstinline{SelectExpBeta}.
 
 In practice, we have found that it is much better to not use
-Eq.~(\ref{eq:2}) directly, but rather use a switching process that
-\emph{converges} towards Eq.~(\ref{eq:2}).  
+Equation~(\ref{eq:2}) directly, but rather use a switching process that
+\emph{converges} towards Equation~(\ref{eq:2}).  
 This can, for example, be
 achieved by using a switching probability from $i$ to $j$ of
 \begin{equation}
@@ -1314,7 +1306,7 @@ T(i \to j) = \gamma \,  e^{\beta ( S_j - S_i )/2} \ ,
 where $i$ is the previous plan, $j$ is a randomly selected plan from
 the same person, and $\gamma$ is a proportionality constant that needs
 to be small enough so that the expression is never larger than one
-(since it denotes a probability).  This works because the logit model
+(since it denotes a probability).  This works because the logit model~
 (\ref{eq:2})
 %\begin{equation}
 %p_i = \frac{1}{Z} \, e^{\beta S_i} \ ,
@@ -1351,11 +1343,11 @@ for these $T(i \to j)$ \citep[e.g.,][]{ross-2006}.%
 % => Ich habe das unten zitierte Buch von Ross im Büro und schaue 
 % da nochmal nach, wenn ich wieder im Buero bin. Gunnar
 Assume that, after a number of iterations, there is no more
-innovation, i.e., the choice set for every agent is fixed, and that
-the scores are updated by MSA.
+innovation, \ie the choice set for every agent is fixed, and that
+the scores are updated by \gls{msa}.
 Upon convergence of the iterations, all agents draw their plans from
 a fixed choice set based on constant score expectations, 
-cf. (\ref{eq:sue-with-expectation}).
+\cf (\ref{eq:sue-with-expectation}).
 This means that all agents make their choices independently
 (and that all interactions are captured in the scores).
 The switching logic (\ref{eq:3}) then defines an ergodic Markovian process,
@@ -1397,22 +1389,22 @@ which converges to the unique steady state probabilities (\ref{eq:2}).
 %
 }
 %
-This is implemented in MATSim by \lstinline{ChangeExpBeta}.
+This is implemented in \gls{matsim} by \lstinline{ChangeExpBeta}.
 
 The ``switching approach'' has additional advantages, including the
 following:
 \begin{itemize}
 
-\item Eq.~(\ref{eq:3}) can be behaviorally interpreted as the
+\item Equation~(\ref{eq:3}) can be behaviorally interpreted as the
   probability of switching from plan $i$ to plan $j$.  Plausibly, this
   probability increases with the magnitude of the improvement.  
 
   For certain applications, one might desire a more involved approach,
-  e.g., an \emph{expected} score of $j$ which then initiates the
+  \eg an \emph{expected} score of $j$ which then initiates the
   switch.
 
-\item One could replace Eq.~(\ref{eq:3}) by a threshold-based
-  dynamics, i.e.\ a switch to a better solution will only take place
+\item One could replace Equation~(\ref{eq:3}) by a threshold-based
+  dynamics, \ie a switch to a better solution will only take place
   if the improvement is above a certain threshold.  The disadvantage
   is that one loses some of the mathematical interpretation, but the
   advantage is that it may be more consistent with some discussion in
@@ -1452,7 +1444,7 @@ possible to include formulations such as path-size logit
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Score convergence}
+\subsubsection{Score Convergence}
 \label{sec:score-convergence}
 
 The assumption that the scores
@@ -1476,11 +1468,11 @@ where $S_i^{new}$ and $S_i^{old}$ are the agent's memorized scores for
 option $i$, and $\tilde S_i$ is the most recent actual performance
 with that option; see also Chapter~\ref{ch:discretechoice}.  
 The issue, in the end, is the same as with the
-stable-vs-unstable fixed points (cf.~Section~\ref{sec:agent-based-ue}):
+stable-vs-unstable fixed points (\cf Section~\ref{sec:agent-based-ue}):
 If the system is well-behaved (corresponding to a stable fixed point),
 it will converge benignly to constant scores and thus to the detailed
 balance solution.  If the system is not well-behaved, one can still
-force it to such a solution with MSA, but the meaning of this is less
+force it to such a solution with \gls{msa}, but the meaning of this is less
 clear.
 
 As stated before, stochastic network loading makes no additional
@@ -1499,10 +1491,10 @@ the choice behavior.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Innovation (choice set generation)}
+\subsubsection{Innovation (Choice Set Generation)}
 
 So far, this has left open the question concerning the choice set
-\emph{generation}, i.e., the part that generates new plans or modifies
+\emph{generation}, \ie the part that generates new plans or modifies
 existing ones.  
 
 One computationally simple technique that does not require a choice
@@ -1514,7 +1506,7 @@ the noise right.
 An alternative is to calculate separate best responses after every
 network loading.  Since the process is stochastic, this will generate
 different solutions from iteration to iteration.  An advantage is that
-the correlations will be generated by the simulation -- and are, thus,
+the correlations will be generated by the simulation---and are, thus,
 presumably realistic. Chapter~\ref{ch:discretechoice}
 relates this to random utility modeling; see also Chapter~\note{REF research avenues}.
 % A disadvantage is that there is currently
@@ -1532,7 +1524,7 @@ option, clearly, is to use a regular activity-based demand generation
 code \citep[e.g.,][]{BowmanEtc1999PortlandActs,MillerRoordaTASHA}
 although our experience is that this may not be as simple as it seems
 \citep{RieserNagelEtc2007early-berlin-trr} since in practice
-activity-based models are often constructed with OD matrices in mind.  
+activity-based models are often constructed with \gls{od} matrices in mind.  
 A successful integration is described by 
 \cite{ZiemkeNagelBhatIntegratingCemdapMatsimTransferability}.
 
@@ -1551,8 +1543,8 @@ A successful integration is described by
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Adjusting the ``improvement function'' from shortest
-time to generalized utility functions}
+\subsubsection{Adjusting the ``Improvement Function'' from Shortest
+Time to Generalized Utility Functions}
 \label{sec:adjust-impr-funct}
 
 \def\perf{{\it perf}}
@@ -1583,7 +1575,7 @@ arguments may serve as starting points:
 
 \item A heuristic approach, consistent with wide-spread assumptions
   about travel behavior, is to give positive rewards to performing an
-  activity and negative rewards to travelling.
+  activity and negative rewards to traveling.
 
 \item For the activities, one should select functions where the
   marginal reward of doing an activity decreases over time.
@@ -1594,7 +1586,7 @@ arguments may serve as starting points:
   activities should be the same.  
 
 \end{itemize}
-MATSim has, in the past years, gained some experience with the approach 
+\gls{matsim} has, in the past years, gained some experience with the approach 
 described in Chapter~\ref{ch:scoring} and with more theory in 
 Chapter~\ref{ch:economicEval}; this then closes the loop.  
 
@@ -1639,13 +1631,13 @@ At the same time, the \emph{population of the travelers} co-evolves
 towards a stationary distribution of choices.
 
 Overall, this chapter has worked out the structural similarity between the 
-``classical" DTA problem and the more recent agent-based assignment problem.
+``classical" \gls{dta} problem and the more recent agent-based assignment problem.
 The presentation has focused on the algorithmic issue of how to find solutions 
 of these problems. This is complemented by the subsequent Chapters~\ref{ch:montecarlo} to \ref{ch:kinematicwaves}, 
-which mostly discuss modeling (descriptive) aspects of MATSim.
+which mostly discuss modeling (descriptive) aspects of \gls{matsim}.
 
 \gunnar{Hier w\"urde sich vielleicht noch ein kleiner (eher technischer) Appendix 
-zum Thema ``running MATSim as a standard DTA'' anbieten.}
+zum Thema ``running \gls{matsim} as a standard DTA'' anbieten.}
 
 % %%\todoKai{Mit diesem Schluss-Paragraphen habe ich Probleme.  Vorschlaege?
 % %%  weglassen?  Kai $\Rightarrow$ Hab's mal versucht. Gunnar}
@@ -1671,7 +1663,7 @@ zum Thema ``running MATSim as a standard DTA'' anbieten.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% \section{Acknowledgements}
 
-%% This paper derives much from the MATSim project, which is a
+%% This paper derives much from the \gls{matsim} project, which is a
 %% collaboration between many people and institutions.  For the issues
 %% investigated in this paper, we benefited from discussions with
 %% %
