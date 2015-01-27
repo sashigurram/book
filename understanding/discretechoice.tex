@@ -5,12 +5,12 @@
 
 \hfill \textbf{Author:} Gunnar Flötteröd
 
-\gunnar{Equation underlying the ``title figure'' has changed.}
+%\gunnar{Equation underlying the ``title figure'' has changed.} \ah{corrected}
 
 \begin{center} \includegraphics[width=0.5\textwidth, angle=0]{understanding/figures/dc.png} \end{center}
 
 % ##################################################################################################################
-This chapter (i) attempts to reconcile MATSim's mechanisms of plan
+This chapter (i) attempts to reconcile \gls{matsim}'s mechanisms of plan
 {}``mutation'', {}``selection'' and {}``execution'', borrowed from evolutionary computation, with a 
 %mainstream
 discrete choice perspective, and (ii) and sketches a solution to the
@@ -43,18 +43,18 @@ in which the choice set is generated, both of which are addressed
 in the following.
 
 % ##################################################################################################################
-\section{\label{sec:Evaluating-choice-models}Evaluating choice models in
-a simulated environment}
+\section{\label{sec:Evaluating-choice-models}Evaluating Choice Models in
+a Simulated Environment}
 
 The discussion provided in this section focuses on the choice distribution
-$P_{n}(i\mid C_{n})$ for given choice sets. In MATSim, a plan is
+$P_{n}(i\mid C_{n})$ for given choice sets. In \gls{matsim}, a plan is
 evaluated in terms of its score, and plan selection is based on the
 score as the sole property of the plan. This is only a technical specification;
 the scoring and selection protocols are responsible of representing
 adequate perceptional and behavioral mechanisms. The notions of {}``choice''
 and {}``selection'' are subsequently used interchangeably. \note{Parts of this had been suggested in an earlier Email. Not sure where else it may show up.}
 
-The usual selection protocol of MATSim resembles a multinomial logit
+The usual selection protocol of \gls{matsim} resembles an \gls{mnl}
 choice model. Letting $S_{ni}$ be the score of plan $i$ of agent
 $n$, one has
 \begin{eqnarray}
@@ -63,7 +63,7 @@ P_{n}(i\mid C_{n}) & = & \frac{e^{\mu S_{ni}}}{\sum_{j\in C_{n}}e^{\mu S_{nj}}}\
 with $\mu$ controlling the preference for higher scores.
 It is set to one in the remainder of this section. Only if the score
 of a plan represented its expected utility, then this would constitute
-a plain multinomial logit choice model with $\mu$ taking the role
+a plain \gls{mnl} choice model with $\mu$ taking the role
 of a scale parameter. However, things are somewhat more complicated.
 
 Assume that the attribute vector $\mathbf{x}_{ni}$ of the alternatives in \MyEqRef{eq:ExpBetaPlanSelector}
@@ -86,9 +86,9 @@ P_{n}(i\mid C_{n}) & = &
 p(\boldsymbol{\eta}_{n})d\boldsymbol{\eta}_{n}\label{eq:mixture-of-logit}
 \end{eqnarray}
 where $p(\boldsymbol{\eta}_{n})$ is the probability density function of 
-$\boldsymbol{\eta}_{n}=(\boldsymbol{\eta}_{ni})$, i.e. the joint probability
+$\boldsymbol{\eta}_{n}=(\boldsymbol{\eta}_{ni})$, \ie the joint probability
 density function of the random disturbances of all alternatives of individual $n$.
-\citep{train-2003}. This formulation comprises most if not all MATSim
+\citep{train-2003}. This formulation comprises most if not all \gls{matsim}
 configurations currently used. It represents the \lstinline{ExpBetaPlanSelector}
 and the equivalent \lstinline{ExpBetaPlanChanger}. It also comprises
 the \lstinline{BestPlanSelector} because that is equivalent to the \lstinline{ExpBetaPlanSelector}
@@ -100,7 +100,7 @@ the tractability of closed-form logit models with the flexibility of
 simulating arbitrary $p(\boldsymbol{\eta}_n)$ distributions.
 The distribution of $\boldsymbol{\eta}_n$ is often as simple as a multivariate normal
 because this already allows to introduce rich correlation structures
-into the underlying random utilities. In MATSim, however, the simulated
+into the underlying random utilities. In \gls{matsim}, however, the simulated
 error term $\boldsymbol{\eta}_n$ is extremely complicated. Revisiting \MyEqRef{eq:score},
 it defines the variability of the score that results from the fact
 that the simulated network conditions are stochastic. The distribution
@@ -111,10 +111,10 @@ one can only draw from it.
 Additional complexity results from the simulated network conditions
 being in turn the consequence of simulated travel behavior that is
 again defined through \MyEqRef{eq:mixture-of-logit}. This circular
-dependency is natural, given that MATSim is mainly a transport planning
+dependency is natural, given that \gls{matsim} is mainly a transport planning
 model, (see Chapter~\ref{ch:montecarlo}). Indeed, just as a representation
 of the mutual demand/supply dependency is essential in transport planning,
-the circular definition of the $\boldsymbol{\eta}_n$ terms adds realism to MATSim:
+the circular definition of the $\boldsymbol{\eta}_n$ terms adds realism to \gls{matsim}:
 \begin{enumerate}
 \item Assume one could somehow make the simulated network conditions more
 realistic. The result would be a more realistic distribution $p(\boldsymbol{\eta}_n)$
@@ -147,7 +147,7 @@ be given.
 
 However, another perspective on this problem is possible, continuing
 the arguments of Chapter~\ref{ch:montecarlo}. It is argued there that
-the sole purpose of MATSim's iterative mechanism is to attain a realistic
+the sole purpose of \gls{matsim}'s iterative mechanism is to attain a realistic
 stationary distribution. If so, then the sole purpose of the simulated
 $\boldsymbol{\eta}_n$s is to yield a realistic stationary choice distribution. To
 illustrate this perspective, consider the following moving-average score
@@ -161,7 +161,7 @@ updating rule:
 where $\bar{S}^{k}$ is the filtered score of iteration $k$ and $S^{k}$
 is the concrete score observed in that iteration. The learning rate $\alpha$
 controls how strongly the filtered score is smoothed out, and hence
-it controls the variability of $\boldsymbol{\eta}_n$. MATSim enables this mechanism
+it controls the variability of $\boldsymbol{\eta}_n$. \gls{matsim} enables this mechanism
 through the \lstinline{learningRate} parameter.
 
 Assuming for simplicity that upon convergence the unfiltered stationary score
@@ -186,11 +186,11 @@ estimated from real data, just as any other parameter of that model.
 environment}
 
 This section turns to the question what it means to insert a plan
-innovation mechanism into MATSim's iterated simulation logic. The
+innovation mechanism into \gls{matsim}'s iterated simulation logic. The
 modeling of a choice set is, even in the discrete choice community,
 quite controversial \citep{frejinger-2010}, and there is no reason
 to believe that {}``plan mutation'' or {}``plan innovation'' in
-MATSim are more realistic than anything proposed in that community.
+\gls{matsim} are more realistic than anything proposed in that community.
 However, as said before, if the choice sets are {}``wrong'' (whatever
 this may precisely mean) then one can be fairly confident that the
 simulated behavior also turns out wrong.
@@ -200,9 +200,9 @@ For example, if all alternatives in the synthetic choice set are very different 
 
 %%\kai{Ich würde das so nicht unterschreiben.  Irgendwie brauchen wir aber einen Weg, wie wir das in diesem Buch zur Konvergenz bringen.  EINE Möglichkeit wäre, dass wir an mehreren Stellen so etwas wie ``Also see Sec.??? for a discussion.'', und versuchen dann, dort auf Formulierungen zu kommen, auf die wir uns einigen können.  Das wäre dann ``research avenues'', was es dann logischerweise ist.}
 
-%%\kai{Inhaltlich: Wenn ich mir so etwas wie das Buch von Norvig/Russel anschaue, dann kann man m.E.\ nicht behaupten, dass im Umfeld von ``artificial intelligence'' (AI) nichts passiert ist.   Mein Eindruck ist eher, dass Fortschritt vor allem dann passiert, wenn die ``intuitiveren'' Methoden aus AI sich mit den ökonometrischen Methoden irgendwie einigen.  Deshalb will ich auch keine Gegnerschaft zwischen ``MATSim'' und sogenannten ``more mainstream methods''.  Selbst wenn Dinge wie ``genetic algorithms'', ``simulated annealing'', ``neuronale Netze'' bereits bekannte statistische Methoden neu erfinden, so ist es dennoch so, dass sie vielleicht ein gutes ``Bild'' finden, was die Methode viel zugänglicher macht.  Und schlussendlich wollen wir mit MATSim kein perfektes ökonometrisches Modell, sondern etwas, was in der Praxis gut funktioniert.  Und bisher hat es tatsächlich recht gut funktioniert, das choice set einfach heuristisch zusammenzusetzen, und dann mit starker Betonung der guten Lösungen auszuwählen.  Es spricht nichts dagegen, zu \emph{untersuchen}, ob man es besser machen kann.  Aber ohne  klaren Nachweis, dass man mit einer stärker ökonometrischen Methode wirklich für die Praxis brauchbarer wird, möchte ich die (für Nicht-Ökonometriker) besser verständliche Variante gerne auch behalten.  --  Der deutsche BVWP macht übrigens Routenwahl \emph{nur} basierend auf ``fastest route'', und hat noch nicht einmal ein konvergierendes Verfahren.}
+%%\kai{Inhaltlich: Wenn ich mir so etwas wie das Buch von Norvig/Russel anschaue, dann kann man m.E.\ nicht behaupten, dass im Umfeld von ``artificial intelligence'' (AI) nichts passiert ist.   Mein Eindruck ist eher, dass Fortschritt vor allem dann passiert, wenn die ``intuitiveren'' Methoden aus AI sich mit den ökonometrischen Methoden irgendwie einigen.  Deshalb will ich auch keine Gegnerschaft zwischen ``MATSim'' und sogenannten ``more mainstream methods''.  Selbst wenn Dinge wie ``genetic algorithms'', ``simulated annealing'', ``neuronale Netze'' bereits bekannte statistische Methoden neu erfinden, so ist es dennoch so, dass sie vielleicht ein gutes ``Bild'' finden, was die Methode viel zugänglicher macht.  Und schlussendlich wollen wir mit \gls{matsim} kein perfektes ökonometrisches Modell, sondern etwas, was in der Praxis gut funktioniert.  Und bisher hat es tatsächlich recht gut funktioniert, das choice set einfach heuristisch zusammenzusetzen, und dann mit starker Betonung der guten Lösungen auszuwählen.  Es spricht nichts dagegen, zu \emph{untersuchen}, ob man es besser machen kann.  Aber ohne  klaren Nachweis, dass man mit einer stärker ökonometrischen Methode wirklich für die Praxis brauchbarer wird, möchte ich die (für Nicht-Ökonometriker) besser verständliche Variante gerne auch behalten.  --  Der deutsche BVWP macht übrigens Routenwahl \emph{nur} basierend auf ``fastest route'', und hat noch nicht einmal ein konvergierendes Verfahren.}
 
-MATSim performs in every iteration the following operations for each
+\gls{matsim} performs in every iteration the following operations for each
 agent: (1) update of the choice set and (2) choice of a plan from
 the updated choice set, using the model (\ref{eq:ExpBetaPlanSelector}).
 To make the simulated long-term (stationary) plan choice independent
@@ -217,21 +217,21 @@ meaning that plans are selected from the universal choice set.
 Denoting further by $P(C_{n}\rightarrow C_{n}')$ the probability
 that plan mutation/innovation turns the choice set $C_{n}$ into $C_{n}'$,
 it is possible to enforce the long-term choice distribution \MyEqRef{eq:global-choice-model}
-through an application of the Metropolis-Hastings (MH) algorithm \citep{hastings-1970}.
+through an application of the \gls{mh} algorithm \citep{hastings-1970}.
 (See also \citet{floetteroed-2012b} for a related approach to a similar
 problem.) 
 
-The MH algorithm specifies the transition distribution
+The \gls{mh} algorithm specifies the transition distribution
 of a Markov chain such that a desired stationary distribution of that
 chain is reached. Given that Chapter~\ref{ch:montecarlo} has established
-a formulation of MATSim in terms of such a chain, the MH machinery can
-hence be inserted into the MATSim iterations. A simplification made in
+a formulation of \gls{matsim} in terms of such a chain, the \gls{mh} machinery can
+hence be inserted into the \gls{matsim} iterations. A simplification made in
 the following is that the choice distribution of agent $n$ is considered
 independent of all other agents.
 
 To make this concrete, the state space of the algorithm is defined as the tuple
 $(C_{n},\, i\in C_{n})$ consisting of choice set and resulting choice.
-During each (MATSim) iteration, one first draws a new choice set $C_{n}'$,
+During each (\gls{matsim}) iteration, one first draws a new choice set $C_{n}'$,
 then draws a new choice $i'\in C_{n}'$, and finally accepts the new
 state $(C_{n}',\, i')$ with probability
 \begin{eqnarray}
@@ -331,7 +331,7 @@ is irreducible \citep{ross-2006}.
 
 % ##################################################################################################################
 \section{\label{sec:Summary}Summary}
-This chapter attempted to phrase MATSim's mechanisms of plan scoring,
+This chapter attempted to phrase \gls{matsim}'s mechanisms of plan scoring,
 innovation, mutation and selection in the somewhat more mainstream
 terminology of discrete choice modeling. The implications of evaluating
 stochastic scores when selecting a plan were explained. Further, a
@@ -340,7 +340,7 @@ innovation modules was suggested.
 
 % ##################################################################################################################
 
-\section*{Appendix: Derivation of filtered score statistics}
+\section*{Appendix: Derivation of Filtered Score Statistics}
 
 Writing out the expectation:
 \begin{eqnarray}
