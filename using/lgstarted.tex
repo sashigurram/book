@@ -157,7 +157,9 @@ Further configuration possibilities are described in Chapter~\ref{ch:configuring
 \section{Building and Running a Basic Scenario}
 \label{sec:buildingbasicscenario}
 % ===============================================================================================
-This section provides information on the typical input data files used for a \gls{matsim} experiment, and the standard output files generated. It presents a parsimonious example scenario and shortly explains units, conventions and coordinate systems used in \gls{matsim}. Finally some hints on practical data requirements and how to perform calibration, verification and validation are given.
+This section provides information on the typical input data files used for a \gls{matsim} experiment, and the standard output files generated. It presents a parsimonious example scenario and shortly explains units, conventions and coordinate systems used in \gls{matsim}. Finally some hints on practical data requirements
+% and how to perform calibration, verification and validation 
+are given.
 
 % ===============================================================================================
 \subsection{Typical Input Data}
@@ -567,143 +569,179 @@ In simulation practice, two different network types are in use, planning network
 {}
 
 % ===============================================================================================
-\subsection{The Modeling Process: Implementation, Verification, Validation, and Calibration}
-
-%% \kai{Andreas, re Typographie: Es gibt die Theorie, dass Text bzgl.\ seiner ``grayness'' gleichmäßig aussehen sollte.  Daraus folgt, dass ``emph'' typischerweise Text in der gleichen ``Graustufe'' erzeugt wie normal. -- Ich persönlich habe es manchmal allerdings ganz gerne, wenn bestimmte Ausdrücke tatsächlich herausgehben sind ... wie im folgenden ``calibration'', ``verification'', ...  Bessere Lesbarkeit um den Preis der schlechteren Typographie.  Definiere dazu oft ``imp'', analog zu ``emph''.  Bin da allerdings nicht militant; wenn das einer Mehrheit nicht passt, ziehe ich mich hier zurück.}
-
-%% \ah{Finde ich gut. Einige "imp"s sind jetzt halt wieder rausgeflogen, wegen dem Einfügen von paragraphs.}
-
-% --------------------------------------
-\kai{Hallo Andreas,
-
-In Deinem Text plus dazugehörigem Bild steht, dass verification \emph{nach} calibration kommt.
-
-Ist das auch so in der originalen Quelle (Petty)?
-
-Ich hatte das immer umgekehrt gesehen.  Auch technisch machen wir es nahezu zwangsläufig umgekehrt: "verification" entspricht (meinem Verständnis nach) den regression tests, und die sind sinvollerweise im development process, und calibration kann erst danach kommen, nämlich wenn die user übernehmen.
-
-Auch \url{http://en.wikipedia.org/wiki/Verification_and_validation_of_computer_simulation_models} hat verification am Anfang; dort folgt interessanterweise gleich validation, und 
-calibration nur dann, wenn die validation scheitert (so würde ich das eigentlich auch sehen; wir haben in der Meteorologie nie kalibriert).
-
-Auch die NASA kennt nur verification und validation:  \url{http://www.grc.nasa.gov/WWW/wind/valid/tutorial/tutorial.html} .  (Calibration 
-wird dort im glossary genannt.)
-
-\url{http://www.streamnologies.com/support/pdfs/Calibration.pdf}
-hat verification \emph{nach} calibration ... verwechselt aber m.E. verification mit validation.
-
-\url{http://www.webpages.uidaho.edu/niatt_labmanual/chapters/traveldemandforecasting/professionalpractice/ModelCalibrationAndValidation.htm} : Verifying a calibrated model in this manner is commonly called "validation." :-)
-
-Viele Grüße
-
-Kai
-}
-
-% --------------------------------------
-\kai{Hallo Andreas,
-
-Nur schnell, ohne das genau gelesen zuhaben:
-
-verification -- software conforms to specifications
-
-validation -- software generates correct ``image'' of reality (gescheiterweise einschl. der sensitivities)
-
-calibration -- if validation fails (\ie an iterative cycle between validation and calibration)
-
-Also
-
-while ( validate()==false ) { 
-   calibrate() ; // if validate()==true immediately, this is never called }
-
-In den empirischen Sozialwissenschaften wird wohl davon ausgegangen, dass es ohne Kalibrierung ohnehin nicht validiert, daher
-
-do {
-   calibrate() ; // call at least once
-} until ( validate()==true ) ;
-   
-Ich selber tendiere allerdings (aufgrund Ausbildung?) auch dazu, erstmal ohne weitere Kalibrierung zu Validieren.
-
-===
-
-Da fällt mir allerdings gerade auf, dass die Verkehrsleute unter Kalibrierung etwas anderes Verstehen als die Naturwissenschaftler:
-
-- Ben-Akiva versteht unter Kalibrierung die upstream estimation des choice models. Also \emph{unabhängig} vom network loading model, traffic counts etc.  Er sagte mir sogar mal, "wenn alle Teil-Modelle richtig kalibriert sind, dann muss doch auch das Gesamt-Modell richtig kalibriert sein".
-
-- Meiner Erfahrung entspricht das nicht; das liegt an der Nicht-Linearität der ``emergent phenomena''.  Also muss man sich den Modell-Output anschauen, das Modell invertieren, und damit den Modell-Input (z.B. die Parameter der Nutzenfunktion) (nach)kalibrieren.  Das ist auch der Ansatz von Cadyts.
-
-Nun gut, müssen wir suchen.  Für die ``normale'' Sichtweise haben wir ja Perry und die NASA-webseite.  
-
-VG
-
-Kai
-}
-
-% --------------------------------------
-\kai{Figure 2: A scientific method to creating a model from a real world \[10\]:
-
-Kommentare:
-
-- ``verification'' (wo es wohl validation heißen müsste) --??
-
-- General solution --> Estimated real world: Hier wäre dann die ``calibration'' auch vor der validation.
-
-VG
-
-Kai
-}
-
-% --------------------------------------
-
-\kai{Go through text after above issue is resolved.}
-
-\ah{Obige Punkte weiter einbauen und auf MATSim practice zuschneiden.}
-
-% =====================================================================
-
-Designing a \gls{microsimulation} scenario requires knowledge of the general modeling process, \ie a clear understanding of the required steps. Thus, this section aims at giving the novice modeler a guide through the modeling process. It is skteched in Figure~\ref{fig:modeling}---loosely based on \citet[][Figure 10.2]{Petty_SokolowskiBanks_2010}. Modeling starts with observation and measurement of reality (in \citet[][]{Petty_SokolowskiBanks_2010} called ``\emph{simuland}'') for acquisition of knowledge (in \citet[][]{Petty_SokolowskiBanks_2010} called ``\emph{referent}''). Model creation---in a strict sense usually referred to as \emph{modeling}---is based on the modeler's knowledge about the world. Based on a conceptual model, an executable model is implemented. The executable model is evaluated in a verification step in terms of ``\emph{was the model made right?}'' \citep[][p.332]{Petty_SokolowskiBanks_2010}. Validation compares results with the referent in the sense of ``\emph{was the right model made?}'' \citep[][p.332]{Petty_SokolowskiBanks_2010}. Transferring a model from one domain to another---in transport planning for example applying the simulation for a different population---usually requires calibration.
-
-Verification and validation, are of more concern for the \gls{microsimulation} developers. Given a valuable estimate for demand and supply including a properly estimated utility function, from customer's perspective the simulation can be expected to generate valuable single run results out of the box for the design domain.
-
-Besides possibly calibrating the model for different application domains, the user's or customer's responsibility is asked, at another place: \Glspl{microsimulation} are basically a sampling tool, just as a survey (see Section~\ref{sec:variability}). A single run represents the sampling unit, the individual in surveys. This obviously means that \gls{microsimulation} results must not to be presented as single runs but with the help of the usual statistical tools, \eg by parameters with the common measures of spread or confidence intervals. That basically means that the user/customer is responsible to specify the sample size, the number of simulation runs initialized with different random seeds. 
-
-%Policy evaluations are often based on count data, usually widely available but also showing substantial temporal variability. For \gls{matsim}, the count data need to be converted to match the simulated period of the day.
-
-% ...................................................................
-\paragraph{Verification:}
-Verification is the procedure to test if a ``\emph{product is consistent with its specifications [...]}'' \citet[][p.330]{Petty_SokolowskiBanks_2010}. In verification, a perfect match can be achieved comparing the conceptual and the executable model (see Figure~\ref{fig:modeling}) in contrast to validation, where the model is always an approximation to reality \citep[][p.145]{Kleijnen_EJOR_1995}. 
-
-% ...................................................................
-\paragraph{Validation:}
-According to \citet[][p.331]{Petty_SokolowskiBanks_2010}, ``\emph{validation is the process of determining the degree to which the model is an accurate representation of the simuland.}'' Validation is difficult to standardize due to the variety of models and model purposes. Some measures, tests, and applications relevant to transport modeling are given by \citet[][Table 2]{MilamChao_TRBATPM_2001}, \citet[][]{Lima_TechRep_LMPO_2006}, \citet[][p.155]{KurthEtAl_TRBTDF_2006}, \citet[][p.157]{PendyalaBhat_TRBTDF_2006}, \citet[][p.8]{WegmannEverett_TechRep_CTRUT_2008}, \citet[][]{MilamChao_TRBATPM_2001, RoordaEtAl_TransResA_2008, HawasHameed_TPT_2009, SadekEtAl_TRR_2003, GouliasKitamura_TRR_1992}, \citet[][p.25]{CambridgeSystematics_manual_2008}, \citet[][p.145]{Kleijnen_EJOR_1995} (see also \citet[][]{David_EACSSS_2009}, \citet[][p.56]{SbaytiRoden_ResRep_AASHTO_2010}, \citet[][]{SchifferRossi_TRB_2009}). While for the 4-step procedure some validation standards have emerged \citep[e.g.,][]{BartonAschmanCambridgeSystematics_manual_1997}, a lack of standardization exists for activity-based models. \citet[][]{PendyalaBhat_TRBTDF_2006} say that ``\emph{despite the appeal of these models,}'' [activity- and tour-based travel demand modeling systems] ``\emph{their widespread implementation appears to be hindered by the absence of a detailed validation and assessment of this new wave of model systems. Many MPOs \ah{glossary} will not adopt such models until they are tested.}'' \citet[][]{KurthEtAl_TRBTDF_2006} cites a statement made by Chandra Bhat and Frank Koppelman in a DRCOG e-mail discussion: ``\emph{Researchers and practitioners have not thought carefully enough about the criteria for validation of models. Researchers have the habit of asking practitioners to believe that activity- based methods will produce better impact assessment and forecasts because such models more appropriately represent the actual decision process (we plead guilty to this charge). There is a good basis for this line of thought, but researchers need to go beyond this argument. They need to develop clear validation criteria and demonstrate the value of activity-based methods in ways that are easily understood.}''
-
-Often neglected, but important, is performing \imp{sensitivity analysis} (sometimes dubbed ``what-if analysis'' \citep[][p.155]{Kleijnen_EJOR_1995}) \citep[][]{KurthEtAl_TRBTDF_2006, CambridgeSystematics_manual_2008, CFD_TRB_2007}. Sensitivity analysis is similar to assessing elasticity of a variable \citep[][p.3f]{WegmannEverett_TechRep_CTRUT_2008} and it tests reaction of the model to changed parameters including model input. This includes both testing the range of parameters for a given point in time, and analysis of the system's fore- and backcasting abilities \citep[e.g.,][p.56]{CFD_TRB_2007}, \citep[][]{CambridgeSystematics_manual_2008}. As forecasting is a vital objective of most transport models, this test is crucial. \citet[][p.158]{PendyalaBhat_TRBTDF_2006} puts it succinctly: ``\emph{There is no doubt that any model can be adjusted, refined, tweaked, and---if all else fails---hammered to replicate base-year conditions.}'' and concludes that ``\emph{the quality of a travel demand model system is better judged on its ability to respond to a range of scenarios and policies of interest.}'' In \gls{matsim}, a natural and interesting sensitivity test would be to compare the \gls{matsim} forecasts with the current actual state of Zürich network after addition of the bypass ``Westumfahrung'' in 2009 \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009, Westumfahrung_Webpage_2008}.
-
-% ...................................................................
-\paragraph{Calibration:}
-Calibration is the process of adjusting model parameters to increase consistency of model outputs and observed target values \citep[][p.348]{HollanderLiu_Transportation_2007} \citep[see also][]{TrucanoEtAl_RESS_2006}. \citet[][Table 1]{HollanderLiu_Transportation_2007} list numerous studies that each calibrate a specific transport \gls{microsimulation}. Further examples are \citet[][]{SmithEtAl_JTE_2008, KimEtAl_TRR_2005, RutterEtAl_JASA_2009}, \gls{microsimulation} calibration guidelines are provided by \citet[][]{MilamChao_TRBATPM_2001, WegmannEverett_TechRep_CTRUT_2008, DowlingEtAl_manual_2002}. \citet[][Table 2]{HollanderLiu_Transportation_2007} describe measures of goodness-of-fit, that are productive for calibration. 
-
-The main calibration component for \gls{matsim} is the \gls{utilityfunction}; it needs to reflect the preferences of the study area's population.
-
-A second prominent calibration screw is in particular used for sample runs: To reduce the computational effort, initial explorative simulation runs are often performed on samples of the full population. In this case, either the flow and storage capacity values of the mobility simulation or the network capacities need to be adapted accordingly. \kai{described where?}
-
-Due to the usually large number of model parameters, an automated process is favorable as far as possible. Essentially this is an optimization process \citep[][p.353]{HollanderLiu_Transportation_2007}, for which various established procedures exist \citep[e.g.,][p.41ff]{ZhangMa_ResRep_PATH_2008}. For \gls{matsim}, an automatic procedure adapting the plans to road counts was developed by \citet[][]{floetteroed-2010e}. It is unclear however, if a certain loss of behavioral soundness is caused by adapting plans according to statistical matching. On the other hand, it is unclear anyway, to date, if the \gls{matsim} relaxation transitions should be given a behavioral meaning.
-
-% ...................................................................
-
-As mentioned above, models are in general flexible enough to be calibrated to target data. Thus, validation \emph{must} be performed using a different data set than for creating or calibrating the model \citep[][p.1]{CambridgeSystematics_manual_2008}, \citep[][p.56]{CFD_TRB_2007}, \citep[][p.18]{OrtuzarWillumsen_2001}. In statistics, this is called cross-validation. It is particularly important for forecasting models, which need to be general enough to capture temporal changes. Calibration and validation should thus be strictly separated. Due to the vast amount of data required for model implementation and calibration this is not an easy endeavor for \gls{microsimulation} practice. In \gls{matsim}, for example, after model creation often only road count data is left for validation \citep[][]{HorniEtAl_STRC_2009}. New data sources, such as road speed analyses based on \gls{gps} \citep[][]{HackneyEtAl_JGS_2007}, should be included.
-
-Furthermore, many central and comfortable characteristics of systems known from natural sciences are only seldom available for the social science, such as path-independence, decomposability, isolation, and on top of that repeatability of experiments. As a result, there is still a debate if social science actually can provide something similar as laws. \citet[][p.107ff]{Abel_1976} lists and discusses the 12\,claims of the ``\emph{Verstehen Position}''; although, he finds contrary arguments to every claim, nevertheless, something definitely remains true, making social science model validation exceptionally difficult. 
-
-%\ah{Latte zu hoch gelegt und wohl gerissen:}
-%For microsimulation results interpretation and model validation, it helps to visualize the following example. A microsimulation forecast (or backcast) regarding the construction of the "Westumfahrung Zürich" provides a probability distribution of scenarios, and it is essentially an exercise in Monte Carlo sampling (see also Chapter~\ref{ch:montecarlo}). 4\,years later we have exactly one actual state, and there is no way to assess the forecasted (or backcasted) probability distribution beyond checking that this actual state is contained in the probability distribution, and hopefully with high probability. There is nothing like Monte Carlo sampling when it comes to aggregate real system states. In other words the existing state is \emph{unique}. In essence, we thus compare an observed Dirac impulse with a computed probability distribution, which is a difficult undertaking.
-
-% ----------
-\createfigure%
-{Modeling process}%
-{Modeling process}%
-{\label{fig:modeling}}%
-{\includegraphics[width=0.8\textwidth, angle=0]{using/figures/modeling.pdf}}%
-{}
-% ----------
+%\subsection{The Modeling Process: Implementation, Verification, Validation, and Calibration}
+%\label{sec:using-modeling-process}
+%
+%%% \kai{Andreas, re Typographie: Es gibt die Theorie, dass Text bzgl.\ seiner ``grayness'' gleichmäßig aussehen sollte.  Daraus folgt, dass ``emph'' typischerweise Text in der gleichen ``Graustufe'' erzeugt wie normal. -- Ich persönlich habe es manchmal allerdings ganz gerne, wenn bestimmte Ausdrücke tatsächlich herausgehben sind ... wie im folgenden ``calibration'', ``verification'', ...  Bessere Lesbarkeit um den Preis der schlechteren Typographie.  Definiere dazu oft ``imp'', analog zu ``emph''.  Bin da allerdings nicht militant; wenn das einer Mehrheit nicht passt, ziehe ich mich hier zurück.}
+%
+%%% \ah{Finde ich gut. Einige "imp"s sind jetzt halt wieder rausgeflogen, wegen dem Einfügen von paragraphs.}
+%
+%% --------------------------------------
+%\kai{Hallo Andreas,
+%
+%In Deinem Text plus dazugehörigem Bild steht, dass verification \emph{nach} calibration kommt.
+%
+%Ist das auch so in der originalen Quelle (Petty)?
+%
+%Ich hatte das immer umgekehrt gesehen.  Auch technisch machen wir es nahezu zwangsläufig umgekehrt: "verification" entspricht (meinem Verständnis nach) den regression tests, und die sind sinvollerweise im development process, und calibration kann erst danach kommen, nämlich wenn die user übernehmen.
+%
+%Auch \url{http://en.wikipedia.org/wiki/Verification_and_validation_of_computer_simulation_models} hat verification am Anfang; dort folgt interessanterweise gleich validation, und 
+%calibration nur dann, wenn die validation scheitert (so würde ich das eigentlich auch sehen; wir haben in der Meteorologie nie kalibriert).
+%
+%Auch die NASA kennt nur verification und validation:  \url{http://www.grc.nasa.gov/WWW/wind/valid/tutorial/tutorial.html} .  (Calibration 
+%wird dort im glossary genannt.)
+%
+%\url{http://www.streamnologies.com/support/pdfs/Calibration.pdf}
+%hat verification \emph{nach} calibration ... verwechselt aber m.E. verification mit validation.
+%
+%\url{http://www.webpages.uidaho.edu/niatt_labmanual/chapters/traveldemandforecasting/professionalpractice/ModelCalibrationAndValidation.htm} : Verifying a calibrated model in this manner is commonly called "validation." :-)
+%
+%Viele Grüße
+%
+%Kai
+%}
+%
+%% --------------------------------------
+%\kai{Hallo Andreas,
+%
+%Nur schnell, ohne das genau gelesen zuhaben:
+%
+%verification -- software conforms to specifications
+%
+%validation -- software generates correct ``image'' of reality (gescheiterweise einschl. der sensitivities)
+%
+%calibration -- if validation fails (\ie an iterative cycle between validation and calibration)
+%
+%Also
+%
+%while ( validate()==false ) { 
+   %calibrate() ; // if validate()==true immediately, this is never called }
+%
+%In den empirischen Sozialwissenschaften wird wohl davon ausgegangen, dass es ohne Kalibrierung ohnehin nicht validiert, daher
+%
+%do {
+   %calibrate() ; // call at least once
+%} until ( validate()==true ) ;
+   %
+%Ich selber tendiere allerdings (aufgrund Ausbildung?) auch dazu, erstmal ohne weitere Kalibrierung zu Validieren.
+%
+%===
+%
+%Da fällt mir allerdings gerade auf, dass die Verkehrsleute unter Kalibrierung etwas anderes Verstehen als die Naturwissenschaftler:
+%
+%- Ben-Akiva versteht unter Kalibrierung die upstream estimation des choice models. Also \emph{unabhängig} vom network loading model, traffic counts etc.  Er sagte mir sogar mal, "wenn alle Teil-Modelle richtig kalibriert sind, dann muss doch auch das Gesamt-Modell richtig kalibriert sein".
+%
+%- Meiner Erfahrung entspricht das nicht; das liegt an der Nicht-Linearität der ``emergent phenomena''.  Also muss man sich den Modell-Output anschauen, das Modell invertieren, und damit den Modell-Input (z.B. die Parameter der Nutzenfunktion) (nach)kalibrieren.  Das ist auch der Ansatz von Cadyts.
+%
+%Nun gut, müssen wir suchen.  Für die ``normale'' Sichtweise haben wir ja Perry und die NASA-webseite.  
+%
+%VG
+%
+%Kai
+%}
+%
+%% --------------------------------------
+%\kai{Figure 2: A scientific method to creating a model from a real world \[10\]:
+%
+%Kommentare:
+%
+%- ``verification'' (wo es wohl validation heißen müsste) --??
+%
+%- General solution --> Estimated real world: Hier wäre dann die ``calibration'' auch vor der validation.
+%
+%VG
+%
+%Kai
+%}
+%
+%% --------------------------------------
+%
+%\kai{Go through text after above issue is resolved.}
+%
+%% =====================================================================
+%
+%Designing a \gls{microsimulation} scenario requires basic knowledge of the general modeling process, \ie a clear understanding of its required steps. 
+%Thus, this section aims at giving the novice modeler a quick guide through the abstract modeling process. 
+%The process is further detailed in Section~\ref{sec:extending-modeling-process} as it is particularly relevant for designing new functional modules, the topic of this book's part~II. 
+%
+%% ------------------------------------------------------
+%\subsubsection{The Modeling Process in Theory}
+%\label{sec:using-modeling-process-in-theory}
+%The abstract modeling process is sketched in Figure~\ref{fig:modeling}---loosely based on \citet[][Figure 10.2]{Petty_SokolowskiBanks_2010}. 
+%It starts with \imp{observation and measurement} of reality (in \citet[][]{Petty_SokolowskiBanks_2010} called ``\emph{simuland}'') for acquisition of \imp{knowledge} (in \citet[][]{Petty_SokolowskiBanks_2010} called ``\emph{referent}''). 
+%\imp{Conceptual model} creation---in a strict sense, this is usually referred to as \emph{modeling}---is based on the modeler's knowledge about the world. 
+%Based on a conceptual model, an \imp{executable model} is \imp{implemented}. 
+%
+%The executable model is evaluated in a \imp{verification} step in terms of ``\emph{was the model made right?}'' \citep[][p.332]{Petty_SokolowskiBanks_2010}, \ie verification is the procedure to test if a ``\emph{product is consistent with its specifications [...]}'' \citet[][p.330]{Petty_SokolowskiBanks_2010}. 
+%In verification, a perfect match can be achieved between the conceptual and the executable model (see Figure~\ref{fig:modeling}) in contrast to validation (see below), where the model is always an approximation to reality \citep[][p.145]{Kleijnen_EJOR_1995}. 
+%
+%\imp{Validation} compares results with the referent in the sense of ``\emph{was the right model made?}'' \citep[][p.332]{Petty_SokolowskiBanks_2010}, \ie ``\emph{validation is the process of determining the degree to which the model is an accurate representation of the simuland.}'' \citep[][p.331]{Petty_SokolowskiBanks_2010}. 
+%
+%\imp{Calibration} is the process of adjusting model parameters to increase consistency of model outputs and observed target values \citep[][p.348]{HollanderLiu_Transportation_2007} \citep[see also][]{TrucanoEtAl_RESS_2006}. This is sometimes additionally necessary, when transferring a model from the domain it was built for to another---for example applying a social simulation for a different region. 
+%
+%% ----------
+%\createfigure%
+%{Modeling process}%
+%{Modeling process}%
+%{\label{fig:modeling}}%
+%{\includegraphics[width=0.8\textwidth, angle=0]{using/figures/modeling.pdf}}%
+%{}
+%% ----------
+%
+%% ------------------------------------------------------
+%\subsubsection{The Modeling Process in Action in Transport Planning and MATSim}
+%The modeling process as sketched above comes into play at two places: user's scenario creation, but also developer's simulator design. 
+%Although, in this part of the book, the user is focused, here, we also consider the designer of new \gls{microsimulation} functionality as treated in part~II of the book.
+%
+%% ...................................................................
+%\paragraph{Verification:}
+%
+%
+%% ...................................................................
+%\paragraph{Validation:}
+%In practice, validation is difficult to standardize due to the variety of models and model purposes. 
+%Some measures, tests, and applications relevant to transport modeling are given by \citet[][Table 2]{MilamChao_TRBATPM_2001}, \citet[][]{Lima_TechRep_LMPO_2006}, \citet[][p.155]{KurthEtAl_TRBTDF_2006}, \citet[][p.157]{PendyalaBhat_TRBTDF_2006}, \citet[][p.8]{WegmannEverett_TechRep_CTRUT_2008}, \citet[][]{MilamChao_TRBATPM_2001, RoordaEtAl_TransResA_2008, HawasHameed_TPT_2009, SadekEtAl_TRR_2003, GouliasKitamura_TRR_1992}, \citet[][p.25]{CambridgeSystematics_manual_2008}, \citet[][p.145]{Kleijnen_EJOR_1995} (see also \citet[][]{David_EACSSS_2009}, \citet[][p.56]{SbaytiRoden_ResRep_AASHTO_2010}, \citet[][]{SchifferRossi_TRB_2009}). 
+%While for the 4-step procedure some validation standards have emerged \citep[e.g.,][]{BartonAschmanCambridgeSystematics_manual_1997}, a lack of standardization exists for activity-based models. 
+%\citet[][]{PendyalaBhat_TRBTDF_2006} say that ``\emph{despite the appeal of these models,}'' [activity- and tour-based travel demand modeling systems] ``\emph{their widespread implementation appears to be hindered by the absence of a detailed validation and assessment of this new wave of model systems. 
+%Many MPOs \ah{glossary} will not adopt such models until they are tested.}'' \citet[][]{KurthEtAl_TRBTDF_2006} cites a statement made by Chandra Bhat and Frank Koppelman in a DRCOG e-mail discussion: ``\emph{Researchers and practitioners have not thought carefully enough about the criteria for validation of models. 
+%Researchers have the habit of asking practitioners to believe that activity- based methods will produce better impact assessment and forecasts because such models more appropriately represent the actual decision process (we plead guilty to this charge). There is a good basis for this line of thought, but researchers need to go beyond this argument. 
+%They need to develop clear validation criteria and demonstrate the value of activity-based methods in ways that are easily understood.}''
+%
+%Often neglected, but important, is performing \imp{sensitivity analysis} (sometimes dubbed ``what-if analysis'' \citep[][p.155]{Kleijnen_EJOR_1995}) \citep[][]{KurthEtAl_TRBTDF_2006, CambridgeSystematics_manual_2008, CFD_TRB_2007}. 
+%Sensitivity analysis is similar to assessing elasticity of a variable \citep[][p.3f]{WegmannEverett_TechRep_CTRUT_2008} and it tests reaction of the model to changed parameters including model input. 
+%This includes both testing the range of parameters for a given point in time, and analysis of the system's fore- and backcasting abilities \citep[e.g.,][p.56]{CFD_TRB_2007}, \citep[][]{CambridgeSystematics_manual_2008}. 
+%As forecasting is a vital objective of most transport models, this test is crucial. 
+%\citet[][p.158]{PendyalaBhat_TRBTDF_2006} puts it succinctly: ``\emph{There is no doubt that any model can be adjusted, refined, tweaked, and---if all else fails---hammered to replicate base-year conditions.}'' and concludes that ``\emph{the quality of a travel demand model system is better judged on its ability to respond to a range of scenarios and policies of interest.}''
+%
+%In \gls{matsim}, a natural and interesting sensitivity test would be to compare the \gls{matsim} forecasts with the current actual state of Zürich network after addition of the bypass ``Westumfahrung'' in 2009 \citep[][]{Westumfahrung_Webpage_2008}, researched in detail by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}.
+%
+%% ...................................................................
+%\paragraph{Calibration:}
+%\citet[][Table 1]{HollanderLiu_Transportation_2007} list numerous studies that each calibrate a specific transport \gls{microsimulation}. Further examples are \citet[][]{SmithEtAl_JTE_2008, KimEtAl_TRR_2005, RutterEtAl_JASA_2009}, \gls{microsimulation} calibration guidelines are provided by \citet[][]{MilamChao_TRBATPM_2001, WegmannEverett_TechRep_CTRUT_2008, DowlingEtAl_manual_2002}. \citet[][Table 2]{HollanderLiu_Transportation_2007} describe measures of goodness-of-fit, that are productive for calibration. 
+%
+%The main calibration component for \gls{matsim} is the \gls{utilityfunction}; it needs to reflect the preferences of the study area's population.
+%
+%A second prominent calibration screw is in particular used for sample runs: To reduce the computational effort, initial explorative simulation runs are often performed on samples of the full population. In this case, either the flow and storage capacity values of the mobility simulation or the network capacities need to be adapted accordingly. \kai{described where?}
+%
+%Due to the usually large number of model parameters, an automated process is favorable as far as possible. 
+%Essentially this is an optimization process \citep[][p.353]{HollanderLiu_Transportation_2007}, for which various established procedures exist \citep[e.g.,][p.41ff]{ZhangMa_ResRep_PATH_2008}. 
+%For \gls{matsim}, an automatic procedure adapting the plans to road counts was developed by \citet[][]{floetteroed-2010e}. 
+%It is unclear however, if a certain loss of behavioral soundness is caused by adapting plans according to statistical matching. On the other hand, it is unclear anyway, to date, if the \gls{matsim} relaxation transitions should be given a behavioral meaning. 
+%
+%% ...................................................................
+%
+%As mentioned above, models are in general flexible enough to be calibrated to target data. Thus, validation \emph{must} be performed using a different data set than for creating or calibrating the model \citep[][p.1]{CambridgeSystematics_manual_2008}, \citep[][p.56]{CFD_TRB_2007}, \citep[][p.18]{OrtuzarWillumsen_2001}. In statistics, this is called cross-validation. It is particularly important for forecasting models, which need to be general enough to capture temporal changes. Calibration and validation should thus be strictly separated. Due to the vast amount of data required for model implementation and calibration this is not an easy endeavor for \gls{microsimulation} practice. In \gls{matsim}, for example, after model creation often only road count data is left for validation \citep[][]{HorniEtAl_STRC_2009}. New data sources, such as road speed analyses based on \gls{gps} \citep[][]{HackneyEtAl_JGS_2007}, should be included.
+%
+%Furthermore, many central and comfortable characteristics of systems known from natural sciences are only seldom available for the social science, such as path-independence, decomposability, isolation, and on top of that repeatability of experiments. As a result, there is still a debate if social science actually can provide something similar as laws. \citet[][p.107ff]{Abel_1976} lists and discusses the 12\,claims of the ``\emph{Verstehen Position}''; although, he finds contrary arguments to every claim, nevertheless, something definitely remains true, making social science model validation exceptionally difficult. 
+%
+%Verification and validation, are of more concern for the \gls{microsimulation} developers. Given a valuable estimate for demand and supply including a properly estimated utility function, from customer's perspective the simulation can be expected to generate valuable single run results out of the box for the design domain.
+%
+%Besides possibly calibrating the model for different application domains, the user's or customer's responsibility is asked, at another place: \Glspl{microsimulation} are basically a sampling tool, just as a survey (see Section~\ref{sec:variability}). A single run represents the sampling unit, the individual in surveys. This obviously means that \gls{microsimulation} results must not to be presented as single runs but with the help of the usual statistical tools, \eg by parameters with the common measures of spread or confidence intervals. That basically means that the user/customer is responsible to specify the sample size, the number of simulation runs initialized with different random seeds. 
+%
+%%Policy evaluations are often based on count data, usually widely available but also showing substantial temporal variability. For \gls{matsim}, the count data need to be converted to match the simulated period of the day.
+%
+%%\ah{Latte zu hoch gelegt und wohl gerissen:}
+%%For microsimulation results interpretation and model validation, it helps to visualize the following example. A microsimulation forecast (or backcast) regarding the construction of the "Westumfahrung Zürich" provides a probability distribution of scenarios, and it is essentially an exercise in Monte Carlo sampling (see also Chapter~\ref{ch:montecarlo}). 4\,years later we have exactly one actual state, and there is no way to assess the forecasted (or backcasted) probability distribution beyond checking that this actual state is contained in the probability distribution, and hopefully with high probability. There is nothing like Monte Carlo sampling when it comes to aggregate real system states. In other words the existing state is \emph{unique}. In essence, we thus compare an observed Dirac impulse with a computed probability distribution, which is a difficult undertaking.
 
 % ##################################################################################################################
 \section{MATSim Survival Guide}
