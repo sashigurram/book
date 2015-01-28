@@ -165,11 +165,13 @@ That approach had, as a consequence, very clearly defined interfaces, \ie the fi
 
 When \acrshort{matsim} was re-implemented in \gls{java} around 2006--7, it was re-implemented as one system.  As a result, now everything could interact with everything.  For example, a router could modify the network, compute routes on the modified network, and then modify it back---including the danger of not getting things completely right in changing it back.  \kai{not very clear}
 
-What made even more problems, however, were extensions to the program flow.  The program flow was, as it still is, organized by the \lstinline$Controler$ class.  Originally, everybody who wanted to change the program flow, in particular insert his or her own research \glspl{module}, would inherit from \lstinline$Controler$, override some methods, and insert his or how own instructions.  This did, however, have the consequence that it was impossible to combine the \glspl{extension} without possibly massive manual interventions (see Figure~\ref{fig:do-not-extend-controler}).
+What made even more problems, however, were extensions to the program flow.  The program flow was, as it still is, organized by the \lstinline$Controler$ class.  Originally, everybody who wanted to change the program flow, in particular insert his or her own research \glspl{module}, would inherit from \lstinline$Controler$, override some methods, and insert his or how own instructions.  This did, however, have the consequence that it was impossible to combine the \glspl{extension} without possibly massive manual interventions, illustrated as follows.
+% (see Figure~\ref{fig:do-not-extend-controler}). \ah{reasons for this being a figure?}
 
-\begin{figure}\footnotesize
-\hrule
-\strut For example, assume the core method as
+%\begin{figure}\footnotesize
+%\hrule
+%\strut For example, assume the core method as
+For example, assume the core method as
 \begin{lstlisting}
 class Controler {
    void run() {
@@ -205,11 +207,12 @@ class YourControler extends Controler {
    }
 }  
 \end{lstlisting}
-You can neither say \protect\lstinline$YourControler extends MyControler$ nor \protect\lstinline$MyControler extends YourControler$, since either way one of the two extensions gets lost.  In this simple case, it may be possible to address the problem by manual intervention, but in more complicated situations this is no longer possible without extensive additional testing. \strut
-\hrule
-\caption{Example why extending \lstinline|Controler| does not allow combination of extensions.}
-\label{fig:do-not-extend-controler}
-\end{figure}
+%
+You can neither say \protect\lstinline$YourControler extends MyControler$ nor \protect\lstinline$MyControler extends YourControler$, since either way one of the two extensions gets lost.  In this simple case, it may be possible to address the problem by manual intervention, but in more complicated situations this is no longer possible without extensive additional testing. %\strut
+%\hrule
+%\caption{Example why extending \lstinline|Controler| does not allow combination of extensions.}
+%\label{fig:do-not-extend-controler}
+%\end{figure}
 
 Therefore, in 2008 a decision was made to make \gls{matsim} more modular.  The first step in that direction was a decision to submit the whole \gls{matsim} repository to frequent refactorings, \ie to \emph{not} leave the code alone as much as possible but rather make the community get used to frequent changes of code while maintaining functionality.  In order to facilitate that approach, the coverage by automatic regression tests on the build server was hugely increased, and all developers were encouraged to write automatic regression tests for their own code and their own projects. 
 
