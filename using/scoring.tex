@@ -4,7 +4,7 @@
 
 \hfill \textbf{Author:} Andreas Horni, Kai Nagel
 
-\begin{center} \includegraphics[width=0.3\textwidth, angle=0]{using/figures/utf.png} \end{center}
+\begin{center} \includegraphics[width=0.3\textwidth, angle=0]{using/figures/scoring-example} \end{center}
 
 % ##################################################################################################################
 
@@ -13,8 +13,8 @@
 \kai{im folgenden habe ich noch ein paar Absätze neu geschrieben, muss daher doppelt gründlich durchgeschaut werden}
 
 As outlined in Section~\ref{sec:co-ev} and by Figures~\ref{fig:matsimcycle} and~\ref{fig-ea}, \gls{matsim} is based on a co-evolutionary algorithm where each individual agent learns by maintaining multiple plans which are scored by executing them in the mobsim, selected according to the score, and sometimes modified.  Somewhat more detailed, the iterative process contains the following elements:
+%
 \begin{description}
-
 \item[mobsim] The mobility simulation takes one ``selected'' plan per agent and executes it in a synthetic reality.  This may also be called network loading.
 
 \item [scoring] The actual performance of the plan in the synthetic reality is taken to compute the each executed plan's score.
@@ -27,12 +27,10 @@ As outlined in Section~\ref{sec:co-ev} and by Figures~\ref{fig:matsimcycle} and~
     \item For some agents, a plan copied, modified, and then selected for the next iteration (choice set extension/innovation).
 
   \item All other agents select between their plans (choice).
-
   \end{enumerate}
-
 \end{description}
 
-The plans of an agent in a given iteration may be considered the agent's \imp{choice set} in that iteration.  In consequence, steps 1 and 2 of replanning are modifying the choice set, while step~3 implements the actual \imp{choice} between options.
+The plans of an agent in a given iteration may be considered the agent's \imp{choice set} in that iteration.  In consequence, steps~1 and~2 of replanning are modifying the choice set, while step~3 implements the actual \imp{choice} between options.
 %
 Choice is typically based on the score, with plans with a higher score having a higher probability of being selected.  
 %
@@ -105,7 +103,7 @@ where:
 \begin{itemize}
 \item $S_{dur,q}= \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q})$ 
 %
-is the utility of performing activity $q$, where opening times of activity locations are taken into account. $t_{dur,q}$ is performed activity duration, $\beta_{dur}$ is the marginal utility of activity duration (or marginal utility of time as a resource -- the same for all activities),
+is the utility of performing activity $q$, where opening times of activity locations are taken into account. $t_{dur,q}$ is performed activity duration, $\beta_{dur}$ is the marginal utility of activity duration (or marginal utility of time as a resource---the same for all activities),
 % for its typical duration $t_{typ,q}$, 
 and $t_{0,q}$ is minimal duration, or in other words, the duration for which utility starts to be positive. 
 %
@@ -177,7 +175,7 @@ and
 %
 \benjamin{Irgendwo müsste dann definiert werden, was ``direct'' vs ``indirect'' ist; M.E. einfach ``without'' vs ``with'' (time) costraints.}
 %
-This is the direct utility contribution of travel; see Section~\ref{sec:opport-cost-of-time} for the the full indirect utility as well as the relation to the VTTS \ah{glossary}, and Section~\ref{ch:economicEval} for a more general discussion.
+This is the direct utility contribution of travel; see Section~\ref{sec:opport-cost-of-time} for the the full indirect utility as well as the relation to the \gls{vtts}, and Section~\ref{ch:economicEval} for a more general discussion.
 
 Note that the distance contributes to disutility in two ways. First, it is included in a direct manner via $\beta_{d, mode(q)}$, which is natural for modes with physical efforts such as walking or cycling. Second, distance is also included monetarily via $\beta_m \cdot \gamma_{d, mode(q)}$ which is natural for mode car or pt, where monetary costs increase dependent on distance. \benjamin{Maybe add: `The current specification makes it possible to use either of those approaches for each transport mode'}.
 
@@ -190,7 +188,7 @@ Note that the distance contributes to disutility in two ways. First, it is inclu
 % ------------
 \createfigure[!h!]%
 {Illustration of the scoring function.}%
-{Illustration of the scoring function. TOP: Individual contributions of the activities and legs.  BOTTOM: Score accumulation over the day}%
+{Illustration of the scoring function. TOP: Individual contributions of the activities and legs.  BOTTOM: Score accumulation over the day \ah{act starts negative, thus, acc score should start with a negative offset, right? thx Marcel!}}%
 {\label{fig:scoring-function}}%
 {\includegraphics[width=0.8\hsize,trim=0 0 0 0,clip]{using/figures/scoring-example}}%
 {}
@@ -233,7 +231,7 @@ mUTTS(t_{dur,q} = t_{typ,q}) = - \beta_{trav} + \beta_{dur} \ ,
 \]
 where it can be imagined $q$ is the activity immediately following the shortened trip (\cf Section~\ref{ch:economicEval:valuingBehavior}).
 
-The marginal utility of travel time savings at the typical duration can be transformed to the more common \textbf{value of travel time savings} \ah{acr. glossary} by division with $\beta_{m}$:
+The marginal utility of travel time savings at the typical duration can be transformed to the more common \gls{vtts} by division with $\beta_{m}$:
 \[
 VTTS = \frac{mUTTS}{\beta_{m}} = \frac{- \beta_{trav} + \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} }{\beta_{m}}
 \]
