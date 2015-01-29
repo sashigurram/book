@@ -9,7 +9,7 @@
 The three main elements of the \gls{matsim} cycle---execution, scoring, and \gls{replanning} (Section~\ref{sec:co-ev})---operate on what is essentially an in-memory object-oriented data base of \lstinline|Person| objects \citep{RaneyNagel2006traf-framework}.
 
 These three elements are the main screws to configure \gls{matsim}:
-\begin{description}
+\begin{description}\styleDescription
 \item[Execution] The \gls{mobsim} can be replaced, either by an internally available alternative, or by a fully external \gls{mobsim}.
 \item[Scoring] The scoring can be replaced, by possibly giving each individual agent a different recipe to compute its score.
 \item[Replanning] Arbitrary implementations of type \lstinline|PlanStrategy| can be added to the \gls{replanning}; these either generate new plans from scratch or by mutating existing ones, or they select between plans.
@@ -18,19 +18,18 @@ These three elements are the main screws to configure \gls{matsim}:
 The simulation's behavior can be further configured by using so-called \lstinline|ControlerListener|s.
 
 The \gls{mobsim} generates a stream of \glspl{event}. These are primarily used in two places:
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item The scoring uses them to track each agent's success at executing its plan, and compute the scoring value based on this.
 \item \lstinline|PlanStrategy| modules use them to build approximate models of the world in which they operate. For example, the router obtains time-dependent expected link travel times from a \lstinline|TravelTime| object, which in turn listens to link enter and link exit events.
-  
-\end{compactitem}
+\end{itemize}
 %% In consequence, each \lstinline|PlanStrategy| module can use events to obtain information about the world in which the plans of the synthetic travelers need to be improved. 
 Additionally, one can write any sort of event handlers for analysis during the iterations, or after a run by evaluating the events file.
 
 Some modules are so large that fully replacing them in order to adapt the simulation system to one's need is too much work. These are, in particular,
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item the \gls{qsim}, which is the default implementation of the \lstinline|Mobsim| interface, and
 \item the router.
-\end{compactitem}
+\end{itemize}
 In consequence, it is possible to add additional executable code into the execution flow of the \gls{qsim} by \lstinline|MobsimListeners| in a similar way as this is possible with the \lstinline|ControlerListeners| mentioned above.
 %
 The router, in contrast, is most importantly configured by replacing the definition of the generalized travel cost. 
@@ -82,7 +81,7 @@ The object-oriented in-memory database which holds the \lstinline|Person| object
 \subsection{Events}
 \label{sec:events-extension-point}
 The \gls{mobsim} moves the agents around in the virtual world according to their plans and within the bounds of the simulated reality. It documents their moves by producing a stream of \glspl{event}. Events are small pieces of information describing the action of an object at a specific time. Examples of such events are:
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item An agent finishes an activity
 \item An agent starts a trip
 \item A vehicle enters a road segment
@@ -90,7 +89,7 @@ The \gls{mobsim} moves the agents around in the virtual world according to their
 \item An agent boards a public transport vehicle
 \item An agent arrives at a location
 \item An agent starts an activity
-\end{compactitem}
+\end{itemize}
 %
 Each event has a timestamp, a type, and additional attributes required to describe the action like a vehicle id, a link id, an activity type or other data. In theory, it should be possible to replay the \gls{mobsim} just by the information stored in the events. While a \gls{plan} describes an agent's intention, the stream of events describes how the simulated day actually was.
 
@@ -123,11 +122,11 @@ A \lstinline{TripRouter} is a service object providing methods to generate \emph
 % ----------------------------------------------------------------
 \subsubsection{Using the Router}
 A \lstinline{TripRouter} instance provides a few methods to work with trips, namely
-\begin{compactitem}
+\begin{itemize}\styleItemize
 	\item Compute a route for a given mode and \gls{od} pair, for a \lstinline{Person} with a specific departure time
 	\item Identify the \emph{main mode} of a trip. For instance, a trip composed of several \emph{walk} and \emph{pt} \glspl{leg} should be identified as a public transport trip.
 	\item Identify which activities are \emph{stage activities}, and, by extension, identify the trips in the plan: A trip is the longest sequence of consecutive \lstinline{Leg}s and \emph{stage activities}
-\end{compactitem}
+\end{itemize}
 
 Please check the documentation of the \lstinline{TripRouter} class (see~\url{http://matsim.org/javadoc} $\to$ core) for more details and pointers to examples.
 
@@ -152,22 +151,22 @@ a \lstinline|Runnable| which is supposed to take a \gls{scenario} and produce a 
 Replanning in \gls{matsim} is specified by defining a set of weighted strategies. In each iteration, each agent makes a draw from this set and executes the selected strategy. The strategy specifies how the agent changes its behavior. Most generally, it is an operation on the plan memory of an agent: It adds and/or removes plans, and it marks one of these plans as selected.
 
 Strategies are implementations of the \lstinline|PlanStrategy| interface. The two most common cases are:
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item Pick one plan from memory according to a specified choice algorithm.
 \item Pick one plan from memory at random, copy it, mutate it in some specific aspect, add the mutated plan to the plan memory, and mark this new plan as selected.
-\end{compactitem}
+\end{itemize}
 
 The framework provides a helper class which can be used to implement both of these strategy templates. The helper class delegates to an implementation of \lstinline|PlanSelector|, which selects a plan from memory, and to zero, one or more implementations of \lstinline|PlanStrategyModule|, which mutate a copy of the selected plan.
 
 The maximum size of the plan memory per agent is a configurable parameter of \gls{matsim}. Independent of what the selected \lstinline|PlanStrategy| does, the framework will remove plans in excess of the maximum from the plan memory. The algorithm by which this is done is another implementation of \lstinline|PlanSelector| and can be configured. 
 
 The four most commonly used strategies shipped with \gls{matsim} are:
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item Select from the existing plans at random, which are weighted by their current score.
 \item Mutate a random existing plan by re-routing all trips.
 \item Mutate a random existing plan by randomly shifting all activity end times backwards or forwards and re-routing all trips.
 \item Mutate a random existing plan by changing the mode of transport and re-routing one or more trips or tours.
-\end{compactitem}
+\end{itemize}
 
 Routes are computed based on the traffic conditions of the previous iteration, which are measured by means of an \lstinline|EventHandler|. Using the same pattern, your own \lstinline|PlanStrategy| can use any data which can be computed from the mobility simulation. The source code of the standard \lstinline|PlanStrategy| implementations can be used as a starting point for implementing custom behavior.
 
