@@ -64,7 +64,7 @@ There are the following roles in the \gls{matsim} community.
 %\ah{contribs auch, oder?} \kai{ja}. 
 %The \gls{api} developer finds information in Part~II of this book, on the web page in the \emph{developer's guide} and in the mailing list \lstinline|developers@matsim.org| 
 %
-\item There are relatively few \textbf{\gls{matsim} core developers} stemming from the \gls{matsim} team. This role is an extension of the \gls{matsim} \gls{api} developer and these guys make necessary modifications of the core as defined in Section~\ref{sec:core-contribs-playgrounds}), usually after having discussed them in the issue tracker, in the \gls{matsim} committee, or at a developer meeting (see below). 
+\item There are relatively few \textbf{\gls{matsim} core developers} stemming from the \gls{matsim} team. This role is an extension of the \gls{matsim} \gls{api} developer and these guys make necessary modifications of the core as defined in Section~\ref{sec:extending-core}), usually after having discussed them in the issue tracker, in the \gls{matsim} committee, or at a developer meeting (see below). 
 %% Part~II and part~III of this book might be particularly interesting for them.
 %
 % \kn{Sehe nicht, warum ausgerechnet die core developers neben dem software engineering auch noch die mathematisch-konzeptionelle Arbeit übernehmen müssen. --> weglassen}
@@ -108,37 +108,62 @@ Due to the heterogeneous character of the community and its individual research 
 
 % ##################################################################################################################
 \section{Code Base, Development Tools and Techniques}
-
 % ====================================================================================
-\subsection{\lstinline{org.matsim.*}, Core, Contribs, and Playgrounds}
+\subsection{Core, Contribs, and Playgrounds}
 \labe{sec:core-contribs-playgrounds}
-The various pieces of \gls{matsim} are delineated by \gls{maven} projects and sub-projects.  The \gls{maven} layout corresponds to the layout of the \gls{svn} repository.  Note that the \gls{java} package structure does \emph{not} directly correspond to the \gls{maven}/\gls{svn} layout.
+The various pieces of \gls{matsim} are delineated by \gls{maven} projects and sub-projects. 
+The \gls{maven} layout corresponds to the layout of the \gls{svn} repository.  
+Note that the \gls{java} package structure does \emph{not} directly correspond to the \gls{maven}/\gls{svn} layout.
 
 %---------------------------------------------------------------
 \subsubsection{Core}
-The so-called \gls{matsim} core corresponds to the ``matsim'' part of the \gls{svn} repository \ah{see below}.  It is currently at \gls{sourceforge} under \url{https://svn.code.sf.net/p/matsim/source/matsim}. The exact path name sometimes changes, \eg because of changes at \gls{sourceforge}.
+\label{sec:extending-core}
+The so-called \gls{matsim} core corresponds to the ``matsim'' part of the \gls{svn} repository. 
+It is currently at \gls{sourceforge} under \url{https://svn.code.sf.net/p/matsim/source/matsim}. 
+The exact path name sometimes changes, \eg because of changes at \gls{sourceforge}.
+This is the material that the core developers consider most important.
 
-Most of the core material is in packages that start with
-\begin{compactitem}
+At the time of writing, the core contains following packages:
+\begin{itemize}\styleItemize
+\item \lstinline{org.matsim.analysis.*}
 \item \lstinline{org.matsim.api.*}
-\item \lstinline{org.matsim.core.*}
+\item \lstinline{org.matsim.core.*}\footnote{Please note, that at the moment, the core is \emph{not} restricted to this large package as one might naturally assumes.}
+\item \lstinline{org.matsim.counts.*}
+\item \lstinline{org.matsim.facilities.*}
+\item \lstinline{org.matsim.households.*}
+\item \lstinline{org.matsim.jaxb.*}
+\item \lstinline{org.matsim.lanes.*}
+\item \lstinline{org.matsim.matrices.*}
+\item \lstinline{org.matsim.population.*}
+\item \lstinline{org.matsim.pt.*}
+\item \lstinline{org.matsim.run.*}
+\item \lstinline{org.matsim.signalsystems.*}
+\item \lstinline{org.matsim.utils.*}
+\item \lstinline{org.matsim.vehicles.*}
+\item \lstinline{org.matsim.vis.*}
+\item \lstinline{org.matsim.visum.*}
+\item \lstinline{org.matsim.withinday.*}
 \item \lstinline{tutorial.*}
-\end{compactitem}
-This is the material that the core developers consider most important. 
+\end{itemize}
 
+%Most of the core material is in packages that start with 
+%\begin{compactitem}
+%\item \lstinline{org.matsim.api.*}
+%\item \lstinline{org.matsim.core.*}
+%\item \lstinline{tutorial.*}
+%\end{compactitem}
+ 
 %There is additional material in that part of the repository, for example under \lstinline{org.matsim.withinday.*} or \lstinline{org.matsim.pt.*}, that could as well be moved into the ``contrib'' section, but for the time being has remained in the core \ah{see below}, mostly because the maintainers of these parts have moved to \gls{senozon} and from there continue to maintain these functionalities.
 
-\ah{we should make the difference more clearer between \lstinline{org.matsim.core.*} and \lstinline{org.matsim.*}. I have the impression that we use the word ``core'' interchangeably, and even if not, then having \lstinline{org.matsim.core.*} inside ``core (?) MATSim'' is confusing.}
-\ah{see now below and issues \url{https://matsim.atlassian.net/browse/MATSIM-327} and \url{https://matsim.atlassian.net/browse/MATSIM-323}}
+%\ah{we should make the difference more clearer between \lstinline{org.matsim.core.*} and \lstinline{org.matsim.*}. I have the impression that we use the word ``core'' interchangeably, and even if not, then having \lstinline{org.matsim.core.*} inside ``core (?) MATSim'' is confusing.}
+%\ah{see now below and issues \url{https://matsim.atlassian.net/browse/MATSIM-327} and \url{https://matsim.atlassian.net/browse/MATSIM-323}}
 
 %---------------------------------------------------------------
-\subsubsection{Non-Core \lstinline{org.matsim.*}}
-There is additional material in that part of the repository, for example under \lstinline{org.matsim.withinday.*} or \lstinline{org.matsim.pt.*}, that could as well be moved into the ``contrib'' section, but for the time being has remained in \lstinline{org.matsim.*}, mostly because the maintainers of these parts have moved to \gls{senozon} and from there continue to maintain these functionalities.
-
-%---------------------------------------------------------------
-\subsubsection{Contrib}
+\subsubsection{Contribs}
 %% Additionally, there is not directly related to the core functionality of \gls{matsim}, which is agent-behavior and transport simulation, 
-More material, often denoted as ``contrib'', is in the ``contrib'' part of the \gls{svn} repository.  It is currently at \gls{sourceforge} under \url{https://svn.code.sf.net/p/matsim/source/contrib}.  The \gls{java} packages often have the root \lstinline{org.matsim.contrib.*}, but this is not enforced.
+More material, often denoted as ``contrib'', is in the ``contrib'' part of the \gls{svn} repository.  
+It is currently at \gls{sourceforge} under \url{https://svn.code.sf.net/p/matsim/source/contrib}.  
+The \gls{java} packages often have the root \lstinline{org.matsim.contrib.*}, but this is not enforced.
 
 %% in the code base 
 %% as \gls{matsim} contributions (\lstinline|package org.matsim.contrib.*|). Such modules are usually provided by \gls{matsim} \gls{api}-users or developers. %
