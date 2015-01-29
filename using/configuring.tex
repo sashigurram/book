@@ -120,10 +120,9 @@ All strategy modules are called by configuring the strategy module in the config
 </module>
 \end{xml}
 %
-Each module is given a weight which determines the probability by which the course of action represented by the module is taken. The weights of the strategy modules are renormalized in case they do not sum to one. In this example, each agent changes his leg mode with probability~0.1, its plan timing with probability 0.2. A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. In the example, the agent chooses a plan from his set of plans according to a logit model with probability 0.7. 
-\ah{sollte man immer noch von proba reden, wo wir sie doch im Code endlich losgeworden sind? Andererseits ist es ja am Ende des Tages tatsächlich eine proba.}
+Each module is given a weight which determines the probability by which the course of action represented by the module is taken. The weights of the strategy modules are normalized in case they do not sum to one. In this example, each agent changes his leg mode with probability~0.1, its plan timing with probability 0.2. A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. In the example, the agent chooses a plan from his set of plans according to a logit model with probability~0.7. 
 
-By specifying the parameter \lstinline|subpopulation|, \eg
+By specifying the parameter \lstinline|subpopulation|, replanning strategies can be applied to distinct sub-populations: \eg
 \begin{xml}
 	<parameterset type="strategysettings" >
 		<param name="strategyName" value="ChangeLegMode" />
@@ -131,7 +130,6 @@ By specifying the parameter \lstinline|subpopulation|, \eg
 		<param name="subpopulation" value="urbanTravelers"/>
 	</parameterset>
 \end{xml}
-replanning strategies can be applied to distinct sub-populations.
 
 In older versions of the \gls{configfile} you will find following deprecated configuration syntax using numbered strategy modules:
 %
@@ -232,19 +230,17 @@ plus its weight to the strategy modules, and by specifying the routing algorithm
 Mode innovation is applied by adding 
 %
 \begin{xml}
-	<param name="strategyName" value="{ChangeLegMode |
-    		ChangeSingleLegMode | SubtourModeChoice}" />
+	<param name="strategyName" value="{ChangeLegMode | ChangeSingleLegMode | SubtourModeChoice}" />
 \end{xml}
 %
 plus its weight to the strategy modules. In the \gls{configfile} a section with one of the mode innovation strategies need to be added, \ie 
 %
 \begin{xml}
-<module name="{changeLegMode |
-				changeLegMode | subtourModeChoice}" >
+<module name="{changeLegMode | changeSingleLegMode | subtourModeChoice}" >
     [...]
 </module>
 \end{xml}
-\kai{obiges hat jetzt 2x ``changeLegMode''.  Kann zwar sein, dass das tatsächlich so ist, aber falls ja, sollten wir explizit sagen, dass das kein Tippfehler ist.}
+%\kai{obiges hat jetzt 2x ``changeLegMode''.  Kann zwar sein, dass das tatsächlich so ist, aber falls ja, sollten wir explizit sagen, dass das kein Tippfehler ist.} \ah{thx}
 %
 \lstinline|ChangeLegMode| randomly picks one of the plans of a person and changes its mode of transport. By default, the supported modes are driving a car and using public transport. Only one mode of transport per plan is supported. For using different modes for sub-tours on a single day the \lstinline|SubtourModeChoice| module is required. Optionally, car availability is respected. \lstinline|ChangeSingleLegMode| randomly picks one of the plans of a person and changes the mode of transport of one single leg. The leg is picked randomly. In contrast to \lstinline|ChangeLegMode|, it allows for multiple modes in one plan. By default, the supported modes are driving a car and using public transport. Also, this module is able to (optionally) respect car-availability.
 
