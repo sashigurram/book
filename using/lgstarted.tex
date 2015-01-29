@@ -73,13 +73,13 @@ On Windows, an example command could be:
 % problems with the combination of lstinline, backslash, and footnote. :-(  kai, jan'15
 
 Such a command consists of multiple parts:
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item \lstinline|java| tells the system that you want to run \gls{java}.
 \item \lstinline|-Xmx512m| tells \gls{java} that it should use up to 512\,\gls{mb} of memory. This is typically enough to run the small examples. For larger \glspl{scenario}, you might need more memory, \eg \lstinline|-Xmx3g| would allow \gls{java} to use up to 3\,\gls{gb} of \gls{ram}.
 \item \lstinline|-cp /path/to/matsim.jar| tells Java where to find the \gls{matsim} code.
 \item \lstinline|org.matsim.run.Controler| specifies which class (think of an ``entry point'') should be run. In most cases, the default \gls{matsim} \lstinline|Controler| is the class you will need to run simulations.
 \item \lstinline|/path/to/config.xml| tells \gls{matsim} which \gls{configfile} is to be used. 
-\end{compactitem}
+\end{itemize}
 
 }
 
@@ -89,7 +89,7 @@ Such a command consists of multiple parts:
 Configuring \gls{matsim} is 
 %(at this stage) only 
 % KISS.  kai, jan'15
-done via the \gls{configfile}. It builds the connection between the user and \gls{matsim}. It contains a list of settings which influence how the simulation behaves.
+done in the \gls{configfile}. It builds the connection between the user and \gls{matsim}. It contains a list of settings which influence how the simulation behaves.
 %% In the second part of the book we will learn how \gls{matsim} can be configured and extended by programming against its API. \kai{Andreas, hier brauchen wir eine Entscheidung.  Derzeit enthält ``extending matsim'' auch Material, welches alleine durch die Config angesprochen werden kann, ohne contrib und ohne programming.  Beispiele sind time-dep network, andere strategy modules, oder observational modules.  Mit ``transit'' wird das nochmal deutlich mehr.  Nichts davon ist somit ``programming against its API''.  Möglichkeiten aus meiner Sicht: 
 % (1) Wir verstehen unter ``extending'' auch solche Dinge, die alleine durch die config (und evtl. zusätzliche Input-Dateien) angesprochen werden können.  
 % (2) Wir packen Dinge, die über die config ansprechbar sind, aber zusätzliche Dateien benötigen, nach ``extending'', alles andere nach ``using''.  
@@ -165,11 +165,11 @@ are given.
 \subsection{Typical Input Data}
 \label{sec:inputdata}
 Minimally \gls{matsim} needs the files
-\begin{compactitem}
+\begin{itemize}\styleItemize
 	\item \lstinline|config.xml|, containing the configuration options for \gls{matsim} and presented above,
 	\item \lstinline|network.xml|, with the description of the (road) network, and
 	\item \lstinline|population.xml|, providing information about	the travel demand, \ie the list of agents and their day plans.
-\end{compactitem}
+\end{itemize}
 
 %% \kai{Andreas, eigentlich würde ich `facilities', `vehicles', und `transit' gerne nach ``extending matsim'' verschieben: (1) `facilities' kann man nur mit core matsim und config file m.E. gar nicht benutzen, (2) schedule-based pt ist ein fehler-anfälliger plug-in, mit dem man nicht gleich ``starten'' muss.  Ok?} \ah{ok}
 %% \kai{clean this out (facilities, pt, etc.} \ah{done}
@@ -220,13 +220,13 @@ For a working example, check the \lstinline{examples/equil} directory in the \gl
 
 Each element has an identifier \lstinline|id|. Nodes are described by an \lstinline|x| and a \lstinline|y| coordinate value. Links have more attributes: The \lstinline|from| and \lstinline|to| attribute reference nodes and describe the geometry of the network. Additional attributes describe the traffic-related aspects of the links:
 %network:
-\begin{compactitem}
+\begin{itemize}\styleItemize
     \item the \lstinline|length| of the link, typically in meters (see Section~\ref{sec:unitsconventions}).
     \item the flow \lstinline|capacity| of the link, \ie the number of vehicles that can pass the link, typically in vehicles per hour.
     \item the \lstinline|freespeed| is the maximum speed at which vehicles are allowed to travel along the link, typically in meters per seconds.
     \item the number of lanes (\lstinline|permlanes|) available in the direction specified by the from and to nodes.
     \item the list of \lstinline|modes| allowed on the link. This is a comma-separated list, \eg \lstinline|modes="car, bike, taxi"|.
-\end{compactitem}
+\end{itemize}
 %Note that
 All links are uni-directional. If a road can be traveled in both directions, two links have to be defined with alternating \lstinline|to| and \lstinline|from| attributes (see links with id 2 and 3 in the example given in the listing above). Thus, the network can be seen as a directed graph. 
 
@@ -301,13 +301,13 @@ The population data format is one of the most central data structures in \gls{ma
 For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (\cf Section~\ref{sec:settingUpMatsim}).
 
 Notably, the following simplifications can be made:
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item Each person needs exactly one plan.
 \item The plan does not need to be selected or have a score.
 \item Activities can be located just by their coordinates.
 \item Activities should have a somewhat meaningful end-time.
 \item Legs only need a mode, but no routes.
-\end{compactitem}
+\end{itemize}
 When a simulation is started, \gls{matsim}'s \lstinline|Controler| will load such a file and then automatically assign the nearest link to each activity and calculate a suitable route for each leg. This makes it easy to get started quickly. 
 
 % ===============================================================================================
@@ -321,7 +321,7 @@ output data, which can be used to analyze the results but also to monitor the co
 %\ah{sollte jetzt erledigt sein}
 
 The following output files are continuously built up to summarize the complete run.
-\begin{description}
+\begin{description}\styleDescription
 
   \item[Log File:]
 During a \gls{matsimrun}, a log file is printed. This file contains information that you might need later for your analyses. Additionally, it might be helpful if a run has crashed for some unknown reason. 
@@ -344,7 +344,7 @@ The stopwatch file (\lstinline|stopwatch.txt|) contains the computer time (so-ca
 %\ah{sollte jetzt erledigt sein}
 
 The following output files are created for specific iterations:
-\begin{description}
+\begin{description}\styleDescription
 
 \item[Events:] Every action in the simulation is recorded as a so-called \gls{matsim} \gls{event}, be it the starting of an activity or the change of a network link. Each \gls{event} hosts one or multiple attributes. By default, the time when the \gls{event} occurred is contained. Additionally, information like the id of the agent who caused the event or the id of the link where the \gls{event} occurred could be included. By default, the \gls{matsim} simulation module creates a so called events-file in every 10th iteration. This file contains every single \gls{event} that has been created by the simulation. The events file is thus a formidable base for post-analyses for example with the visualizers. Events are discussed in detail in Section~\ref{sec:events-extension-point}.
 
@@ -456,7 +456,7 @@ The scenario is run for 10\,iterations, writes the output files to \lstinline|./
 
 \paragraph{Visualization}
 
-Simulation results can be comfortably analyzed using one of the visualizers, via (Chapter~\ref{ch:via}) or \gls{otfvis} (Chapter~\ref{ch:otfvis}).
+Simulation results can be comfortably analyzed using one of the visualizers, \gls{via} (Chapter~\ref{ch:via}) or \gls{otfvis} (Chapter~\ref{ch:otfvis}).
 
 % ===============================================================================================
 \subsection{Units, Conventions, and Coordinate Systems}
@@ -754,7 +754,7 @@ In simulation practice, two different network types are in use, planning network
 %ok dann bleibt er hier. kai, jan'15
 
 There are many options and possibilities available with \gls{matsim}, and finding them can be a taunting exercise.  Here are a couple of recommendations, derived from our own frequent use of the system.
-\begin{enumerate}
+\begin{enumerate}\styleEnumerate
 
 \item Always start and test with a small example.
 
