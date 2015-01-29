@@ -110,12 +110,18 @@ and $t_{0,q}$ is minimal duration, or in other words, the duration for which uti
 %\kai{Andreas, betaPerf gibt es (absichtlich) nur einmal, und nicht pro Aktivitätentyp.  Unterschiedlicher Zeitdruck kann sich immer noch ergeben, weil EQ~(\ref{eq:mUTTSfull}) für Akvitiäten innerhalb eines bestimmten Zeitfensters höher sein kann (weil dann für diese Aktivitäten $t_{dur,q}$, wg.\ Zeitknappheit, relative gesehen kürzer ist).}  
 %%
 %\ah{got it}
-%
+
+\medskip
+
 \item $ S_{wait,q} = \beta_{wait} \cdot t_{wait,q}$ 
 %
-denotes the waiting time spent for example in front of a yet closed store; $\beta_{wait}$ is the \emph{direct} marginal utility of time spent waiting which should \emph{not} contain the marginal utility of time as a resource $\beta_{dur}$ from above; and $t_{wait,q}$ is the waiting time.
-%
-It is recommended to leave $\beta_{wait}$ at zero; also see Section~\ref{sec:schedule-delay-costs}.
+  denotes the waiting time spent for example in front of a yet closed store; $\beta_{wait}$ is the so-called \emph{direct} (see Sec.~\ref{sec:opport-cost-of-time}) marginal utility of time spent waiting; and $t_{wait,q}$ is the waiting time.  It is recommended to leave $\beta_{wait}$ at zero; also see Section~\ref{sec:schedule-delay-costs}.
+  \kai{Andreas, Benjamin: Habe den Hinweis auf die ``addition mit der marginal utility of time as a resource'' hier wieder rausgestrichen; ich finde, es auf Null zu lassen ist ein ausreichender Hinweis.  Wir können nicht alles auf einmal erklären.}
+
+  %% $\beta_{wait}$  is in addition to the marginal utility of time as a resource $\beta_{dur}$ from above;
+
+
+\medskip
 
 \item $S_{late.ar,q}= \left\{
   \begin{array}{l l}
@@ -124,7 +130,9 @@ It is recommended to leave $\beta_{wait}$ at zero; also see Section~\ref{sec:sch
   \end{array} \right.$
 %  
   specifies the late arrival penalty, where $t_{start,q}$ is the starting time of activity $q$ and $t_{latest.ar}$ is the latest possible starting time of that activity for example given by opening times.
-%
+
+\medskip
+
 \item $S_{early.dp} = \left\{
   \begin{array}{l l}
     \beta_{early.dp} \cdot (t_{earliest.dp, q} - t_{end,q}) & \quad \text{if $t_{end,q} > t_{earliest.dp,q}$}\\
@@ -132,7 +140,9 @@ It is recommended to leave $\beta_{wait}$ at zero; also see Section~\ref{sec:sch
   \end{array} \right.$
 %
 defines the penalty for staying not long enough, where $t_{end,q}$ is the ending time of the activity and $t_{earliest.dp,q}$ is the earliest possible end time for activity $q$.
-%
+
+\medskip
+
 \item $ S_{short.dur, q} = \left\{
   \begin{array}{l l}
     \beta_{short.dur} \cdot (t_{short.dur, q} - t_{dur,q}) & \quad \text{if $t_{dur,q} < t_{short.dur,q}$}\\
@@ -160,15 +170,22 @@ S_{trav, q} & = & C_{mode(q)} + \beta_{trav, mode(q)} \cdot t_{trav, q} + \beta_
 where:
 %
 \begin{itemize}\styleItemize
-\item $C_{mode(q)}$ is a mode-specific constant,
-\item $\beta_{trav, mode(q)}$ is the \emph{direct} marginal utility of time spent traveling by mode (normally negative or zero); it should \emph{not} contain the marginal utility of time as a resource $\beta_{dur}$ from above,
-\item $t_{trav, q}$ is the travel time between location of activity $q$ and $q+1$,
-\item $\beta_{m}$ is the marginal utility of money (normally positive),
-\item $\Delta m_q$ is the change in the monetary budget invoked by fares or tolls for the complete leg (normally negative or zero),
-\item $\beta_{d, mode(q)}$ is the  marginal utility of distance (normally negative or zero),
-\item $\gamma_{d, mode(q)}$ is the mode-specific monetary distance rate (normally negative or zero),
-\item $d_{trav, q}$ is the distance traveled between location of activity $q$ and $q+1$, 
-\item $\beta_{transfer}$ are transfer penalties in public transport (normally negative),
+
+\item $C_{mode(q)}$ is a mode-specific constant.
+
+\item $\beta_{trav, mode(q)}$ is the so-called \emph{direct} (see Sec.~\ref{sec:opport-cost-of-time}) marginal utility of time spent traveling by mode.  Since \gls{matsim} uses and scores 24-hour episodes, this is in addition to the marginal utility of time as a resource (again, see Sec.~\ref{sec:opport-cost-of-time}).
+
+  %% (normally negative or zero); it should \emph{not} contain the marginal utility of time as a resource $\beta_{dur}$ from above.
+
+\item $t_{trav, q}$ is the travel time between location of activity $q$ and $q+1$.
+
+\item $\beta_{m}$ is the marginal utility of money (normally positive).
+
+\item $\Delta m_q$ is the change in the monetary budget invoked by fares or tolls for the complete leg (normally negative or zero).
+\item $\beta_{d, mode(q)}$ is the  marginal utility of distance (normally negative or zero).
+\item $\gamma_{d, mode(q)}$ is the mode-specific monetary distance rate (normally negative or zero).
+\item $d_{trav, q}$ is the distance traveled between location of activity $q$ and $q+1$.
+\item $\beta_{transfer}$ are transfer penalties in public transport (normally negative).
 %\kai{is this mode-specific?}\kai{no it is not}, 
 and
 \item $x_{transfer,q}$ is a 0/1 variable denoting if a transfer has happened between the previous and the current leg.
@@ -176,9 +193,12 @@ and
 %
 \benjamin{Irgendwo müsste dann definiert werden, was ``direct'' vs ``indirect'' ist; M.E. einfach ``without'' vs ``with'' (time) costraints.}
 %
+\kai{Ich habe jetzt mal ``so-called'' sowie weitere Hinweise auf 3.2.4 eingebaut -- natürlich müssen wir checken, dass wir es dort dann erklären.}
+%
 This is the direct utility contribution of travel; see Section~\ref{sec:opport-cost-of-time} for the the full indirect utility as well as the relation to the \gls{vtts}, and Section~\ref{ch:economicEval} for a more general discussion.
 
-Note that the distance contributes to disutility in two ways. First, it is included in a direct manner via $\beta_{d, mode(q)}$, which is natural for modes with physical efforts such as walking or cycling. Second, distance is also included monetarily via $\beta_m \cdot \gamma_{d, mode(q)}$ which is natural for mode car or pt, where monetary costs increase dependent on distance. \benjamin{Maybe add: `The current specification makes it possible to use either of those approaches for each transport mode'}.
+Note that the distance contributes to disutility in two ways. First, it is included in a direct manner via $\beta_{d, mode(q)}$, which is natural for modes with physical efforts such as walking or cycling. Second, distance is also included monetarily via $\beta_m \cdot \gamma_{d, mode(q)}$ which is natural for mode car or pt, where monetary costs increase dependent on distance.
+%% \benjamin{Maybe add: `The current specification makes it possible to use either of those approaches for each transport mode'}. \kai{Würde ich weglassen.  Man kann es ja auch beides verwenden, dann wird es halt addiert.}
 
 %% \kai{distance both via distance cost rate and via direct marginal utl.  ok with me, BK will (probably) be less happy. If it stays this way, config needs to be made consistent with text above.}
 
@@ -214,7 +234,10 @@ Note that scoring the two activities separately would lead to a different result
 % ====================================================================================
 \subsection{MATSim Scoring, Opportunity Cost of Time, and the VTTS}
 \label{sec:opport-cost-of-time}
-As a result of the wrap-around concept, travel receives, beyond the typically negative direct marginal utility $\beta_{trav, mode}$, an additional implicit penalty from the marginal opportunity cost of time: \benjamin{potentially rephrase: ``marginal utility of time as a resource''? This is more in line with the literature as we know from Section~\ref{ch:economicEval:valuingBehavior}} If a travel time could be reduced by $\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav}~\cdot~\Delta t_{trav}$, but also from making activities longer (effect of the so-called opportunity cost of time). The \textbf{marginal \emph{utility} of travel time savings} is thus:
+As a result of the wrap-around concept, travel receives, beyond the typically negative direct marginal utility $\beta_{trav, mode}$, an additional implicit penalty from the marginal utility of time as a resource:
+%% \benjamin{potentially rephrase: ``marginal utility of time as a resource''? This is more in line with the literature as we know from Section~\ref{ch:economicEval:valuingBehavior}}
+If a travel time could be reduced by 
+$\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav} \cdot \Delta t_{trav}$, but also from gaining additional time for activities (effect of the so-called opportunity cost of time). The \textbf{(total) marginal \emph{utility} of travel time savings} is thus:
 %
 \[
 mUTTS = - \frac{\partial}{\partial t_{trav}} S_{trav} + \frac{\partial}{\partial t_{dur}}S_{dur} \ .
@@ -228,16 +251,25 @@ mUTTS = - \beta_{trav}
 \end{equation}
 and at the typical duration of an activity
 \[
-mUTTS(t_{dur,q} = t_{typ,q}) = - \beta_{trav} + \beta_{dur} \ , 
+mUTTS \Big|_{t_{dur,q} = t_{typ,q}} = - \beta_{trav} + \beta_{dur} \ , 
 \]
 where it can be imagined $q$ is the activity immediately following the shortened trip (\cf Section~\ref{ch:economicEval:valuingBehavior}).
+%
+The marginal utility of travel time savings, $mUTTS$, is thus composed of the indirect effect on the overall time budget, corrected by an offset $\beta_{trav}$ that denotes how much better or worse it is to spend that time travelling rather than ``doing nothing''.\footnote{%
+  %
+  This is an approximative statement; in the full theory, the reference marginal utility is not given by ``doing nothing'', but by a Lagrange multiplier related to the constraint that a day has 24~hours; again, \cf Section~\ref{ch:economicEval:valuingBehavior}.
+  %
+} To differentiate $\beta_{trav}$ from the indirect effect, it is sometimes called \textbf{direct marginal utility} of time spent traveling.
 
-The marginal utility of travel time savings at the typical duration can be transformed to the more common \gls{vtts} by division with $\beta_{m}$:
+The marginal utility of travel time savings
+%at the typical duration
+can be transformed to the more common \gls{vtts} by division with the marginal utility of money, $\beta_{m}$:
 \[
-VTTS = \frac{mUTTS}{\beta_{m}} = \frac{- \beta_{trav} + \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} }{\beta_{m}}
+VTTS = \frac{mUTTS}{\beta_{m}} = \frac{- \beta_{trav} + \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} }{\beta_{m}} \ ,
 \]
+and at the typical duration of an activity
 \[
-VTTS(t_{dur,q} = t_{typ,q}) = \frac{mUTTS}{\beta_{m}} = \frac{- \beta_{trav} + \beta_{dur}}{\beta_{m}}
+VTTS \Big|_{t_{dur,q} = t_{typ,q}} = \frac{mUTTS}{\beta_{m}} = \frac{- \beta_{trav} + \beta_{dur}}{\beta_{m}}
 \]
 This is important for calibration of the utility function.
 

@@ -7,18 +7,29 @@
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{using/figures/strategy.png} \end{center}
 
 % ##################################################################################################################
-In this chapter, configuration options are described that are exclusively done by the \gls{configfile}. \gls{matsim} configuring  requiring further input data beyond the three basic elements---\ie the \gls{configfile}, a population and a network---are described in Chapter~\ref{ch:modules}. The technical details for module usage, in particular the parameter sets are described in \citep[][]{MATSim_Userguide_2015} and in the \gls{javadoc}.
+In this chapter, configuration options are described that can be used together with the tree basic elements \gls{configfile}, population and network.
+%are exclusively done by the \gls{configfile}. \gls{matsim} configuring  requiring
+%% Aspects that require further input data are described in Chapter~\ref{ch:modules}. The technical details for module usage, in particular the parameter sets are described in \citep[][]{MATSim_Userguide_2015} and in the \gls{javadoc}.
+%
+Part~\ref{part:extending-matsim} will discuss various options to extend \gls{matsim} beyond these three elements, sometimes by just using additional files, sometimes by using additional \gls{jar} files beyond the \gls{matsim} core \gls{jar} file,  sometimes by writing so-called ``scripts in \gls{java}'', and sometimes by adding or replacing functionality.
+
+\gls{matsim} writes configuration files at several places, for example in the logfile, in the iteration output directory, or the \lstinline{CreateFullConfig} functionality described in Section~\ref{sec:lgs-config}.  As already explained in Section~\ref{sec:survival}, these files come with comments that explain the configuration options.  This is often the best source to understand configuration options.  \kai{Andreas, meinem Eindruck nach geht der user guide hier auch nicht weiter als das Buch -- und soll es derzeit auch gar nicht.  Unsere Javadoc sagt m.E.\ traditionell sehr wenig bis gar nichts über config.}
+
+
+
 
 % ##################################################################################################################
 \section{MATSim Data Containers}
 \label{sec:using-data-containers}
-\kai{Eigentlich steht das alles schon in Section~\ref{sec:inputdata}.  Ist es wirklich sinnvoll, das zu doppeln?  Oder schreiben wir hier halt die ``weiteren'' Container rein (dann sollten wir aber einiges weitere von oben hier runter holen).}
-\ah{M.E. jetzt ok.}
+%% \kai{Eigentlich steht das alles schon in Section~\ref{sec:inputdata}.  Ist es wirklich sinnvoll, das zu doppeln?  Oder schreiben wir hier halt die ``weiteren'' Container rein (dann sollten wir aber einiges weitere von oben hier runter holen).}
+%% \ah{M.E. jetzt ok.}
 
 % ===================================================================================
 \subsection{Network}
 \label{sec:using-network}
-The \gls{configfile} section \lstinline|network| amongst other specifies which network file will be used in the simulation (Section~\ref{sec:lgs-config} and \ref{sec:lgstarted-network-file}). Further configuration options, \eg specification of time-variant networks, are presented in Section~\ref{sec:extending-network}.
+The \gls{configfile} section \lstinline|network|
+%amongst other
+specifies which network file will be used in the simulation (Section~\ref{sec:lgs-config} and \ref{sec:lgstarted-network-file}). Further configuration options, \eg specification of time-variant networks, are presented in Section~\ref{sec:extending-network}.
 
 % ===================================================================================
 \subsection{Population}
@@ -33,7 +44,7 @@ Further \gls{matsim} containers are described in Section~\ref{sec:extending-data
 % ===================================================================================
 \subsection{Controler}
 \label{sec:using-controler}
-The controler is an indispensable module for running \gls{matsim}, its parameters are set in the \lstinline|controler| \gls{configfile} section. Besides others, the \gls{matsimrun}'s output directory, its number of iterations, and the ouput interval of plans and events can be specified here. Also, the \gls{mobsim} to be used can be defined (Section~\ref{sec:using-mobsims}). Importantly, the routing algorithm is defined here by using
+The controler is an indispensable module for running \gls{matsim}, its parameters are set in the \lstinline|controler| \gls{configfile} section. The \gls{matsimrun}'s output directory, its number of iterations, and the ouput interval of plans and events can be specified here. Also, the \gls{mobsim} to be used can be defined (Section~\ref{sec:using-mobsims}). Importantly, the routing algorithm is defined here by using
 %
 \begin{xml}
 <module name="controler" >
@@ -43,26 +54,82 @@ The controler is an indispensable module for running \gls{matsim}, its parameter
 </module>
 \end{xml}
 %
-In Section~\ref{sec:extending-controler}, the possibilities to extend the \lstinline|Controler| functionality is given in Section~\ref{sec:extending-controler} and Chapter~\ref{ch:extensionpoints}.
+%In Section~\ref{sec:extending-controler}, the
+Possibilities to extend the \lstinline|Controler| functionality is given in %Section~\ref{sec:extending-controler} and % da steht nichts mehr. kai, jan'15
+Chapter~\ref{ch:extensionpoints}.
+
+% ===================================================================================
+\subsection{Parallel Computing}
+\label{sec:using-parallel-computing}
+
+\gls{matsim} uses multi-threading in order to accelerate the computing speeds.  Related configuration parameters can be found in several config modules; they are combined into one section here for convenience.
+
+\paragraph{Global setting}
+
+The \lstinline{global} section contains
+\begin{xml}
+<module name="global" >
+    <param name="numberOfThreads" value="2" />
+    [...]
+</module>
+\end{xml}
+This number is used at several places, most importantly for the innovative strategies, where for example multiple routing requests are distributed to multiple threads.
+
+An advisable starting point is to use the number of available cores.
+
+
+\paragraph{Parallel Event Handling}
+\label{sec:using-paralleleventhandling}
+
+The \gls{configfile} section \lstinline|parallelEventHandling| is used to define the number of threads used for event handling. 
+As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in \gls{matsim} simulation runs.
+% Clearly, the number of threads should correspond with available processor cores.  \kai{Meine Erfahrung ist eine andere, und je nach Maschine kann man das manchmal überauslasten und manchmal sollte man es eher unterauslasten.}  
+%% According to our experiences the optimal degree of capacity utilization (threads versus cores) is highly machine-dependent.
+%% As mentioned above, the \gls{mobsim} \gls{qsim} is running parallel by default.
+
+%% Being able to speed-up scenarios might become even more important than today, when additional innovation (choice) dimensions are added with large variability in the parameters rendering ensemble runs necessary. % (see Section~\ref{sec:variability}).
+
+\paragraph{Parallel QSim}
+
+The number of threads for the paralle QSim (\cf \cite{Dobler_PhDThesis_2013}) can be configured by
+\begin{xml}
+<module name="qsim" >
+    <param name="numberOfThreads" value="10" />
+    [...]
+</module>
+\end{xml}
+
+%\ah{Marcel hatte mal Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.) geplant. Nachfragen, ob schon was vorhanden}
+
+
+\paragraph{General recommendations}
+
+Quite generally, computations that use threads are not necessarily faster with more threads. The same holds for \gls{matsim}.  In consequence, some experimentation is necesary for each combination of scenario and hardware.  Here are some recommendations:
+\begin{itemize}
+
+\item For the ``global'' number of threads, a good starting point is the number of available cores.
+
+\item It is no longer possible to switch of parallel event handling completely, so setting it to `0' or `null' or `1' presently does exactly the same.  Setting it to values larger than one sometimes leads to performance gains, but they are rarely significant.
+
+\item The most sensitive parameter is for the QSim.
+  %
+  For somewhat older hardware (e.g.\ Apple Macbook Pro from 2010), using all three cores that remained besides the parallel event handling led to negligible performance gains while rendering the machine inutilisable even for normal office tasks.
+  %
+  For new hardware (e.g.\ Apple Macbook Pro from 2014), using six of the available eight cores for the QSim can make the mobsim more than a factor of two faster while the machine can still be used for office tasks.
+  %
+  Experiences with older servers say that one needs to investigate carefully the number of threads for the mobsim since using more threads often slows it down \citep{Dobler_PhDThesis_2013}.
+  %
+  Experiences with new servers are currently not available. \kai{or are there?  where?}
+
+\end{itemize}
+
+%% \kai{number of threads: nicht unter parallel computing?  Wäre meiner Erfahrung nach tatsächlich hilfreich, die paralellen Aspekte zusammenzufassen.} \ah{\url{https://matsim.atlassian.net/browse/MATSIM-310}} \kai{Ich meinte eigentlich eher, sie ``im Buch'' zusammen zu fassen.  Im code scheint mir das derzeit nicht genügende Priorität zu haben, zumal wir mit dem Buch langsam in die Zielgerade kommen müssen.  Bin mir auch nicht sicher, ob wir das im code wirklich umbauen wollen. }
+
 
 % ===================================================================================
 \subsection{Global}
 \label{sec:using-global}
-In the \gls{configfile} section \lstinline|global| the simulation's random seed, the number of \gls{java} threads assigned to the replanning modules, and the coordinate system to be applied (\cf Section~\ref{sec:unitsconventions}), can be defined. 
-\kai{number of threads: nicht unter parallel computing?  Wäre meiner Erfahrung nach tatsächlich hilfreich, die paralellen Aspekte zusammenzufassen.} \ah{\url{https://matsim.atlassian.net/browse/MATSIM-310}}.
-
-% ===================================================================================
-\subsection{Parallel Event Handling}
-\label{sec:using-paralleleventhandling}
-The \gls{configfile} section \lstinline|parallelEventHandling| is used to define the number of threads used for event handling. 
-As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} the simulation can be substantially speed-up when using multiple threads for the events handling, usually being a bottleneck in \gls{matsim} simulation runs.
-% Clearly, the number of threads should correspond with available processor cores.  \kai{Meine Erfahrung ist eine andere, und je nach Maschine kann man das manchmal überauslasten und manchmal sollte man es eher unterauslasten.}  
-According to our experiences the optimal degree of capacity utilization (threads versus cores) is highly machine-dependent.
-As mentioned above, the \gls{mobsim} \gls{qsim} is running parallel by default.
-
-Being able to speed-up scenarios might become even more important than today, when additional innovation (choice) dimensions are added with large variability in the parameters rendering ensemble runs necessary. % (see Section~\ref{sec:variability}).
-
-%\ah{Marcel hatte mal Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.) geplant. Nachfragen, ob schon was vorhanden}
+In the \gls{configfile} section \lstinline|global|, the simulation's random seed, the ``global'' number of \gls{java} threads (see above), and the coordinate system (\cf Section~\ref{sec:unitsconventions}) can be defined. 
 
 % ##################################################################################################################
 \section{Mobility Simulations}
@@ -72,14 +139,15 @@ An overview of \gls{matsim} mobility simulations is given in \citet[][]{Dobler_T
 % ===================================================================================
 \subsection{\protect\gls{qsim}}
 \label{sec:using-qsim}
-The queue-based and time-step based \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is \gls{matsim}'s default \gls{mobsim}. Its parameters are set in the \lstinline|qsim| \gls{configfile} section. Prominent parameters are as follows. By specifying the parameter \lstinline|numberOfThreads| \gls{qsim} can be run in parallel. Importantly, this section's parameters \lstinline|flowCapacityFactor| and \lstinline|storageCapacityFactor| need to be set accordingly, when running sample scenarios, \eg for a 10\,\% sample, these factors need to be divided by 10. The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to adapt these parameters with the command \lstinline|Tools...Create Sample Population|.
+The queue-based and time-step based \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is \gls{matsim}'s default \gls{mobsim}. Its parameters are set in the \lstinline|qsim| \gls{configfile} section. Prominent parameters are as follows. By specifying the parameter \lstinline|numberOfThreads| \gls{qsim} can be run in parallel, see above. Importantly, this section's parameters \lstinline|flowCapacityFactor| and \lstinline|storageCapacityFactor| need to be set accordingly, when running sample scenarios, \eg for a 10\,\% sample, these factors need to be divided by 10. The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to adapt these parameters with the command \lstinline|Tools...Create Sample Population|.
 
-The link dynamics, either \gls{fifo} or passing can be specified by the parameter \lstinline|linkDynamics|. Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) can be added with the parameter \lstinline|trafficDynamics|.
+The link dynamics, either \gls{fifo} or passing can be specified by the parameter \lstinline|linkDynamics|. Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) can be added with the parameter \lstinline|trafficDynamics|. \kai{Das gibt es immer noch nicht wirklich.  Habe jetzt Amit rekrutiert, damit er mir da hoffentlich hilft.}
 
-As shown in Section~\ref{sec:multimodalsim_qsim}, \gls{qsim} can handle \gls{multimodal} scenarios.
+As shown in Section~\ref{sec:multimodalsim_qsim}, \gls{qsim} can handle \gls{multimodal} scenarios. \kai{chk}
 
-\ah{explizit hinzufügen ist jetzt nicht mehr nötig, weil default, oder?}
-To invoke \gls{qsim}, the parameter \lstinline|mobsim| of \lstinline|controler| \gls{configfile} section must be set to \lstinline|qsim| and a \lstinline|qsim| \gls{configfile} section must be provided. 
+%% \ah{explizit hinzufügen ist jetzt nicht mehr nötig, weil default, oder?}
+%% To invoke \gls{qsim}, the parameter \lstinline|mobsim| of \lstinline|controler| \gls{configfile} section must be set to \lstinline|qsim| and a \lstinline|qsim| \gls{configfile} section must be provided.
+%% \kai{ja, qsim ist default.}
 
 % ===================================================================================
 \subsection{JDEQSim}
@@ -91,12 +159,17 @@ To run \gls{jdeqsim} the parameter \lstinline|mobsim| of \lstinline|controler| \
 %##################################################################################################################
 \section{Scoring}
 \label{sec:using-scoring}
-The \gls{configfile} section \lstinline|planCalcScore| specifies the parameters used for scoring agents' plans (Section~\ref{sec:lgs-config}); parameters are explained in detail in the next chapter~\ref{ch:scoring}.
+The \gls{configfile} section \lstinline|planCalcScore| specifies the parameters used for scoring agents' plans (Section~\ref{sec:lgs-config}); parameters are explained in detail in Chapter~\ref{ch:scoring}.
 
 %##################################################################################################################
 \section{Replanning Strategies}
 \label{sec:strategymodules}
 %\kai{Habe ``strategy'' ans Ende gezogen, weil ein matsim run so auch tatsächlich losgeht: erst mobsim, dann scoring, dann replanning.  Gibt es Argumente für andere Reihenfolgen?} \ah{nein, super Punkt!}
+
+\subsection{Plans generation and removal (choice set generation)}
+
+\kai{wo ist plans removal?}
+
 The replanning strategy modules are the basic innovation modules available in \gls{matsim}. We do not call them \emph{choice} modules although they are involved in people's choice making. The choice process, however, is performed over the iterations with an \emph{implicit} choice set and it is not based on explicit probability function drawing. Usually, innovation modules also do no define their own utility function. This is particularly true for random mutation modules, where best response modules such as destination innovation are closer to the standard procedure of choice modeling but still not full-blown choice models. For a detailed discussion of \gls{matsim} in choice modeling context see Chapter~\ref{ch:discretechoice}.
 
 All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
@@ -195,7 +268,7 @@ Please note, that combining strategy modules that are \glspl{contribution} such 
 %\ah{habs mal auskommentiert und die Warnung über Contrib-Kombinationen oben hingeschrieben.} 
 
 % ===================================================================================
-\subsection{Time Innovation}
+\subsubsection{Time Innovation}
 \label{sec:timechoice}
 Time innovation is applied by defining its parameters in the \gls{configfile} section \lstinline|TimeAllocationMutator| and by adding 
 %
@@ -208,7 +281,7 @@ plus its weight to the strategy modules.
 The module shifts activity end times randomly within a configurable range as described by \citet[][]{BalmerEtAl_Timmermans_2005, Raney_PhDThesis_2005, Balmer_unpub_VSP_2004, BalmerEtAl_unpub_EIRASS_2004, BalmerEtAl_unpub_STRC_2004}. %A best-reponse approach to time choice is applied by "Planomat" described in Section~\ref{sec:planomat}.
 
 % ===================================================================================
-\subsection{Route Innovation}
+\subsubsection{Route Innovation}
 \label{sec:routechoice}
 
 Route innovation is applied by defining its parameters in the \gls{configfile} section \lstinline|planscalcroute|, by adding 
@@ -225,7 +298,7 @@ plus its weight to the strategy modules, and by specifying the routing algorithm
 %\ah{Kann tatsächlich auch keine Sonderkonfiguration (mehr) finden unter \url{http://www.matsim.org/docs/tutorials/transit}. Kann man also wegmachen. Muss zu Config-Param "transitRouter" noch was gesagt werden?}
 
 % ===================================================================================
-\subsection{Mode Innovation}
+\subsubsection{Mode Innovation}
 \label{sec:modechoice}
 Mode innovation is applied by adding 
 %
@@ -247,7 +320,7 @@ plus its weight to the strategy modules. In the \gls{configfile} a section with 
 Mode innovation is described by \citet[][]{RieserEtAl_TRR_2009, MeisterEtAl_WCTRS_2010, CiariEtAl_STRC_2008, CiariEtAl_STRC_2007}.
 
 % ===================================================================================
-\subsection{Selectors}
+\subsection{Plan Selection (Choice)}
 \label{sec:selectors}
 Selectors and their weight are also added to the strategy modules
 %
