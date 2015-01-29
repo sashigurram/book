@@ -2,7 +2,7 @@
 \label{ch:modules}
 % ##################################################################################################################
 
-\hfill \textbf{Author:} Andreas Horni, Kai Nagel
+\hfill \textbf{Authors:} Andreas Horni, Kai Nagel
 
 \begin{center} \includegraphics[width=0.5\textwidth, angle=0]{extending/figures/modules.pdf} \end{center}
 
@@ -29,20 +29,20 @@ In this chapter you will learn about the possibilities to extend, and customize 
 \kai{würde gerne, hier und im folgenden, url links auf sourceforge gerne vermeiden ... wir haben da keine Kontrolle drüber, ob die sich ändern.  M.E.\ lieber auf so etwas wie matsim.org/downloads verweisen.}
 
 In order to use the core only, one needs to do the following (see Section~\ref{sec:runningmatsim}):
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item Download a \gls{matsim} release or a nightly build by following the respective links at %% \url{http://sourceforge.net/projects/matsim/files/} or a nightly build \url{http://matsim.org/downloads/nightly} % \kai{url?}.
 \url{http://matsim.org/downloads}.
 \item Minimally obtain a network file and an initial plans file.  Small versions can be typed by hand; larger versions should be generated automatically by some computational method.
 \item Write or edit a config file.
 \item Click on the \gls{matsim} jar file\footnote{This works since winter 2014/15 and should be in the 0.7.0~release.} and follow the instructions. 
-\end{compactitem}
+\end{itemize}
 We think that the \gls{matsim} core is already quite powerful; for example, the synthetic persons already follow full daily plans with a full daily scoring function and in consequence opening times for activity types, departure time choice, and schedule delay can be investigated. Also, schedule-based public transit assignment is contained in the core.
 
 % --------------------------------------------------------------------------------------
 \subsubsection{Using One or More Contribs}
 \label{sec:using-contribs}
-
 \kai{Das wären jetzt eigentlich extensions; ``contribs'' sind diejenigen extensions, die sich gleichzeitig im matsim repository befinden.  Oder?}
+\ah{Nein, gemäss momentaner Buch-Definition liegen contribs unter ``contribs'', Module, welche über config, pop, network hinausgehen, aber im Core (was immer das nun genau ist) liegen, haben im Moment keinen Namen.}
 
 \Glspl{contribution} are in a separate part of the repository, separate from the core.  The documentation is not yet fully organized, information about \glspl{contribution} can be found at \url{http://matsim.org/javadoc} or \url{http://matsim.org/extensions}. There are also release versions and nightly builds, which can be found by following the links at %\url{http://sourceforge.net/projects/matsim/files/} 
 %\url{http://matsim.org/files/builds/}. % \kai{check} \ah{gibt es beides am gleichen Ort wie MATSim} \kai{url?}.
@@ -54,13 +54,13 @@ java -Xmx2000m -cp MATSim.jar:contrib/contrib.jar org.matsim.contrib.run.Main co
 \end{lstlisting}
 %% \kai{Maybe better point to electronic docu?} \ah{command ist unter url oben gegeben}
 where
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item \lstinline$-Xmx2000m$ increases the \gls{java} heap space so that most \gls{matsim} runs fit in
 \item \lstinline$MATSim.jar$ needs to be replaced by a relative or absolute path to the \gls{matsim} jar to be used
 \item \lstinline$contrib/contrib.jar$ needs to be replaced by a relative or absolute path to the \gls{contribution} jar to be used
 \item \lstinline$org.matsim.contrib.run.Main$ needs to be replaced by full \gls{java} class name containing the desired main method (given by the \gls{contribution} documentation)
 \item \lstinline$config.xml$ needs to be replaced by a relative or absolute path to a \gls{configfile}, which may contain additional sections specifically for the \gls{contribution}
-\end{compactitem}
+\end{itemize}
 
 It is possible to combine several \glspl{contribution} in this way, provided someone has made available a corresponding main method.  This can in principle be done relatively quickly, so persons who want to run studies with combinations of existing \glspl{contribution} but without programming skills can ask someone with those skills and with access to the repository to help.
 
@@ -228,14 +228,13 @@ Figure~\ref{fig:matsimmodules} shows where in the \gls{matsim} loop, common \gls
 For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be ``mode choice'' instead of the atomic categories, where we use terms ``functionality'' for the larger categories and ``module'' for the atomic components. %\kai{adapt table structure to revised chapter structure} \ah{erledigt}
 
 Due to the distributed and project- and dissertation-driven \gls{matsim} contribution process (see Chapter~\ref{ch:developmentprocess}) modules are usually implemented for a specific practical purpose leading to various limitations of the respective module, \eg modules might only work for a specific mode or for a defined calling order. Before, an additional effort is undertaken to generalize the module toward its embedding in the complete framework, the combination of a specific module with other functionality remains a non-straight-forward task. This means, that the user is in charge of systematically testing a specific modules combination before productively applying it.
-
+%
 \createfigure%
 {MATSim functionality}%
 {MATSim functionality}%
 {\label{fig:matsimmodules}}%
 {\includegraphics[width=0.99\textwidth, angle=0]{extending/figures/modules.pdf}}%
 {}
-%
 The description of the modules in this and the following chapters is based on the categorization shown in Table~\ref{tab:modules}.
 %
 %\kai{TODO: macros for section names to re-use for table entries}
@@ -336,12 +335,12 @@ The description of the modules in this and the following chapters is based on th
 \subsection{Scenario}
 \label{sec:extending-scenario}
 
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item Invoking the module: (1) if you use Controler, scenario is always there. (2) otherwise, it needs to be generated explicitly in java.  \kai{chk}
 \kai{Wir sind uns nicht im klaren darüber, was diese switches genau bedeuten, siehe \url{https://matsim.atlassian.net/browse/MATSIM-320}.  $\to$ weglassen.}
 
 \item Configuration: There is a \lstinline|scenario| config file section, but we don't know what it means. \kai{chk} \ah{Hier haben wir doch eine kleine Inkonsistenz zwischen Container und Configuration Section. Config section definiert lanes, signals, households, vehicles, transit. Scenario hat aber z.B. facilities und population drin. Man sollte diese config section evtl. umbenennen in sowas wie optional\_scenario\_elements oder ähnlich. \url{https://matsim.atlassian.net/browse/MATSIM-320}}
-\end{compactitem}
+\end{itemize}
 
 The \lstinline|scenario| module is
 %, on the one hand, 
@@ -516,7 +515,7 @@ Households are another optional element of \gls{matsim}. To load households into
 %% %
 %% However, if a public transit company decides to buy buses of a certain type, this is more a supply side decision (to supply potential passengers with a vehicle) than a demand side decision (the vehicle will have a demand for road space once it runs).
 
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item Invoking the module: Vehicles need to be enabled in the \lstinline|scenario| configuration file section.
 \item Configuration: At the moment vehicles are only used for public transport (Chapter~\ref{ch:pt}), \ie motorized individual traffic vehicles are not used in \gls{matsim} nowadays. Thus, the configuration file section specifying the input file is located in the \lstinline|transit| configuration file section, while the vehicles module does not have its own configuration file section. 
 \ah{Klären, ob man diese kleine Inkonsistenz beheben möchte.}  
@@ -526,7 +525,7 @@ Households are another optional element of \gls{matsim}. To load households into
 \ah{\url{https://matsim.atlassian.net/browse/MATSIM-314}}
 %
 This might change one day when the parking module will start to use vehicles. \citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households.
-\end{compactitem}
+\end{itemize}
 
 The vehicles package provides a file reader and a factory to create vehicles.
 
