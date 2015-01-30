@@ -20,7 +20,7 @@ As outlined in Section~\ref{sec:co-ev} and by Figures~\ref{fig:matsimcycle} and~
 \item [scoring] The actual performance of the plan in the synthetic reality is taken to compute the each executed plan's score.
 
 \item [replanning] consists of several steps:
-  \begin{enumerate}
+  \begin{enumerate}\styleEnumerate
 
   \item If an agent has more plans than the maximum number of plans (a configuration parameter), then plans are removed according to a (configurable) plan selector (choice set reduction/plans removal).
 
@@ -36,7 +36,7 @@ Choice is typically based on the score, with plans with a higher score having a 
 %
 This is dicussed in more detail in Chapter~\ref{ch:abta}.  For the time being, note that the three steps of replanning need to cooperate for the approach to work: The plans removal step should remove ``bad'' plans, and the innovation step should generate ``good'' plans, where in both cases ``good'' means ``being able to obtain a high score in the mobsim/scoring''.  Fortunately, the approach, due to its evolutionary concept, is fairly robust: The innovation step does not always have to generate good solutions; it is sufficient if \emph{some} of the solutions are good ones that lead to a high score.
 
-However, from the above it should become clear that scoring is a central element of \gls{matsim}.  Only solutions that obtain a high score will be selected by the agent, and will survive the plans removal step.  In consequence, the scoring function needs to be ``correct'' for a given scenario, which roughly means that plans ``perform well'' obtain a higher score than plans that do ``not perform well''.  And if a performance is good or not is in the end decided by the persons living in a region -- some persons may prefer a congested car trip to a destination, some others may prefer a crowded but affordable trip by public transit, while even others may prefer using the bicycle even in bad weather.
+However, from the above it should become clear that scoring is a central element of \gls{matsim}.  Only solutions that obtain a high score will be selected by the agent, and will survive the plans removal step.  In consequence, the scoring function needs to be ``correct'' for a given scenario, which roughly means that plans ``perform well'' obtain a higher score than plans that do ``not perform well''.  And if a performance is good or not is in the end decided by the persons living in a region---some persons may prefer a congested car trip to a destination, some others may prefer a crowded but affordable trip by public transit, while even others may prefer using the bicycle even in bad weather.
 
 The typical way to bridge this gap is to use econometric \imp{\gls{utility}} functions, for example from random utility models \citep[e.g.][]{BenAkivaLerman_1985,Train_2003} for the score.  However, in \gls{ai} utility may also be used in a more general way, as the \gls{score} that either each individual agent or the system as a whole wants to or should optimize \citep{RusselNorvig2010ArtificialIntelligence}.  \kai{Etwas davon sollte wohl auch ins Glossar.} For those reasons, the terms ``\gls{score}'' and ``\gls{utility}'' are mostly interchangeable in the \gls{matsim} context.  Since at some places we will need the concept of a marginal utility, this chapter will mostly speak of utility since it feels a bit unusual to speak of marginal score.
 
@@ -173,7 +173,7 @@ where:
 
 \item $C_{mode(q)}$ is a mode-specific constant.
 
-\item $\beta_{trav, mode(q)}$ is the so-called \emph{direct} (see Sec.~\ref{sec:opport-cost-of-time}) marginal utility of time spent traveling by mode.  Since \gls{matsim} uses and scores 24-hour episodes, this is in addition to the marginal utility of time as a resource (again, see Sec.~\ref{sec:opport-cost-of-time}).
+\item $\beta_{trav, mode(q)}$ is the so-called \emph{direct} (see Section~\ref{sec:opport-cost-of-time}) marginal utility of time spent traveling by mode.  Since \gls{matsim} uses and scores 24-hour episodes, this is in addition to the marginal utility of time as a resource (again, see Section~\ref{sec:opport-cost-of-time}).
 
   %% (normally negative or zero); it should \emph{not} contain the marginal utility of time as a resource $\beta_{dur}$ from above.
 
@@ -193,7 +193,7 @@ and
 %
 \benjamin{Irgendwo müsste dann definiert werden, was ``direct'' vs ``indirect'' ist; M.E. einfach ``without'' vs ``with'' (time) costraints.}
 %
-\kai{Ich habe jetzt mal ``so-called'' sowie weitere Hinweise auf 3.2.4 eingebaut -- natürlich müssen wir checken, dass wir es dort dann erklären.}
+\kai{Ich habe jetzt mal ``so-called'' sowie weitere Hinweise auf 3.2.4 eingebaut---natürlich müssen wir checken, dass wir es dort dann erklären.}
 %
 This is the direct utility contribution of travel; see Section~\ref{sec:opport-cost-of-time} for the the full indirect utility as well as the relation to the \gls{vtts}, and Section~\ref{ch:economicEval} for a more general discussion.
 
@@ -209,7 +209,9 @@ Note that the distance contributes to disutility in two ways. First, it is inclu
 % ------------
 \createfigure[!h!]%
 {Illustration of the scoring function.}%
-{Illustration of the scoring function. TOP: Individual contributions of the activities and legs.  BOTTOM: Score accumulation over the day \ah{act starts negative, thus, acc score should start with a negative offset, right? thx Marcel!}\kai{right. USED to be zero, but I changed that about a year ago (which also means that DC cannot answer this).  I fixed that in the plot (hopefully; please check if you agree).}}%
+{Illustration of the scoring function. TOP: Individual contributions of the activities and legs.  BOTTOM: Score accumulation over the day 
+% \ah{act starts negative, thus, acc score should start with a negative offset, right? thx Marcel!}\kai{right. USED to be zero, but I changed that about a year ago (which also means that DC cannot answer this).  I fixed that in the plot (hopefully; please check if you agree).} \ah{thx}
+}%
 {\label{fig:scoring-function}}%
 {\includegraphics[width=0.8\hsize,trim=0 0 0 0,clip]{using/figures/scoring-example}}%
 {}
@@ -334,10 +336,10 @@ The duration at which the utility of an activity is exactly zero is computed by 
 t_{0,q} := t_{typ,q} \cdot \exp\left( - \frac{10}{(t_{typ,q}/1\,h) \cdot prio} \right) \ ,
 \]
 where $prio$ is a configurable parameter. This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \citep{CharyparNagel2005ga4acts}. Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the ``home'' activity gets dropped first, which is clearly not plausible. See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives. In the meantime, the recommendations are:
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item Do not set the \lstinline$priority$ value in the config away from its default value.
 \item Recognize that the current \gls{matsim} default scoring/utility function is not suitable for activity dropping.
-\end{compactitem}
+\end{itemize}
 
 % -------------------------------------------------------------------------------------
 
@@ -389,7 +391,7 @@ Two frequently applied starting points for utility function calibration are the 
   \end{array}
 \label{eq:std-params}
 \end{equation}
-(cf.~Equation~(\ref{eq:derivation-of-scoring-default})).
+(\cf Equation~(\ref{eq:derivation-of-scoring-default})).
 %% These parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}. 
 %% \kai{Andreas, wieso Chaument?} 
 \ah{So ganz direkt sind ja die Parameter weder von Arnott noch von Vickrey abgeleitet. Chef meinte, dass da nach langen Diskussionen, mit Chaumet (und M. Bernhard, damals am IVT) noch (nach-)kalibriert wurde. Leider lange vor meiner Zeit.
