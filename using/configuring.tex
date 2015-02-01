@@ -156,10 +156,14 @@ As shown in Section~\ref{sec:multimodalsim_qsim}, \gls{qsim} can handle \gls{mul
 
 To run \gls{jdeqsim} the parameter \lstinline|mobsim| of \lstinline|controler| \gls{configfile} section must be set to \lstinline|JDEQSim| and a \lstinline|jdeqsim| \gls{configfile} section must be provided. 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %##################################################################################################################
 \section{Scoring}
 \label{sec:using-scoring}
 The \gls{configfile} section \lstinline|planCalcScore| specifies the parameters used for scoring agents' plans (Section~\ref{sec:lgs-config}); parameters are explained in detail in Chapter~\ref{ch:scoring}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %##################################################################################################################
 \section{Replanning Strategies}
@@ -345,6 +349,69 @@ Note, that the \lstinline|BestScore| should be used with care as it is prone to 
 Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. Per default, the plan with the lowest score is removed if the agent's memory is full. In line with the requirements of \eg simulated annealing approaches, the removal of candidates will be configurable to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This will reduce the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
 %\ah{siehe Mail by M. Zilske, August 14 "[Matsim-devel] custom plan selector for removal")}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Other modes than car}
+
+\kai{new section, pls check.  Also see in ``available modules''!!}
+
+\kai{This ends up being quite long.  What to do?  Maybe (again) cut into two pieces: (1) by config; (2) extensions--???}
+
+The \gls{matsim} software started with car as mode of transport since in many regions where it was used at that time, car was the main mode.  The idea to integrate other modes has, however, always been there.
+
+The following sections describes the current multi-modal capabilities of \gls{matsim}.  The material does not only cover options that can be enabled with config options only, but also gives an overview over multi-modal extensions, described in Part~\ref{part:extending-matsim} of the book.
+
+\subsection{So-called \gls{teleportation}}
+
+\paragraph{Teleportation with teleported mode free speed factor}
+
+\paragraph{Teleportation with teleported mode speed}
+
+\paragraph{Teleportation from routing}
+
+\subsection{Movement on separate and uncongested networks}
+
+\subsection{Multiple ``main'' or ``network'' modes}
+
+The previous sections modelled modes other than car on separate simulation infrastructures, either by teleportation or on separate, congestion-free networks.  Clearly, this does not longer work once these modes are congested as well.  However, often the separate modes are not individually congested but share the same infrastructure, for example cars and trucks, or bicycles, motorbikes, and cars in India \citep{AgarwalEtcMixedTraffic}.  It thus was investigated how to have different modes interact on the same congested network.
+
+\paragraph{Pedestrian simulations} A first step was to replace ``car'' by something else, for example ``pedestrian''.  This was possible by re-interpreting the geometric properties so that the flow and storage capacity constraints of the \gls{matsim} queue model \kai{explained where?} would make sense for pedestrians rather than for cars \cite{somePaperFromGregor} \kai{chk}.  
+
+\paragraph{Mode vehicle types} The above approach fails as soon as more than one vehicle type is involved.  Therefor, eventually the ability to allow multiple modes on the same network was introduced.  It is defined by the \lstinline{qsim} config option of type
+\begin{xml}
+   <param name="mainMode" value="car,truck,bicycle" />
+\end{xml}
+This will look at the leg mode in the plan, and if that leg mode corresponds to one of the listed main modes, it will generate vehicle for that leg and make it enter the network.
+
+In order to not use the pre-defined default vehicle type for each mode, for the time being it is necessary to write a script-in-\gls{java}. For the necessary syntax, see the \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ core.  We will eventually make this available as a config option; at this time, we are still searching for a software design that makes the QSim both pluggable at multiple levels \emph{and} easy to maintain.
+
+Note that the framework \emph{also} needs to be told \kai{...}.
+
+\paragraph{PassingQ} Once the different mode vehicle types have different maximum speeds, the standard QSim is no longer sufficient, since it uses \acrfull{fifo} as the queueing discipline, and thus fast vehicles cannot pass slower vehicles.  Here, the so-called Passing(Vehicle)Q can be used instead.  It replaces the \gls{fifo} sorting criterion, where vehicles are sorted by the sequence in which they arrive on the link, by a sorting according to the so-called earliest link exit time, which is computed from the link enter time and the freespeed travel time.  Now using the minimum of the vehicle and the link maximum speeds, the freespeed travel time can be different between vehicles, and thus fast vehicles can obtain an earlier link exit time even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \cite{AgarwalEtcMixedTraffic}.
+
+This option can be enabled by using
+\begin{xml}
+   <param name="linkDynamics" value="passingQ" />
+\end{xml}
+in the \lstinline{qsim} section of the config file.
+
+
+
+pseudo-pt, matrix-based pt, schedule-based pt
+
+multi-modal link extension
+
+multiple vehicle types/modes on same link
+
+\paragraph{Other options}
+
+vehicle file
+
+\subsection{Modes transporting other modes}
+
+
+\kai{not consistent with remainder of book}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %##################################################################################################################
 \section{Observational Modules}
 \label{sec:observational}
