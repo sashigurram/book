@@ -174,11 +174,11 @@ class MyDriverAgent implements DriverAgent {
 \end{lstlisting}
 %
 Similar implementations are needed for all other queries that could be asked of the agent, for example:
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item Should the trip end on the current link?
 \item Should the agent get off at the current stop?
 \item What is the \lstinline|ID| of the vehicle to be used for a trip?
-\end{compactitem}
+\end{itemize}
 %
 From the agent's perspective, such an approach might be called \emph{event driven}, since the agent performs only mental activity at such events.
 
@@ -243,24 +243,24 @@ this makes the design robust so it cannot produce race conditions which could oc
 %\mnote{different basic replanners for current/future trips/acts}
 
 \lstinline{Replanner} implementations are available for any basic change of an agent's scheduled daily plan. All trips and activities can be adapted, although some replanning operations are not available when trip or activity has already been started. Possible adaptations are:
-\begin{compactitem}
+\begin{itemize}\styleItemize
     \item Current trip (route, destination)
     \item Future trip (add, remove, mode, route, origin, destination)
     \item Current activity (end time)
     \item Future activity (add, remove, location, type, start and end time)
-\end{compactitem}
+\end{itemize}
 %
 For complex plan adaptations, those basic \lstinline{Replanners} can be combined. If, for example, an agent currently performing a trip changes the destination of its next activity, routes of the current and next trip must be adapted.
 %
 %\mnote{different basic identifiers}
 
 Additionally, four basic \lstinline{Identifiers} have been implemented so far. They identify agents, which are...
-\begin{compactitem}
+\begin{itemize}\styleItemize
     \item Performing an activity.
     \item Performing an activity which will end in the current time step.
     \item Performing a trip.
     \item Performing a trip and are going to move to another link.
-\end{compactitem}
+\end{itemize}
 %
 %\mnote{AgentFilters (e.g., for spatial areas)}
 
@@ -273,11 +273,11 @@ Basically, simple and re-usable functionality should be implemented as \lstinlin
 %\mnote{basic AgentFilters}
 
 Three basic \lstinline{AgentFilters} have been implemented so far. They filter agents which are not...
-\begin{compactitem}
+\begin{itemize}\styleItemize
     \item Part of a predefined agent set.
     \item Currently using a transport mode included in a given set.
     \item Currently located on a link included in a predefined set.
-\end{compactitem}
+\end{itemize}
 %
 %\mnote{observers}
 
@@ -364,10 +364,10 @@ The second set of experiments uses within-day replanning to create agents' initi
 %% \kai{go through following and make consistent!!!}
 According to \cite{RussellNorvigBook}, an agent is ``anything that can be viewed as perceiving its environment through sensors and acting upon that environment through effectors.''  As stated above, \gls{matsim} has agents on two levels:
 %
-\begin{compactitem}
+\begin{itemize}\styleItemize
 	\item \lstinline$Person$ is a Q-learning agent that is persistent over the iterations.
 	\item \lstinline$MobsimAgent$ is a reactive agent that only exists during the \gls{mobsim}.
-\end{compactitem}
+\end{itemize}
 
 For the Q-learning agent, perception works through the events; \ie events are used to compute the score, build mental models to generate alternatives, etc. Acting on the environment works through plan selection.
 
@@ -380,19 +380,19 @@ Here, with this in mind, we will look at \lstinline$MobsimAgent$s, which no long
 % ----------------------------------------------------------------------------
 \subsubsection{Agent Interface}
 The \lstinline$DriverAgent$ interface structurally resembles:
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item \lstinline$Id chooseNextLinkId()$---agent is asked at intersections and needs to return how to proceed.
 %% \item \lstinline$Id<Link> getDestinationLinkId()$ -- agent is essentially asked if it wants to arrive on the current link.\footnote{%
 %% The method can return {\tt null}.  Arguably, it should be modified to something like {\tt boolean isArrivingOnCurrentLink()}.
 %% }  
 \item \lstinline$boolean isWantingToArriveOnCurrentLink()$---agent is asked if it wants to arrive on the current link.
 \item \lstinline$void notifyMoveOverNode(Id newLinkId)$---agent is notified that it has traversed the intersection and entered a new link.
-\end{compactitem}
+\end{itemize}
 %
 The rest comprises relatively simple bookkeeping methods like \lstinline$getId()$---the agent needs to know its own identifier.
 
 If it is assumed that the agent does not only replan en-route, but also while at activities, then the \lstinline$MobsimAgent$ interface also must be implemented.  This is a bit more involved; important methods are:
-\begin{compactitem}
+\begin{itemize}\styleItemize
 \item \lstinline$endLegAndComputeNextState(...)$---agent is notified that the current transport leg has ended, and the agent internally needs to decide how to continue.
 \item \lstinline$endActivityAndComputeNextState(...)$---agent is notified that current activity has ended; the agent internally needs to decide how to continue.
 \item \lstinline$setStateToAbort(...)$---if a leg or an activity was not ended cleanly: this could happen if \lstinline$chooseNextLinkId()$ returns a link that is not outgoing from the current node.\footnote{%
@@ -400,7 +400,7 @@ If it is assumed that the agent does not only replan en-route, but also while at
 Despite the name of the method, the agent can recover.  %
 }
 \item \lstinline$getState()$---agent needs to return its current state, which essentially either returns \lstinline$ACTIVITY$ or \lstinline|LEG|; most important here  is that the framework obtains information about whether the agent wants to start a new activity or leg.
-\end{compactitem}
+\end{itemize}
 Again, everything else concerns bookkeeping methods.
 
 % ----------------------------------------------------------------------
