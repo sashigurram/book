@@ -354,7 +354,7 @@ Besides the selectors for plan modification and execution, in the near future al
 
 \kai{new section, pls check.  Also see in ``available modules''!!}
 
-\kai{This ends up being quite long.  What to do?  Maybe (again) cut into two pieces: (1) by config; (2) extensions--???}
+\kai{This new section ends up being quite long.  What to do?  Maybe (again) cut into two pieces: (1) by config; (2) extensions--???}
 
 The \gls{matsim} software started with car as mode of transport since in many regions where it was used at that time, car was the main mode.  The idea to integrate other modes has, however, always been there.
 
@@ -362,11 +362,41 @@ The following sections describes the current multi-modal capabilities of \gls{ma
 
 \subsection{So-called \gls{teleportation}}
 
+\subsubsection{QSim side}
+
+All modes that are \emph{not} registered with the QSim as ``main modes'' (see below) will be teleported.  That is, the QSim will without problems process legs such as
+\begin{lstlisting}
+<leg mode="pedelec" >
+   <route type="generic" trav_time="00:14:44" distance="2374" />
+</leg>
+\end{lstlisting}
+The QSim will generate a departure event (for events see Section~\ref{sec:outputdata}) after the end of the previous activity, and an arrival event 14~minutes and 44~seconds later.  The leg will be recorded with a distance of 2374~meters.  If the distance is not used for the scoring (\cf Chapter~\ref{ch:scoring}), it can be left out from the route as well (which is the situation in most present set-ups).
+
+\subsubsection{Routing side}
+
+The question now is how the teleportation routes are generated.  Clearly, the user can write her or is own router which can either be a full-blown network router (\cf Section~\ref{sec:router-extension-point}) or some heuristic that comes up with plausible travel times and travel distances.  It is, however, much easier to use the preconfigured options, as follows.
+
 \paragraph{Teleportation with teleported mode free speed factor}
 
-\paragraph{Teleportation with teleported mode speed}
+A config entry such as
+\begin{xml}
+<module name="planscalcroute" >
+   <parameterset type="teleportedModeParameters" >
+      <param name="mode" value="pt" />
+      <param name="teleportedModeFreespeedFactor" value="2.0" />
+      <param name="teleportedModeSpeed" value="null" />
+   </parameterset>
+   [...]   
+</module>      
+\end{xml}
+means that if the router encounters a leg with mode pt, it should generate a ``teleportation'' route whose travel time is twice that of a freespeed car route.
+\kai{what about distance?  and does this go into the leg or the route?}
+
+\paragraph{Teleportation with teleported mode speed}  Setting, in the above, \lstinline{teleportedModeParameters} \kai{incomplete}
 
 \paragraph{Teleportation from routing}
+
+\subsubsection{Scoring side}
 
 \subsection{Movement on separate and uncongested networks}
 
@@ -378,7 +408,10 @@ The previous sections modelled modes other than car on separate simulation infra
 
 \paragraph{Mode vehicle types} The above approach fails as soon as more than one vehicle type is involved.  Therefor, eventually the ability to allow multiple modes on the same network was introduced.  It is defined by the \lstinline{qsim} config option of type
 \begin{xml}
+<module name="qsim">
    <param name="mainMode" value="car,truck,bicycle" />
+   [...]
+</module>
 \end{xml}
 This will look at the leg mode in the plan, and if that leg mode corresponds to one of the listed main modes, it will generate vehicle for that leg and make it enter the network.
 
@@ -390,7 +423,10 @@ Note that the framework \emph{also} needs to be told \kai{...}.
 
 This option can be enabled by using
 \begin{xml}
+<module name="qsim">
    <param name="linkDynamics" value="passingQ" />
+   [...]
+</module>
 \end{xml}
 in the \lstinline{qsim} section of the config file.
 
