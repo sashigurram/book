@@ -13,10 +13,7 @@ In this chapter, configuration options are described that can be used together w
 %
 Part~\ref{part:extending-matsim} will discuss various options to extend \gls{matsim} beyond these three elements, sometimes by just using additional files, sometimes by using additional \gls{jar} files beyond the \gls{matsim} core \gls{jar} file,  sometimes by writing so-called ``scripts in \gls{java}'', and sometimes by adding or replacing functionality.
 
-\gls{matsim} writes configuration files at several places, for example in the logfile, in the iteration output directory, or the \lstinline{CreateFullConfig} functionality described in Section~\ref{sec:lgs-config}.  As already explained in Section~\ref{sec:survival}, these files come with comments that explain the configuration options.  This is often the best source to understand configuration options.  \kai{Andreas, meinem Eindruck nach geht der user guide hier auch nicht weiter als das Buch -- und soll es derzeit auch gar nicht.  Unsere Javadoc sagt m.E.\ traditionell sehr wenig bis gar nichts über config.}
-
-
-
+\gls{matsim} writes configuration files at several places, for example in the logfile, in the iteration output directory, or the \lstinline{CreateFullConfig} functionality described in Section~\ref{sec:lgs-config}.  As already explained in Section~\ref{sec:survival}, these files come with comments that explain the configuration options.  This is often the best source to understand configuration options.  %\kai{Andreas, meinem Eindruck nach geht der user guide hier auch nicht weiter als das Buch -- und soll es derzeit auch gar nicht.  Unsere Javadoc sagt m.E.\ traditionell sehr wenig bis gar nichts über config.} \ah{ok}
 
 % ##################################################################################################################
 \section{MATSim Data Containers}
@@ -64,7 +61,8 @@ Chapter~\ref{ch:extensionpoints}.
 
 \gls{matsim} uses multi-threading in order to accelerate the computing speeds.  Related configuration parameters can be found in several config modules; they are combined into one section here for convenience.
 
-\paragraph{Global setting}
+% ...................................
+\paragraph{Global Setting}
 
 The \lstinline{global} section contains
 \begin{xml}
@@ -77,7 +75,7 @@ This number is used at several places, most importantly for the innovative strat
 
 An advisable starting point is to use the number of available cores.
 
-
+% ...................................
 \paragraph{Parallel Event Handling}
 \label{sec:using-paralleleventhandling}
 
@@ -89,9 +87,10 @@ As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} 
 
 %% Being able to speed-up scenarios might become even more important than today, when additional innovation (choice) dimensions are added with large variability in the parameters rendering ensemble runs necessary. % (see Section~\ref{sec:variability}).
 
+% ...................................
 \paragraph{Parallel QSim}
 
-The number of threads for the paralle QSim (\cf \cite{Dobler_PhDThesis_2013}) can be configured by
+The number of threads for the paralle \gls{qsim} (\cf \cite{Dobler_PhDThesis_2013}) can be configured by
 \begin{xml}
 <module name="qsim" >
     <param name="numberOfThreads" value="10" />
@@ -101,23 +100,23 @@ The number of threads for the paralle QSim (\cf \cite{Dobler_PhDThesis_2013}) ca
 
 %\ah{Marcel hatte mal Testreihe mit Identifikation der Laufzeit einzelner Module (QSim, Eventshandling etc.) geplant. Nachfragen, ob schon was vorhanden}
 
-
-\paragraph{General recommendations}
+% ...................................
+\paragraph{General Recommendations}
 
 Quite generally, computations that use threads are not necessarily faster with more threads. The same holds for \gls{matsim}.  In consequence, some experimentation is necesary for each combination of scenario and hardware.  Here are some recommendations:
-\begin{itemize}
+\begin{itemize}\styleItemize
 
 \item For the ``global'' number of threads, a good starting point is the number of available cores.
 
 \item It is no longer possible to switch of parallel event handling completely, so setting it to `0' or `null' or `1' presently does exactly the same.  Setting it to values larger than one sometimes leads to performance gains, but they are rarely significant.
 
-\item The most sensitive parameter is for the QSim.
+\item The most sensitive parameter is for the \gls{qsim}.
   %
-  For somewhat older hardware (e.g.\ Apple Macbook Pro from 2010), using all three cores that remained besides the parallel event handling led to negligible performance gains while rendering the machine inutilisable even for normal office tasks.
+  For somewhat older hardware (\eg Apple Macbook Pro from~2010), using all three cores that remained besides the parallel event handling led to negligible performance gains while rendering the machine inutilisable even for normal office tasks.
   %
-  For new hardware (e.g.\ Apple Macbook Pro from 2014), using six of the available eight cores for the QSim can make the mobsim more than a factor of two faster while the machine can still be used for office tasks.
+  For new hardware (\eg Apple Macbook Pro from~2014), using six of the available eight cores for the \gls{qsim} can make the \gls{mobsim} more than a factor of two faster while the machine can still be used for office tasks.
   %
-  Experiences with older servers say that one needs to investigate carefully the number of threads for the mobsim since using more threads often slows it down \citep{Dobler_PhDThesis_2013}.
+  Experiences with older servers say that one needs to investigate carefully the number of threads for the \gls{mobsim} since using more threads often slows it down \citep{Dobler_PhDThesis_2013}.
   %
   Experiences with new servers are currently not available. \kai{or are there?  where?}
 
@@ -139,9 +138,15 @@ An overview of \gls{matsim} mobility simulations is given in \citet[][]{Dobler_T
 % ===================================================================================
 \subsection{\protect\gls{qsim}}
 \label{sec:using-qsim}
-The queue-based and time-step based \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is \gls{matsim}'s default \gls{mobsim}. Its parameters are set in the \lstinline|qsim| \gls{configfile} section. Prominent parameters are as follows. By specifying the parameter \lstinline|numberOfThreads| \gls{qsim} can be run in parallel, see above. Importantly, this section's parameters \lstinline|flowCapacityFactor| and \lstinline|storageCapacityFactor| need to be set accordingly, when running sample scenarios, \eg for a 10\,\% sample, these factors need to be divided by 10. The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to adapt these parameters with the command \lstinline|Tools...Create Sample Population|.
+The queue-based and time-step based \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is \gls{matsim}'s default \gls{mobsim}. 
+Its parameters are set in the \lstinline|qsim| \gls{configfile} section. Prominent parameters are as follows. By specifying the parameter \lstinline|numberOfThreads| \gls{qsim} can be run in parallel, see above. 
+Importantly, this section's parameters \lstinline|flowCapacityFactor| and \lstinline|storageCapacityFactor| need to be set accordingly, when running sample scenarios, \eg for a 10\,\% sample, these factors need to be divided by~10. The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to adapt these parameters with the command \lstinline|Tools...Create Sample Population|.
 
-The link dynamics, either \gls{fifo} or passing can be specified by the parameter \lstinline|linkDynamics|. Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) can be added with the parameter \lstinline|trafficDynamics|. \kai{Das gibt es immer noch nicht wirklich.  Habe jetzt Amit rekrutiert, damit er mir da hoffentlich hilft.}
+The link dynamics, either \gls{fifo} or passing can be specified by the parameter \lstinline|linkDynamics|. 
+Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) are only available in an experimental manner, 
+they will be added in the near future and will then be configurable with the parameter \lstinline|trafficDynamics|. 
+\kai{Das gibt es immer noch nicht wirklich.  Habe jetzt Amit rekrutiert, damit er mir da hoffentlich hilft.}
+\ah{ok. angepasst}
 
 As shown in Section~\ref{sec:multimodalsim_qsim}, \gls{qsim} can handle \gls{multimodal} scenarios. \kai{chk}
 
@@ -442,6 +447,8 @@ The previous sections modelled modes other than car on separate simulation infra
 </module>
 \end{xml}
 This will look at the leg mode in the plan, and if that leg mode corresponds to one of the listed main modes, it will generate vehicle for that leg and make it enter the network.
+
+\ah{ab hier vielleicht anch Part II + forward pointer? Dann haben wir wieder Konsistenz.}
 
 In order to not use the pre-defined default vehicle type for each mode, for the time being it is necessary to write a script-in-\gls{java}. For the necessary syntax, see the \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ core.  We will eventually make this available as a config option; at this time, we are still searching for a software design that makes the QSim both pluggable at multiple levels \emph{and} easy to maintain.
 

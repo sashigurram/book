@@ -9,16 +9,17 @@
 % ##################################################################################################################
 \section{\label{sec:Introduction}Introduction}
 
-MATSim comes with a number of \glspl{mobsim}. These differ from the
+\gls{matsim} comes with a number of \glspl{mobsim}. These differ from the
 implementation perspective (time-stepping vs. event-based, degree
 of parallelism), but they constitute all (at least approximate) solvers
 of the same underlying traffic flow model. The present chapter attempts
 to explain this (from the technical mobsim specification alone not
 obvious) fact and clarifies (the implications of) currently made simplifications.
 
-At the heart of MATSim's traffic flow model is the flow-density relationship
-(also called fundamental diagram) shown in Figure~\ref{fig:Fundamental-diagram}
-and subsequently abbreviated as {}"FD". Given a long, homogeneous
+At the heart of \gls{matsim}'s traffic flow model is the flow-density relationship
+(also called \gls{fd}) shown in Figure~\ref{fig:Fundamental-diagram}
+%and subsequently abbreviated as {}''FD''. 
+Given a long, homogeneous
 road it predicts the average flow $q$ (in vehicles per time unit)
 through any cross-section of that road, given an average vehicle density
 $\varrho$ (in vehicles per length unit) on that road. 
@@ -32,7 +33,7 @@ $\varrho$ (in vehicles per length unit) on that road.
 {}
 % ----------
 
-The FD is defined as the minimum of a sending function $S(\varrho)$
+The \gls{fd} is defined as the minimum of a sending function $S(\varrho)$
 (solid) and a receiving function $R(\varrho)$ (dashed), resulting
 overall in a triangular curve that is parametrized by the maximum
 velocity $\hat{v}$, the maximum density $\hat{\varrho}$ and the
@@ -45,13 +46,14 @@ be multiplied with the number of lanes (\texttt{permlanes} attribute
 of the \texttt{link} element) otherwise. The backward wave speed turns
 out to be the ratio of the length of a vehicle to the safety time
 gap adopted by drivers in congested conditions. This parameter turns
-out to be fairly constant; a vehicle length of 7.5\,m and a time
-gap of 2\,s leads to a value of 13.5\,km/h. \note{Can it be set somewhere, or is there a hardcoded value?}
+out to be fairly constant; a vehicle length of 7.5\,meters and a time
+gap of 2\,seconds leads to a value of 13.5\,kilometers per hour. 
+\note{Can it be set somewhere, or is there a hardcoded value?}
 
-The considered FD alone applies only in stationary conditions, where
+The considered \gls{fd} alone applies only in stationary conditions, where
 it predicts that (i) flow increases linearly with density at low densities
-(i.e. in uncongested conditions); (ii) flow decreases linearly with
-density at high densities (i.e. in congested conditions); and (iii)
+(\ie in uncongested conditions); (ii) flow decreases linearly with
+density at high densities (\ie in congested conditions); and (iii)
 in-between it attains a maximal value that constitutes the flow capacity
 \begin{eqnarray}
 \hat{q} & = & \frac{\hat{v}w\hat{\varrho}}{\hat{v}+w}\label{eq:flow-cap}
@@ -63,13 +65,13 @@ below.
 
 A realistic representation of non-stationary traffic flow (where density
 and flow change over space and time) is possible by inserting the
-FD into a continuity equation (which intuitively models vehicle conservation,
+\gls{fd} into a continuity equation (which intuitively models vehicle conservation,
 in the sense that vehicles cannot vanish or spontaneously appear on
-a road segment without on- and off-ramps). This leads to the Kinematic
-Wave Model of traffic flow \citep[KWM;][]{lighthill-1955,richards-1956},
+a road segment without on- and off-ramps). This leads to the \gls{kwm} 
+of traffic flow \citep[KWM;][]{lighthill-1955,richards-1956},
 where the sending and receiving function receive an intuitive interpretation:
 The instantaneous flow across any interface, possibly with different
-densities prevailing and FDs applying up- and downstream of that interface,
+densities prevailing and \glspl{fd} applying up- and downstream of that interface,
 is defined by (i) inserting the density upstream of the interface
 into the upstream sending function, (ii) inserting the density downstream
 of that interface into the downstream receiving function, and (iii)
@@ -77,9 +79,9 @@ taking the minimum of these two quantities \citep{daganzo-1994,lebacque-1996}.
 Intuitively: The flow is limited by what can be sent from upstream
 and what can be received downstream, but otherwise it is maximized.
 
-The remainder of this chapter expresses MATSim\textquoteright{}s link
+The remainder of this chapter expresses \gls{matsim}\textquoteright{}s link
 model (Section~\ref{sec:Link-model}) and its node model (Section~\ref{sec:Node-model})
-in terms of the sending and receiving function framework of the KWM.
+in terms of the sending and receiving function framework of the \gls{kwm}.
 Some technical detail is omitted from the presentation for the sake
 of readability; pointers to the literature are provided.
 
@@ -95,12 +97,12 @@ rates by the duration $\delta$ of a simulation time step then yields
 the maximum number of vehicles that can enter and leave the link,
 respectively.
 
-MATSim also needs to compute these quantities. The way in which it
-does so is rooted in Newell's {}"simplified theory of kinematic
-waves" \citep{newell-1993}, which provides a simple recipe for
+\gls{matsim} also needs to compute these quantities. The way in which it
+does so is rooted in Newell's {}''simplified theory of kinematic
+waves'' \citep{newell-1993}, which provides a simple recipe for
 computing the flow and the density anywhere inside of a link given
 that one keeps track of the cumulative flow at the link's up- and
-downstream interface. In terms of the continuum model (i.e. one that
+downstream interface. In terms of the continuum model (\ie one that
 allows for real-valued flows and densities at real-valued locations
 and times) specified by \citet{newell-1993}, the cumulative in- and
 outflow of the link are defined as
@@ -111,7 +113,7 @@ N^{\text{out}}(t) & = & \int_{0}^{t}q^{\text{out}}(z)dz\label{eq:cum-out}
 where $t$ denotes time, $q^{\text{in}}$ and $q^{\text{out}}$are
 the instantaneous in- and outflow rate (in vehicles per time unit)
 of the link, and an initially (at $t=0$) empty link is assumed. From
-MATSim's vehicle-discrete perspective, the cumulative inflow (outflow)
+\gls{matsim}'s vehicle-discrete perspective, the cumulative inflow (outflow)
 at a given point in time hence represents the total number of vehicles
 having entered (left) the link up to that point in time.
 
@@ -130,7 +132,7 @@ S(t) & = & \min\left\{ \left[N^{\text{in}}(t+\delta-L/v)-N^{\text{out}}(t)\right
 where $L$ is the length of the link and $\delta$ is the (small)
 discrete time step length.
 
-The connection to MATSim can now be made explicit by labeling the
+The connection to \gls{matsim} can now be made explicit by labeling the
 two bracketed terms in \MyEqRef{eq:R-yperman} and \MyEqRef{eq:S-yperman}
 as {}``upstream queue'' UQ and {}``downstream queue'' DQ \citep{osorio-2011a,osorio-2013b}:
 \begin{eqnarray}
@@ -163,7 +165,7 @@ the amount of flow that is allowed to leave the link is given by the
 number of vehicles in its DQ. \note{Is this description compatible with the actual implementation?}
 
 A \gls{mobsim} that implements the rules \MyEqRef{eq:UQ-rek}, \MyEqRef{eq:DQ-rek}
-and \MyEqRef{eq:R-matsim}, \MyEqRef{eq:S-matsim} implements a KWM-consistent
+and \MyEqRef{eq:R-matsim}, \MyEqRef{eq:S-matsim} implements a \gls{kwm}-consistent
 link model. This is almost the case for the \note{REF double-queue mobsim},
 which, in its implementation as of December 2014, has the sole deficiency
 of not limiting the link's inflow to its flow capacity. \note{Is this correct?}
@@ -178,21 +180,21 @@ which represents nothing but the total number of vehicles in the link.
 This corresponds indeed to the behavior of the \note{REF single-queue mobsim(s)},
 where the inflow to a link is limited only by the available space
 in the link as a whole. Letting $\left|w\right|=L/\delta$ means that
-the \note{REF single-queue mobsim(s)} behave like a KWM with an extremely
+the \note{REF single-queue mobsim(s)} behave like a \gls{kwm} with an extremely
 high backward shockwave speed, which physically means that a queue
-on the link does not dissolve from its downstream end but moves {}"en
-block" over the link.
+on the link does not dissolve from its downstream end but moves {}''en
+block'' over the link.
 
 % ##################################################################################################################
 \section{\label{sec:Node-model}Node Model}
-All \glspl{mobsim} in MATSim implement the same node model. Somewhat surprisingly,
+All \glspl{mobsim} in \gls{matsim} implement the same node model. Somewhat surprisingly,
 this node model can be traced back at least to \note{when?}, whereas
-the literature based on which its consistency with the KWM can be
+the literature based on which its consistency with the \gls{kwm} can be
 established is only a few years old \citep{tampere-2010b,floetteroed-2011a,corthout-2012}. 
 
-Nodes in MATSim have no spatial dimension; they merely connect up-
+Nodes in \gls{matsim} have no spatial dimension; they merely connect up-
 and downstream links. \citet{tampere-2010b} specify a set of requirements
-for a (continuum) node model to be consistent with the KWM. They require
+for a (continuum) node model to be consistent with the \gls{kwm}. They require
 that the flow through the node shall be maximized subject to the following
 constraints:
 \begin{enumerate}
@@ -200,15 +202,15 @@ constraints:
 vehicles cannot drive backwards, and they must neither disappear nor
 spontaneously appear within the node.
 \item Flow ratios comply with exogenous specified turning fractions. For
-instance, if it is specified that 20 percent of the outflow of link
+instance, if it is specified that 20\,\% of the outflow of link
 $i$ shall turn into link $j$, then the amount of flow that actually
-advances from link $i$ into link $j$ shall indeed be 20 percent
+advances from link $i$ into link $j$ shall indeed be 20\,\%
 of the flow that actually leaves link $i$.
 \item Sending flows of upstream links and receiving flows of downstream
 downstream are not exceeded. The meaning of this is explained in Section~\ref{sec:Link-model}.
 \item The invariance principle of \citet{lebacque-2005} is satisfied. The
 intuitively most important implication of this principle is that the
-advancement of a queueing vehicle is not affected by the vehicles
+advancement of a queuing vehicle is not affected by the vehicles
 behind it.
 \item A {}``supply constraint interaction rule'' is satisfied. It defined
 how how the limited receiving flow of a downstream link is shared
@@ -224,7 +226,7 @@ transfer, and it terminates only once no more flow can be moved. In
 consequence, the ultimately moved flows also comply with all constraints,
 and they are maximal. 
 
-Now consider the code documentation of MATSim's \lstinline|queuesim.QueueNode.moveNode|
+Now consider the code documentation of \gls{matsim}'s \lstinline|queuesim.QueueNode.moveNode|
 (as of December 2014):
 \begin{quote}
 \noindent \texttt{Moves vehicles from the inlinks' buffer to the outlinks
@@ -243,7 +245,7 @@ in (the upstream queue of) that link. A more detailed inspection of
 the underlying implementation also does not reveal any inconsistencies
 with the incremental node model specification.
 
-There are two aspects of the MATSim node model that is not reflected
+There are two aspects of the \gls{matsim} node model that is not reflected
 by the above code comment.
 \begin{itemize}
 \item The sending flows of an upstream link may be limited by by an outflow
@@ -257,7 +259,7 @@ more flow. This is again consistent with \citet{floetteroed-2011a}
 and constitutes a concrete {}``supply constraint interaction rule'',
 as required by \citet{tampere-2010b}.
 \end{itemize}
-The relative simplicity of MATSim's intersection logic may be refined
+The relative simplicity of \gls{matsim}'s intersection logic may be refined
 in many regards; for instance, turning pockets may be added and conflicts
 within the intersection may be modeled. \note{I think Dominik has done something like this. Need to find a reference.}
 However, some caution is needed when implementing such extensions.
@@ -267,21 +269,21 @@ to more complicated specifications \citep{corthout-2012}.
 
 % ##################################################################################################################
 \section{\label{sec:Summary}Summary}
-This chapter demonstrated that MATSim's mobility simulation is already
+This chapter demonstrated that \gls{matsim}'s mobility simulation is already
 very close to implementing a particle-discretized instance of the
-KWM. For full consistency, one needs to (i) use the \note{REF double-queue mobsim}
+\gls{kwm}. For full consistency, one needs to (i) use the \note{REF double-queue mobsim}
 and to (ii) limit the inflow of a link by its flow capacity (which
-corresponds to the maximum of its triangular FD). \note{Is this correct? Or is there already "full consistency" with the KWM?.}
+corresponds to the maximum of its triangular \gls{fd}). \note{Is this correct? Or is there already ``full consistency'' with the KWM?.}
 
 \kai{Folgend einige Sätze von AH, die eingearbeitet oder verworfen werden müssten.  M.E.\ interessant vor allem im Hinblick auf MFD.}
 
 \subsection{Aggregate Traffic Flow Characteristics}
-MATSim's aggregate traffic flow characteristics were analyzed in the common form of the macroscopic fundamental diagram. Some investigations additionally derived MATSim's (implicit) volume-delay function \citep[][]{HorniMontini_STRC_2013}.
+\gls{matsim}'s aggregate traffic flow characteristics were analyzed in the common form of the macroscopic fundamental diagram. Some investigations additionally derived \gls{matsim}'s (implicit) volume-delay function \citep[][]{HorniMontini_STRC_2013}.
 
 Some simulation investigations had problems to reproduce the complete MFD (project NetCap, personal communication, 2014), in particular, the high density region. They used mobsim versions without the backward moving gaps feature. Other studies, based on DEQSim and JDEQSim respectively, which both \emph{do} include \emph{back moving gaps}, were able to generate realistic MFDs. \kai{Das ist natürlich kein Wunder.}
 
-\citet[p.81ff][]{Simoni_MastersThesis_2013} investigates MATSim's ability to model macroscopic characteristics with a four link ring scenario. He found considerable influence of the backward moving gaps speed on the form of the MFD. \citet[][]{CharyparEtAl_TRB_2009} also use a circular toy scenario. They also found the typical trapezoidal form for a broad range of network resolutions.
+\citet[p.81ff][]{Simoni_MastersThesis_2013} investigates \gls{matsim}'s ability to model macroscopic characteristics with a four link ring scenario. He found considerable influence of the backward moving gaps speed on the form of the MFD. \citet[][]{CharyparEtAl_TRB_2009} also use a circular toy scenario. They also found the typical trapezoidal form for a broad range of network resolutions.
 
-Natural conclusion here is, that back moving gaps are essential for generating a realistic MFD \kai{bis hier hin stimme ich zu}, in other words to realistically model the complete range of traffic conditions \kai{hier eigentlich nicht wirklich.}. Backward moving gaps are re-included in the default MATSim mobsim (qsim). 
+Natural conclusion here is, that back moving gaps are essential for generating a realistic MFD \kai{bis hier hin stimme ich zu}, in other words to realistically model the complete range of traffic conditions \kai{hier eigentlich nicht wirklich.}. Backward moving gaps are re-included in the default \gls{matsim} mobsim (qsim). 
 
 % ##################################################################################################################
