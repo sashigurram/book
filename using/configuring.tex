@@ -364,7 +364,7 @@ The following sections describes the current multi-modal capabilities of \gls{ma
 
 \subsubsection{QSim side}
 
-All modes that are \emph{not} registered with the QSim as ``main modes'' (see below) will be teleported.  That is, the QSim will without problems process legs such as
+All modes that are \emph{not} registered with the QSim as ``main modes'' (see below \kai{no, here}) will be teleported.  That is, the QSim will without problems process legs such as
 \begin{lstlisting}
 <leg mode="pedelec" >
    <route type="generic" trav_time="00:14:44" distance="2374" />
@@ -374,7 +374,17 @@ The QSim will generate a departure event (for events see Section~\ref{sec:output
 
 \subsubsection{Routing side}
 
-The question now is how the teleportation routes are generated.  Clearly, the user can write her or is own router which can either be a full-blown network router (\cf Section~\ref{sec:router-extension-point}) or some heuristic that comes up with plausible travel times and travel distances.  It is, however, much easier to use the preconfigured options, as follows.
+The question now is how the teleportation routes are generated.  Clearly, the user can write her or is own router which can either be a full-blown network router (\cf Section~\ref{sec:router-extension-point}), or alternatively some heuristic that comes up with plausible travel times and travel distances.  It is, however, much easier to use the preconfigured options, as follows.
+
+\paragraph{Network modes}
+
+\kai{todo}
+
+\begin{xml}
+<module name="planscalcroute" >
+   <param name="networkModes" value="car,ride" />
+</module>
+\end{xml}
 
 \paragraph{Teleportation with teleported mode free speed factor}
 
@@ -385,18 +395,36 @@ A config entry such as
       <param name="mode" value="pt" />
       <param name="teleportedModeFreespeedFactor" value="2.0" />
       <param name="teleportedModeSpeed" value="null" />
+      <param name="beelineDistanceFactor" value="null" />
    </parameterset>
    [...]   
 </module>      
 \end{xml}
-means that if the router encounters a leg with mode pt, it should generate a ``teleportation'' route whose travel time is twice that of a freespeed car route.
-\kai{what about distance?  and does this go into the leg or the route?}
+means that if the router encounters a leg with mode pt, it generates a ``teleportation'' route whose travel distance is the same as and whose travel time is twice that of a freespeed car route.
 
-\paragraph{Teleportation with teleported mode speed}  Setting, in the above, \lstinline{teleportedModeParameters} \kai{incomplete}
+This models public transit with the assumption that it roughly travels along the same routes as a car trip would, but takes twice as long \citep[\cf][]{Reinhold2006Konzeptzurintegrierten}.
 
-\paragraph{Teleportation from routing}
+\paragraph{Teleportation with teleported mode speed}  Setting, in the above, \lstinline{teleportedModeParameters} to something like
+\begin{xml}
+      <param name="teleportedModeFreespeedFactor" value="null" />
+      <param name="teleportedModeSpeed" value="4.167" />
+      <param name="beelineDistanceFactor" value="1.3" />
+\end{xml}
+will, instead, generate a teleportation route whose travel distance is 1.3 times the beeline distance, and whose travel time is that distance divided by 4.167~m/s.
+
+This is for example useful when the travel times of the teleported mode should not change together with car freespeed travel times as a result of a policy measure, or when the travel times of the teleported mode have nothing to do with car travel times.  A disadvantage is that this approach does not take obstacles such as water or mountain areas into account for the teleported modes.
+
+%% \paragraph{Teleportation from routing}
 
 \subsubsection{Scoring side}
+
+For all modes that are mentioned in the plans, a corresponding scoring section must exist.  See Section~\ref{sec:mathematical-form} for an approximate example.
+
+\subsubsection{Other consistency requirements}
+
+All modes that are mentioned in the plans also need to be mentioned in the \lstinline{plansCalcRoute} section of the config object, either as network mode or as teleported mode.  Some modes are configured as default so not all of it has to be listed explicitly in the input config.
+
+\kai{can't this go into the router section?}
 
 \subsection{Movement on separate and uncongested networks}
 
