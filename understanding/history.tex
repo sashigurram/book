@@ -16,21 +16,18 @@
 \ah{Wo wir sonst noch History drinhaben und Konsistenz garantieren müssen: Editor's Foreword, Preface, Section\ref{sec:howitstarted}, Chapter~\ref{ch:developmentprocess}}
 
 % ##################################################################################################################
-\section{MATSim: Merging Three Large and Old Streams of Research}
+\section{MATSim: Merging Four Large Streams of Research}
 \label{sec:streams}
-
-\todo{adapting this to bullets in Section~\ref{sec:howitstarted}}
-
-As sketched earlier, \gls{matsim} is based on the three prominent research streams, ``microscopic'', ``agent-based'' and ``equilibrium modeling'', described in more detail as follows.
+As sketched earlier, \gls{matsim} merges the following four prominent research streams:
 
 % ............................................
-\paragraph{Microscopic Modeling:} 
-Microscopic modeling had been the basis of traffic flow simulation from the start in the 1970’s \citep[e.g.,][]{Wiedemann_PhDThesis_1974, Seddon_Simulation_1972}, but the work on traffic flow limited itself to individual links or small sequences of links and could therefore not address equilibrium as the aggregate assignment models could do from the 1970’s onward \citep[see][]{OrtuzarWillumsen_2011}. The expansion to whole and large networks came with the increasingly more powerful computers in the 1980’s and fast and accurate enough flow models \citep[e.g.,][]{Schwerdtfeger_VolmulerHamerslag_1984,NagelSchreckenberg1992CA,Daganzo_TransResPartB_1994}, but these 
+\paragraph{Microscopic Modeling of Traffic:} 
+Microscopic modeling had been the basis of traffic flow simulation from the start in the 1970’s \citep[e.g.,][]{Wiedemann_PhDThesis_1974, Seddon_Simulation_1972}, but the work on traffic flow limited itself to individual links or small sequences of links and could therefore not address equilibrium as the aggregate assignment models could do from the 1970’s onward \citep[see][]{OrtuzarWillumsen_2011}. The expansion to whole and large networks came with the increasingly more powerful computers in the 1980’s and fast and accurate enough flow models \citep[e.g.,][]{Schwerdtfeger_VolmulerHamerslag_1984, NagelSchreckenberg1992CA, Daganzo_TransResPartB_1994}, but these 
 %agent-based 
 microscopic simulations were not used to find an \gls{equilibrium} at first. 
 
 % ............................................
-\paragraph{Agent-Based Modeling:} 
+\paragraph{Microscopic Behavioral Modeling of Demand/Agent-Based Modeling:} 
 %% \kai{Habe im folgenden das mit "agent-based" expliziter diskutiert.  Pls chk.}
 According to \citet[][p.~53]{RusselNorvig2010ArtificialIntelligence}, an \gls{agent} is ``anything that can be viewed as perceiving its environment through sensors and acting upon that environment through actuators''. In that sense, both the models of \citet{Seddon_Simulation_1972} and of \citet{Wiedemann_PhDThesis_1974} can be classified as agent-based, and this holds even for the simple cellular automata models of \citet{NagelSchreckenberg1992CA} since here the driver-vehicle units perceive the distance to the vehicle ahead, and act by adjusting their velocity.  
 % Bei Schwerdtfeger oder Daganzo würde ich das NICHT mehr sehen, hier kommt die Geschwindigkeit nämlich aus einer Dichte, und das ist eine aggregierte Systemgröße und keine agenten-spezifische Perzeption mehr. kai, dec'14
@@ -61,7 +58,11 @@ activity-based demand models (see \citet[][]{BradleyBowman_TRBTDF_2006} for the 
 %% }
 
 % ............................................
-\paragraph{Equilibrium Modeling:}
+\paragraph{Computational Physics:} Computational physics often adopts simple and thereby very fast models of physical processes and has thus performed simulations with $10^8$ and more particles since the 1980s.
+\gls{matsim}'s microscopic modeling of traffic as well as of demand, with $10^7$ or more ``particles'', brings it into this field of many-particle systems. %\ah{numerical analysis}
+
+% ............................................
+\paragraph{Complex Adaptive Systems/Co-Evolutionary Algorithms}
 Nash-equilibrium-like approaches had been developed in transport assignment since the seminal \citet[][]{Wardrop_PICE_1952} paper. These aggregate flow based approaches were expanded to account for perception errors of the user and for the social optimum \citep[see][]{DaganzoSheffi_TransScience_1977}, but their reformulation for disaggregate agent-based solutions had to wait until the late 1990’s with \citet{Nagel1995phd,Nagel1996NRW, Gawron_IJMPC_1998}, and \gls{transims} \citep[][]{SmithEtc1995TRANSIMSSeattle}. These approaches translated the logic of the Nash equilibrium
 %genetic \glspl{algorithm} 
 into co-evolutionary search schemes, which efficiently identified the optima of each agent’s daily schedule.
@@ -77,9 +78,9 @@ At the end of the 1990’s \gls{matsim} merged these strands into a computationa
 \subsection{Fast Microscopic Modeling of Traffic Flow (University of Cologne With Some Does of Los Alamos National Laboratory)}
 \label{sec:history-u-of-cologne-phase}
 
-Kai Nagel originally wanted to do this Ph.D.\ in meteorology.  When the funding did not come together, he started exploring alternatives, and applied with Prof.\ A.\ Bachem at the University of Cologne for a position in insurance modeling.  He was instead offered a position in operations research/logistics, solving problems such as dynamic vehicle routing with time windows. 
+Kai Nagel originally wanted to do this \gls{phd} in meteorology.  When the funding did not come together, he started exploring alternatives, and applied with Prof.\ A.\ Bachem at the University of Cologne for a position in insurance modeling.  He was instead offered a position in operations research/logistics, solving problems such as dynamic vehicle routing with time windows. 
 
-Having had some training in Computational Statistical Physics, he soon became a bit sceptical if it made sense to optimize up to the last second of a closing time window while at the same time being faced with highly stochastic transport system.  He thus embarked on using his training to build a microscopic model of the transport system, in particular single-lane~\citep{NagelSchreckenberg1992CA,Nagel1999flowTheoTrr} road traffic on long links as well combining such links to large-scale network-based simulations where each vehicle would follow its own individual route~\citep{Nagel1996NRW}, including an adaptive dynamics being influenced most heavily by \cite{ArthurBar}.  Already that paper describes what is still the main \gls{matsim} architecture, where agents have many different plans, they keep trying them out, and eventually settle on the best option.  In contrast to the current approach, all plans were pre-computed, \ie there was no innovation during the iterations.  This was possible because the network was much coarser than what we use today, and thus computing route plans with enough diversity was easy.
+Having had some training in Computational Statistical Physics, he soon became a bit skeptical if it made sense to optimize up to the last second of a closing time window while at the same time being faced with highly stochastic transport system.  He thus embarked on using his training to build a microscopic model of the transport system, in particular single-lane~\citep{NagelSchreckenberg1992CA,Nagel1999flowTheoTrr} road traffic on long links as well combining such links to large-scale network-based simulations where each vehicle would follow its own individual route~\citep{Nagel1996NRW}, including an adaptive dynamics being influenced most heavily by \cite{ArthurBar}.  Already that paper describes what is still the main \gls{matsim} architecture, where agents have many different plans, they keep trying them out, and eventually settle on the best option.  In contrast to the current approach, all plans were pre-computed, \ie there was no innovation during the iterations.  This was possible because the network was much coarser than what we use today, and thus computing route plans with enough diversity was easy.
 
 % ========================================================================================================
 \subsection{TRANSIMS (Los Alamos National Laboratory With Some Dose of Santa Fe Institute)}
