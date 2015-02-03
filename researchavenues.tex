@@ -107,13 +107,85 @@ In that sense, one could include some approximation of the error into the analys
 \label{sec:future-of-scoring-function}
 \ah{Shortcomings of current standard \gls{matsim} utility function: activity choice (see Section~\ref{sec:alternative-functions}), curvature param, estimates, ...}
 
+\ah{calibration of second derivative}
+
 % =========================================================================================
 \subsection{Alternative Functional Forms of the Utility Function}
 \label{sec:alternative-functions}
-Both \citet[][p.127f]{Feil_PhDThesis_2010} and \citet[][p.32]{MATSim_Userguide_2015} report that the standard logarithmic function of \gls{matsim} is not suitable for modeling activity sequence choice. Due to the log form very short activities are favored, which means that the schedule is filled-up with numerous short activities, where the usually long home activities are replaced first. Since this is unrealistic behavior, a new function was introduced by \citet[][p.129ff]{Feil_PhDThesis_2010}. The function was based on the asymmetrically S-shaped function proposed by \citet[][]{Joh_PhDThesis_2004}. Estimates of the new function based on the Swiss microcensus were provided. The estimation, however, suffered inherent stability issues. The function was, thus, not further developed.
+The current logarithmic \gls{matsim} utility function is not suitable for modeling activity sequence choice \citet[][p.127f]{Feil_PhDThesis_2010} and \citet[][]{MATSim_Userguide_2015}. Because of its negative second derivative, the log form favors very short activities, which means that the schedule is ever filled-up with short activities, where the usually long home activities are replaced first. Since this is completely unstable and unrealistic behavior, a new function was introduced by \citet[][p.129ff]{Feil_PhDThesis_2010}. The function was based on the asymmetrically S-shaped function proposed by \citet[][]{Joh_PhDThesis_2004}. Estimates of the new function based on the Swiss microcensus were provided. The estimation, however, suffered inherent stability issues as shown below. The function was, thus, not further developed.
 
-\ah{Detail stability issues here and derive requirements for a new successful functional form}
-\ah{calibration of second derivative}
+% ----------------------------------------------------------
+\subsubsection{Stability Issues With the S-Shaped Function}
+Establishing a positive second derivative near point of origin is a natural idea to work against the degenerated mechanism of adding more and more and ever short activities.
+The optimization problem differs from the log form optimization in the number of optimal points.
+For the log form there is one optimal point which is is by $dt$ greater than zero where $\lim\limits_{dt \rightarrow 0}{}$. All first derivatives are equal at this point in line with consumer theory's utility maximization.
+
+For an S-shaped function however, first derivative is bell-shaped, \ie not bijective. 
+Together with the flexible number of activities, this means that there are infinitely many optima, \ie
+with $N$ activities of which $m$ activities lie below injection point with first derivative $\cdot{f_0}$ and $N-m$ activities lie above injection point with first derivative $\cdot{f_1}$, 
+the total time budget $T$,
+and the infinitely small time change $dt$ 
+\begin{equation}
+m \cdot \dot{f_0}(t_0) \cdot dt = (N-m) \cdot \dot{f_1}(t_1) \cdot (T-m\cdot dt)/(N-m)
+\end{equation}
+has infinitely many solutions as $N$, $t_0$, $t_1$ are flexible; $t_0$ and $t_1$ are dependent on each other though.
+This also includes the case that activities have zero durations.
+In any case, it is very difficult to estimate such a function.
+Its behavioral suitability is another unsolved issue.
+
+\ah{ungewöhnliche Notation mit $dt$, wie schreibt man das sonst?}
+
+% ----------------------
+\ah{Some pieces of notes to go there, might be used, when realizing that above is crap:
+
+consumer theory, first derivative equal -> defined clear optimization problem. 
+
+In other words, first derivatives do not need to be equal, 
+
+various combinations of activities lying above utility function injection point while others are below it are possible.
+
+This means that as long as the number of activities is flexible (degree of freedom) there exist ...
+
+The system is only stable (and optimal) if all non-zero-duration activities are exactly at inflection point of the utility function as detailed by following differentiation: 
+\begin{enumerate}
+\item All activities are in concave region (thus having equal marginal utility). Adding another activity might add additional benefit. 
+\item All activities are in convex region (thus having equal marginal utility). Removing one activity might add additional benefit.
+\item Some activities are in convex and others are in concave region. Increasing the convex activities while reducing the concave activities, or the other way round, might generate additional benefit.
+\end{enumerate}
+
+If one activity duration was in the convex region, then the overall utility could be increased by either
+(i) increasing its duration and at the same time reducing the duration of one activity in the concave region, or
+(ii) decreasing its duration and at the same time increasing the duration of one or more activities in the concave region.
+
+In any case; alle Ableitungen gleich stimmt nicht mehr
+
+If all activity durations are in the concave region (negative second derivative), another activity is added.
+If all activity durations are in the convex region (positive second derivative), at least one activity is set to zero 
+
+
+It does, however not prevent activities being set to zero duration.
+
+intuitively assigns the function estimates too much power.
+
+Problematic with this approach is the fact, that the system is only one stable point, the inflection point. 
+
+For the log function and at the optimal point all marginal utilities are equal. 
+
+Metaphorically speaking, the agent performs a system optimum search in terms of assigning time budgets to activities, where here system optimum is congruent with user optimum.
+
+
+For the S-shaped function system optimum is not necessarily congruent with user optimum, meaning that not all activities have equal marginal utilities at the system optimum point.
+
+In case the overall budget is too small to have all activities located in the concave region, there will be 
+
+There is no stable point in the convex region however. A stable point has $n$ activities in the concave region and $m$ activities at zero. 
+
+The gradient is positive but diminishing (second derivative negative). The system optimum view is congruent with the user optimum view.
+
+In the convex region. system optimum. Not all activities equal. gradient positive and increasing (second derivative positive). Pushed to zero nevertheless, if remaining activities in convex region generate more utility! Large depends on estimation. Only works correct in concave region.
+
+This is not a Lennard-Jones force!
+}
 
 \kai{Hallo Kay,
 Ist Euch die S-shaped utl function so wichtig, dass Ihr sie im "Buch" stehen haben wollt?
@@ -175,7 +247,7 @@ Estimating a utility function for \gls{matsim} is associated with another proble
 \subsection{Frozen Randomness for Other Choice Dimensions Than Destination Choice}
 For destination choice a iteration-stable random error terms have been successfully applied to incorporate the unobserved heterogeneity not included by the stochasticity of the co-evolutionary process. Other choice dimensions, already implemented but in particular, future implementations concerning activity choice might also depend on explicit error terms.  
 
-\vfill\eject
+%\vfill\eject
 % ##################################################################################################################
 \section{Transients Versus the Notion of ``Learning''}
 \label{sec:transients-vs-learning}
@@ -187,7 +259,7 @@ Sometimes the relaxation process is ascribed a behavioral interpretation, for ex
 An opposite perspective exists, where the relaxation procedure is just a numerical method to compute the equilibrium state or states without behavioral basis of the transitions.
 
 
-\vfill\eject
+%\vfill\eject
 % ##################################################################################################################
 \section{Macroscopic Fundamental Diagram}
 \label{sec:researchavenues-mfd}
@@ -195,7 +267,7 @@ An opposite perspective exists, where the relaxation procedure is just a numeric
 \kai{Siehe auch Material in basicprocedure.tex}
 
 
-\vfill\eject
+%\vfill\eject
 % ##################################################################################################################
 \ah{Habe Results' Variability auskomentiert.
 Das Zeug ist nur als STRC-paper publiziert, ist also nichts was die Welt vermissen wird.
