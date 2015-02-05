@@ -7,6 +7,11 @@
 \begin{center} \includegraphics[width=0.3\textwidth, angle=0]{frontmatter/figures/MATSimBook} \end{center}
 
 % ##################################################################################################################
+The on-going work and the interest documented in the many scenarios shows 
+that the system has not exhausted its possibilities as a platform for research on it and with it. 
+This chapter wants to highlight some of them for further discussion and maybe action. 
+
+% ##################################################################################################################
 \section{MATSim and Agents}
 
 % Q-learning: learn utility for each state-action pair
@@ -65,6 +70,12 @@ In the meantime, both \gls{ai} and the field of transport simulation have moved 
 % ##################################################################################################################
 \section{Within-Day Replanning and the User Equilibrium}
 \label{sec:researchavenues-withinday}
+Within-day replanning, \ie the ability of the agents to respond to the immediate context is the standard mode of operation for simulation models. Note the traffic flow models in the transport domain, for example. Many agent based models travel demand of travel demand adopted the same approach (ORIENT, ORIENT/RV, MobiTOPP, Emmerink et al., \ah{cite} and all the work on intelligent transport system \kwaah{do we have more?}), but none of these aim for equilibrium in the sense adopted by \gls{matsim} carried forward from \gls{transims}. If supplied with a learning approach these within-day models should approach equilibrium after many iterations, as the agents with a suitable memory structure would avoid plans which make them worse off. This memory, which would need to be agent-specific and covering the very large set of choice options, makes the approach costly to implement. 
+
+Still, there are context where this immediate response ability could be used within \gls{matsim} to explore the choice set more effectively, especially if the choice alternatives are limited in number and in geographic reach. Waraich et al. (200x) \kwaah{What is the best reference here?} use a localized within-day, actually within-trip search to find the best parking space around a destination. This localized search reduces the need for full iterations considerably and allows to add behavioural detail at this point, here the type of space, walking distance and parking fee trade-off. In the same spirit, Horni (2015) \ah{Gibt es da schon etwas?} employs the same approach to address crossing of signalized intersections. 
+
+While within-day replanning can be used as described above within the framework equilibrium search, it can also be added to open up the \gls{matsim} framework to context, where such an equilibrium is inappropriate. \citet[][]{Dobler_PhDThesis_2013} used the \gls{matsim} calculated equilibrium as the starting point for his model of evacuations and the behavior of the evacuees. He also documents that his approach finds a set of executed plans, which is close to the \gls{matsim} equilibrium, but for much lower computing costs. While the benefits of an equilibrium solution in comparison with an approximation have been extensively discussed for aggregate assignment models, for \gls{matsim} the issue is, if these fast approximation could be used to speed up the overall equilibrium search; similar in spirit to start a Frank-Wolf search based on four or five incremental network loadings of the network. While aggregate assignment has possibilities to identify the routes chosen as belonging to the equilibrium, in the agent-based context research is needed to a) see, if the approach is indeed faster and b) if the resulting set of plans is unbiased by the fast initialization. 
+
 
 \vfill\eject
 % ##################################################################################################################
@@ -248,35 +259,38 @@ This correlation or dependency between choice dimensions is also the reason why 
 
 Incorporating a contribution, \eg for parking or destination choice, in combination with absolute utilities becomes even more tricky as the Charypar-Nagel function is non-linear, which means that available models---very often being linear---need to be incorporated by workarounds such as approximation procedures and distinction of cases as described in \citet[][p.75ff]{Horni_PhDThesis_2013}. Furthermore, \gls{matsim} utility function includes travel times, which is usually seen as an unreliable information in classical surveys; they are often distance based thus. \gls{gps} or smartphone-based surveys, however, provide this information with great precision and, thus, they are a promising means for future estimations.
 
-Furthermore, travel time and activity duration estimations including income need to carefully consider the parameters' relation to the value of travel time savings. \citet[][p.276]{MeisterEtAl_SVT_2009} for example argues that the average Swiss hourly earnings are much higher than 6\,EUR/h. However, the \gls{matsim} is measured in utils not monetary units anymore. Still, the parameters in utils and monetary terms (such as tolls, parking costs, fares etc., or income-dependent attributes) are often interacted and thus their relation needs to be consistent.
+Furthermore, travel time and activity duration estimations including income need to carefully consider the parameters' relation to the value of travel time savings. \citet[][p.276]{MeisterEtAl_SVT_2009} for example argues that the average Swiss hourly earnings are much higher than 6\,EUR/h. However, the \gls{matsim} is measured in utils not monetary units anymore. Still, the parameters in utils and monetary terms (such as tolls, parking costs, fares etc., or income-dependent attributes) are often interacted and thus their relation needs to be consistent if they come from different studies.
 %
 \benjamin{I dont see the problem here...parameters define the \gls{vtts}, and are dependent on the variance of the unobserved attributes, no? So measuring in utils or money does not make a difference.}
 
-A numerical problem, particularly relevant for activity choice, concerns the functional form of the utility function. As argued in Section~\ref{sec:alternative-functions}, a function offering an additional degree of freedom (the curvature at the typical duration) would be better.
+A numerical problem, particularly relevant for activity choice, concerns the functional form of the utility function---As argued in Section~\ref{sec:alternative-functions}, a function offering an additional degree of freedom (the curvature at the typical duration) would be better.
 
-Estimating a utility function for \gls{matsim} is associated with another problem. The function is applied iteratively for a travel demand, which is in the beginning of the relaxation process usually not very similar to the situation where the function was estimated. In other words, the function is used for a whole range of operating points, whereas it has been estimated for only one possibly completely different working point. The \gls{matsim} function thus must be also correct in the elasticities, to be able to efficiently drive the relaxation process toward the final relaxation point, where the estimated function is valid by construction. 
+Estimating a utility function for \gls{matsim} is associated with another problem---The function is applied iteratively for a travel demand, which is in the beginning of the relaxation process usually not very similar to the situation for which the function was estimated. In other words, the function is used for a whole range of operating points, whereas it has been estimated for only one possibly completely different working point---The \gls{matsim} function thus must be also correct in the elasticities, to be able to efficiently drive the relaxation process toward the final relaxation point, where the estimated function is valid by construction. 
 
 % =========================================================================================
 \subsection{Agent-Specific Preferences}
 \label{sec:agent-specific-prefs}
-\gls{matsim} scenarios so far consider a relatively small set of agent attributes, essentially due to missing suitable data to derive detailed attributes for large populations. Some studies, however, used larger sets of attributes. \citet{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome} estimated individual income-contingent utility functions. \citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014} incorporated agent-specific travel preferences and individual income-dependent marginal utilities of money; the preference values however, were assigned randomly. As natural consideration of agent-specific preferences is one of the corner-stones of \glspl{microsimulation}, future work should exploit this avenue. 
+\gls{matsim} scenarios so far consider a relatively small set of agent attributes, essentially due to missing suitable data to derive detailed attributes for large populations \kwaah{ref to pop gen paper}. Some studies, however, used larger sets of attributes. \citet{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome} estimated individual income-contingent utility functions. \citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014} incorporated agent-specific travel preferences and individual income-dependent marginal utilities of money; the preference values however, were assigned randomly. As natural consideration of agent-specific preferences is one of the corner-stones of agent-based \glspl{microsimulation}, future work should exploit this avenue. 
 
 %\benjamin{Das haben wir auch gemacht -- vielleicht sogar noch ein bisschen genauer (mit HH-Einkommen und Lorenzkurve). Siehe \cite{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome}. Da das früher war, vielleicht hier reinnehmen?} \ah{done}
 
 % =========================================================================================
 \subsection{Frozen Randomness for Other Choice Dimensions Than Destination Choice}
-For destination choice a iteration-stable random error terms have been successfully applied to incorporate the unobserved heterogeneity not included by the stochasticity of the co-evolutionary process. Other choice dimensions, already implemented but in particular, future implementations concerning activity choice might also depend on explicit error terms.  
+For destination choice an iteration-stable random error term has been successfully applied to incorporate the unobserved heterogeneity not included by the stochasticity of the co-evolutionary process. Other choice dimensions, already implemented but in particular, future implementations concerning activity choice might also add explicit agent-specific error terms.  
+
+A general implementation would obviously be useful. 
+This implementation could incorporate a mechanism to generate the error terms with the correct correlation structures. 
 
 %\vfill\eject
 % ##################################################################################################################
-\section{Transients Versus the Notion of ``Learning''}
+\section{Transients Versus the Notion of \enquote{Learning}}
 \label{sec:transients-vs-learning}
 
 As in many other simulations of similar kind, the interpretation of the relaxation procedure (iterations) of \gls{matsim} is unclear. 
 %
 Sometimes the relaxation process is ascribed a behavioral interpretation, for example, day-to-day learning, where also the transition process and not only the final equilibrium has a meaning \citep[][p.128]{LiuEtAl_TransResA_2006}, \citep[][p.523]{NagelBarrett1997feedback}. 
 %
-An opposite perspective exists, where the relaxation procedure is just a numerical method to compute the equilibrium state or states without behavioral basis of the transitions.
+An opposite perspective exists, where the relaxation procedure is just a numerical method to compute the equilibrium state or states without a behavioral basis of the transitions.
 
 
 %\vfill\eject
