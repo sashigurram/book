@@ -386,10 +386,14 @@ Note, that the \lstinline|BestScore| should be used with care as it is prone to 
 Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. Per default, the plan with the lowest score is removed if the agent's memory is full. In line with the requirements of \eg simulated annealing approaches, the removal of candidates will be configurable to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This will reduce the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
 %\ah{siehe Mail by M. Zilske, August 14 "[Matsim-devel] custom plan selector for removal")}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Other modes than car}
+%##################################################################################################################
+\section{Other Modes Than Car}
+\label{sec:using-othermodesthancar}
 
-\kai{new section, pls check.  Also see in ``available modules''!!}
+\kai{new section, pls check.  Also see in ``available modules''!!} \ah{done}
+
+\ah{I think we should explicitly say something about pt vehicles here?}
+\ah{Do we actually have all the vehicular traffic interactions in \gls{qsim}, including pt vehicles. have to check that, sorry}
 
 %% \kai{This new section ends up being quite long.  What to do?  Maybe (again) cut into two pieces: (1) by config; (2) extensions--???}
 
@@ -397,15 +401,16 @@ The \gls{matsim} software started with car as mode of transport since in many re
 
 The following sections describes the current multi-modal capabilities of \gls{matsim}.  The material does not only cover options that can be enabled with config options only, but also gives an overview over multi-modal extensions, described in Part~\ref{part:extending-matsim} of the book.
 
-\subsection{QSim side}
-
-\subsubsection{Multiple vehicular modes on the same network}
-
+% ===================================================================================
+\subsection{QSim Side}
+\label{sec:using-qsim-multimodal}
+\subsubsection{Multiple Vehicular Modes on the Same Network}
 %% The previous sections modelled modes other than car on separate simulation infrastructures, either by teleportation or on separate, congestion-free networks.  Clearly, this does not longer work once these modes are congested as well.  However, often the separate modes are not individually congested but share the same infrastructure, for example cars and trucks, or bicycles, motorbikes, and cars in India \citep{AgarwalEtcMixedTraffic}.  It thus was investigated how to have different modes interact on the same congested network.
 
 %% \paragraph{Pedestrian simulations} A first step was to replace ``car'' by something else, for example ``pedestrian''.  This was possible by re-interpreting the geometric properties so that the flow and storage capacity constraints of the \gls{matsim} queue model \kai{explained where?} would make sense for pedestrians rather than for cars \cite{somePaperFromGregor} \kai{chk}.  
 
-\paragraph{``main modes''}
+% ..............................
+\paragraph{\enquote{Main Modes}}
 %% The above approach fails as soon as more than one vehicle type is involved.  Therefor, 
 Recently, the ability to allow multiple modes on the same network was introduced.  It is defined by the \lstinline{qsim} config option of type
 \begin{xml}
@@ -414,10 +419,11 @@ Recently, the ability to allow multiple modes on the same network was introduced
    [...]
 </module>
 \end{xml}
-This will look at the leg mode in the plan, and if that leg mode corresponds to one of the listed main modes, it will generate vehicle for that leg and make it enter the network.
+This will look at the leg mode in the plan, and if that leg mode corresponds to one of the listed main modes, it will generate a vehicle for that leg and make it enter the network.
 
-
-\paragraph{PassingQ} Once the different mode vehicle types have different maximum speeds, the standard QSim is no longer sufficient, since it uses \acrfull{fifo} as the queueing discipline, and thus fast vehicles cannot pass slower vehicles.  Here, the so-called Passing(Vehicle)Q can be used instead.  It replaces the \gls{fifo} sorting criterion, where vehicles are sorted by the sequence in which they arrive on the link, by a sorting according to the so-called earliest link exit time, which is computed from the link enter time and the freespeed travel time.  Now using the minimum of the vehicle and the link maximum speeds, the freespeed travel time can be different between vehicles, and thus fast vehicles can obtain an earlier link exit time even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \cite{AgarwalEtcMixedTraffic}.
+% ..............................
+\paragraph{PassingQ} 
+Once the different mode vehicle types have different maximum speeds, the standard \gls{qsim} is no longer sufficient, since it uses \acrfull{fifo} as the queuing discipline, and thus fast vehicles cannot pass slower vehicles.  Here, the so-called Passing(Vehicle)Q can be used instead.  It replaces the \gls{fifo} sorting criterion, where vehicles are sorted by the sequence in which they arrive on the link, by a sorting according to the so-called earliest link exit time, which is computed from the link enter time and the freespeed travel time.  Now using the minimum of the vehicle and the link maximum speeds, the freespeed travel time can be different between vehicles, and thus fast vehicles can obtain an earlier link exit time even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \cite{AgarwalEtcMixedTraffic}.
 
 This option can be enabled by using
 \begin{xml}
@@ -426,62 +432,78 @@ This option can be enabled by using
    [...]
 </module>
 \end{xml}
-in the \lstinline{qsim} section of the config file.
+in the \lstinline{qsim} section of the \gls{configfile}.
 
-\paragraph{Different vehicle types by mode}
-
-The PassingQ makes no difference as long as all vehicles have the same maximum speed.  It is therefore possible to define so-called ``mode vehicles'', i.e.\ a typical vehicle for each mode.  This is discussed \kai{where?}.\footnote{%
+% ..............................
+\paragraph{Different Vehicle Types by Mode}
+%The \lstinline|PassingQ| makes no difference as long as all vehicles have the same maximum speed. 
+%It is therefore possible to define so-called ``mode vehicles'', \ie a typical vehicle for each mode. 
+\ah{was not easy to read. reformulated it. pls check }
+\lstinline|PassingQ| with vehicles of the same maximum speed corresponds to \gls{fifo}. 
+The option to simulate scenarios with equal mode-specific maximum speeds is supported by the possibility to define so-called ``mode vehicles'', \ie by specifying a typical vehicle for each mode.
+%
+This is discussed \kai{where?}.
+%\footnote{%
 %  
-\ah{ab hier fielleicht nach Part II + forward pointer?  Dann haben wir wieder Konsistenz.}
+%\ah{ab hier vielleicht nach Part II + forward pointer?  Dann haben wir wieder Konsistenz.}
 %
-\kai{Ja das können wir versuchen.}
+%\kai{Ja das können wir versuchen.} \ah{ok}
 %
-In order to not use the pre-defined default vehicle type for each mode, for the time being it is necessary to write a script-in-\gls{java}. For the necessary syntax, see the \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ core.  We will eventually make this available as a config option; at this time, we are still searching for a software design that makes the QSim both pluggable at multiple levels \emph{and} easy to maintain.
+%In order to not use the pre-defined default vehicle type for each mode, for the time being it is necessary to write a script-in-\gls{java}. \ah{moved this down}
+%For the necessary syntax, see the \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ core.  
+%We will eventually make this available as a config option; at this time, we are still searching for a software design that makes the QSim both pluggable at multiple levels \emph{and} easy to maintain.
 %
-}
+%}
 
-\paragraph{Planned vehicle Id}
+In order to not use the pre-defined default vehicle type for each mode, for the time being it is necessary to write a script-in-\gls{java} as shown in Section~\ref{sec:multimodalsim_qsim}
+\footnote{We will eventually make this available as a config option; at this time, we are still searching for a software design that makes the \gls{qsim} both pluggable at multiple levels \emph{and} easy to maintain.}.
 
-It is possible to give each planned route a list of possible vehicle \glspl{id} to be used for this route.  This is discussed \kai{where?}.
+\ah{Should we say something about this? Is that correct?}
+\ah{Passing is all-or-none, \ie either every vehicle type can pass every other type or none can pass none. 
+However, in reality, there usually is something between \gls{fifo} and free passing, \eg a bus might not be able to pass a car, although being faster, whereas bikes might always be able to slip by cars. Such more fine-grained rules about passing do not yet exist at the time of writing this book. }
 
+% ..............................
+\paragraph{Planned Vehicle Id}
+It is possible to give each planned route a list of possible vehicle \glspl{id} to be used for this route.  \ah{I think this is not easy to understand, but yes, the ref will probably clarify this}
+This is discussed \kai{where?}.
 
-\subsubsection{So-called \gls{teleportation}}
-
-All modes that are \emph{not} registered with the QSim as ``main modes'' will be teleported.  That is, the QSim will without problems process legs such as
+%------------------------------------------------------------
+\subsubsection{So-Called \Gls{teleportation}}
+All modes that are \emph{not} registered with the \gls{qsim} as ``main modes'' will be teleported.  That is, the \gls{qsim} will, without problems, process legs such as
 \begin{lstlisting}
 <leg mode="pedelec" >
    <route type="generic" trav_time="00:14:44" distance="2374" />
 </leg>
 \end{lstlisting}
-The QSim will generate a departure event (for events see Section~\ref{sec:outputdata}) after the end of the previous activity, and an arrival event 14~minutes and 44~seconds later.  The leg will be recorded with a distance of 2374~meters.  If the distance is not used for the scoring (\cf Chapter~\ref{ch:scoring}), it can be left out from the route as well (which is the situation in most present set-ups).
+The \gls{qsim} will generate a departure event (for events see Section~\ref{sec:outputdata}) after the end of the previous activity, and an arrival event 14\,minutes and 44\,seconds later.  The leg will be recorded with a distance of 2\,374\,meters.  If the distance is not used for the scoring (\cf Chapter~\ref{ch:scoring}), it can be left out from the route as well (which is the situation in most present set-ups).
 
-\subsubsection{Departure handlers}
+%------------------------------------------------------------
+\subsubsection{Departure Handlers}
 \label{sec:departure-handlers}
-
 It is possible to register a separate departure handler for each mode; see Section~\ref{sec:mobsim-extension-point} for the syntax.  There are also pre-configured extensions that use this approach:
-\begin{itemize}
+%
+\begin{itemize}\styleItemize
 
-\item The so-called ``multiModal'' extension moves all modes that are registered with it on separate, congestion-free networks.  This is better than teleportation since the vehicles (or pedestrians) have defined positions at each point in time, meaning that they can also re-plan, e.g.\ re-route.  See Chapter~\ref{ch:multimodalsim}.
+\item The so-called ``multiModal'' extension moves all modes that are registered with it on separate, congestion-free networks.  This is better than \gls{teleportation} since the vehicles (or pedestrians) have defined positions at each point in time, meaning that they can also re-plan, \eg re-route (see Chapter~\ref{ch:multimodalsim}).
 
-\item The public transit extension moves all modes that are registered with it with specific public transit vehicles.    See Chapter~\ref{ch:pt}.
+\item The public transit extension moves all modes that are registered with it with specific public transit vehicles (see Chapter~\ref{ch:pt}).
 
-  \item The dynamic transport systems extension moves all modes that are registered with it with taxis.  See Chapter~\pageref{ch:dts}.
+\item The dynamic transport systems extension moves all modes that are registered with it with taxis (see Chapter~\pageref{ch:dts}).
 
 \end{itemize}
 
-
-\subsection{Routing side}
-
+% ===================================================================================
+\subsection{Routing Side}
 The question now is how routes are generated.
 %% Clearly, the user can write her or is own router which can either be a full-blown network router (\cf Section~\ref{sec:router-extension-point}), or alternatively some heuristic that comes up with plausible travel times and travel distances.  It is, however, much easier to use the preconfigured options, as follows.
 
-\subsubsection{Network modes}
+%------------------------------------------------------------
+\subsubsection{Network Modes}
 \label{sec:network-modes}
-
-The following syntax defines for which modes the router should generate network routes, i.e.\ routes that contain a sequence of links to follow:
+The following syntax defines for which modes the router should generate network routes, \ie routes that contain a sequence of links to follow:
 \begin{xml}
 <module name="planscalcroute" >
-   <param name="networkModes" value="car,truck" />
+   <param name="networkModes" value="car, truck" />
    [...]
 </module>
 \end{xml}
@@ -492,12 +514,10 @@ As of the writing of this text, the router will route all these modes on the ``c
 
 %% \kai{There is still a problem here in that ``car,bicycle'' or even just ``bicycle'' will (I think) route the bicycles on the car network \emph{even when the network contains bicycle links}.}
 
-
-
+%------------------------------------------------------------
 \subsubsection{Teleportation ...}
-
-\paragraph{... with teleported mode free speed factor}
-
+% ..............................
+\paragraph{... With Teleported Mode Free Speed Factor}
 A config entry such as
 \begin{xml}
 <module name="planscalcroute" >
@@ -514,32 +534,37 @@ means that if the router encounters a leg with mode pt, it generates a ``telepor
 
 This models public transit with the assumption that it roughly travels along the same routes as a car trip would, but takes twice as long \citep[\cf][]{Reinhold2006Konzeptzurintegrierten}.
 
-\paragraph{... with teleported mode speed}  Setting, in the above, something like
+% ..............................
+\paragraph{... With Teleported Mode Speed}  Setting, in the above, something like
 \begin{xml}
       <param name="teleportedModeFreespeedFactor" value="null" />
       <param name="teleportedModeSpeed" value="4.167" />
       <param name="beelineDistanceFactor" value="1.3" />
 \end{xml}
-will, instead, generate a teleportation route whose travel distance is 1.3 times the beeline distance, and whose travel time is that distance divided by 4.167~m/s.
+will, instead, generate a teleportation route whose travel distance is 1.3\,times the beeline distance, and whose travel time is that distance divided by 4.167\,meters per second.
 
 This is for example useful when the travel times of the teleported mode should not change together with car freespeed travel times as a result of a policy measure, or when the travel times of the teleported mode have nothing to do with car travel times.  A disadvantage is that this approach does not take obstacles such as water or mountain areas into account for the teleported modes.
 
-\subsubsection{Other routing options}
+%------------------------------------------------------------
+\subsubsection{Other Routing Options}
+It is possible to register separate routers for specific mode.  The syntax for this is discussed in Section~\ref{sec:router-extension-point}.  The pre-configured extensions that were discussed in Section~\ref{sec:departure-handlers}---``multiModal'', public transit, taxis---come with corresponding routers.  
 
-It is possible to register separate routers for specific mode.  The syntax for this is discussed in Section~\ref{sec:router-extension-point}.  The pre-configured extensions that were discussed in Section~\ref{sec:departure-handlers} -- ``multiModal'', public transit, taxis -- come with corresponding routers.  
-
-In addition, the so-called matrix based pt router (Section~\ref{sec:matrix-based-pt-router}) uses a list of transit stops, and a matrix of stop-to-stop travel times and travel distances, and based on those informations computes a telported walk leg to the next stop, a teleported walk leg to the destination stop, and a telported walk leg to the final destination.
+In addition, the so-called ``matrix based pt router'' (Section~\ref{sec:matrix-based-pt-router}) uses a list of transit stops, and a matrix of stop-to-stop travel times and travel distances, and based on this information computes a teleported walk leg to the next stop, a teleported walk leg to the destination stop, and a telported walk leg to the final destination.
 %% Again, the teleportation facility of the QSim will execute these teleported legs, with departure and arrival events both at the activity locations and origin and destination stops.
 
 % It is also important to note that, 
-The matrix based pt router also serves as an example that, given the teleportation capability of the QSim, it is possible to come up with arbitrary algorithms for arbitrary modes as long as they generate (expected) travel times and (expected) travel distances.  As said earlier, the teleportation facility of the QSim will just use these two attributes at face value.  Although with such an approach neither congestion nor en-route replanning are or can be incluced, it is nevertheless a flexible approach that allows a fully modular addition of arbitrary modes without having to interact with the QSim.
+The matrix based pt router also serves as an example that, given the teleportation capability of the \gls{qsim}, it is possible to come up with arbitrary algorithms for arbitrary modes as long as they generate (expected) travel times and (expected) travel distances.  As said earlier, the \gls{teleportation} facility of the \gls{qsim} will just use these two attributes at face value.  Although with such an approach neither congestion nor en-route replanning are or can be included, it is nevertheless a flexible approach that allows a fully modular addition of arbitrary modes without having to interact with the \gls{qsim}.
 
-\subsection{Scoring side}
-
+% ===================================================================================
+\subsection{Scoring Side}
 For all modes that are mentioned in the plans, a corresponding scoring section must exist.  See Section~\ref{sec:mathematical-form} for an approximate example.
 
+% ===================================================================================
+\subsection{Network Side}
+\ah{not sure if my added section helps, if routing is not working properly. but this is then somehow a bug, right?}
+To model mode interactions, a fully \gls{multimodal} network, \ie a network that has links being shared by different modes must be provided. 
+As shown in Section~\ref{sec:lgstarted-network-file}, specification of link modes is done with the network attribute \lstinline|modes|.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %##################################################################################################################
 \section{Observational Modules}
 \label{sec:observational}

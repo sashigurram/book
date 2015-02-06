@@ -649,35 +649,40 @@ The controler module, can be extended by \lstinline|Events| and \lstinline|Liste
 \label{sec:extending-qsim}
 The simulation is able to handle time-variant networks, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, and in an experimental manner traffic lights \citep[][]{Neumann_MastersThesis_2008}).
 
-The next section shows the necessary steps to enable \gls{qsim} handling \gls{multimodal} scenarios.
+Section~\ref{sec:using-othermodesthancar} details the necessary steps to simulate a multi-modal scenario; Section~\ref{sec:using-qsim-multimodal} therein focuses on \gls{qsim}. 
+In addition to that, arbitrary vehicles can be included as follows. 
+Assigning vehicles of a specific type to agents is done with in the vehicles input file \lstinline|<param name="vehiclesFile" value="..." />| and following the syntax in the example \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ core.
 
-% --------------------------------------
-\subsubsection{Multi-Modal Simulation With QSim}
-\label{sec:multimodalsim_qsim}
-\gls{qsim} can simulate \gls{multimodal} traffic. Congested modes, \ie modes simulated not only \gls{teleported}, are specified by the parameter \lstinline|mainMode|. Technically, these are the modes that the departure handler of the \lstinline|netsimengine| handles 
-\footnote{Effective cell size, effective lane width, flow capacity factor, and storage capacity factor need to be set with diligence.}. 
-Theoretically also pedestrians can be included, however, only vehicular modes actually make sense, \ie car, bike, and public transport, in particular buses. 
-\ah{Is that true with pt? Do we actually have all the vehicular traffic interactions in \gls{qsim}?}. 
-Assigning vehicles of a specific type to agents is done with in the vehicles input file \lstinline|<param name="vehiclesFile" value="..." />|. 
-\ah{is that the only place necessary?}. 
-Further configuration necessary to include public transport is detailed in Chapter~\ref{ch:pt}.
-
-To model mode interactions, a fully \gls{multimodal} network, \ie a network that has links being shared by different modes must be provided. 
-As shown in Section~\ref{sec:lgstarted-network-file}, specification of link modes is done with the network attribute \lstinline|modes|.
-Furthermore, the router needs to be informed about the network modes by the \lstinline|planscalcroute| parameter \lstinline|<param name="networkModes" value="car,ride" />|.
-\ah{is this a double configuration, qsim and planscalcroute? can we merge them?}
-
-The mode interactions can be further specified by \gls{qsim} parameter \lstinline|linkDynamics|. 
-This parameter is also productive for car mode only, but it is particularly important for multi-modal scenarios. 
-Dynamics either follow strict \gls{fifo} or include passing, \ie \lstinline$<param name="linkDynamics" value="FIFO|PassingQ" />$. 
-Passing is all-or-none, \ie either every vehicle type can pass every other type or none can pass none. 
-However, in reality, there usually is something between \gls{fifo} and free passing, \eg a bus might not be able to pass a car, although being faster, whereas bikes might always be able to slip by cars. Such more fine-grained rules about passing do not yet exist at the time of writing this book. 
-
-Simulation experiments for \gls{qsim}'s relatively new \gls{multimodal} feature have been performed for the Patna scenario as reported in Chapter~\ref{ch:patna}.
+Simulation experiments for \gls{qsim}'s relatively new \gls{multimodal} feature, applying multiple mode vehicles, have been performed for the Patna scenario as reported in Chapter~\ref{ch:patna}.
 
 An earlier \gls{multimodal} approach targeted at overcoming the \gls{teleportation} estimates of non-motorized modes, particularly focused on pedestrians, is presented in Chapter~\ref{ch:multimodalsim}.
 
-\ah{Amit, Kai: Please check this section. Thanks.}
+% --------------------------------------
+%\subsubsection{Multi-Modal Simulation With QSim}
+%\label{sec:multimodalsim_qsim}
+%\gls{qsim} can simulate \gls{multimodal} traffic. Congested modes, \ie modes simulated not only \gls{teleported}, are specified by the parameter \lstinline|mainMode|. Technically, these are the modes that the departure handler of the \lstinline|netsimengine| handles 
+%\footnote{Effective cell size, effective lane width, flow capacity factor, and storage capacity factor need to be set with diligence.}. 
+%Theoretically also pedestrians can be included, however, only vehicular modes actually make sense, \ie car, bike, and public transport, in particular buses.
+ 
+%\ah{Is that true with pt? Do we actually have all the vehicular traffic interactions in \gls{qsim}?}. 
+%Assigning vehicles of a specific type to agents is done with in the vehicles input file \lstinline|<param name="vehiclesFile" value="..." />|. 
+%\ah{is that the only place necessary?}. 
+%Further configuration necessary to include public transport is detailed in Chapter~\ref{ch:pt}.
+
+%To model mode interactions, a fully \gls{multimodal} network, \ie a network that has links being shared by different modes must be provided. 
+%As shown in Section~\ref{sec:lgstarted-network-file}, specification of link modes is done with the network attribute \lstinline|modes|.
+%Furthermore, the router needs to be informed about the network modes by the \lstinline|planscalcroute| parameter \lstinline|<param name="networkModes" value="car,ride" />|.
+%\ah{is this a double configuration, qsim and planscalcroute? can we merge them?}
+
+%The mode interactions can be further specified by \gls{qsim} parameter \lstinline|linkDynamics|. 
+%This parameter is also productive for car mode only, but it is particularly important for multi-modal scenarios. 
+%Dynamics either follow strict \gls{fifo} or include passing, \ie \lstinline$<param name="linkDynamics" value="FIFO|PassingQ" />$. 
+
+%Simulation experiments for \gls{qsim}'s relatively new \gls{multimodal} feature, applying multiple mode vehicles, have been performed for the Patna scenario as reported in Chapter~\ref{ch:patna}.
+
+%An earlier \gls{multimodal} approach targeted at overcoming the \gls{teleportation} estimates of non-motorized modes, particularly focused on pedestrians, is presented in Chapter~\ref{ch:multimodalsim}.
+
+%\ah{Amit, Kai: Please check this section. Thanks.}
 
 % ##################################################################################################################
 % Local Variables:
