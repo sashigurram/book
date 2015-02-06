@@ -1,4 +1,4 @@
-\chapter{The ``multi-modal'' Extension}
+\chapter{The \enquote{Multi-Modal} Contribution}
 \label{ch:multimodalsim}
 % ##################################################################################################################
 
@@ -19,7 +19,7 @@
 \gls{matsim}'s standard \gls{mobsim}, \gls{qsim}, has recently been enabled to model \gls{multimodal} scenarios as shown in Section~\ref{sec:multimodalsim_qsim}.\kai{chk}
 
 In this chapter \footnote{Parts of this chapter are based on work published at the 6th International Conference on Pedestrian and Evacuation Dynamics in Zürich \cite{00DoblerLaemmelAxhausen2012PedMultiModal}.},
- an earlier approach to handle \gls{multimodal} scenarios, the \gls{multimodal} link \gls{extension}, is presented. As shown below, it is a very efficient approach, that considers persons' biking and walking speeds to improve the \gls{teleportation} estimates for these modes, whereas mode interactions are not taken into account. 
+ an earlier approach to handle \gls{multimodal} scenarios, the \gls{multimodal} link \gls{contribution}, is presented. As shown below, it is a very efficient approach, that considers persons' biking and walking speeds to improve the \gls{teleportation} estimates for these modes, whereas mode interactions are not taken into account. 
 
 %The proposed \gls{multimodal} simulation model adds support for ride trips and non-motorized (i.e., walk and bike) traffic to a framework for large-scale simulations. The next section discusses the requirements of these \gls{multimodal} extensions. Then, modeling approaches for non-motorized and ride trips, as well as their implementation in \gls{matsim}, are described.
 %Finally, the implementations are tested by conducting experiments with a sample scenario.
@@ -43,24 +43,24 @@ In this chapter \footnote{Parts of this chapter are based on work published at t
 % ##################################################################################################################
 \section{Modeling Approach and Implementation}
 % =========================================================================
-\subsection{Multi-modal Link Extension} 
+\subsection{Multi-modal Link Contribution} 
 \label{sec:Multi-modalSimulation}
 %For the simulation of non-motorized trips a new simulation module has been developed for \gls{matsim}'s \gls{qsim}. 
-Figure~\ref{fig:multi-modal-link-extension} shows the implementation's basic concept---a \gls{multimodal} extension is added to each link object in the \gls{mobsim}. 
+Figure~\ref{fig:multi-modal-link-extension} shows the implementation's basic concept---a \gls{multimodal} contribution is added to each link object in the \gls{mobsim}. 
 % The existing network infrastructure is re-used, which---as discussed before---simplifies the realization of interactions between agents using different transport modes. \ah{But we do not do taht, right?}
 
 %---------------------------------------------------------------------
 \createfigure%
-{Multi-modal link extension}%
-{Multi-modal link extension}%
+{Multi-modal link contribution}%
+{Multi-modal link contribution}%
 {\label{fig:multi-modal-link-extension}}%
 {\includegraphics[width=0.75\textwidth, angle=0]{extending/figures/MultiModalSimulation/multi-modal-link-extension}}%
 {}
 %---------------------------------------------------------------------
 
-While traffic flow dynamics are simulated by \gls{matsim}'s \gls{mobsim} using a queue model, these flows are not taken into account in the \gls{multimodal} extension. Examining typical pedestrian and cyclist traffic flows shows that congestion is very rare compared to vehicular traffic, justifying application of this simplistic approach over a scenario. For regions with higher traffic flows, this simple model loses accuracy, but still outperforms the \gls{teleportation} approach, which \gls{matsim} uses by default.
+While traffic flow dynamics are simulated by \gls{matsim}'s \gls{mobsim} using a queue model, these flows are not taken into account in the \gls{multimodal} contribution. Examining typical pedestrian and cyclist traffic flows shows that congestion is very rare compared to vehicular traffic, justifying application of this simplistic approach over a scenario. For regions with higher traffic flows, this simple model loses accuracy, but still outperforms the \gls{teleportation} approach, which \gls{matsim} uses by default.
 
-Each \gls{multimodal} link extension uses a priority queue to manage all agents traveling on that link using a non-motorized mode. The queue orders the agents based on their scheduled link leave time (see Figure~\ref{fig:linkRepresentationSimpleModel}). This time is calculated when an agent enters a link and is based on parameters like the agent's age and gender, as well as the links' steepness. In each time step, it is checked whether the queue contains agents who have reached their link leave time and thus must be moved to their route's next link. An agent's position on a link is not determined by the model. However, under the assumption that agents move with constant speed, their position can be interpolated. This approach is computationally very efficient, because computation effort is created only when an agent enters or leaves a link but not when it is traveling along a link. Additionally, agents can travel at different speeds, so can overtake each other.
+Each \gls{multimodal} link contribution uses a priority queue to manage all agents traveling on that link using a non-motorized mode. The queue orders the agents based on their scheduled link leave time (see Figure~\ref{fig:linkRepresentationSimpleModel}). This time is calculated when an agent enters a link and is based on parameters like the agent's age and gender, as well as the links' steepness. In each time step, it is checked whether the queue contains agents who have reached their link leave time and thus must be moved to their route's next link. An agent's position on a link is not determined by the model. However, under the assumption that agents move with constant speed, their position can be interpolated. This approach is computationally very efficient, because computation effort is created only when an agent enters or leaves a link but not when it is traveling along a link. Additionally, agents can travel at different speeds, so can overtake each other.
 
 %---------------------------------------------------------------------
 \createfigure%
@@ -165,10 +165,10 @@ Another parameter affecting pedestrian and cyclist speed is the crowd density of
 
 % ##################################################################################################################
 \section{Conclusions and Future Work}
-The \gls{multimodal} \gls{extension} allows the tracking an agent's movement in detail, essential for studies related to topics like evacuations, e-bikes, car sharing or public transport. Experiments testing the implementation and demonstrating its capabilities are described by \citet{Dobler_PhDThesis_2013}.
+The \gls{multimodal} \gls{contribution} allows the tracking an agent's movement in detail, essential for studies related to topics like evacuations, e-bikes, car sharing or public transport. Experiments testing the implementation and demonstrating its capabilities are described by \citet{Dobler_PhDThesis_2013}.
 
 An application's required level of detail strongly influences the modeling approach selection. A simple model including agents' age and gender, but not incorporating agent-agent interactions, might be detailed enough for some studies (\eg e-bikes or public transport). However, for other studies, a more detailed model, also simulating agent interactions, might be necessary. 
 
-A first implementation of a pedestrian simulation module for \gls{matsim}, which also supports agent-agent interactions, was presented by \citet{00LaemmelPlaue2012CollisionAvoidingModels} introducing a force-base model. The agents' high-level planning (\ie route and destination choice) was performed on a graph representing the transport system (\eg a \gls{matsim} network), while the low level behavior (\ie physical interaction between the participants) was simulated with a force-based model. Due to the intense computational effort of the underlying physical model, the scenario size was limited to a few thousand agents. An attempt to bypass this limitation was presented by \citet{00DoblerLaemmel2012MultiModalEvac}. They combined the force-based pedestrian simulation module with the \gls{multimodal} link extension, creating the opportunity to simulate \gls{largescale} scenarios, by staying highly resolved where needed and being more aggregated where possible.
+A first implementation of a pedestrian simulation module for \gls{matsim}, which also supports agent-agent interactions, was presented by \citet{00LaemmelPlaue2012CollisionAvoidingModels} introducing a force-base model. The agents' high-level planning (\ie route and destination choice) was performed on a graph representing the transport system (\eg a \gls{matsim} network), while the low level behavior (\ie physical interaction between the participants) was simulated with a force-based model. Due to the intense computational effort of the underlying physical model, the scenario size was limited to a few thousand agents. An attempt to bypass this limitation was presented by \citet{00DoblerLaemmel2012MultiModalEvac}. They combined the force-based pedestrian simulation module with the \gls{multimodal} link contribution, creating the opportunity to simulate \gls{largescale} scenarios, by staying highly resolved where needed and being more aggregated where possible.
 
 % ##################################################################################################################
