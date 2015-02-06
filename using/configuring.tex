@@ -185,8 +185,6 @@ The \gls{configfile} section \lstinline|planCalcScore| specifies the parameters 
 
 \subsection{Plans Generation and Removal (Choice Set Generation)}
 
-\kai{wo ist plans removal?} \ah{Steht momentan noch bei den Selectors, wie auch im Code \lstinline|org.matsim.core.replanning.selectors.WorstPlanForRemovalSelector|. Sehe da aber nur worst plan removal.  }
-
 The replanning strategy modules are the basic innovation modules available in \gls{matsim}. We do not call them \emph{choice} modules although they are involved in people's choice making. The choice process, however, is performed over the iterations with an \emph{implicit} choice set and it is not based on explicit probability function drawing. Usually, innovation modules also do no define their own utility function. This is particularly true for random mutation modules, where best response modules such as destination innovation are closer to the standard procedure of choice modeling but still not full-blown choice models. For a detailed discussion of \gls{matsim} in choice modeling context see Chapter~\ref{ch:discretechoice}.
 
 All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
@@ -336,6 +334,32 @@ plus its weight to the strategy modules. In the \gls{configfile} a section with 
 
 Mode innovation is described by \citet[][]{RieserEtAl_TRR_2009, MeisterEtAl_WCTRS_2010, CiariEtAl_STRC_2008, CiariEtAl_STRC_2007}.
 
+\subsubsection{Plans removal}
+
+The maximum number of plans per agent is configured by the setting 
+\begin{xml}
+<module name="strategy" >
+   <param name="maxAgentPlanMemorySize" value="5" />
+   [...]
+</module>
+\end{xml}
+If an agent ends up having more plans than these, \gls{matsim} will start removing plans one by one until the maximum number of plans is reached.  Plans to be removed are selected by the setting configured by
+\begin{xml}
+<module name="strategy" >
+   <param name="planSelectorForRemoval" value="..." />
+   [...]
+</module>
+\end{xml}
+Starting with release 0.7.x, the config file comments give possible options.
+
+This option is presently not well investigated, \cf Section~\ref{sec:choicesets}.
+
+---
+
+\kai{wo ist plans removal?} \ah{Steht momentan noch bei den Selectors, wie auch im Code \lstinline|org.matsim.core.replanning.selectors.WorstPlanForRemovalSelector|. Sehe da aber nur worst plan removal.}\kai{Andreas, ich Verstehe Deinen Kommentar nicht.  DefaultPlanStrategiesModule listet sie alle auf.  WorstPlanForRemovalSelctor ist eine Wahlmöglichkeit.}
+
+
+
 % ===================================================================================
 \subsection{Plan Selection (Choice)}
 \label{sec:selectors}
@@ -367,7 +391,7 @@ Besides the selectors for plan modification and execution, in the near future al
 
 \kai{new section, pls check.  Also see in ``available modules''!!}
 
-\kai{This new section ends up being quite long.  What to do?  Maybe (again) cut into two pieces: (1) by config; (2) extensions--???}
+%% \kai{This new section ends up being quite long.  What to do?  Maybe (again) cut into two pieces: (1) by config; (2) extensions--???}
 
 The \gls{matsim} software started with car as mode of transport since in many regions where it was used at that time, car was the main mode.  The idea to integrate other modes has, however, always been there.
 
@@ -423,7 +447,7 @@ It is possible to give each planned route a list of possible vehicle \glspl{id} 
 
 \subsubsection{So-called \gls{teleportation}}
 
-All modes that are \emph{not} registered with the QSim as ``main modes'' (see below \kai{no, here}) will be teleported.  That is, the QSim will without problems process legs such as
+All modes that are \emph{not} registered with the QSim as ``main modes'' will be teleported.  That is, the QSim will without problems process legs such as
 \begin{lstlisting}
 <leg mode="pedelec" >
    <route type="generic" trav_time="00:14:44" distance="2374" />
@@ -432,6 +456,7 @@ All modes that are \emph{not} registered with the QSim as ``main modes'' (see be
 The QSim will generate a departure event (for events see Section~\ref{sec:outputdata}) after the end of the previous activity, and an arrival event 14~minutes and 44~seconds later.  The leg will be recorded with a distance of 2374~meters.  If the distance is not used for the scoring (\cf Chapter~\ref{ch:scoring}), it can be left out from the route as well (which is the situation in most present set-ups).
 
 \subsubsection{Departure handlers}
+\label{sec:departure-handlers}
 
 It is possible to register a separate departure handler for each mode; see Section~\ref{sec:mobsim-extension-point} for the syntax.  There are also pre-configured extensions that use this approach:
 \begin{itemize}
@@ -460,7 +485,12 @@ The following syntax defines for which modes the router should generate network 
    [...]
 </module>
 \end{xml}
-At this point, the router will route all these modes on the ``car'' links of the network, which is also the interpretation if no mode information is attached to a link \kai{\url{https://matsim.atlassian.net/browse/MATSIM-330}}.  For alternatives, see \kai{where?}.
+As of the writing of this text, the router will route all these modes on the ``car'' links of the network.  Note that, per the network file \gls{dtd}, ``car'' is the default mode of each link as long as long as the link's mode field is not explicitly filled.
+
+
+%% , which is also the interpretation if no mode information is attached to a link \kai{\url{https://matsim.atlassian.net/browse/MATSIM-330}}.  For alternatives, see \kai{where?}.
+
+%% \kai{There is still a problem here in that ``car,bicycle'' or even just ``bicycle'' will (I think) route the bicycles on the car network \emph{even when the network contains bicycle links}.}
 
 
 
@@ -496,20 +526,13 @@ This is for example useful when the travel times of the teleported mode should n
 
 \subsubsection{Other routing options}
 
-It is possible to register a separate router for each mode that is registered as a network mode.  The syntax for this is discussed in Section~\ref{sec:router-extension-point}.  Again, there are pre-configured extensions that use this approach:
-\begin{itemize}
+It is possible to register separate routers for specific mode.  The syntax for this is discussed in Section~\ref{sec:router-extension-point}.  The pre-configured extensions that were discussed in Section~\ref{sec:departure-handlers} -- ``multiModal'', public transit, taxis -- come with corresponding routers.  
 
-\item \kai{how does multi-modal work here?}
+In addition, the so-called matrix based pt router (Section~\ref{sec:matrix-based-pt-router}) uses a list of transit stops, and a matrix of stop-to-stop travel times and travel distances, and based on those informations computes a telported walk leg to the next stop, a teleported walk leg to the destination stop, and a telported walk leg to the final destination.
+%% Again, the teleportation facility of the QSim will execute these teleported legs, with departure and arrival events both at the activity locations and origin and destination stops.
 
-\item Using the public transit extension (Chapter~\ref{ch:pt}) also switches on a corresponding schedule-based public transit router.
-
-\item The taxicab mode (Chapter~\ref{ch:dts}) in fact works without a corresponding router; it is sufficient to register the correct mode in the leg.  \kai{how does this go together with prepareforsim?}
-
-\item The so-called matrix based pt router (Chapter \kai{???}).  It uses a list of transit stops, and a matrix of stop-to-stop travel times and travel distances.  Based on those informations, it computes a telported walk leg to the next top, a teleported walk leg to the destination stop, and a telported walk leg to the final destination.  Again, the teleportation facility of the QSim will execute these teleported legs, with departure and arrival events both at the activity locations and origin and destination stops.
-
-\end{itemize}
-
-It is also important to note that, given the teleportation facility in the QSim, it is possible to come up with arbitrary algorithms for arbitrary modes as long as they generate (expected) travel times and (expected) travel distances.  As said earlier, the teleportation facility of the QSim will just use these two attributes at face value.  Clearly, with such an approach neither congestion nor en-route replanning are or can be incluced.
+% It is also important to note that, 
+The matrix based pt router also serves as an example that, given the teleportation capability of the QSim, it is possible to come up with arbitrary algorithms for arbitrary modes as long as they generate (expected) travel times and (expected) travel distances.  As said earlier, the teleportation facility of the QSim will just use these two attributes at face value.  Although with such an approach neither congestion nor en-route replanning are or can be incluced, it is nevertheless a flexible approach that allows a fully modular addition of arbitrary modes without having to interact with the QSim.
 
 \subsection{Scoring side}
 
