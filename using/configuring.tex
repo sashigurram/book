@@ -405,10 +405,10 @@ Besides the selectors for plan modification and execution, in the near future al
 
 %% \kai{This new section ends up being quite long.  What to do?  Maybe (again) cut into two pieces: (1) by config; (2) extensions--???}
 
-\ah{I think we should explicitly say something about pt vehicles here?}
-\ah{Do we actually have all the vehicular traffic interactions in \gls{qsim}, including pt vehicles. have to check that, sorry}
-\kai{I am reasonably sure that it is as follows: pt vehicles operate on same network if cars if everything is configured that way.  ``everything'' means, I think, that the pt routes use links that are at the same time car links.  So it is really a data issue, not a modelling or implementation issue.}
-\kai{Habe unten mal noch einen Abschnitt ``modes transporting other modes'' eingefügt.}
+%% \ah{I think we should explicitly say something about pt vehicles here?}
+%% \ah{Do we actually have all the vehicular traffic interactions in \gls{qsim}, including pt vehicles. have to check that, sorry}
+%% \kai{I am reasonably sure that it is as follows: pt vehicles operate on same network if cars if everything is configured that way.  ``everything'' means, I think, that the pt routes use links that are at the same time car links.  So it is really a data issue, not a modelling or implementation issue.}
+%% \kai{Habe unten mal noch einen Abschnitt ``modes transporting other modes'' eingefügt.}
 
 The \gls{matsim} software started with car as mode of transport since in many regions where it was used at that time, car was the main mode.  The idea to integrate other modes has, however, always been there.
 
@@ -455,15 +455,17 @@ in the \lstinline{qsim} section of the \gls{configfile}.
 \lstinline|PassingQ| with vehicles of the same maximum speed still corresponds to \gls{fifo}. 
 The option to simulate scenarios with 
 %\st{equal} different \kai{Andreas, ok?} 
-\ah{Wollte eigentlich sagen: Identisch pro Mode. mode-specific müsste reichen oder?}
+%% \ah{Wollte eigentlich sagen: Identisch pro Mode. mode-specific müsste reichen oder?}
+%% \kai{Klingt komisch ohne das ``maximum'', habe es daher dringelassen.}
 mode-specific maximum speeds is supported by the possibility to define so-called ``mode vehicles'', \ie by specifying a typical vehicle for each mode.
 %
-This is discussed \kai{where?}.
+With the two options \lstinline{PassingQ} and \lstinline{FIFO}, passing is implemented as all-or-none, \ie either every vehicle type can pass every other type or none can pass none. More fine-grained passing rules are currently researched.
+%This is discussed \kai{where?}.
 %\footnote{%
 %  
 %\ah{ab hier vielleicht nach Part II + forward pointer?  Dann haben wir wieder Konsistenz.}
 %
-%\kai{Ja das können wir versuchen.} \ah{ok}
+%\kai{Ja das koennen wir versuchen.} \ah{ok}
 %
 %In order to not use the pre-defined default vehicle type for each mode, for the time being it is necessary to write a script-in-\gls{java}. \ah{moved this down}
 %For the necessary syntax, see the \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ core.  
@@ -473,11 +475,12 @@ This is discussed \kai{where?}.
 
 In order to not use the same pre-defined default vehicle type for each mode, for the time being it is necessary to write a script-in-\gls{java} as shown in Section~\ref{sec:extending-qsim}.\footnote{We will eventually make this available as a config option; at this time, we are still searching for a software design that makes the \gls{qsim} both pluggable at multiple levels \emph{and} easy to maintain.}
 
-\ah{Should we say something about this? Is that correct?}
-\ah{Passing is all-or-none, \ie either every vehicle type can pass every other type or none can pass none. 
-However, in reality, there usually is something between \gls{fifo} and free passing, \eg a bus might not be able to pass a car, although being faster, whereas bikes might always be able to slip by cars. Such more fine-grained rules about passing do not yet exist at the time of writing this book. }
-\kai{Hm.  Ist nicht ganz einfach zu beschreiben, was da wirklich passiert.  Habe schon viele Stunden mit dem gemeinsamen Paper mit Amit et al verbracht, und endgültig klar ist es immer noch nicht.  }
-\ah{Die Frage wird m.E. von jedem Leser kommen. Also einfach?: Passing is for now implemented as all-or-none, \ie either every vehicle type can pass every other type or none can pass none. More fine-grained passing rules are currently researched.}
+%% \ah{Should we say something about this? Is that correct?}
+%% \ah{Passing is all-or-none, \ie either every vehicle type can pass every other type or none can pass none. 
+%% However, in reality, there usually is something between \gls{fifo} and free passing, \eg a bus might not be able to pass a car, although being faster, whereas bikes might always be able to slip by cars. Such more fine-grained rules about passing do not yet exist at the time of writing this book. }
+%% \kai{Hm.  Ist nicht ganz einfach zu beschreiben, was da wirklich passiert.  Habe schon viele Stunden mit dem gemeinsamen Paper mit Amit et al verbracht, und endgueltig klar ist es immer noch nicht.  }
+%% \ah{Die Frage wird m.E. von jedem Leser kommen. Also einfach?: Passing is for now implemented as all-or-none, \ie either every vehicle type can pass every other type or none can pass none. More fine-grained passing rules are currently researched.}
+%% \kai{s.o.}
 
 % ..............................
 \paragraph{Planned Vehicle Id}
@@ -499,15 +502,24 @@ All modes that are \emph{not} registered with the \gls{qsim} as ``main modes'' w
 The \gls{qsim} will generate a departure event (for events see Section~\ref{sec:outputdata}) after the end of the previous activity, and an arrival event 14\,minutes and 44\,seconds later.  The leg will be recorded with a distance of 2\,374\,meters.  If the distance is not used for the scoring (\cf Chapter~\ref{ch:scoring}), it can be left out from the route as well (which is the situation in most present set-ups).
 
 %------------------------------------------------------------
-\subsubsection{Modes Transported by Other Modes \ah{Ich weiss, was du meinst, aber versteht das auch der Anfänger? Mode Interactions / Modes/ Modes Handled}}
+\subsubsection{Explicitly Simulated Passenger Modes}
 
-\kai{Andreas, I added this section, please check}
+\ah{Ich weiss, was du meinst, aber versteht das auch der Anfaenger? Mode Interactions / Modes/ Modes Handled}
+%
+\kai{``Explicitly Simulated Passenger Modes'' ok?}
+%
+\kai{Habe auch den folgenden Text spezifischer gemacht.}
 
-With modes such as car, bicycle, or in some sense even walk, the travelers are at the same time the drivers, \ie the entities that decide about turns at intersections and arrivals (or not) on links.
+%% \kai{Andreas, I added this section, please check}
+
+With ``driver'' modes such as car, bicycle, or in some sense even walk, the travelers are at the same time the drivers, \ie the entities that decide about turns at intersections and arrivals (or not) on links.
 %
-With modes such as public transit or taxi, this is no longer correct: Here, the traveler boards a vehicle, the vehicle moves around in the network, and, with pt,  the traveler has to make a decision at each stop if she or he wants to get off or not.  The vehicle, in turn, can be a normal participant of the corresponding traffic system, \ie buses and taxis can operate on the normal road network and be caught in the same congestion as cars and trucks.  
+With ``passenger'' modes such as public transit or taxi, this is no longer correct: For example, the traveler boards a bus, the bus moves around in the network, and the only decision the traveler has to make if she or he wants to get off or not at the current stop.  The bus, in turn, is a normal participant of the corresponding traffic system, \ie buses and taxis can operate on the normal road network and be caught in the same congestion as cars and trucks.  
 %
-This is exactly how it works in the \gls{matsim} \gls{qsim}: taxis typically operate on the same network as cars; pt vehicles may operate on the same network if their routes are defined such that they use the same links as regular cars. \ah{to conclude: } Their interactions are thus captured by the simulation. \ah{correct?}
+This is exactly how it works in the \gls{matsim} \gls{qsim}: taxis typically operate on the same network as cars; pt vehicles may operate on the same network if their routes are defined such that they use the same links as regular cars. 
+%\ah{to conclude: } 
+In these cases, their interactions are thus captured by the simulation. 
+%\ah{correct?}
 
 
 %------------------------------------------------------------
