@@ -50,20 +50,34 @@ This chapter wants to highlight some of them for further discussion and maybe ac
 
 % 20.6 Learning an action-value function (Q values, Q-learning)
 
-The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the so-called field of \glspl{cas}.  
+The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the so-called field of \glspl{cas}. 
+%\kwaah{Has this been spelled out somewhere ?} \ah{yes, gls()}
+\kwaah{Why not Axelrod (1980) or Schelling: ``Schelling, TC 1978. Micromotives and Macrobehavior. Toronto, Canada: George J. McLeod Ltd.'' Mit seinem Segregationsmodell} \ah{m.E. ist dies sein Seggregationspaper: \citet[][]{Schelling_TJMS_1971} (Issue 2), Sakoda war aber sowieso vorher \citet[][]{Sakoda_TJMS_1971} (Issue 1), was sich durch Prof. Hegselmann evtl. noch rumsprechen wird.}
 %
-\cite{ArthurBar} addresses a coordination problem, where agents receive a payoff only when less than 60 out of 100 go to an event.  He addresses this by first generating a large number of heuristic predictors for the next round's attendance, such as ``same as in last round'' or ``trend of last four rounds''.  He next gives each agent a randomly selected handful of these strategies, so that agents in general have different sets of predictors.  Then, many rounds of the game are played, where the score of each predictor is updated based on its prediction quality, and agents act based on their currently best predictor.  Simulations demonstrate that the approach leads to successful coordination, \ie around 60\,agents show up in every round.
+\citet{ArthurBar} addresses a coordination problem, where agents receive a payoff only when less than 60 out of 100 go to an event.  He addresses this by first generating a large number of heuristic predictors for the next round's attendance, such as ``same as in last round'' or ``trend of last four rounds''.  He next gives each agent a randomly selected handful of these strategies, so that agents in general have different sets of predictors.  Then, many rounds of the game are played, where the score of each predictor is updated based on its prediction quality \kwaah{payoff?}, and agents act based on their currently best predictor.  Simulations demonstrate that the approach leads to successful coordination, \ie around 60\,agents show up in every round.
 %
-That approach in turn builds on work by \cite{PalmerEtAl_PhysicaD_1994}, who simulate a stock market, \citet{Holland_1992}, whose classifier systems have more structure than Arthur's model but have a similar model of performance learning, or \cite{AxelrodBook}, who investigates adaptive agent in the face of repeated non-cooperative games.  
+That approach in turn builds on work by \cite{PalmerEtAl_PhysicaD_1994}, who simulate a stock market, \citet{Holland_1992}, whose classifier systems have more structure than in Arthur's model but have a similar model of performance learning, or \cite{AxelrodBook}, who investigates adaptive agent in the face of repeated non-cooperative games.  
 
 \citet{ArthurBar} kept each agent's predictors fixed after initialization.  In contrast,
 \citet{HraberJonesForrestEcho} simulate an artificial ecosystem, where the individual agent strategies are based on so-called genes, which are adapted over the rounds/iterations by a genetic algorithms \citep{Goldberg_1989}.
 
-The focus of \gls{cas} is on many agents, agent interaction, and emergence. \Gls{ai} in contrast concentrated on single agents. In \gls{ai} terms, the original \gls{matsim} agents (those that do day-to-day learning) are very simple active reinforcement learning agents \citep[][Chapter 21.3]{RusselNorvig2010ArtificialIntelligence}. Since these \gls{matsim} have only one state and each plan is simply an action, the distinction between Q-learning and utility learning actually collapses, and what remains is the temporal difference learning scheme for the utility, which translated to the \gls{matsim} situation updates the score/performance/utility value of each plan every time it is selected.
+The focus of \gls{cas} is on many agents, agent interaction, and emergence. \Gls{ai} in contrast concentrated on single agents. In \gls{ai} terms, the original \gls{matsim} agents (those that do day-to-day learning) are very simple active reinforcement learning agents \citep[][Chapter 21.3]{RusselNorvig2010ArtificialIntelligence}. Since these \gls{matsim} agents have only one state and each plan is simply an action, the distinction between Q-learning and utility learning actually collapses, and what remains is the \st{temporal difference} \kwaah{lagged} \kwaah{Maybe better, given the difficult interpretation of the the iterations.} learning scheme for the utility, which translated to the \gls{matsim} situation updates the score/performance/utility value of each plan every time it is selected.
 
-That is, overall, the original \gls{matsim} system has inherited the focus on large systems, interaction, and emergence as well as the approach to strategy innovation from \gls{cas}, while the score updating rather comes from the field of \gls{ai}.
+\st{That is, overall,} the original \gls{matsim} system has inherited the focus on large systems, interaction, and emergence as well as the approach to strategy innovation from \gls{cas}, while the score updating rather comes from the field of \gls{ai}.
 
-In the meantime, both \gls{ai} and the field of transport simulation have moved on, increasingly looking at agents that can react immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}.
+In the meantime, both \gls{ai} and the field of transport simulation \st{have moved on}, \kwaah{switched their focus of interest} increasingly looking at agents that can react immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}.
+
+% -----------------
+\kwaah{
+The question of the need for a meta-search for strategies, as sketched by \citet[][]{ArthurBar} remains an open question. In the \gls{matsim} context all decisions, which are based on explicit search for alternatives, can be studied to see, how far apart the choice set generation strategies of discrete choice modeling, which draw (stratified) (randomly) from the universal choice sets, are from explicit construction strategies. The question would be in the second step to see, what impact these would have on the results and the policy conclusions. 
+
+A good example is parking search \citep[][]{Waraich_unpub_IATBR_2012}, for which multiple strategies have been documented and which explain the empirical observations \citep[][]{Shoup_2005}. In a discrete choice model context, the distribution of parking preferences can mimic the choice strategies, but the approach would be unable to capture the context specific choice of the strategy. In \gls{matsim} this set of strategies could become the object of a meta-search to see, which agents would retain which strategies and how these would be used by the agents. Empirical work could be conducted to see, if these sets and their distributions match the travelers' practices. 
+
+In the same vain, one could look at the destination choice for leisure, where different strategies can be observed, although they have not been subject of empirical study yet. If longer term choices were to be added to the \gls{matsim} framework, residential and workplace choice could also be considered. 
+
+The issue of the convergence of the \gls{matsim} plans towards a single optimal structure, can be seen as the absence of search strategies on the plan level. This overlaps strongly with the question of the choice of the number and sequence of activities, where these alternative plans are needed. 
+}
+% -----------------
 
 \kai{to do more}
 
@@ -84,7 +98,7 @@ While within-day replanning can be used as described above within the framework 
 
 \kai{in particular plans removal!! From Benjamin's diss:}
 
-In the plans innovation process of the simulation, the plan with the lowest utility is removed whenever the maximum number of plans are reached for an agent. In consequence, this decreases the probability that heterogeneous plans survive and increases the probability of very similar plans. This, again, increases the likelihood that the final choice set is correlated, \ie containing only plans that are very similar to the best plan \citep[see][for a review on correlation of 
+During the plans innovation process of the simulation, the plan with the lowest utility is removed whenever the maximum number of plans are reached for an agent. In consequence, this decreases the probability that heterogeneous plans survive and increases the probability of very similar plans. This, again, increases the likelihood that the final choice set is correlated, \ie containing only plans that are very similar to the best plan \citep[see][for a review on correlation of 
  routes]{Prato2009ChoiceModellingSurvey}.%
  %
  \footnote{
@@ -97,7 +111,11 @@ In the plans innovation process of the simulation, the plan with the lowest util
  %
  }
 
----
+% --------
+\kwaah{
+No extended research has been undertaken so far to see, if \gls{matsim} could adopt the strategy of \glspl{ga}, which regularly introduce new random starting solutions to avoid local minima. The challenge is that the generation of such random plans would result in most cases in nonsensical plans, which would need to be removed through computationally expensive iterations. See \citet[][]{Feil_PhDThesis_2010} for the difficulties in constructing optimal alternative plans in terms of number and sequence of activities. One possibility is to allocate a small set of randomly chosen alternative day plans at the beginning and to measure their similarity throughout the simulation and to reduce the chances of their removal depending on their lack of similarity with the other plans. Furthermore, there is no research which has studied a replanning technique involving the switching of the activity order of the day plan, which again would produce more dissimilar plans than currently possible. 
+}
+%----------
 
 To give recommendations to other researchers: the bias in choice set generation of \gls{matsim} needs to be fixed in the near future in order to obtain valid choice sets.
 %
@@ -107,10 +125,15 @@ Having obtained these valid choice sets \citep{NagelFloetteroed2009IatbrResource
 %
 \benjamin{Well, here it now depends on how we write the previous section...}
 %
-Using the logsum formulation with correlated choice sets requires a careful interpretation of the results. However, when looking at differences between the two states before and after a policy, this issue is unlikely to change results structurally: if the correlation remains roughly the same between the two states, the error of utility differences is small. If the correlation structure of plans changes, the error will\textemdash among other model specifications\textemdash depend on the number of iterations.
+Using the logsum formulation with correlated choice sets requires a careful interpretation of the results 
+\kwaah{As far I can see, nobody has worried about this in ABM construction, as they assume that the nesting takes care of this, which it doesn't (fully)}. 
+However, when looking at differences between the two states before and after a policy, this issue is unlikely to change results structurally: if the correlation remains roughly the same between the two states, the error of utility differences is small. If the correlation structure of plans changes, the error will\textemdash among other model specifications\textemdash depend on the number of iterations.
 %
 \benjamin{If we iterate the base case to the same iteration number as the policy case, the former will be more correlated. This would result in a underestimation of the utility changes.}
 %
+\kwaah{
+– kwa: assuming we start with the equilibrium of the base case. This would result in an underestimation of the utility changes – kwa: assuming that the correlation means similarity and that the policy case has a tighter distribution.] 
+}
 In that sense, one could include some approximation of the error into the analysis of results, possibly similar to Equation~(\ref{eq:ch:economicEval:logsumMaxError}). If the differences in utility levels between the two states are in the same magnitude as $\ln(P)$, it is possible that the signal of the policy effect is smaller than the noise of randomness.
 
 % ##################################################################################################################
@@ -137,6 +160,15 @@ The problem of the diminishing of these activities with longer typical durations
 Furthermore, there are points where common system stability criteria---small perturbations only have small effects---is broken.
 At such points of the optimization trajectory, for filling up the time budget, it is suddenly better to add a new activity to the convex region than to prolong an activity in the concave region.
 Due to the the S-shaped function's symmetry, these points seem to fall together with the inflection points of the the bell-shaped first derivative of the S-shaped function.
+
+\kwaah{
+The estimation, however, was difficult due to its non-linearities and the difficulty in generating sufficiently large choice sets. In addition many daily activities and their durations are not chosen freely by the individual. Without information about such constraints and social interactions the imposition of a utility maximizing framework is problematic. We and the literature have accepted this approach so far, but when we are addressing activity generation it might need to be rethought. Looking at the nested-logit-based activity based model literature it is obvious, that the generation and sequencing facets are mostly driven by the socio-economics of the travellers and the role of the logsum term summarizing the transport aspects is minor.suffered inherent stability issues. Further tests with larger choice sets did not result in satisfactory results and further work has been stopped. Still, as induced and suppressed demand are urgent policy issues this stream of work would need to be taken up again. 
+
+There are also technical issues with Joh’s S-shaped formulation. Away from the upper part of the curve, where it starts to become similar to a logarithmic curve, it grows very rapidly. In estimation this implies dramatic changes over short parameter spans. This makes finding an optimum difficult numerically. 
+
+It might be worth to take another approach based on the observation \citep[][and others]{SchlichEtAl_TransportRev_2004} that activity, location and mode form packages, which are rarely changed. One could think of the optimization task as a knapsack problem, where the traveler creates a Gestalt of the interactions to satisfy his commitments and his desires. \gls{tasha} is a model, which takes a similar stance. 
+}
+
 
 % ----------------------
 %\ah{Some pieces of notes:
@@ -243,23 +275,41 @@ PS: "Instabil": Sobald der Arbeitspunkt hier etwas nach rechts geht, geht die St
 % =========================================================================================
 \subsection{Estimating a Utility Function}
 \label{sec:estimation}
-As shown earlier, the commonly applied \gls{matsim} utility function parameters are derived from \citet[][]{ArnottEtAl_TAER_1993, ChaumetEtAl_2006}. \citet[][]{Kickhoefer_MastersThesis_2009} provides estimates based on data from \citet[][]{VrticEtc2008ReisekostenSVIBericht}. \citet[][]{KickhoeferEtAl2012WelfareBusCorridorKuhmoNectar} translates estimates from \citet[][]{TirachiniEtAl2012CrowdingCongestion} into \gls{matsim} values.
-%
-However, with the exception of a few studies \citet[][]{BalmerEtAl_ResRep_datapuls_2010, HuelsmannEtAl2012HotspotPricing, KickhoeferNagel2013EmissionInternalizationNETS, KaddouraEtAl2014AgentBasedPtOptimization, KaddouraEtAl2015PtMarginalSocialCostPricingJTEP}, these estimates have not been considered yet for many other projects, although they represent a valuable base for further estimations. Having such a base at hand is important as estimating and applying a \gls{matsim} utility function is non-trivial due to the following. 
+\kwaah{
+The challenge is that transport research has amply documented, that the travelers value different elements of their experience at different rates on average and certainly with large variances between each other. Some of these differences might be due to the omission of the daily schedule context, as well as missing interactions with the trip purpose and the omitted or mispecified distribution of the payment responsibilities (the firm paying, the parents paying for young adults, girlfriends paying for their boyfriends etc.). Still, the following differences should be accounted for: 
 
+\begin{itemize}
+\item Modal preferences either via modal constants or mode-specific valuation of in-vehicle-travel times to capture the comfort and social prestige effects
+\item Walking time 
+\item Transfers as a measure of their inconvenience and risk of the lost connection
+\item Crowding above the disutility of the in-vehicle time for its discomfort
+\item Parking search above the disutility of in-vehicle time for its uncertainty
+\item Type preferences for parking places for the different levels of personal risk and risk for the vehicle
+\item Cost sensitivity by available personal income 
+\item Operating points for the activities
+\item Level and curvature of the activity utilities by purpose
+\end{itemize}
+
+The literature has shown finer interactions, as well as further elements, but this set cover the key parts of the generalized costs. As shown earlier, the commonly applied \gls{matsim} utility function parameters are derived from \citet[][]{ArnottEtAl_TAER_1993, ChaumetEtAl_2006}. \citet[][]{Kickhoefer_MastersThesis_2009} provides estimates based on data from \citet[][]{VrticEtc2008ReisekostenSVIBericht}. \citet[][]{KickhoeferEtAl2012WelfareBusCorridorKuhmoNectar} translates estimates from \citet[][]{TirachiniEtAl2012CrowdingCongestion} into \gls{matsim} values. 
+However, with the exception of a few studies \citep[][]{BalmerEtAl_ResRep_datapuls_2010, HuelsmannEtAl2012HotspotPricing, KickhoeferNagel2013EmissionInternalizationNETS, KaddouraEtAl2015PtMarginalSocialCostPricingJTEP}, these estimates have not been considered yet for many other projects, although they represent a valuable base for future comparisons. The complete set outlined above has not yet been estimated in one consistent estimation, and so remains an urgent item for \gls{matsim} research. 
+
+Having such a base at hand is important as estimating and applying a MATSim utility function is non-trivial due to the following. 
+}
+%
 Agents optimize \emph{complete day plans} \citep[see also][Section 6.3.1]{MATSim_Userguide_2015}. This means that the utility levels of the single choice dimensions need to be carefully balanced, when applying estimates. Usually it is impossible to apply readily-available functions estimated independently for a single choice dimension. A degenerated example might be the following. All destination alternatives evaluated with a not-well calibrated utility function generate very low utility; in that case the complete activity might be simply dropped. 
 %
 \benjamin{I dont fully understand the above...what is an inappropriate utility function?}
 %
 \ah{better?}
 %
-This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. The inseparability of choice dimensions means that in \gls{matsim} we can only consistently handle choices if we assume an absolute utility level rather than a relative level usually assumed for discrete choice models.
+This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. The inseparability of choice dimensions means that in \gls{matsim} we can only consistently handle choices if the parameters are estimated or postulated consistently. Estimates from independent studies reflect the scale parameter of the Gumbel distribution of the observed choices, which is arbitrarily set to zero for identification purposes, which means that the values cannot be compared \kwaah{(See Bierlaire, ????)}. The elasticities and trade-offs values can be compared, as they removed the scale parameter from their values. 
 %
 \benjamin{Why? The only difference if one has more choice dimensions in the model is that utility differences resulting from some policy will be smaller than with less choice dimensions---\ie influencing the elasticity.}
 
-Incorporating a contribution, \eg for parking or destination choice, in combination with absolute utilities becomes even more tricky as the Charypar-Nagel function is non-linear, which means that available models---very often being linear---need to be incorporated by workarounds such as approximation procedures and distinction of cases as described in \citet[][p.75ff]{Horni_PhDThesis_2013}. Furthermore, \gls{matsim} utility function includes travel times, which is usually seen as an unreliable information in classical surveys; they are often distance based thus. \gls{gps} or smartphone-based surveys, however, provide this information with great precision and, thus, they are a promising means for future estimations.
+Incorporating a contribution, \eg for parking or destination choice, in combination with absolute utilities is even trickier as the Charypar-Nagel function is non-linear, which means that available parameters---very often linear utility functions---need to be incorporated by approximation procedures and distinction of cases as described in \citet[][p.75ff]{Horni_PhDThesis_2013}. Furthermore, \gls{matsim} utility function includes travel times, while their parameters which are readily available from studies, the quality and potential bias in the calculation of the travel times used for those estimate is rarely challenged. It would be unlikely that these estimates are perfect, given that disaggregate assignment models have until recently only been calibrated against counts and not against observed travel times. The omission of junction models cannot help either. In addition, the travel time estimates are influenced by the underlying mode choice model in that implementation which can bias the results further \citep[][]{Vrtic_PhDThesis_2003}. 
+\gls{gps} or smartphone-based surveys, however, provide this information with higher precision and, thus, they are a promising mean for better model calibration and therefore better description of the non-chosen alternatives in the model .
 
-Furthermore, travel time and activity duration estimations including income need to carefully consider the parameters' relation to the value of travel time savings. \citet[][p.276]{MeisterEtAl_SVT_2009} for example argues that the average Swiss hourly earnings are much higher than 6\,EUR/h. However, the \gls{matsim} is measured in utils not monetary units anymore. Still, the parameters in utils and monetary terms (such as tolls, parking costs, fares etc., or income-dependent attributes) are often interacted and thus their relation needs to be consistent if they come from different studies.
+Furthermore, travel time and activity duration parameter estimates including income need to carefully consider the parameters' relation to the \gls{vtts}. \citet[][p.276]{MeisterEtAl_SVT_2009} for example argue that the average Swiss hourly earnings are much higher than 6\,EUR/h used in the \gls{matsim} function then. However, the \gls{matsim} is now measured in utils not monetary units. Still, the parameters in utils and monetary terms (such as tolls, parking costs, fares etc., or income-dependent attributes) are often interacted and thus their relation needs to be consistent if they come from different studies.
 %
 \benjamin{I dont see the problem here...parameters define the \gls{vtts}, and are dependent on the variance of the unobserved attributes, no? So measuring in utils or money does not make a difference.}
 
@@ -270,7 +320,7 @@ Estimating a utility function for \gls{matsim} is associated with another proble
 % =========================================================================================
 \subsection{Agent-Specific Preferences}
 \label{sec:agent-specific-prefs}
-\gls{matsim} scenarios so far consider a relatively small set of agent attributes, essentially due to missing suitable data to derive detailed attributes for large populations \kwaah{ref to pop gen paper}. Some studies, however, used larger sets of attributes. \citet{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome} estimated individual income-contingent utility functions. \citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014} incorporated agent-specific travel preferences and individual income-dependent marginal utilities of money; the preference values however, were assigned randomly. As natural consideration of agent-specific preferences is one of the corner-stones of agent-based \glspl{microsimulation}, future work should exploit this avenue. 
+\gls{matsim} scenarios so far consider a relatively small set of agent attributes, essentially due to missing suitable data to derive detailed attributes for large populations \citep[][]{MuellerFloetteroed_unpub_hEART_2014}. Some studies, however, used larger sets of attributes. \citet{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome} estimated individual income-contingent utility functions. \citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014} incorporated agent-specific travel preferences and individual income-dependent marginal utilities of money; the preference values however, were assigned randomly. As natural consideration of agent-specific preferences is one of the corner-stones of agent-based \glspl{microsimulation}, future work should exploit this avenue. 
 
 %\benjamin{Das haben wir auch gemacht -- vielleicht sogar noch ein bisschen genauer (mit HH-Einkommen und Lorenzkurve). Siehe \cite{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome}. Da das früher war, vielleicht hier reinnehmen?} \ah{done}
 
