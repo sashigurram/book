@@ -24,12 +24,19 @@ In this chapter you will learn about the possibilities to extend, and customize 
 % ##################################################################################################################
 \section{MATSim Modularity}
 \label{sec:matsim-modularity}
-\kai{Andreas, haben wir noch eine Chance, diese Ungleichheiten in der Nomenklatur geradezuziehen?  contrib vs extension \url{https://matsim.atlassian.net/browse/MATSIM-323}; PlanStrategy vs StrategyModule; ... }
+\kai{Andreas, haben wir noch eine Chance, diese Ungleichheiten in der Nomenklatur geradezuziehen?  
+%contrib vs extension \url{https://matsim.atlassian.net/browse/MATSIM-323};  
+PlanStrategy vs StrategyModule; ... }
 
 % ====================================================================================================
 \subsection{Levels of Access}
 \label{sec:levels-of-access}
-\gls{matsim} currently provides four levels of access: using the core only, using core and \glspl{contribution}, writing ``scripts in \gls{java}'', and finally writing your own \glspl{extension}.
+\gls{matsim} currently provides five levels of access: 
+using the \gls{matsim} core only, 
+using the \gls{matsim} main distribution, 
+using \gls{matsim} main distribution and \glspl{contribution}, 
+writing ``scripts in \gls{java}'', and finally 
+writing your own \glspl{extension}.
 
 % --------------------------------------------------------------------------------------
 \subsubsection{Using the Core Only}
@@ -41,23 +48,34 @@ In order to use the core only, one needs to do the following (see Section~\ref{s
 \begin{itemize}\styleItemize
 \item Download a \gls{matsim} release or a nightly build by following the respective links at %% \url{http://sourceforge.net/projects/matsim/files/} or a nightly build \url{http://matsim.org/downloads/nightly} % \kai{url?}.
 \url{http://matsim.org/downloads}.
-\item Minimally obtain a network file and an initial plans file.  Small versions can be typed by hand; larger versions should be generated automatically by some computational method.
-\item Write or edit a config file.
+\item Obtain a network file and an initial plans file.  Small versions can be typed by hand; larger versions should be generated automatically by some computational method.
+\item Write or edit a \gls{configfile}.
 \item Click on the \gls{matsim} jar file\footnote{This works since winter 2014/15 and should be in the 0.7.0~release.} and follow the instructions. 
 \end{itemize}
-We think that the \gls{matsim} core is already quite powerful; for example, the synthetic persons already follow full daily plans with a full daily scoring function and in consequence opening times for activity types, departure time choice, and schedule delay can be investigated. Also, schedule-based public transit assignment is contained in the core.
+We think that the \gls{matsim} core is already quite powerful; for example, the synthetic persons already follow full daily plans with a full daily scoring function and in consequence opening times for activity types, departure time choice, and schedule delay can be investigated. 
+% Also, schedule-based public transit assignment is contained in the core. \ah{not according to current def of core}
+
+% --------------------------------------------------------------------------------------
+\subsubsection{Using MATSim Main Distribution}
+\label{sec:using-main-distro}
+The \glspl{extension} in the \gls{matsim} main distribution are by design very close to the \gls{matsim} core and thus even less configuration is required than for \glspl{contribution} as shown below. Often providing additional files with a respective \gls{configfile} entry is sufficient to use them; required steps are described below case by case.
 
 % --------------------------------------------------------------------------------------
 \subsubsection{Using One or More Contribs}
 \label{sec:using-contribs}
-\kai{Das wären jetzt eigentlich extensions; ``contribs'' sind diejenigen extensions, die sich gleichzeitig im matsim repository befinden.  Oder?}
-\ah{Nein, gemäss momentaner Buch-Definition liegen contribs unter ``contribs'', Module, welche über config, pop, network hinausgehen, aber im Core (was immer das nun genau ist) liegen, haben im Moment keinen Namen.}
+%\kai{Das wären jetzt eigentlich extensions; ``contribs'' sind diejenigen extensions, die sich gleichzeitig im matsim repository befinden.  Oder?}
+%\ah{Nein, gemäss momentaner Buch-Definition liegen contribs unter ``contribs'', Module, welche über config, pop, network hinausgehen, aber im Core (was immer das nun genau ist) liegen, haben im Moment keinen Namen.}
+%\ah{geklärt}
 
-\Glspl{contribution} are in a separate part of the repository, separate from the core.  The documentation is not yet fully organized, information about \glspl{contribution} can be found at \url{http://matsim.org/javadoc} or \url{http://matsim.org/extensions}. There are also release versions and nightly builds, which can be found by following the links at %\url{http://sourceforge.net/projects/matsim/files/} 
+\Glspl{contribution} are in a separate part of the repository, separate from the \gls{matsim} main distribution.  
+The documentation is not yet fully organized, information about \glspl{contribution} can be found at \url{http://matsim.org/javadoc} or \url{http://matsim.org/extensions}. 
+There are also release versions and nightly builds, which can be found by following the links at %\url{http://sourceforge.net/projects/matsim/files/} 
 %\url{http://matsim.org/files/builds/}. % \kai{check} \ah{gibt es beides am gleichen Ort wie MATSim} \kai{url?}.
 \url{http://matsim.org/downloads}.
 
-In general, \glspl{contribution} should provide main methods with which they can be used.  We might eventually provide clickable jar files here as well, but for the time being the extensions need to be bundled with core \gls{matsim} (and potentially other \glspl{contribution}). As shown at \url{http://www.matsim.org/docs/extensions} the syntax roughly is
+In general, \glspl{contribution} should provide main methods with which they can be used.  
+We might eventually provide clickable jar files here as well, but for the time being the extensions need to be bundled with core \gls{matsim} (and potentially other \glspl{contribution}). 
+As shown at \url{http://www.matsim.org/docs/extensions} the syntax roughly is
 \begin{lstlisting}
 java -Xmx2000m -cp MATSim.jar:contrib/contrib.jar org.matsim.contrib.run.Main config.xml  
 \end{lstlisting}
@@ -76,7 +94,8 @@ It is possible to combine several \glspl{contribution} in this way, provided som
 % --------------------------------------------------------------------------------------
 \subsubsection{Writing \enquote{Scripts in Java}}
 \label{sec:writing-scripts-java}
-The \glspl{contribution} are written in a style that they can be plugged into core \gls{matsim} via extension points (see Chapter~\ref{ch:extensionpoints}). If a specific combination or configuration of modules is not (yet) available, one can write it for oneself. The syntax roughly is
+The \glspl{contribution} are written in a style that they can be plugged into core \gls{matsim} via extension points (see Chapter~\ref{ch:extensionpoints}). 
+If a specific combination or configuration of modules is not (yet) available, one can write it for oneself. The syntax roughly is
 \begin{lstlisting}
 ... main( ... ) {
     // construct the config object:
@@ -103,14 +122,18 @@ The extension points, especially at \lstinline{(*)} and \lstinline{(**)}, are de
 % --------------------------------------------------------------------------------------
 \subsubsection{Writing Your Own Extensions}
 \label{sec:writing-your-own-extensions}
-If the existing \glspl{contribution} are not sufficient to plug your own study together, the next option is to write your own \gls{extension}.  Again, this should preferably use the extension points described in Chapter~\ref{ch:extensionpoints}, since this is the only way in which an \gls{extension} may later become a \gls{contribution}.  \kai{here is a difference between an extension and a contrib :--)}
+If the existing \glspl{extension} are not sufficient to plug your own study together, the next option is to write your own \gls{extension}.  
+Again, this should preferably use the extension points described in Chapter~\ref{ch:extensionpoints}, since this is the only way in which an \gls{extension} may later become a \gls{contribution}.  
+%\kai{here is a difference between an extension and a contrib :--)}
 
 %% \paragraph{If none of this is enough}
 %% Clearly, it is always possible to download some version of \gls{matsim}, remove all the \lstinline{final} 
 
 % ====================================================================================================
 \subsection{The Ideas Behind this Setup}
-The setup as described above came out of the observation that an ever growing monolithic \gls{matsim} would eventually overwhelm the core team. Therefore, a set-up was searched where the core team could concentrate on central infrastructure, while specific functionality such as road pricing, multi-modal simulations, signals, additional choice dimensions, or analysis modules could be written and contributed by other people. Clearly, a plug-in architecture had to be the solution, but it took (and still takes) time and effort to make the extension points sufficiently capable and sufficiently robust.  
+The setup as described above came out of the observation that an ever growing monolithic \gls{matsim} would eventually overwhelm the \gls{matsim} team and its core developers group. 
+Therefore, a set-up was searched where they could concentrate on central infrastructure, while specific functionality such as road pricing, multi-modal simulations, signals, additional choice dimensions, or analysis modules could be written and contributed by the community. 
+Clearly, a plug-in architecture had to be the solution, but it took (and still takes) time and effort to make the extension points sufficiently capable and sufficiently robust.  
 
 At the same time, \gls{matsim} is a research platform, and a trait of research is that it investigates innovative questions, which often means that the questions were not foreseen by the designs of the code. 
 Quite often, scripting languages are the solution to such problems; 
@@ -121,11 +144,16 @@ SUMO (via the traci interface) (\url{http://sumo.dlr.de/wiki/TraCI})
 for plug-ins.
 Scala \url{http://www.scala-lang.org/}
 \ah{have to put urls in bib} 
-was discussed for \gls{matsim}, but in the end it was decided to just use Java itself as the scripting language. 
-This has the advantage that persons who are in between core development and \gls{matsim} application do not need to learn two languages, and in addition the \gls{tu} Berlin team can continue to teach \gls{java} both as an entry point to \gls{matsim} and as a general professional skill.
+was discussed for \gls{matsim}, but in the end it was decided to just use \gls{java} itself as the scripting language. 
+This has the advantage that persons who are in between development and \gls{matsim} application do not need to learn two languages, 
+and in addition the \gls{tu} Berlin team can continue to teach \gls{java} both as an entry point to \gls{matsim} and as a general professional skill.
 
 % ====================================================================================================
 \subsection{MATSim Modules}
+
+\ah{Mittlerweile frage ich mich, ob wir nicht einfach zusammenfassend sagen sollten, dass es verschiedene Ausprägungen von Modulen gibt und Untenstehendes auf 2-3 Sätze zusammengepresst werden sollte. Eine weitere Klassifikationsmöglichkeit brauchen wir nicht, vor allem nicht wenn es nur eine Klasse gibt ;)
+Mit deinem OK versuche ich das mal.}
+
 According to the Merriam-Webster (\url{http://www.merriam-webster.com}), a module is
 %
 ``one of a set of parts that can be connected or combined to build or complete something'' 
