@@ -362,6 +362,21 @@ Some simulation investigations had problems to reproduce the complete MFD (proje
 Natural conclusion here is, that back moving gaps are essential for generating a realistic MFD \kai{bis hier hin stimme ich zu}, in other words to realistically model the complete range of traffic conditions \kai{hier eigentlich nicht wirklich.}. Backward moving gaps are re-included in the default \gls{matsim} mobsim (qsim).
 }
 
+\ah{following copied from atlassian:}
+
+\kai{The queue model fundamental diagram (flow vs density) is horizontal for medium densities, and falls to zero very steeply at very high densities.
+This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards travelling speed of ``length\_of\_link''/1sec rather than the conventional approx. 15km/h.
+
+A fix, developed by Charypar, is to generate a ``hole'' when a vehicle leaves a link, and have it travel with a configured velocity against the direction of traffic. The hole cannot be used before it has arrived at the upstream end.
+
+Now the problem is that the model is initialized with one hole per empty space. This means many ``hole'' objects which consume a lot of memory ... in fact, too much of it.
+Way out: Just keep track of the number of available holes. Initially, that number corresponds to the storage capacity. Every time a vehicle enters, the number is decreased (which can also take care of different vehicles sizes, \ie decrease by the PCE instead of by one). Every time vehicle leaves, a hole is created (with size equal to the vehicle's PCE) which travels upstream. When the hole has reached the upstream end, the number of available holes is increased accordingly, and the hole object is destroyed.
+This would need to be implemented and tested ...}
+
+\marcel{
+Having the holes only while traveling back brings it closer to an events-based implementation: Basically, the hole then represents nothing else as a delayed event to increase the available space on the link. This leads to a further simplified implementation: Instead of hole objects, one could just have a queue where the time, when an additional space becomes available (=when the hole would reach the start of the link), is stored. In each step, the head of the queue could be checked to see if space becomes available and increase the counter. This would then also be more queue-like like the name of the QSim suggests}
+
+
 % ##################################################################################################################
 \section{Social Networks}
 Hackney, Marchal
