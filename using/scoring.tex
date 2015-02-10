@@ -11,6 +11,8 @@
 \section{Good Plans and Bad Plans, Score and Utility}
 
 \kai{im folgenden habe ich noch ein paar Absätze neu geschrieben, muss daher doppelt gründlich durchgeschaut werden}
+%
+\kai{Andreas, hast Du das mal durchgelesen?}
 
 As outlined in Section~\ref{sec:co-ev} and by Figures~\ref{fig:matsimcycle} and~\ref{fig:ea}, \gls{matsim} is based on a co-evolutionary algorithm where each individual agent learns by maintaining multiple plans which are scored by executing them in the mobsim, selected according to the score, and sometimes modified.  Somewhat more detailed, the iterative process contains the following elements:
 %
@@ -103,7 +105,7 @@ where:
 \begin{itemize}\styleItemize
 \item $S_{dur,q}= \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q})$ 
 %
-is the utility of performing activity $q$, where opening times of activity locations are taken into account. $t_{dur,q}$ is performed activity duration, $\beta_{dur}$ is the marginal utility of activity duration (or marginal utility of time as a resource---the same for all activities),
+is the utility of performing activity $q$, where opening times of activity locations are taken into account. $t_{dur,q}$ is performed activity duration, $\beta_{dur}$ is the marginal utility of activity duration (or marginal utility of time as a resource---the same for all activities; see Section~\ref{sec:opport-cost-of-time}),
 % for its typical duration $t_{typ,q}$, 
 and $t_{0,q}$ is minimal duration, or in other words, the duration for which utility starts to be positive. 
 %
@@ -233,9 +235,9 @@ The config syntax (config version v2) approximately is
 \end{xml}
 \kai{check possible re-name of monetaryDistanceCostRate}
 
-\benjamin{Irgendwo müsste dann definiert werden, was ``direct'' vs ``indirect'' ist; M.E. einfach ``without'' vs ``with'' (time) costraints.}
-%
-\kai{Ich habe jetzt mal ``so-called'' sowie weitere Hinweise auf 3.2.4 eingebaut---natürlich müssen wir checken, dass wir es dort dann erklären.}
+%% \benjamin{Irgendwo müsste dann definiert werden, was ``direct'' vs ``indirect'' ist; M.E. einfach ``without'' vs ``with'' (time) costraints.}
+%% %
+%% \kai{Ich habe jetzt mal ``so-called'' sowie weitere Hinweise auf 3.2.4 eingebaut---natürlich müssen wir checken, dass wir es dort dann erklären.}
 %
 Equation~(\ref{eq:tdisutility}) the direct utility contribution of travel; see Section~\ref{sec:opport-cost-of-time} for the the full indirect utility as well as the relation to the \gls{vtts}, and Section~\ref{ch:economicEval} for a more general discussion.
 
@@ -278,10 +280,10 @@ Note that scoring the two activities separately would lead to a different result
 % ====================================================================================
 \subsection{MATSim Scoring, Opportunity Cost of Time, and the VTTS}
 \label{sec:opport-cost-of-time}
-As a result of the wrap-around concept, travel receives, beyond the typically negative direct marginal utility $\beta_{trav, mode}$, an additional implicit penalty from the marginal utility of time as a resource:
+As a result of the wrap-around concept, travel receives, beyond the typically negative direct marginal utility $\beta_{trav, mode}$, an additional implicit penalty from the \textbf{marginal utility of time as a resource}:
 %% \benjamin{potentially rephrase: ``marginal utility of time as a resource''? This is more in line with the literature as we know from Section~\ref{ch:economicEval:valuingBehavior}}
 If a travel time could be reduced by 
-$\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav} \cdot \Delta t_{trav}$, but also from gaining additional time for activities (effect of the so-called opportunity cost of time). The \textbf{(total) marginal \emph{utility} of travel time savings} is thus:
+$\Delta t_{trav}$, the person would not only gain from avoiding $\beta_{trav} \cdot \Delta t_{trav}$, but also from gaining additional time for activities (effect of the so-called opportunity cost of time). The \textbf{(total) marginal utility of travel time savings} is thus:
 %
 \[
 mUTTS = - \frac{\partial}{\partial t_{trav}} S_{trav} + \frac{\partial}{\partial t_{dur}}S_{dur} \ .
@@ -307,7 +309,7 @@ The marginal utility of travel time savings, $mUTTS$, is thus composed of the in
 
 The marginal utility of travel time savings
 %at the typical duration
-can be transformed to the more common \gls{vtts} by division with the marginal utility of money, $\beta_{m}$:
+can be transformed to the more common \textbf{\acrfull{vtts}} by division with the marginal utility of money, $\beta_{m}$:
 \[
 VTTS = \frac{mUTTS}{\beta_{m}} = \frac{- \beta_{trav} + \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} }{\beta_{m}} \ ,
 \]
@@ -339,23 +341,24 @@ In consequence, as long as one is not able to estimate $\beta_{wait}$ separately
 
 Arriving late incurs a marginal utility of $\beta_{late}$, typically negative.  Here, no additional opportunity cost of time is involved. Intuitively, arriving later implies having left the previous activity later.  That is, the current activity is shortened by the same amount by which the previous activity was extended, leaving the overall score unaffected (\cf Section~\ref{ch:economicEval:valuingBehavior}). 
 
-\paragraph{The Typical\kai{nay} Vickrey Parameters}
+%% \paragraph{The Typical\kai{nay} Vickrey Parameters}
+\paragraph{Vickrey Parameters}
 
-In consequence, the typical\kai{nay} Vickrey parameters of $6$, $12$ and $18$ \kai{citation} \ah{siehe nächster Kommentar} are consistent with the following equations:
+In consequence, the Vickrey parameters of $\alpha$, $\beta$ and $\gamma$ \citep{ArnottEtcBottleneck-inelastic} are consistent with the following equations:
 \begin{equation}
 \begin{array}{ccrc}
--\beta_{wait} + \beta_{dur} & = & 6 & \\
--\beta_{trav} + \beta_{dur} & = & 12 & \\
-- \beta_{late} & = & 18 & . \\
+-\beta_{wait} + \beta_{dur} & = & \alpha & \\
+-\beta_{trav} + \beta_{dur} & = & \beta & \\
+- \beta_{late} & = & \gamma & . \\
 \end{array}
 \end{equation}
 
 This has one degree of freedom too many to be solved uniquely.  With setting $\beta_{wait} = 0$ as recommended earlier, one obtains
 \begin{equation}
-  \begin{array}{lcrc}
-    \beta_{dur} & = & 6 & \\
-\beta_{trav} & = & - 6 & \\
-\beta_{late} & = & - 18 & .\\
+  \begin{array}{lccc}
+    \beta_{dur} & = & \alpha & \\
+\beta_{trav} & = & - \alpha - \beta & \\
+\beta_{late} & = & - \gamma & .\\
   \end{array}
   \label{eq:derivation-of-scoring-default}
 \end{equation}
@@ -419,6 +422,9 @@ Clearly, the wrap-around approach fails if the first and last activity are not t
 
 % ##################################################################################################################
 \section{Parameters}
+
+\kai{Wenn wir das ohnehin nicht genau wissen, dann frage ich mich, ob wir nicht lieber auf $\beta_{trav}=0$ wechseln sollten?}
+
 Two frequently applied starting points for utility function calibration are the parameter set proposed by \citet[][]{CharyparNagel2005ga4acts} and the estimates by \citet[][]{Kickhoefer_MastersThesis_2009}.
 
 \citet[][p.393]{CharyparNagel2005ga4acts} recommend
