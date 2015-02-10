@@ -149,23 +149,38 @@ An overview of \gls{matsim} mobility simulations is given in \citet[][]{Dobler_T
 \label{sec:using-qsim}
 The queue-based and time-step based \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is \gls{matsim}'s default \gls{mobsim}. 
 Its parameters are set in the \lstinline|qsim| \gls{configfile} section. Prominent parameters are as follows.
-\begin{itemize} 
-
-\item
-By specifying the parameter \lstinline|numberOfThreads| \gls{qsim} can be run in parallel, see Section~\ref{sec:using-parallel-computing}. 
-
-\item Importantly, this section's parameters \lstinline|flowCapacityFactor| and \lstinline|storageCapacityFactor| need to be set accordingly, when running sample scenarios, \eg for a 10\,\% sample, these factors need to be divided by~10. The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to adapt these parameters with the command \lstinline|Tools...Create Sample Population|.
-
-\item
-The link dynamics, either \gls{fifo} or passing can be specified by the parameter \lstinline|linkDynamics|. 
-
-\item
+%% \begin{itemize} 
+%% \item
+By specifying
+\begin{xml}
+   <param name="numberOfThreads" value="..."/>
+\end{xml}
+\gls{qsim} can be run in parallel, see Section~\ref{sec:using-parallel-computing}. 
+%
+%% \item 
+Importantly, the \lstinline{qsim} parameters
+\begin{xml}
+    <param name="flowCapacityFactor" value="..." />
+    <param name="storageCapacityFactor" value="..." />
+\end{xml}
+need to be set accordingly when running sample scenarios. For example, for a 10\,\% sample, these factors need to be 0.1. The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to adapt these parameters with the command \lstinline|Tools...Create Sample Population|.
+%
+%% \item
+The link dynamics, either \gls{fifo} or passing can be specified by the parameter 
+\begin{xml}
+   <param name="linkDynamics" value="..." />
+\end{xml}
+%
+%\item
 Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) are only available in an experimental manner, 
-they will be added in the near future and will then be configurable with the parameter \lstinline|trafficDynamics|. 
+they will be added in the near future and will then be configurable with the parameter
+\begin{xml}
+   <param name="trafficDynamics" value="..." />
+\end{xml}
 %% \kai{Das gibt es immer noch nicht wirklich.  Habe jetzt Amit rekrutiert, damit er mir da hoffentlich hilft.}
 %% \ah{ok. angepasst}
-\end{itemize}
-
+%% \end{itemize}
+%
 As shown in Section~\ref{sec:using-qsim-multimodal}, \gls{qsim} can handle \gls{multimodal} scenarios. %% \kai{chk}
 
 %% \ah{explizit hinzufügen ist jetzt nicht mehr nötig, weil default, oder?}
@@ -563,7 +578,14 @@ As of the writing of this text, the router will route all these modes
 %\ah{which ones? pt also?} 
 %\kai{Andreas, I added some lines above (in red).  Does that clarify it?} 
 %\ah{Sorry, hatte wohl was an den Augen ;)}
-on the ``car'' links of the network.  Note that, per the network file \gls{dtd}, ``car'' is the default mode of each link as long as long as the link's mode field is not explicitly filled.
+on the ``car'' links of the network.  This means that, say, denominating some links as ``car only'' or ``truck only'' will not be picked up by the current router.\footnote{%
+%
+Check \url{https://matsim.atlassian.net/browse/MATSIM-330} for developments.
+%
+}
+
+Note that, per the network file \gls{dtd}, ``car'' is the default mode of each link as long as long as the link's mode field is not explicitly filled. 
+ %% This also means that a link that does not fill the mode field is not one that accepts any mode.  It rather is a car link that wi
 
 
 %% , which is also the interpretation if no mode information is attached to a link \kai{\url{https://matsim.atlassian.net/browse/MATSIM-330}}.  For alternatives, see \kai{where?}.
