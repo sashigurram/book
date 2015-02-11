@@ -345,17 +345,16 @@ In consequence, as long as one is not able to estimate $\beta_{wait}$ separately
 
 Arriving late incurs a marginal utility of $\beta_{late}$, typically negative.  Here, no additional opportunity cost of time is involved. Intuitively, arriving later implies having left the previous activity later.  That is, the current activity is shortened by the same amount by which the previous activity was extended, leaving the overall score unaffected (\cf Section~\ref{ch:economicEval:valuingBehavior}). 
 
-%% \paragraph{The Typical\kai{nay} Vickrey Parameters}
-%% \paragraph{Vickrey Parameters}
+\paragraph{Vickrey Parameters}
 
-%% In consequence, the Vickrey parameters of $\alpha$, $\beta$ and $\gamma$ \citep{ArnottEtcBottleneck-inelastic} are consistent with the following equations:
-%% \begin{equation}
-%% \begin{array}{ccrc}
-%% -\beta_{wait} + \beta_{dur} & = & \alpha & \\
-%% -\beta_{trav} + \beta_{dur} & = & \beta & \\
-%% - \beta_{late} & = & \gamma & . \\
-%% \end{array}
-%% \end{equation}
+In consequence, the Vickrey parameters of $\alpha$ (marginal penalty for arriving early), $\beta$ (penalty for traveling) and $\gamma$ (marginal penalty for arriving late) \citep[as defined by][]{ArnottEtcBottleneck-inelastic} are consistent with the following equations:
+\begin{equation}
+\begin{array}{ccrc}
+-\beta_{wait} + \beta_{dur} & = & \alpha & \\
+-\beta_{trav} + \beta_{dur} & = & \beta & \\
+- \beta_{late} & = & \gamma & . \\
+\end{array}
+\end{equation}
 
 %% This has one degree of freedom too many to be solved uniquely.  With setting $\beta_{wait} = 0$ as recommended earlier, one obtains
 %% \begin{equation}
@@ -425,19 +424,21 @@ For an adaptive \gls{algorithm}, such a penalty needs to be defined such that it
 Clearly, the wrap-around approach fails if the first and last activity are not the same.  The present code does not look at locations, but gives a warning and problematic results when they do not have the same type.
 
 % ##################################################################################################################
-\section{Parameters}
+\section{Parameters of the Scoring Function and their Calibration}
 
-\kai{Wenn wir das ohnehin nicht genau wissen, dann frage ich mich, ob wir nicht lieber auf $\beta_{trav}=0$ wechseln sollten?} 
-%
-\kai{ Siehe \url{https://matsim.atlassian.net/browse/MATSIM-335}}
+%% \kai{Wenn wir das ohnehin nicht genau wissen, dann frage ich mich, ob wir nicht lieber auf $\beta_{trav}=0$ wechseln sollten?} 
+%% %
+%% \kai{ Siehe \url{https://matsim.atlassian.net/browse/MATSIM-335}}
 
-Two frequently applied starting points for utility function calibration are the parameter set proposed by \citet[][]{CharyparNagel2005ga4acts} and the estimates by \citet[][]{Kickhoefer_MastersThesis_2009}.
+%% Two frequently applied starting points for utility function calibration are the parameter set proposed by \citet[][]{CharyparNagel2005ga4acts} and the estimates by \citet[][]{Kickhoefer_MastersThesis_2009}.
 
-\citet[][p.393]{CharyparNagel2005ga4acts} recommend
+%% \citet[][p.393]{CharyparNagel2005ga4acts} recommend
+The \gls{matsim} default values for release 7 will be
 \begin{equation}
   \begin{array}{lcrl}
+\beta_{m} & = & 1\, & utils/monetary unit \\
 \beta_{dur} & = & 6\, & utils/h \\
-\beta_{trav, mode(q)} & = & -6\, & utils/h \\
+\beta_{trav, mode(q)} & = & 0 & utils/h \kai{check} \\
 \beta_{wait} & = & 0\, & utils/h \\
 \beta_{short.dur} & = & 0\, & utils/h \\
 \beta_{late.ar} & = & -18\, & utils/h \\
@@ -445,58 +446,116 @@ Two frequently applied starting points for utility function calibration are the 
   \end{array}
 \label{eq:std-params}
 \end{equation}
-(\cf Equation~(\ref{eq:derivation-of-scoring-default})).
-%% These parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}. 
-%% \kai{Andreas, wieso Chaument?} 
-\ah{So ganz direkt sind ja die Parameter weder von Arnott noch von Vickrey abgeleitet. Chef meinte, dass da nach langen Diskussionen, mit Chaumet (und M. Bernhard, damals am IVT) noch (nach-)kalibriert wurde. Leider lange vor meiner Zeit.
+The are very loosely based on the Vickrey bottleneck model \citep[e.g.][]{ArnottEtcBottleneck-inelastic}, together with the additional insight that in many of the systems we model, traveling does not seem to be less convenient than ``doing nothing'', and thus the \emph{direct} marginal utility of traveling, $\beta_{trav}$, is close to zero and sometimes even positive \citep[\cf][]{} \kai{there is at least one paper by handy and/or mokhtarian, but i can't find it in the bibtex}.
 
-\citet[][p.164, p.173]{ArnottEtAl_TAER_1993} defines 
-$\alpha=5.00\ \$/h$ the shadow cost of travel time,
-$\beta=3.05\ \$/h$ the unit cost of arriving early at work, and
-$\gamma=11.88\ \$/h$ the unit cost of arriving late based on the estimations reported by \citet[][Table 2 on p.473]{Small_AER_1982}.
-Derived from this initial values \citet[][p.382]{CharyparNagel2005ga4acts} define the MATSim utility function as follows [...], where they consider the opportunity costs of $20\ EUR/h$, \ie the costs for doing nothing. 
+\def\betaperf{\beta_{\it perf}}
 
-Frage ist hier: wie genau kam man auf die Werte? 
+%% %% (\cf Equation~(\ref{eq:derivation-of-scoring-default})).
+%% %% These parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}. 
+%% %% \kai{Andreas, wieso Chaument?} 
+%% \ah{So ganz direkt sind ja die Parameter weder von Arnott noch von Vickrey abgeleitet. Chef meinte, dass da nach langen Diskussionen, mit Chaumet (und M. Bernhard, damals am IVT) noch (nach-)kalibriert wurde. Leider lange vor meiner Zeit.
 
-In \citet[][p.122]{ArnottEtAl_JUE_1990}, they are defined as $\alpha=6.40\ \$/h$, $\beta=3.90\ \$/h$ and $\gamma=15.21\ \$/h$.
+%% \citet[][p.164, p.173]{ArnottEtAl_TAER_1993} defines 
+%% $\alpha=5.00\ \$/h$ the shadow cost of travel time,
+%% $\beta=3.05\ \$/h$ the unit cost of arriving early at work, and
+%% $\gamma=11.88\ \$/h$ the unit cost of arriving late based on the estimations reported by \citet[][Table 2 on p.473]{Small_AER_1982}.
+%% Derived from this initial values \citet[][p.382]{CharyparNagel2005ga4acts} define the MATSim utility function as follows [...], where they consider the opportunity costs of $20\ EUR/h$, \ie the costs for doing nothing. 
 
-%Bernhard and Axhausen: Metaanalysis. Normwerk. Verlässlichkeit ...
-% Chaumet, R., P. Locher, F. Bruns, D. Imhof, M. Bernard and K.W.\ Axhausen (2007) Verfahren zur Berücksichtigung der Zuverlässigkeit in Evaluationen, final report for VSS 2002/002, Schriftenreihe, 1176, %Bundesamt für Strassen, UVEK, Bern. 
-}
+%% Frage ist hier: wie genau kam man auf die Werte? 
 
-\kai{Arrgghh.  Es ist doch erstaunlich, wie Legenden entstehen können (in dem Fall die Legende, dass 6/12/18 ``the typical Vickrey parameters'' seien); offenbar hat das nie jemand nachgeschaut, inklusive mir selbst.
+%% In \citet[][p.122]{ArnottEtAl_JUE_1990}, they are defined as $\alpha=6.40\ \$/h$, $\beta=3.90\ \$/h$ and $\gamma=15.21\ \$/h$.
 
-  Vickrey selber hat 0ct/min für trav, 1ct/min für wait, 2ct/min für perf und 4ct/min für late.  Habe das jetzt nicht gelesen, aber auch das scheint die Opportunitätskosten der Zeit somit separat auszuweisen; wenn man das integriert, dann hat man 2ct/min für traf\_eff, 3ct/min für wait\_eff und weiterhin 4ct/min für late.  Hm.
+%% %Bernhard and Axhausen: Metaanalysis. Normwerk. Verlässlichkeit ...
+%% % Chaumet, R., P. Locher, F. Bruns, D. Imhof, M. Bernard and K.W.\ Axhausen (2007) Verfahren zur Berücksichtigung der Zuverlässigkeit in Evaluationen, final report for VSS 2002/002, Schriftenreihe, 1176, %Bundesamt für Strassen, UVEK, Bern. 
+%% }
 
-  ---
+%% \kai{Arrgghh.  Es ist doch erstaunlich, wie Legenden entstehen können (in dem Fall die Legende, dass 6/12/18 ``the typical Vickrey parameters'' seien); offenbar hat das nie jemand nachgeschaut, inklusive mir selbst.
 
-  Bei CharyparNagel müsstest Du auch noch in Section 8 reinschauen, da stehen die derzeitigen 6/12/18.
+%%   Vickrey selber hat 0ct/min für trav, 1ct/min für wait, 2ct/min für perf und 4ct/min für late.  Habe das jetzt nicht gelesen, aber auch das scheint die Opportunitätskosten der Zeit somit separat auszuweisen; wenn man das integriert, dann hat man 2ct/min für traf\_eff, 3ct/min für wait\_eff und weiterhin 4ct/min für late.  Hm.
 
-  ---
+%%   ---
 
-  Meine Erinnerung ist wie folgt:
+%%   Bei CharyparNagel müsstest Du auch noch in Section 8 reinschauen, da stehen die derzeitigen 6/12/18.
 
-  Ich bin mir ziemlich sicher, dass ich die beiden Arnott-et-al papers damals schon kannte (hatte ich in Los Alamos schon gelesen).  Kann aber nicht sagen, ob ich David Charypar die Werte 6/12/18 direkt gegeben habe, oder ob er sie aus dem Paper extrahiert hat.
+%%   ---
 
-  Benjamin hat das dann mal nachgeschätzt (darauf bezieht sich der Absatz unten; eigentlich müsste es aber m.E.\ Tabelle 5 sein).  Seine Werte (perf/car/wait/late = 2.26/0/0/-11) waren deutlich anders (matsim hat 6/-6/0/-18), aber die verkehrlichen Resultate schienen, soweit wir sehen konnten, nicht anders, insbesondere nicht besser im Vergleich mit Zählungen.
+%%   Meine Erinnerung ist wie folgt:
 
-  Außerdem hat car=wait=0 zur Folge, dass das Arnott/Vickrey bottleneck model nicht mehr funktioniert, weil im Auto sitzen dann auch nicht mehr schlechter als zu früh kommen ist.  Inhaltlich scheint das (sogar) plausibel, aber vom Gefühl her wird ein solches Modell instabil.
+%%   Ich bin mir ziemlich sicher, dass ich die beiden Arnott-et-al papers damals schon kannte (hatte ich in Los Alamos schon gelesen).  Kann aber nicht sagen, ob ich David Charypar die Werte 6/12/18 direkt gegeben habe, oder ob er sie aus dem Paper extrahiert hat.
 
-  Schlussendlich ist ``wait'' schwierig zu schätzen, weil die meisten Befragungen das nicht sauber abfragen.
+%%   Benjamin hat das dann mal nachgeschätzt (darauf bezieht sich der Absatz unten; eigentlich müsste es aber m.E.\ Tabelle 5 sein).  Seine Werte (perf/car/wait/late = 2.26/0/0/-11) waren deutlich anders (matsim hat 6/-6/0/-18), aber die verkehrlichen Resultate schienen, soweit wir sehen konnten, nicht anders, insbesondere nicht besser im Vergleich mit Zählungen.
 
-  Wir hatten dann beschlossen, den matsim-default bei 6/12/18 zu lassen, weil dies zum einen plausible Resultate gibt, und weil die sehr synthetischen Werte deutlich machen, dass man die Werte eigentlich anpassen müsste.
+%%   Außerdem hat car=wait=0 zur Folge, dass das Arnott/Vickrey bottleneck model nicht mehr funktioniert, weil im Auto sitzen dann auch nicht mehr schlechter als zu früh kommen ist.  Inhaltlich scheint das (sogar) plausibel, aber vom Gefühl her wird ein solches Modell instabil.
 
-  ---
+%%   Schlussendlich ist ``wait'' schwierig zu schätzen, weil die meisten Befragungen das nicht sauber abfragen.
 
-  Besonders schlimm finde ich das jetzt nicht.  Wir sollten allerdings das wording vorsichtiger gestalten (``loosely based on Vickrey/Arnott'').  Und aus meiner Sicht hat Chaumet da nichts zu suchen; da müsstet Ihr wissen, welche Rolle er da gespielt hat.
+%%   Wir hatten dann beschlossen, den matsim-default bei 6/12/18 zu lassen, weil dies zum einen plausible Resultate gibt, und weil die sehr synthetischen Werte deutlich machen, dass man die Werte eigentlich anpassen müsste.
 
-}
+%%   ---
 
-\citet[][]{Kickhoefer_MastersThesis_2009} added monetary variables and income to the \gls{matsim} utility function and performed a mode-specific estimation based on the survey by \citet[][]{VrticEtAl_ResRep_SVI_2007}. The utility function extended by monetary factors was linear, both in the variables and the parameters. Estimated parameters are given in Table 3 of \citet[][]{Kickhoefer_MastersThesis_2009}. The income-dependent utility function was based on \citet[][]{Franklin_PhDThesis_2006}.
+%%   Besonders schlimm finde ich das jetzt nicht.  Wir sollten allerdings das wording vorsichtiger gestalten (``loosely based on Vickrey/Arnott'').  Und aus meiner Sicht hat Chaumet da nichts zu suchen; da müsstet Ihr wissen, welche Rolle er da gespielt hat.
 
-%% Note, that nowadays the utility function measures in the unit $utils$, where an earlier interpretation was based on monetary terms (e.g., $\EUR$).
+%% }
+
+%% \citet[][]{Kickhoefer_MastersThesis_2009} added monetary variables and income to the \gls{matsim} utility function and performed a mode-specific estimation based on the survey by \citet[][]{VrticEtAl_ResRep_SVI_2007}. The utility function extended by monetary factors was linear, both in the variables and the parameters. Estimated parameters are given in Table 3 of \citet[][]{Kickhoefer_MastersThesis_2009}. The income-dependent utility function was based on \citet[][]{Franklin_PhDThesis_2006}.
+
+%% %% Note, that nowadays the utility function measures in the unit $utils$, where an earlier interpretation was based on monetary terms (e.g., $\EUR$).
+%% %
+%% %m.E. nicht notwendig.  kai, jan'2015
+
+A possible approach to calibration is as follows:\footnote{%
 %
-%m.E. nicht notwendig.  kai, jan'2015
+Different groups have different systems, this one is typical for VSP, although it takes ideas from Michael Balmer.
+%
+}
+\begin{enumerate}
+
+\item Set $\beta_{scale} \equiv$ \verb$BrainExpBeta$ to $1.0$.  (This is the default.)
+
+This is normally a positive value.
+
+\item Set $\beta_{money} \equiv$ \verb$marginalUtilityOfMoney$ to whatever is the prefactor of your monetary term in your mode choice logit model.
+
+If you do not have a mode choice logit model, set to $1.0$.  (This is the default.)
+
+This is normally a positive value (since having more money normally increases utility).
+
+\item Set $\betaperf \equiv$ \verb$performing$ to whatever is the prefactor of car travel time in your mode choice mode (probably with a sign change, see below).
+
+If you do not have a mode choice logit model, set to $+6.0$.  (This is the default.)
+
+This is normally a positive value (since performing an activity for more time normally increases utility).
+
+\item Set $\beta_{tt,car} \equiv$ \verb$traveling$ to $0.0$. (For release~7, this is the default. \kai{chk})
+
+\emph{It is important to understand this:}  Even if this value is set to zero, traveling by car will be implicitly punished by the so-called opportunity cost of time: If you are traveling by car, you cannot perform an activity, and thus you are (marginally) losing $\betaperf$.  See Section~\ref{sec:opport-cost-of-time}.
+
+\item Set all other marginal utilities of travel time by mode \emph{relative to the car value}.
+
+E.g.\ if your logit model says something like 
+\[
+... -6/h \cdot tt_{car} - 7/h \cdot tt_{pt} ... ,
+\]
+then 
+\[
+\betaperf = 6 \ , \ \ \beta_{tt,car} = 0 \ , \hbox{ and } \beta_{tt,pt} = -1 \ .
+\]
+
+If you do not have a mode choice logit model, set all $\beta_{tt,mode} \equiv$ \verb$travelingXxx$ values to zero (i.e.\ same as car).
+
+\item Set the distance cost rates \verb$monetaryDistanceCostRateXxx$ to plausible values if you have them.
+
+For the time being, this needs to be negative (which is not entirely plausible but it is the way it is).
+
+\item Use the alternative-specific constants $C_{mode} \equiv$ \verb$constantXxx$ to calibrate your modal split.
+
+(This is, however, not completely simple: One needs to run iterations and look at their end, and especially for modes with small shares one needs to have innovation switched off early enough near the end of the iterations.)
+
+\end{enumerate}
+
+If you end up having your modal split right but its distance distribution not, you probably need to look at the different mode speeds.  In our experience this works better than using the $\beta_{tt,mode}$ for this.
+
+Calibrating schedule-based public transport (see Section~\ref{ch:pt}) goes beyond what can be provided here.
 
 % ##################################################################################################################
 \section{Applications and Extensions}
