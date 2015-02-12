@@ -134,6 +134,101 @@ locations, a considerable performance gain was possible compared to the naive
 implementation, calculating a route for each combination of start/end location
 and then choosing the best out of it.
 
+% -----------------------------------------------------------------------
+\subsection{File formats}
+
+\subsubsection{\lstinline|transitVehicles.xml|}
+\label{sec:inputdata:transitvehicles}
+
+%%\kai{convert to normal vehicles?}
+
+%%\ah{copied from let's get started:}
+%%\kai{vehicles.xml?  (without ``transit''?)} \kai{Andreas, fyi: I think we are leaning towards having separate containers vehicles.xml and transitVehicles.xml.  Not yet implemented.}
+
+To simulate public transport in \gls{matsim}, two additional input files are necessary. One is \lstinline|transitVehicles.xml|, which describes the vehicles which serve the lines: are they big buses, small buses, trains or light rail vehicles, and describes how many passengers each vehicle can transport.
+
+The description of public transport vehicles can be split into two parts: In a first part, vehicle types have to be described, specifying how many passengers such a vehicle can transport (Note that the term ``vehicle'' can refer to multiple vehicles in reality, \eg a train with several wagons should be specified as one long vehicle with a high number of seats). In the second part, actual vehicles have to be listed. Each vehicle has an identifier and is of a previously specified vehicle type. The following shows an example of a such a file, describing one vehicle type and two vehicles of that type. 
+
+\begin{xml}
+<?xml version="1.0" encoding="UTF-8"?> 
+<vehicleDefinitions xmlns="http://www.matsim.org/files/dtd" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xsi:schemaLocation="http://www.matsim.org/files/dtd http://www.matsim.org/files/dtd/vehicleDefinitions_v1.0.xsd"> 
+	<vehicleType id="1"> 
+      <description>Small Train</description> 
+      <capacity> 
+         <seats persons="50"/> 
+         <standingRoom persons="30"/> 
+      </capacity> 
+      <length meter="50.0"/> 
+   </vehicleType> 
+   <vehicle id="tr_1" type="1"/> 
+   <vehicle id="tr_2" type="1"/> 
+</vehicleDefinitions>
+\end{xml}
+
+% -----------------------------------------------------------------------
+\subsubsection{\lstinline|transitSchedule.xml|}
+\label{sec:inputdata:transitschedule}
+The second file that is required to simulate public transport is \lstinline|transitSchedule.xml|, a rather complex file. It contains information about stop facilities (these can be bus stops, train stations or other stop locations) and transit services.
+
+In the first part, the stop facilities need to be defined, giving each one a coordinate, an identifier and a reference to a link in the network. The stop can only be served by vehicles driving on that specified link. Optionally, it is possible to specify a name for the stop and if other vehicles are blocked when a transit vehicle is waiting at a stop. This last attribute is useful to model \eg the difference of bus stops, where one bus stop has a bay, while at another stop, the bus has to stop on the actual road.
+
+After the stop facilities, the transit lines, their routes and schedules are described. This is a hierarchical data structure: Each line can have one or more routes, each route has a route profile, a network route and a list of departures. The following listing represents an example of a minimalistic but complete transit schedule.
+%
+\begin{xml}
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE transitSchedule SYSTEM "http://www.matsim.org/files/dtd/transitSchedule_v1.dtd"> 
+<transitSchedule> 
+   <transitStops> 
+      <stopFacility id="1" x="990.0"  y="0.0"   name="Adorf" 
+           linkRefId="1" isBlocking="false"/> 
+      <stopFacility id="2" x="1100.0" y="980.0" name="Beweiler" 
+           linkRefId="2" isBlocking="true"/> 
+      <stopFacility id="3" x="0.0"    y="10.0"  name="Cestadt" 
+           linkRefId="3" isBlocking="false"/> 
+   </transitStops> 
+   <transitLine id="Blue Line"> 
+      <transitRoute id="1"> 
+         <description>Just a comment.</description> 
+         <transportMode>bus</transportMode> 
+         <routeProfile> 
+            <stop refId="1" departureOffset="00:00:00"/> 
+            <stop refId="2" arrivalOffset="00:02:30" departureOffset="00:03:00" 
+                                                     awaitDeparture="true"/> 
+            <stop refId="3" arrivalOffset="00:05:00" awaitDeparture="true"/> 
+         </routeProfile> 
+         <route> 
+            <link refId="1"/> 
+            <link refId="2"/> 
+            <link refId="3"/> 
+         </route> 
+         <departures> 
+            <departure id="1" departureTime="07:00:00" vehicleRefId="12"/> 
+            <departure id="2" departureTime="07:05:00" vehicleRefId="23"/> 
+            <departure id="3" departureTime="07:10:00" vehicleRefId="34"/> 
+         </departures> 
+      </transitRoute> 
+   </transitLine> 
+</transitSchedule>
+\end{xml}
+
+Each transit line must have a unique id. Each transit route has an id which must be unique within that one line, so the same route id can be used with different lines. The \lstinline|transportMode| describes on which links in the network the line runs (Actually, this is currently not yet enforced. It would be possible to let a bus run on train links in the simulation. It might be enforced in the future).
+
+The \lstinline|routeProfile| describes the stops this route serves, while route itself describes the series of links in the network the transit vehicle's driver has to drive along (thus often referred to as network route. Note that the complete route, \ie all links the vehicle drives along, must be listed in the route, and not only the ones where stops are located. All the specified stops should occur along this route in the specified order. The time offsets given for each stop in the \lstinline|routeProfile| describe the relative time offset to an actual departure time. If a bus is to depart at 7\,am, and stop~2 has a \lstinline|departureOffset| 3\,minutes, this must be read that the bus is expected to depart at 7:03\,am at the specific stop. All stops in the route profile must have a departure offset defined, except the last one. All stops, except the first one, can optionally have an arrival offset defined. This is mostly useful for large trains that stop for several minutes at a station to help the routing algorithm to find connecting services at the correct time, namely the expected arrival time of the train.
+
+As last part of the description of a transit route, the list of departures should be given. Each departure has an id, which must be unique within the route, and gives the departure time at the first stop of the specified route profile. In addition, the departure specifies with which vehicle the service should be run. This vehicle must be defined in the aforementioned list of transit vehicles. 
+
+Because of its complexity, transit schedules often contain little mistakes that will return in an error when the simulation runs. Typical examples include that the network route is missing a link, or that the network route does not pass at all the defined stops in the right order. To make sure a schedule does not have any such issues before the simulation is started, a special validation routine is available:
+%
+\begin{lstlisting}
+java -Xmx512m -cp /path/to/matsim.jar  
+      org.matsim.pt.utils.TransitScheduleValidator  
+      /path/to/transitSchedule.xml /path/to/network.xml
+\end{lstlisting}
+%
+If run, this validator will print out a list of errors or warnings, if any are found, or show a message that the schedule appears to be valid.
+
 % ============================================================================================
 \subsection{Possible Improvements}
 While the ability to simulate public transport was a big advance for \gls{matsim},

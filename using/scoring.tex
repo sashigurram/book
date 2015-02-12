@@ -319,7 +319,7 @@ VTTS = \frac{mUTTS}{\beta_{m}} = \frac{- \beta_{trav} + \beta_{dur} \cdot \frac{
 \]
 and at the typical duration of an activity
 \[
-VTTS \Big|_{t_{dur,q} = t_{typ,q}} = \frac{mUTTS}{\beta_{m}} = \frac{- \beta_{trav} + \beta_{dur}}{\beta_{m}}
+VTTS \Big|_{t_{dur,q} = t_{typ,q}} = \frac{mUTTS}{\beta_{m}} \Big|_{t_{dur,q} = t_{typ,q}} = \frac{- \beta_{trav} + \beta_{dur}}{\beta_{m}}
 \]
 This is important for calibration of the utility function.
 
@@ -424,7 +424,7 @@ For an adaptive \gls{algorithm}, such a penalty needs to be defined such that it
 Clearly, the wrap-around approach fails if the first and last activity are not the same.  The present code does not look at locations, but gives a warning and problematic results when they do not have the same type.
 
 % ##################################################################################################################
-\section{Parameters of the Scoring Function and their Calibration}
+\section{Typical Parameters of the Scoring Function and their Calibration}
 
 %% \kai{Wenn wir das ohnehin nicht genau wissen, dann frage ich mich, ob wir nicht lieber auf $\beta_{trav}=0$ wechseln sollten?} 
 %% %
@@ -510,7 +510,7 @@ Different groups have different systems, this one is typical for VSP, although i
 }
 \begin{enumerate}
 
-\item Set $\beta_{scale} \equiv$ \verb$BrainExpBeta$ to $1.0$.  (This is the default.)
+\item Set $\beta_{scale} \equiv$ \verb$BrainExpBeta$ to $1.0$.  (This is the default.) \kai{Never mentioned so far, I think.  Yet, it is relevant.}
 
 This is normally a positive value.
 
@@ -526,9 +526,9 @@ If you do not have a mode choice logit model, set to $+6.0$.  (This is the defau
 
 This is normally a positive value (since performing an activity for more time normally increases utility).
 
-\item Set $\beta_{tt,car} \equiv$ \verb$traveling$ to $0.0$. (For release~7, this is the default. \kai{chk})
+\item Set $\beta_{tt,car} \equiv$ \verb$marginalUtilityOfTraveling...$ to $0.0$. (For release~7, this is the default. \kai{chk})
 
-\emph{It is important to understand this:}  Even if this value is set to zero, traveling by car will be implicitly punished by the so-called opportunity cost of time: If you are traveling by car, you cannot perform an activity, and thus you are (marginally) losing $\betaperf$.  See Section~\ref{sec:opport-cost-of-time}.
+\emph{It is important to understand this:}  Even if this value is set to zero, traveling by car will be implicitly punished by the so-called opportunity cost of time: If you are traveling by car, you cannot perform an activity, and thus you are (marginally and approximately) losing $\betaperf$.  See Section~\ref{sec:opport-cost-of-time}.
 
 \item Set all other marginal utilities of travel time by mode \emph{relative to the car value}.
 
@@ -543,11 +543,11 @@ then
 
 If you do not have a mode choice logit model, set all $\beta_{tt,mode} \equiv$ \verb$travelingXxx$ values to zero (i.e.\ same as car).
 
-\item Set the distance cost rates \verb$monetaryDistanceCostRateXxx$ to plausible values if you have them.
+\item Set the distance cost rates \verb$monetaryDistanceCostRate...$ to plausible values if you have them.
 
 For the time being, this needs to be negative (which is not entirely plausible but it is the way it is).
 
-\item Use the alternative-specific constants $C_{mode} \equiv$ \verb$constantXxx$ to calibrate your modal split.
+\item Use the alternative-specific constants $C_{mode} \equiv$ \verb$constant$ to calibrate your modal split.
 
 (This is, however, not completely simple: One needs to run iterations and look at their end, and especially for modes with small shares one needs to have innovation switched off early enough near the end of the iterations.)
 
