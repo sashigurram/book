@@ -101,10 +101,10 @@ If supplied with a learning approach these within-day models should approach equ
 
 Still, there are context where this immediate response ability could be used within \gls{matsim} to explore the choice set more effectively, especially if the choice alternatives are limited in number and in geographic reach. 
 \citet[][]{WaraichEtAl_TechRep_IVT_2013_2}
-Waraich et al. (200x) 
-\kwaah{What is the best reference here?} 
-\ah{afaik, this approach never come beyond a conceptual paper.}
-use a localized within-day, actually within-trip search to find the best parking space around a destination. 
+%Waraich et al. (200x) 
+%\kwaah{What is the best reference here?} 
+%\ah{afaik, this approach never come beyond a conceptual paper.}
+proposed a localized within-day, actually within-trip search to find the best parking space around a destination. 
 This localized search reduces the need for full iterations considerably and allows to add behavioral detail at this point, here the type of space, walking distance and parking fee trade-off. 
 %In the same spirit, Horni (2015) \kwaah{Gibt es da schon etwas?} \ah{not yet} employs the same approach to address crossing of signalized intersections. 
 
@@ -168,15 +168,23 @@ In that sense, one could include some approximation of the error into the analys
 \section{Utility Function}
 \label{sec:future-of-scoring-function}
 The current logarithmic \gls{matsim} utility function is not suitable for modeling activity sequence choice \citet[][p.127f]{Feil_PhDThesis_2010} and \citet[][]{MATSim_Userguide_2015}. 
-Because of its negative second derivative, \ie its concavity, the log form favors very short activities, which means that the schedule is ever filled-up with short activities, where the usually long home activities are replaced first. 
+Because of its negative second derivative, \ie its concavity, the log form favors very short activities, which means that the schedule is ever filled-up with short activities, where the usually long home activities are replaced first.%
+\footnote{
+With a fixed number of activities the log form optimum lies as far to the right as the overall budget constraint allows. 
+In line with consumer theory's utility maximization, all first derivatives are equal and the unique optimum is stable.
+
+With flexible number of activities their durations wander towards zero duration as the marginal utility is largest at zero, where zero duration itself is a singularity. 
+Additionally, only the activity type with the shortest typical duration will survive the optimization process.} 
+%
 Since this generates completely unrealistic behavior, one is on the search for alternative functional forms. 
 
-\ah{curvature param}
+\ah{curvature param?}
 
 % =========================================================================================
 \subsection{Alternative Functional Forms of the Utility Function}
 \label{sec:alternative-functions}
 A new S-shaped function, proposed by \citet[][]{Joh_PhDThesis_2004}, was tested by \citet[][p.129ff]{Feil_PhDThesis_2010}. 
+Establishing a positive second derivative near point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. 
 Estimates of the new function based on the Swiss microcensus were provided. 
 This estimation, however, was difficult due to its non-linearities and the difficulty in generating sufficiently large choice sets. 
 In addition many daily activities and their durations are not chosen freely by the individual. 
@@ -186,39 +194,31 @@ Looking at the nested-logit-based activity based model literature it is obvious,
 Further tests with larger choice sets did not result in satisfactory results and further work has been stopped. 
 Still, as induced and suppressed demand are urgent policy issues this stream of work would need to be taken up again. 
 
-There are also technical issues with Joh’s S-shaped formulation as detailed below in Section~\ref{sec:stabilityissues}. 
+There are also technical issues with Joh's S-shaped formulation. % as detailed below in Section~\ref{sec:stabilityissues}. 
 Away from the upper part of the curve, where it starts to become similar to a logarithmic curve, it grows very rapidly. 
 In estimation this implies dramatic changes over short parameter spans. 
 This makes finding an optimum difficult numerically. 
+Additionally, the problem of the complete diminishing of those activities with longer typical durations, such as home activities, remains the same, when the number and types of activities is flexible.
 
 It might be worth to take another approach based on the observation \citep[][and others]{SchlichEtAl_TransportRev_2004} that activity, location and mode form packages, which are rarely changed. 
 One could think of the optimization task as a knapsack problem, where the traveler creates a Gestalt of the interactions to satisfy his commitments and his desires. 
 \gls{tasha} is a model, which takes a similar stance. 
 
-% ----------------------------------------------------------
-\subsubsection{Stability Issues With the S-Shaped Function}
-\label{sec:stabilityissues}
-With a fixed number of activities the log form optimum lies as far to the right as the overall budget constraint allows. 
-In line with consumer theory's utility maximization, all first derivatives are equal and the unique optimum is stable.
-
-With flexible number of activities their durations wander towards zero duration as the marginal utility is largest at zero, where zero duration itself is a singularity. 
-Additionally, only the activity type with the shortest typical duration will survive the optimization process.
-
-Establishing a positive second derivative near point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. 
-However, the problem of the complete diminishing of those activities with longer typical durations, such as home activities, remains the same, when the number and types of activities is flexible.
-
-Furthermore, an optimum with activity durations in the convex region of their utility functions is unstable. 
-
-...
-
-Either, (a) a small increase of their durations generates larger overall utility, than the shortening of the remaining activities in the concave region. Then the increasing curvature lets this activity increase further, or (b) the shortening 
-
-Furthermore, there are points where common system stability criteria---small perturbations only have small effects---is broken.
-At such points of the optimization trajectory, for filling up the time budget, it is suddenly better to add a new activity to the convex region than to prolong an activity in the concave region. \ah{ist immer so bei act repl}
-Due to the the S-shaped function's symmetry \ah{explain...symmetry not correct}, these points seem to fall together with the inflection points of the the bell-shaped first derivative of the S-shaped function.
+% ---------------------------------------------------------------------------------------------------------
+%\subsubsection{Stability Issues With the S-Shaped Function}
+%\label{sec:stabilityissues}
 
 % ----------------------
-%\ah{Some pieces of notes:
+%\ah{Some pieces of notes: Cannot put it down:
+%
+%Furthermore, an optimum with activity durations in the convex region of their utility functions is unstable. 
+%...
+%
+%Either, (a) a small increase of their durations generates larger overall utility, than the shortening of the remaining activities in the concave region. Then the increasing curvature lets this activity increase further, or (b) the shortening 
+%
+%Furthermore, there are points where common system stability criteria---small perturbations only have small effects---is broken.
+%At such points of the optimization trajectory, for filling up the time budget, it is suddenly better to add a new activity to the convex region than to prolong an activity in the concave region. \ah{ist immer so bei act repl}
+%Due to the the S-shaped function's symmetry \ah{explain...symmetry not correct}, these points seem to fall together with the inflection points of the the bell-shaped first derivative of the S-shaped function.
 %
 % The optimization problem however, does neither have a stable optimum. An S-shaped function's first derivative is bell-shaped, \ie not bijective,
 %
@@ -244,7 +244,6 @@ Due to the the S-shaped function's symmetry \ah{explain...symmetry not correct},
 %Its behavioral suitability is another unsolved issue.
 %
 %\ah{ungewöhnliche Notation mit $dt$, wie schreibt man das sonst?}
-%
 %
 %-------------
 %
@@ -297,34 +296,33 @@ Due to the the S-shaped function's symmetry \ah{explain...symmetry not correct},
 %This is not a Lennard-Jones force!
 %}
 
-\kai{Hallo Kay,
-Ist Euch die S-shaped utl function so wichtig, dass Ihr sie im "Buch" stehen haben wollt?
-Meine Intuition ist nämlich folgende:
-Es herrscht Wettbewerb zwischen Aktivitäten.
-Optimal ist wenn alle ersten Ableitungen nach der Zeit identisch (wie bei normaler consumer theory Ableitungen nach dem Preis).
-Theoretisch kann damit ein Arbeitspunkt auch im konvexen Teil der utl fct liegen.  Das ist aber instabil (siehe PS), und wird sich daher immer entweder nach Null oder in den konkaven Bereich bewegen.
-Damit gibt es aber auch in der Realität nur wenig oder gar keine Dauern im konvexen Bereich.
-Damit ist der konvexe Bereich nicht schätzbar.
-Insofern waren die Probleme bei Feil hier m.E. nicht Pech, sondern systematisch.
-Von mir aus kann sich die Welt damit trotzdem beschäftigen.
-Aber soll es wirklich als "research avenue" in das MATSim-Buch?  Oder könnten wir uns auf eine allgemeinere Formulierung einigen (wo wir einfach sagen, dass die derzeitige matsim fct zu unflexibel ist)?
-Danke \& vG
-Kai
-%
-PS: "Instabil": Sobald der Arbeitspunkt hier etwas nach rechts geht, geht die Steigung nach oben, der marginale Zugewinn steigt also an.  
-- Falls dieser Gewinn an Steigung mehr ist als der Verlust an Steigung an allen anderen Aktivitäten, dann wird der Anteil der betrachteten Aktivität immer größer, bis der Arbeitspunkt im konkaven Bereich ist.
-- Falls nicht, so gilt das Argument andersherum, und die betrachtete Aktivität wird auf Dauer Null zusammenschnurren.
-}
+% ---------------------------------------------------------------------------------------
+%\kai{Hallo Kay,
+%Ist Euch die S-shaped utl function so wichtig, dass Ihr sie im "Buch" stehen haben wollt?
+%Meine Intuition ist nämlich folgende:
+%Es herrscht Wettbewerb zwischen Aktivitäten.
+%Optimal ist wenn alle ersten Ableitungen nach der Zeit identisch (wie bei normaler consumer theory Ableitungen nach dem Preis).
+%Theoretisch kann damit ein Arbeitspunkt auch im konvexen Teil der utl fct liegen.  Das ist aber instabil (siehe PS), und wird sich daher immer entweder nach Null oder in den konkaven Bereich bewegen.
+%Damit gibt es aber auch in der Realität nur wenig oder gar keine Dauern im konvexen Bereich.
+%Damit ist der konvexe Bereich nicht schätzbar.
+%Insofern waren die Probleme bei Feil hier m.E. nicht Pech, sondern systematisch.
+%Von mir aus kann sich die Welt damit trotzdem beschäftigen.
+%Aber soll es wirklich als "research avenue" in das MATSim-Buch?  Oder könnten wir uns auf eine allgemeinere Formulierung einigen (wo wir einfach sagen, dass die derzeitige matsim fct zu unflexibel ist)?
+%Danke \& vG
+%Kai
+%%
+%PS: "Instabil": Sobald der Arbeitspunkt hier etwas nach rechts geht, geht die Steigung nach oben, der marginale Zugewinn steigt also an.  
+%- Falls dieser Gewinn an Steigung mehr ist als der Verlust an Steigung an allen anderen Aktivitäten, dann wird der Anteil der betrachteten Aktivität immer größer, bis der Arbeitspunkt im konkaven Bereich ist.
+%- Falls nicht, so gilt das Argument andersherum, und die betrachtete Aktivität wird auf Dauer Null zusammenschnurren.
+%}
 
 %\kai{Wir können aber auch unter research avenues durchaus so etwas wie "alternative functional forms of the utl function" als Überschrift nehmen, und dann kurz erklären, dass Feil es mit der Joh-Fkt probiert hat, aber mit einem Teil der Parameter Schätzprobleme hatte.  M.E. sollte nur das mit dem S nicht in der Überschrift stehen.}
-
 
 % =========================================================================================
 \subsection{Estimating a Utility Function}
 \label{sec:estimation}
-\kwaah{
 The challenge is that transport research has amply documented, that the travelers value different elements of their experience at different rates on average and certainly with large variances between each other. 
-Some of these differences might be due to the omission of the daily schedule context, as well as missing interactions with the trip purpose and the omitted or misspecified distribution of the payment responsibilities (the firm paying, the parents paying for young adults, girlfriends paying for their boyfriends \ah{?} etc.). 
+Some of these differences might be due to the omission of the daily schedule context, as well as missing interactions with the trip purpose and the omitted or misspecified distribution of the payment responsibilities (the firm paying, the parents paying for young adults, girlfriends paying for their boyfriends etc.). 
 Still, the following differences should be accounted for: 
 %
 \begin{itemize}\styleItemize
@@ -346,22 +344,20 @@ The literature has shown finer interactions, as well as further elements, but th
 However, with the exception of a few studies \citep[][]{BalmerEtAl_ResRep_datapuls_2010, HuelsmannEtAl2012HotspotPricing, KickhoeferNagel2013EmissionInternalizationNETS, KaddouraEtAl2015PtMarginalSocialCostPricingJTEP}, these estimates have not been considered yet for many other projects, although they represent a valuable base for future comparisons. 
 The complete set outlined above has not yet been estimated in one consistent estimation, and so remains an urgent item for \gls{matsim} research. 
 
-Having such a base at hand is important as estimating and applying a MATSim utility function is non-trivial due to the following. 
-}
+Having such a base at hand is important as estimating and applying a \gls{matsim} utility function is non-trivial due to the following. 
+
 %
 Agents optimize \emph{complete day plans} \citep[see also][Section 6.3.1]{MATSim_Userguide_2015}. This means that the utility levels of the single choice dimensions need to be carefully balanced, when applying estimates. Usually it is impossible to apply readily-available functions estimated independently for a single choice dimension. A degenerated example might be the following. All destination alternatives evaluated with a not-well calibrated utility function generate very low utility; in that case the complete activity might be simply dropped. 
 %
-\benjamin{I dont fully understand the above...what is an inappropriate utility function?}
-%
-\ah{better?}
+\benjamin{I dont fully understand the above...what is an inappropriate utility function?} \ah{adapted}
 %
 This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. 
 The inseparability of choice dimensions means that in \gls{matsim} we can only consistently handle choices if the parameters are estimated or postulated consistently. 
 Estimates from independent studies reflect the scale parameter of the Gumbel distribution of the observed choices, which is arbitrarily set to zero for identification purposes, which means that the values cannot be compared 
-\kwaah{(See Bierlaire, ????)}
+%\kwaah{(See Bierlaire, ????)}
 . The elasticities and trade-offs values can be compared, as they removed the scale parameter from their values. 
 %
-\benjamin{Why? The only difference if one has more choice dimensions in the model is that utility differences resulting from some policy will be smaller than with less choice dimensions---\ie influencing the elasticity.}
+\benjamin{Why? The only difference if one has more choice dimensions in the model is that utility differences resulting from some policy will be smaller than with less choice dimensions---\ie influencing the elasticity.} \ah{adapted}
 
 Incorporating a contribution, \eg for parking or destination choice, in combination with absolute utilities is even trickier as the Charypar-Nagel function is non-linear, which means that available parameters---very often linear utility functions---need to be incorporated by approximation procedures and distinction of cases as described in \citet[][p.75ff]{Horni_PhDThesis_2013}. 
 Furthermore, \gls{matsim} utility function includes travel times, while their parameters which are readily available from studies, the quality and potential bias in the calculation of the travel times used for those estimate is rarely challenged. 
@@ -374,9 +370,9 @@ Furthermore, travel time and activity duration parameter estimates including inc
 However, the \gls{matsim} is now measured in utils not monetary units. 
 Still, the parameters in utils and monetary terms (such as tolls, parking costs, fares etc., or income-dependent attributes) are often interacted and thus their relation needs to be consistent if they come from different studies.
 %
-\benjamin{I dont see the problem here...parameters define the \gls{vtts}, and are dependent on the variance of the unobserved attributes, no? So measuring in utils or money does not make a difference.}
+\benjamin{I dont see the problem here...parameters define the \gls{vtts}, and are dependent on the variance of the unobserved attributes, no? So measuring in utils or money does not make a difference.} \ah{adapted}
 
-A numerical problem, particularly relevant for activity choice, concerns the functional form of the utility function---As argued in Section~\ref{sec:alternative-functions}, a function offering an additional degree of freedom (the curvature at the typical duration) would be better.
+%A numerical problem, particularly relevant for activity choice, concerns the functional form of the utility function---As argued in Section~\ref{sec:alternative-functions}, a function offering an additional degree of freedom (the curvature at the typical duration) would be better.
 
 Estimating a utility function for \gls{matsim} is associated with another problem. 
 The function is applied iteratively for a travel demand, which is in the beginning of the relaxation process usually not very similar to the situation for which the function was estimated. 
