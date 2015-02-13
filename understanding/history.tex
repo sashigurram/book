@@ -92,10 +92,10 @@ The \gls{transims} project inherited some of the above design, most notably the 
 
 %% However, it became quickly clear that if the goal was realistic long-term traffic forecasting, demand modelling needed to correspond to what the network loading could do.  This was the time when activity-based demand modelling gained ground \citep{Axhausen1988PhD,Bowman1998PhD,KitamuraEtcSequential}, and it was thus expected that the activity-based demand would eventually come from somewhere else.  
 
-In terms of software design, \gls{transims} was a collection of stand-alone modules, coupled by a script.  For example, the population synthesizer would generate a population file, the activity generate would take the population file as input and generate an activities file as output, etc.  Iterations were done by running 
-the traffic \gls{microsimulation} 
-\ah{replace by \gls{mobsim}?}
-based on plans and outputting average link travel times, and then the router based on link travel times and outputting plans.
+In terms of software design, \gls{transims} was a collection of stand-alone modules, coupled by a script.  For example, the population synthesizer would generate a population file, the activity generator would take the population file as input and generate an activities file as output, etc.  Iterations were done by running 
+the traffic \gls{microsimulation} (in \gls{matsim} called \gls{mobsim})
+%% \ah{replace by \gls{mobsim}?}
+based on plans and outputting average link travel times, and then running the router based on link travel times and outputting plans.
 
 % ========================================================================================================
 \subsection{MATSim in \protect\gls{cpp} (ETH Zurich Computer Science)}
@@ -104,9 +104,9 @@ based on plans and outputting average link travel times, and then the router bas
 %\ah{somehow latex on ci.matsim.org does not like gls in section titles (?). See Build \#432. I'll try to find a work-around.}
 %\ah{got it: \protect\gls{...}}
 
-Kai Nagel moved to \gls{eth} Zürich Computer Science in 1999.  Unfortunately, it turned out to be difficult to continue with \gls{transims}, for example because \gls{transims} was not under an open source license, and also because \gls{transims} fell under U.S.\ technology export restrictions for some time.  In consequence, \gls{matsim} was started.
+Kai Nagel moved to \gls{eth} Zürich Computer Science in 1999.  Unfortunately, it turned out to be difficult to continue with \gls{transims}, in part because \gls{transims} was not under an open source license at that time, and also because \gls{transims} fell under U.S.\ technology export restrictions for some time.  As a result, \gls{matsim} was started.
 
-\gls{matsim} had to important differences to \gls{transims} from the beginning: (1) it tried to be more ``lightweight'', \ie running much faster, in particular by using the queue model \citep{GawronPhd,Gawron1998IterativeAlgorithmto} rather than the cellular automata model for network loading; and (2) other than \gls{transims}, agent properties such as demographic data, activity patterns or routes were no longer distributed across multiple files, but contained in one hierarchical \gls{xml} file.
+\gls{matsim} had two important differences to \gls{transims} from the beginning: (1) it tried to be more ``lightweight'', \ie running much faster, in particular by using the queue model \citep{GawronPhd,Gawron1998IterativeAlgorithmto} rather than the cellular automata model for network loading; and (2) other than \gls{transims}, agent properties such as demographic data, activity patterns or routes were no longer distributed across multiple files, but contained in one hierarchical \gls{xml} file.
 
 Another difference followed eventually, which was to go back to the approach of \citet{Nagel1996NRW}, but this time truly following \citet{ArthurBar} by giving each individual agent its own memory \citep{RaneyNagel2006traf-framework}.  After experimentation with relational databases such as MySQL \citep{mysql-wikipedia} or Oracle \citep{oracle}, it was eventually decided to implement \gls{matsim} as an object-oriented database ``in memory'', \ie by first reading in all \gls{xml} files, modifying the data in memory during the life-time of a run, and writing the data back from memory to \gls{xml} files at the end of the run.  The decision was based on the observation that the \gls{matsim} data model was described much better by \gls{xml} files, and conversion to the relational format was impractical, prone to errors, and also too slow if not kept in memory during iterations. 
 
@@ -125,7 +125,7 @@ We abstract away from the notion that \gls{java} ``passes object references by v
 
 \item \gls{java} runs well on many platforms.  This allowed (and still allows) us to let people work on their favorite platforms, be it \gls{linux}, \gls{windows}, or \gls{mac}.
 
-\item There is better non-commercial support for \gls{java}. 
+\item There is good non-commercial support for \gls{java}, for example the \gls{eclipse} \gls{ide}.
 
 \item The \gls{java} compiler is easier to handle.  For example, there is no extraction of header files, and the \gls{java} compiler by itself sorts out the sequence in which modules need to be compiled.
 
@@ -139,7 +139,7 @@ In addition, it seems that the gap between \gls{cpp} and \gls{java} has narrowed
 
 \item One reason for using \gls{cpp} was that it could be combined with \gls{mpi}, which was a reliable message passing standard for parallel computing.  Parallel computing was necessary both for performance reasons and to be able to run simulations that needed more than about 4\,\gls{gb} of memory---the maximum that could be addressed with the 32\,bit architecture that was standard at that time.  \gls{mpi} is also available for \gls{java}, but it is much less well maintained.
 
-With the advent of the 64\,bit architectures, the second reason for parallel computing became obsolete. In addition, Kai Nagel now being at a transport engineering department, it seemed that making conceptual progress was more important than keeping the parallel computing edge, especially since the maintenance parallel code \emph{permanently} consumes additional resources.
+With the advent of the 64\,bit architectures, the second reason for parallel computing became obsolete. In addition, Kai Nagel now being at a transport engineering department, it seemed that making conceptual progress was more important than keeping the parallel computing edge, especially since the maintenance of parallel code \emph{permanently} consumes additional resources.
 
 With the decision to give up on parallel computing, it was no longer necessary to maintain compatibility with \gls{mpi}, and thus the move to \gls{java} was facilitated.
 
@@ -161,11 +161,11 @@ Clearly, the code by Michael Balmer already had all the necessary data classes, 
 % ========================================================================================================
 \subsection{Code Reorganization}
 \label{sec:matsim-core-reorg}
-The \gls{cpp} version of \gls{matsim} still was, similar to the original \gls{transims}, a collection of stand-alone executables coupled by scripts.  For example, the router would read plans and events, and replace some of the plans by other plans with modified routes.  The program flow was organized with shell scripts and makefiles.  Later it was possible to start all modules simultaneously and they would use messages to interact \citep[also see][]{GloorNagel2005ped-att04-birkh}, but the file-based and scripted interaction always remained available.
+The \gls{cpp} version of \gls{matsim} was, similar to the original \gls{transims}, a collection of stand-alone executables coupled by scripts.  For example, the router would read plans and events, and replace some of the plans by other plans with modified routes.  The program flow was organized with shell scripts and makefiles.  Later it was possible to start all modules simultaneously and they would use messages to interact \citep[also see][]{GloorNagel2005ped-att04-birkh}, but the file-based and scripted interaction always remained available.
 
 That approach had, as a consequence, very clearly defined interfaces, \ie the files. Exchanging information that was not included in the files meant changing the readers and writes on \emph{both} sides, which was in consequence rarely done, and the stand-alone modules rather tried to live with the information they had.
 
-When \gls{matsim} was re-implemented in \gls{java} around 2006--7, it was re-implemented as one system.  As a result, now everything could interact with everything.  For example, a router could modify the network, compute routes on the modified network, and then modify it back---including the danger of not getting things completely right in changing it back.  \kai{not very clear}
+When \gls{matsim} was re-implemented in \gls{java} around 2006--7, it was re-implemented as one system.  As a result, now everything could interact with everything.  For example, a router could modify the network, compute routes on the modified network, and then modify it back. Clearly, it could make an error in the process, and thus erronously modifying the network.  In this way, any module could modify any data of \gls{matsim}, greatly increasing the scope for misunderstandings and errors.
 
 What made even more problems, however, were extensions to the program flow.  The program flow was, as it still is, organized by the \lstinline$Controler$ class.  Originally, everybody who wanted to change the program flow, in particular insert his or her own research \glspl{module}, would inherit from \lstinline$Controler$, override some methods, and insert his or how own instructions.  This did, however, have the consequence that it was impossible to combine the \glspl{extension} without possibly massive manual interventions, illustrated as follows.
 % (see Figure~\ref{fig:do-not-extend-controler}). \ah{reasons for this being a figure?}
@@ -173,7 +173,7 @@ What made even more problems, however, were extensions to the program flow.  The
 %\begin{figure}\footnotesize
 %\hrule
 %\strut For example, assume the core method as
-For example, assume the core method as
+For example, assume the core program flow as
 \begin{lstlisting}
 class Controler {
    void run() {
@@ -210,7 +210,7 @@ class YourControler extends Controler {
 }  
 \end{lstlisting}
 %
-You can neither say \protect\lstinline$YourControler extends MyControler$ nor \protect\lstinline$MyControler extends YourControler$, since either way one of the two extensions gets lost.  In this simple case, it may be possible to address the problem by manual intervention, but in more complicated situations this is no longer possible without extensive additional testing. %\strut
+If you want to combine both approaches, you can neither say \protect\lstinline$YourControler extends MyControler$ nor \protect\lstinline$MyControler extends YourControler$, since either way one of the two extensions gets lost.  In this simple case, it may be possible to address the problem by manual intervention, but in more complicated situations this is no longer possible without extensive additional testing. %\strut
 %\hrule
 %\caption{Example why extending \lstinline|Controler| does not allow combination of extensions.}
 %\label{fig:do-not-extend-controler}
