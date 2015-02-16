@@ -421,41 +421,43 @@ An opposite perspective exists, where the relaxation procedure is just a numeric
 
 %\vfill\eject
 % ##################################################################################################################
-\section{(Macroscopic Fundamental Diagram) Double-Queue Mobsim}
+\section{Double-Queue Mobsim}
 \label{sec:researchavenues-double-queue-mobsim}
+The standard \gls{matsim} \gls{mobsim} \gls{qsim} implements a single-queue model as described in Chapter~\ref{ch:kinematicwaves}. The associated \gls{fd} (flow vs. density) is horizontal for medium densities, and falls to zero very steeply at very high densities. This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards traveling speed of $L/s$ ($L$ is the length of respective link) rather than the conventional approx. 15\,kilometers per hour.
 
-\kai{Siehe auch Material in basicprocedure.tex}
+The \gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) and the deprecated \gls{deqsim} (Section~\ref{sec:deqsim}) implement a double-queue model with backward traveling gaps. Currently, implementation work and tests are performed to include this also in \gls{qsim}; performance problems with the inclusion of a large number of holes is the last issue to be solved.
 
-Illustrates empirically the summary in Section~\ref{sec:kinematicwaves-summary}.
-\ah{
-\subsection{Aggregate Traffic Flow Characteristics}
-\gls{matsim}'s aggregate traffic flow characteristics were analyzed in the common form of the macroscopic fundamental diagram. Some investigations additionally derived \gls{matsim}'s (implicit) volume-delay function \citep[][]{HorniMontini_STRC_2013}.
-
-Some simulation investigations had problems to reproduce the complete MFD (project NetCap, personal communication, 2014), in particular, the high density region. They used mobsim versions without the backward moving gaps feature. Other studies, based on DEQSim and JDEQSim respectively, which both \emph{do} include \emph{back moving gaps}, were able to generate realistic MFDs. \kai{Das ist natürlich kein Wunder.}
-
-\citet[p.81ff][]{Simoni_MastersThesis_2013} investigates \gls{matsim}'s ability to model macroscopic characteristics with a four link ring scenario. He found considerable influence of the backward moving gaps speed on the form of the MFD. \citet[][]{CharyparEtAl_TRB_2009} also use a circular toy scenario. They also found the typical trapezoidal form for a broad range of network resolutions.
-
-Natural conclusion here is, that back moving gaps are essential for generating a realistic MFD \kai{bis hier hin stimme ich zu}, in other words to realistically model the complete range of traffic conditions \kai{hier eigentlich nicht wirklich.}. Backward moving gaps are re-included in the default \gls{matsim} mobsim (qsim).
-}
-
-\ah{following copied from atlassian:}
-
-\kai{The queue model fundamental diagram (flow vs density) is horizontal for medium densities, and falls to zero very steeply at very high densities.
-This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards travelling speed of ``length\_of\_link''/1sec rather than the conventional approx. 15km/h.
-
-A fix, developed by Charypar, is to generate a ``hole'' when a vehicle leaves a link, and have it travel with a configured velocity against the direction of traffic. The hole cannot be used before it has arrived at the upstream end.
-
-Now the problem is that the model is initialized with one hole per empty space. This means many ``hole'' objects which consume a lot of memory ... in fact, too much of it.
-Way out: Just keep track of the number of available holes. Initially, that number corresponds to the storage capacity. Every time a vehicle enters, the number is decreased (which can also take care of different vehicles sizes, \ie decrease by the PCE instead of by one). Every time vehicle leaves, a hole is created (with size equal to the vehicle's PCE) which travels upstream. When the hole has reached the upstream end, the number of available holes is increased accordingly, and the hole object is destroyed.
-This would need to be implemented and tested ...}
-
-\marcel{
-Having the holes only while traveling back brings it closer to an events-based implementation: Basically, the hole then represents nothing else as a delayed event to increase the available space on the link. This leads to a further simplified implementation: Instead of hole objects, one could just have a queue where the time, when an additional space becomes available (=when the hole would reach the start of the link), is stored. In each step, the head of the queue could be checked to see if space becomes available and increase the counter. This would then also be more queue-like like the name of the QSim suggests}
-
-\kai{
-Generelles Problem ist, dass nur die jdeqsim die double-ended queue implementiert, die normale QSim tut das derzeit nicht.  Es gibt seit dem dev mtg eine experimentelle Version für die QSim, aber die verbraucht so viel Speicher, dass man sie nicht empfehlen kann.  Habe jetzt Amit hinzugezogen, damit er mir dabei hilft; keine Ahnung, ab wann wir das evtl. fertig haben könnten.
-}
-
+%\kai{Siehe auch Material in basicprocedure.tex}
+%
+%Illustrates empirically the summary in Section~\ref{sec:kinematicwaves-summary}.
+%\ah{
+%\subsection{Aggregate Traffic Flow Characteristics}
+%\gls{matsim}'s aggregate traffic flow characteristics were analyzed in the common form of the macroscopic fundamental diagram. Some investigations additionally derived \gls{matsim}'s (implicit) volume-delay function \citep[][]{HorniMontini_STRC_2013}.
+%
+%Some simulation investigations had problems to reproduce the complete MFD (project NetCap, personal communication, 2014), in particular, the high density region. They used mobsim versions without the backward moving gaps feature. Other studies, based on DEQSim and JDEQSim respectively, which both \emph{do} include \emph{back moving gaps}, were able to generate realistic MFDs. \kai{Das ist natürlich kein Wunder.}
+%
+%\citet[p.81ff][]{Simoni_MastersThesis_2013} investigates \gls{matsim}'s ability to model macroscopic characteristics with a four link ring scenario. He found considerable influence of the backward moving gaps speed on the form of the MFD. \citet[][]{CharyparEtAl_TRB_2009} also use a circular toy scenario. They also found the typical trapezoidal form for a broad range of network resolutions.
+%
+%Natural conclusion here is, that back moving gaps are essential for generating a realistic MFD \kai{bis hier hin stimme ich zu}, in other words to realistically model the complete range of traffic conditions \kai{hier eigentlich nicht wirklich.}. Backward moving gaps are re-included in the default \gls{matsim} mobsim (qsim).
+%}
+%
+%\ah{following copied from atlassian:}
+%
+%\kai{The queue model fundamental diagram (flow vs density) is horizontal for medium densities, and falls to zero very steeply at very high densities.
+%This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards travelling speed of ``length\_of\_link''/1sec rather than the conventional approx. 15km/h.
+%
+%A fix, developed by Charypar, is to generate a ``hole'' when a vehicle leaves a link, and have it travel with a configured velocity against the direction of traffic. The hole cannot be used before it has arrived at the upstream end.
+%
+%Now the problem is that the model is initialized with one hole per empty space. This means many ``hole'' objects which consume a lot of memory ... in fact, too much of it.
+%Way out: Just keep track of the number of available holes. Initially, that number corresponds to the storage capacity. Every time a vehicle enters, the number is decreased (which can also take care of different vehicles sizes, \ie decrease by the PCE instead of by one). Every time vehicle leaves, a hole is created (with size equal to the vehicle's PCE) which travels upstream. When the hole has reached the upstream end, the number of available holes is increased accordingly, and the hole object is destroyed.
+%This would need to be implemented and tested ...}
+%
+%\marcel{
+%Having the holes only while traveling back brings it closer to an events-based implementation: Basically, the hole then represents nothing else as a delayed event to increase the available space on the link. This leads to a further simplified implementation: Instead of hole objects, one could just have a queue where the time, when an additional space becomes available (=when the hole would reach the start of the link), is stored. In each step, the head of the queue could be checked to see if space becomes available and increase the counter. This would then also be more queue-like like the name of the QSim suggests}
+%
+%\kai{
+%Generelles Problem ist, dass nur die jdeqsim die double-ended queue implementiert, die normale QSim tut das derzeit nicht.  Es gibt seit dem dev mtg eine experimentelle Version für die QSim, aber die verbraucht so viel Speicher, dass man sie nicht empfehlen kann.  Habe jetzt Amit hinzugezogen, damit er mir dabei hilft; keine Ahnung, ab wann wir das evtl. fertig haben könnten.
+%}
 
 % ##################################################################################################################
 %\section{Synthetic Population Generation}
