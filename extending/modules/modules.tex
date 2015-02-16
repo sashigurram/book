@@ -583,7 +583,7 @@ Facilities are mostly used in the \gls{matsim} Zürich group, in particular in t
 \label{sec:extending-households}
 Households are another optional element of \gls{matsim}. To load households into a scenario, the \lstinline|useHouseholds| parameter in the \lstinline|scenario| \gls{configfile} section must be set to true. Furthermore the \gls{configfile} must contain a section \lstinline|households|. This section should specify the paths to a file containing households (parameter \lstinline|inputFile|) and a file containing further household attributes (parameter \lstinline|inputHouseholdAttributesFile|).
 
-\ah{households file listing?}
+% \ah{households file listing?} \ah{maybe next revision}
 
 % Code: \lstinline|org.matsim.households|
 
@@ -591,10 +591,20 @@ Households are another optional element of \gls{matsim}. To load households into
 %% \subsection{Data containers belonging both to demand and to supply}
 \subsection{Vehicles}
 \label{sec:extending-vehicles}
+Vehicles are an optional element of \gls{matsim}. To load vehicles into a scenario, the \lstinline|useVehicles| parameter in the \lstinline|scenario| \gls{configfile} section must be set to true. Furthermore the \gls{configfile} must contain a section \lstinline|vehicles|. This section should specify the paths to a file containing vehicles (parameter \lstinline|vehiclesFile|). 
 
-\kai{Andreas, habe jetzt die transitXxx file formats in das pt chapter verschoben.  Meine Intuition ist zwar eigentlich, dass sie besser ``Infrastruktur'' (als ``shared'') Container wären.  Aber Marcel hat das bis jetzt anders gesagt, und es ist auch kein so großes Problem.} \kai{Siehe auch \url{https://matsim.atlassian.net/browse/MATSIM-332}.}
+\ah{Amit: ``At the moment, different vehicleTypes and vehicles are not added using 'VehiclesFile' instead they are added to scenario directly.''
 
-\kai{Folgendes muss noch geschrieben werden.}
+ah.chk. I guess this now has changed with Kai's refactoring? Or does it still need to be ``scripted''?
+}
+
+Furthermore, there exists the possibility to use \lstinline|VehicleUtils| for specifying mode vehicles according to the example syntax in \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ core (see also Section~\ref{sec:sec:using-qsim-multimodal}). 
+
+%\citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households. \ah{Füllsatz}
+
+%\kai{Andreas, habe jetzt die transitXxx file formats in das pt chapter verschoben.  Meine Intuition ist zwar eigentlich, dass sie besser ``Infrastruktur'' (als ``shared'') Container wären.  Aber Marcel hat das bis jetzt anders gesagt, und es ist auch kein so großes Problem.} \kai{Siehe auch \url{https://matsim.atlassian.net/browse/MATSIM-332}.} \ah{ok}
+
+%\kai{Folgendes muss noch geschrieben werden.} \ah{done}
 
 %% \kai{Bin mir ziemlich sicher, dass wir hier nur die ``vehicles'' lassen sollten, und die ``transitVehicles'' erst mit der entsprechenden extension erklären sollten.  Auch die freightVehicles sind schließlich nicht global verfügbar, sondern nur im Rahmen der extension.}
 
@@ -618,7 +628,6 @@ Households are another optional element of \gls{matsim}. To load households into
 %% \ah{\url{https://matsim.atlassian.net/browse/MATSIM-314}}
 %% %
 %% This might change one day when the parking module will start to use vehicles. 
-\citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households.
 %% \end{itemize}
 
 %% The vehicles package provides a file reader and a factory to create vehicles.
@@ -649,7 +658,12 @@ The simulation is able to handle time-variant networks, within-day replanning \c
 
 Section~\ref{sec:using-othermodesthancar} details the necessary steps to simulate a multi-modal scenario; Section~\ref{sec:using-qsim-multimodal} therein focuses on \gls{qsim}. 
 In addition to that, arbitrary vehicles can be included as follows. 
-Assigning vehicles of a specific type to agents is done with in the vehicles input file \lstinline|<param name="vehiclesFile" value="..." />| and following the syntax in the example \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ core. \kai{Das stimmt so nicht.  Man kann \emph{entweder} die vehicles Datei verwenden.  \emph{Oder} man definiert die mode vehicles.  Revise.}
+Assigning vehicles of a specific type to agents is done
+\begin{itemize}\styleItemize 
+\item by specifying a vehicles input file \lstinline|<param name="vehiclesFile" value="..." />|, or
+\item by creating mode vehicles as shown above. 
+\end{itemize}
+%\kai{Das stimmt so nicht.  Man kann \emph{entweder} die vehicles Datei verwenden.  \emph{Oder} man definiert die mode vehicles.  Revise.} \ah{danke}
 
 Simulation experiments for \gls{qsim}'s relatively new \gls{multimodal} feature, applying multiple mode vehicles, have been performed for the Patna scenario as reported in Chapter~\ref{ch:patna}.
 
