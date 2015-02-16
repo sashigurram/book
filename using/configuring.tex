@@ -90,7 +90,7 @@ As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} 
 % ...................................
 \paragraph{Parallel QSim}
 
-The number of threads for the paralle \gls{qsim} (\cf \cite{Dobler_PhDThesis_2013}) can be configured by
+The number of threads for the parallel \gls{qsim} (\cf \cite{Dobler_PhDThesis_2013}) can be configured by
 \begin{xml}
 <module name="qsim" >
     <param name="numberOfThreads" value="10" />
@@ -380,6 +380,11 @@ Starting with release 0.7.x, the \gls{configfile} comments give possible options
 
 This option is presently not well investigated, \cf Section~\ref{sec:choicesets}.
 
+%Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. 
+Per default, the plan with the lowest score is removed if the agent's memory is full. 
+In line with the requirements of \eg simulated annealing approaches, the removal of candidates can be configured to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This reduces the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
+%\ah{siehe Mail by M. Zilske, August 14 "[Matsim-devel] custom plan selector for removal")}
+
 %\kai{wo ist plans removal?} \ah{Steht momentan noch bei den Selectors, wie auch im Code \lstinline|org.matsim.core.replanning.selectors.WorstPlanForRemovalSelector|. Sehe da aber nur worst plan removal.}\kai{Andreas, ich Verstehe Deinen Kommentar nicht.  DefaultPlanStrategiesModule listet sie alle auf.  WorstPlanForRemovalSelctor ist eine Wahlmöglichkeit.  Ist es mit obigem Text vielleicht geklärt?}
 %\ah{Alles klar danke! Staune immer wieder wieviele und wie schnell Dinge by Magic ``plötzlich'' vorhanden sind, kann mich noch an die Diskussionen darüber erinnern und daran, dass ich mal selber sowas im Playground versucht hatte. Vielleicht bin ich aber auch einfach zu langsam.}
 
@@ -405,9 +410,6 @@ Selectors work as follows:
 \end{itemize}
 %
 Note, that the \lstinline|BestScore| should be used with care as it is prone to getting stuck with sub-optimal plans. Plans that are rated bad due to a random fluctuation in one single iteration, due to \eg a rare traffic jam, will never be tested again. It is therefore recommended to use this in conjunction with \lstinline|SelectRandom| only.
-
-Besides the selectors for plan modification and execution, in the near future also the plan remover will be available for configuration. Per default, the plan with the lowest score is removed if the agent's memory is full. In line with the requirements of \eg simulated annealing approaches, the removal of candidates will be configurable to be probabilistically dependent on the plan score similar to the selection in \lstinline|SelectExpBeta|. This will reduce the probability to get stuck with sub-optimal plans, that were dominant in earlier iterations.
-%\ah{siehe Mail by M. Zilske, August 14 "[Matsim-devel] custom plan selector for removal")}
 
 %##################################################################################################################
 \section{Other Modes Than Car}
