@@ -8,26 +8,30 @@
 \createStandardInformation{locationchoice}{\lstinline|DCControler|}{locationchoice}{\citet[][]{HorniEtAl_unpub_TRB_2012, Horni_PhDThesis_2013}}
 
 % ##################################################################################################################
-\section{Basic Concept}
+\section{Introduction}
 %As explained in Section~\ref{sec:strategymodules}, in \gls{matsim}, we do not use the term \emph{choice} for the MATSim modules, that change transport choices, as the \gls{matsim} choice process differs from the discrete choice framework. 
 %\kai{Andreas, hast Du Dir mal Gunnars Texte durchgelesen?}
 %\ah{ja. ganzer Abschnitt steht aber jetzt sowieso in Section~\ref{sec:strategymodules}}. The MATSim choice process is performed over the course of iterations, \ie it is based on the interplay of the innovation modules with the \gls{matsim} loop and and not on an isolated choice within a single module. 
 %
-Generally speaking, destination choice represents an optimization problem, where every agent searches for his optimal destination according to an \gls{objectivefunction} and subject to various constraints such as the agent's travel time budget, but also subject to interactions with other agents on the competition for space-time slots in the infrastructure. 
+Generally speaking, destination choice represents an optimization problem, where every agent searches for his optimal destination according to an \gls{objectivefunction} and subject to various constraints such as the agent's travel time budget, and also subject to interactions with other agents while competing for space-time slots in the infrastructure. The \gls{matsim} destination innovation module provides a problem-tailored heuristic algorithm to solve this problem along the following lines.
 
-The \gls{matsim} destination innovation module provides a problem-tailored heuristic algorithm to solve this problem. 
+Due to the iterative base of \gls{matsim}, a mechanism ensuring consistent probabilistic choices over the course of iterations is required, which is the main component of the destination innovation module.
 
 Unobserved heterogeneity usually dominant in destination choice is captured in the adaptable \gls{objectivefunction} by random error terms \citep[][]{HorniEtAl_unpub_TRB_2012, Horni_PhDThesis_2013}.
 
-Due to the iterative base of \gls{matsim}, a mechanism ensuring consistent choices over the course of iterations is required.
-
-The destination choice module can be configured to consider not only competition for the road infrastructure but also for the activities infrastructure (for example at shopping malls' parking lots) as shown in Section~\ref{sec:facilityload} and by \citet[][]{HorniEtAl_TRR_2009}.
+Furthermore, the destination choice module can be configured to not only consider competition for the road infrastructure but also for the activities infrastructure (for example at shopping malls' parking lots) as shown in Section~\ref{sec:facilityload} and by \citet[][]{HorniEtAl_TRR_2009}.
 
 % ##################################################################################################################
 \section{Key Issues in Developing the Module}
-Key issues of integrating destination innovation into \gls{matsim} span behavioral and algorithmic problems. On the behavioral side, the specification of choice sets for model estimation is an unsolved problem to date. On the algorithmic side, as mentioned above, destination innovation is in principle an ordinary optimization problem. However, as the agents interact and as the choices are embedded in a highly dynamic context, the problem becomes complex, even more as the targeted scenarios are usually large-scale. Thus, as is common for real-world optimization problems, solutions have to be based on problem-tailored heuristics \citep[][]{MichalewiczFogel_2004}. Important components of the \gls{matsim} destination innovation are the construction of a search space and of the succeeding evaluation of this search space's elements. 
+Key issues of integrating destination innovation into \gls{matsim} span behavioral and algorithmic problems. 
+On the behavioral side, the specification of choice sets for model estimation is an unsolved problem to date. 
+On the algorithmic side, as mentioned above, destination innovation is in principle an ordinary optimization problem. 
+However, as the agents interact and as the choices are embedded in a highly dynamic context, the problem becomes complex, even more as the targeted scenarios are usually large-scale. 
+Thus, as is common for real-world optimization problems, solutions have to be based on problem-tailored heuristics \citep[][]{MichalewiczFogel_2004}. 
+Important components of the \gls{matsim} destination innovation are the construction of a search space and of the succeeding evaluation of this search space's elements. 
 
-The main component however, is a mechanism to generate consistent random draws over the iterations necessary to include the objective function's error terms (see next Section~\ref{sec:errorterms}). This mechanism is also applicable for other choice dimensions.
+The main component however, is a mechanism to generate consistent random draws over the iterations necessary to include the objective function's error terms (see next Section~\ref{sec:errorterms}). 
+This mechanism is also applicable for other choice dimensions.
 
 % ======================================================================================================================
 \subsection{Error Terms}
@@ -66,8 +70,8 @@ The optimization is then performed as a deterministic search based on the result
 \] 
 This includes, via the systematic part $V_{n\ell q}$, the disutility of traveling to destination~$\ell$ for activity~$q$.
 
-As stated above, the random error terms need to remain the same over the iterations. 
-In physics, this approach would be called ``quenched'' randomness; all randomness is computed initially and then attached to particles or destinations, rather than instantaneously generating it, which would be called ``annealed'' randomness. 
+As stated above, the random error terms need to remain the same over the iterations (also discussed in Chapter~\ref{ch:discretechoice}). 
+In physics, this approach would be called ``quenched'' (sometimes also ``frozen'') randomness; all randomness is computed initially and then attached to particles or destinations, rather than instantaneously generating it, which would be called ``annealed'' randomness. 
 Two natural approaches for implementing quenched randomness are as follows:
 %
 \begin{itemize}\styleItemize
@@ -77,24 +81,34 @@ Two natural approaches for implementing quenched randomness are as follows:
  
 Both strategies have flaws. 
 Approach (a) is only an option if one is certain about every single aspect of the computational code. 
-Literally, one additional random number, drawn in one run but not in the other, completely destroys the ``quench'' for all decisions computed later in the program. Consistency is thus hard to achieve, especially in parallel or even distributed computing environments; according to personal communication a substantial machinery is necessary ensuring consistent choices. In a modular environment, as in \gls{matsim}, designed for external plugging-in of users' own modules---possibly drawing their own random numbers---the danger of destroying the quench is prohibitively high and thus approach (a) is impractical.
+Literally, one additional random number, drawn in one run but not in the other, completely destroys the ``quench'' for all decisions computed later in the program. Consistency is thus hard to achieve, especially in parallel or even distributed computing environments; a substantial machinery is necessary ensuring consistent choices. 
+In a modular environment, as in \gls{matsim}, designed for external plugging-in of users' own modules---possibly drawing their own random numbers---the danger of destroying the quench is prohibitively high and thus approach (a) is impractical.
 
 Approach (b) is certainly more robust. 
 However, for large numbers of decision makers and/or alternatives, storing error terms is difficult. 
 For destination innovation, one quickly has $10^6$\,decision makers and $10^6$\,alternatives, resulting in $4 \cdot 10^{12} \hbox{Byte} = 4 \hbox{TB}$ of storage space.
 
-One may argue that this should not be a problem, since a normal person will rarely consider more than the order of a hundred alternatives in their choice set, reducing the computational problem. Aside from the necessity of storing every decision maker's choice set, this converts the computational problem into a conceptual one, since a good method to generate choice sets then needs to be found. With more conceptual progress, this may eventually be an option, but at this point, a conceptually simpler approach is preferred.
+One may argue that this should not be a problem, since a normal person will rarely consider more than the order of a hundred alternatives in their choice set, reducing the computational problem. Aside from the necessity of storing every decision maker's choice set, this converts the computational problem into a conceptual one, since a good method to generate choice sets then needs to be found. 
+With more conceptual progress, this may eventually be an option, but at this point, a conceptually simpler approach is preferred.
 
-The developed solution below is generally applicable in econometric microsimulators. The same \emph{stable} error term can be \emph{re-}calculated on the fly by using stable random seeds $s_{n\ell q} = g(k_n, k_\ell, k_q)$, where are uniformly distributed random numbers associated with $k$, $\ell$, and $q$. That is, for each person $n$ a random number $k_n$ is generated and stored, and the same is done with each destination $\ell$. The value for the activity $q$ can be derived from its index in the plan possibly combined with the person's value $k_n$. This reduces the storage space dramatically from $\bar{nq} \times nn \times n\ell$ to $\bar{nq}(nn + n\ell)$, where $nn$ is the number of persons or agents and $n_\ell$ is the number of destinations and $\bar{nq}$ is the average number of discretionary activities in an agent's plan. This means that storage space is reduced to approx. $2 \cdot 4 \cdot 10^{6} \hbox{Byte} = 8 \hbox{MB}$, which can be easily stored even on any modern machine.
+The developed solution below is generally applicable in econometric microsimulators. The same \emph{stable} error term can be \emph{re-}calculated on the fly by using stable random seeds $s_{n\ell q} = g(k_n, k_\ell, k_q)$, where are uniformly distributed random numbers associated with $k$, $\ell$, and $q$. 
+That is, for each person $n$ a random number $k_n$ is generated and stored, and the same is done with each destination $\ell$. 
+The value for the activity $q$ can be derived from its index in the plan possibly combined with the person's value $k_n$. 
+This reduces the storage space dramatically from $\bar{nq} \times nn \times n\ell$ to $\bar{nq}(nn + n\ell)$, where $nn$ is the number of persons or agents and $n_\ell$ is the number of destinations and $\bar{nq}$ is the average number of discretionary activities in an agent's plan. 
+This means that storage space is reduced to approximately $2 \cdot 4 \cdot 10^{6} \hbox{Byte} = 8 \hbox{MB}$, which can be easily stored even on any modern machine.
 
 The distribution of these seeds is essentially irrelevant; any error term distribution can be generated from any basic seed distribution. 
 In the current version $g(k_n, k_\ell, k_q) = (k_n + k_\ell + k_q) \times v_{max}$ is used. $v_{max}$ is the maximum (long) number that can be handled by the specific machine.
 
-To evaluate utility for a person $n$ visiting the destination $\ell$ for activity $q$ a sequence of Gumbel-distributed random numbers $seq_{n\ell q}$ is generated on the fly for every person-alternative-activity combination using the seed $s_{n\ell q}$. Some random number generators have problems in the initial phase of drawing, \eg the first couple of random numbers are correlated or do never cover the complete probability space. As in our procedure the random number generator is constantly re-initialized, for these technical reasons, the error term $\varepsilon_{n\ell q}$ is derived not from the first element but from the $m^{th}$ element of the sequence $seq_{n\ell q}[m]$. Here, $m$ is set to 10. This procedure is valid as the set of all  $m^{th}$ elements of all different sequences is also a pseudo-random sequence following the same distribution as the sequences $seq_{n\ell q}$; clearly, \emph{true} random number generators relying on physical phenomena, such as hardware temperature, are not applicable. 
+To evaluate utility for a person $n$ visiting the destination $\ell$ for activity $q$ a sequence of Gumbel-distributed random numbers $seq_{n\ell q}$ is generated on the fly for every person-alternative-activity combination using the seed $s_{n\ell q}$. 
+Some random number generators have problems in the initial phase of drawing, \eg the first couple of random numbers are correlated or do never cover the complete probability space. As in our procedure the random number generator is constantly re-initialized, for these technical reasons, the error term $\varepsilon_{n\ell q}$ is derived not from the first element but from the $m^{th}$ element of the sequence $seq_{n\ell q}[m]$. 
+Here, $m$ is set to 10. 
+This procedure is valid as the set of all  $m^{th}$ elements of all different sequences is also a pseudo-random sequence following the same distribution as the sequences $seq_{n\ell q}$; clearly, \emph{true} random number generators relying on physical phenomena, such as hardware temperature, are not applicable. 
 
 % ======================================================================================================================
 \subsection{Search Space Construction and Evaluation}
-\gls{matsim} destination innovation is based on best-response rather than random mutation, \ie in every iteration the currently best alternative is chosen. This works as long as the inter-iteration changes are small, which is usually given by the relatively small share of agents who re-plan. 
+\gls{matsim} destination innovation is based on best-response rather than random mutation, \ie in every iteration the currently best alternative is chosen. 
+This works as long as the inter-iteration changes are small, which is usually given by the relatively small share of agents who re-plan. 
 The best-response approach is adopted due to the usually huge number of alternatives in combination with the search space characteristics. 
 As the discrete search landscape is characterized by random noise because error terms are not (or only locally) spatially correlated (see Figure~\ref{fig:landscape0}). For such problems---as opposed to continuous landscapes (see Figure~\ref{fig:landscape1})---efficient search methods, such as local search methods, generally do not work.
 
@@ -126,37 +140,54 @@ With this procedure, the required computational effort is dramatically reduced, 
 
 % ======================================================================================================================
 \subsection{Destination Choice Set Specification}
-While choice set specification is natural for choices with few alternatives, in contrast, for problems with a large universal choice set, usually present for spatial choices, such as destination or route choice, specifying individual choice sets becomes a challenging computational and even more behavioral issue \citep[e.g.,][]{PagliaraTimmermans_TransLett_2009, Thill_PHG_1992, Schuessler_PhDThesis_2010, FrejingerEtAl_TransResB_2009}. Estimates are sensitive to choice sets, and, at the same time, no established choice set definition procedure exists for spatial problems. This means that choice sets and, hence, estimation results are highly dependent on the modeler, which is an exogenous problem, structurally similar to the well-known \gls{maup}, where results are dependent on modeler's zoning specification.
+While choice set specification is natural for choices with few alternatives, in contrast, for problems with a large universal choice set, usually present for spatial choices, such as destination or route choice, specifying individual choice sets becomes a challenging computational and even more behavioral issue \citep[e.g.,][]{PagliaraTimmermans_TransLett_2009, Thill_PHG_1992, Schuessler_PhDThesis_2010, FrejingerEtAl_TransResB_2009}. 
+Estimates are sensitive to choice sets, and, at the same time, no established choice set definition procedure exists for spatial problems. 
+This means that choice sets and, hence, estimates are highly dependent on the modeler, which is an exogenous problem, structurally similar to the well-known \gls{maup}, where results are dependent on modeler's zoning specification.
 
-A prominent extension of the standard discrete choice modeling approach to treat this problem is formed by stochastic choice set models, founded by \citet[][]{Manski_TD_1977, BurnettKPHanson_TRR_1979, BurnettKP_UG_1980}, which integrates the choice set formation step into the estimation procedure by jointly estimating selection of a choice set and the choice of a particular alternative of this choice set \citep[][]{KaplanEtAl_TRB_2009, PagliaraTimmermans_TransLett_2009, Manski_TD_1977, Swait_TransResPartB_2001, HorowitzLouviere_IJRM_1995, BenAkivaBoccara_IJRM_1995, SwaitBenAkiva_TransResPartB_1987, Swait_TransResPartB_2001, MartinezEtAl_TransResPartB_2009, CascettaPapola_TransResPartA_2009, BierlaireEtAl_2_STRC_2009, ScroginEtAl_TechRep_UCF_2004, ManraiAndrews_EJOR_1998, Ansah_TransRes_1977}. Probabilistic choice set formation is conceptually appealing as choice sets are, in principle, not restrained a priori by exogenous criteria as in standard choice set specification. However, the procedure is in general associated with combinatorial complexity, making it computationally intractable. As a consequence, the practical approaches also require mechanisms to reduce the complexity of the choice set specification problem \citep[e.g.,][p.11]{BenAkivaBoccara_IJRM_1995}. \citet[][]{ZhengJieGuo_TRB_2008}, for example, make the moderate assumption of continuous store choice sets (\ie sets without ``holes'') around the trip origin, while the random-constraints model of \citet[][]{BenAkivaBoccara_IJRM_1995} exploits additional information on alternatives' availability for individuals.
+A prominent extension of the standard discrete choice modeling approach to treat this problem is formed by stochastic choice set models, founded by \citet[][]{Manski_TD_1977, BurnettKPHanson_TRR_1979, BurnettKP_UG_1980}, which integrates the choice set formation step into the estimation procedure by jointly estimating selection of a choice set and the choice of a particular alternative of this choice set \citep[][]{KaplanEtAl_TRB_2009, PagliaraTimmermans_TransLett_2009, Manski_TD_1977, Swait_TransResPartB_2001, HorowitzLouviere_IJRM_1995, BenAkivaBoccara_IJRM_1995, SwaitBenAkiva_TransResPartB_1987, Swait_TransResPartB_2001, MartinezEtAl_TransResPartB_2009, CascettaPapola_TransResPartA_2009, BierlaireEtAl_2_STRC_2009, ScroginEtAl_TechRep_UCF_2004, ManraiAndrews_EJOR_1998, Ansah_TransRes_1977}. 
+Probabilistic choice set formation is conceptually appealing as choice sets are, in principle, not restrained a priori by exogenous criteria as in standard choice set specification. 
+However, the procedure is in general associated with combinatorial complexity, making it computationally intractable. 
+As a consequence, the practical approaches also require mechanisms to reduce the complexity of the choice set specification problem \citep[e.g.,][p.11]{BenAkivaBoccara_IJRM_1995}. 
+\citet[][]{ZhengJieGuo_TRB_2008}, for example, make the moderate assumption of continuous store choice sets (\ie sets without ``holes'') around the trip origin, while the random-constraints model of \citet[][]{BenAkivaBoccara_IJRM_1995} exploits additional information on alternatives' availability for individuals.
 
-Concluding, the destination innovation set specification problem is still unsolved, meaning that the estimated models can only be fully consistently applied for the region, where the model was estimated. For \gls{matsim}, first destination choice model estimation efforts are reported in \citet[][Chapter 5]{Horni_PhDThesis_2013}.
+Concluding, the destination innovation set specification problem is still unsolved, meaning that the estimated models can only be fully consistently applied for the region, where the model was estimated. 
+For \gls{matsim}, first destination choice model estimation efforts are reported in \citet[][Chapter 5]{Horni_PhDThesis_2013}.
 
 % ======================================================================================================================
 \subsection{Facility Load}
 \label{sec:facilityload}
-The influence of interaction in \emph{transport} infrastructure for people's route and departure time choice has been recognized early \citep[e.g.,][]{Pigou_1920, Knight_QJE_1924, Wardrop_PICE_1952}. Similarly, it can be reasonably assumed that agent interaction in \emph{activities} infrastructure affects travel choices \citep[][]{Axhausen_SSRL_2006}. Marketing science provides ample evidence that agent interactions influence utility of performing an activity, where it can have both, positive or negative influence \citep[][p.331]{BakerJEtAl_JAMS_1994}, \citep[][]{ErogluAndHarrell_JR_1986, ErogluAndMachleit_JR_1990, ErogluEtAl_JBR_2005, HarrellEtAl_JMR_1980, HuiAndBateson_JCR_1991, PonsEtAl_PsychMark_2006}.
+The influence of interaction in \emph{transport} infrastructure for people's route and departure time choice has been recognized early \citep[e.g.,][]{Pigou_1920, Knight_QJE_1924, Wardrop_PICE_1952}. 
+Similarly, it can be reasonably assumed that agent interaction in \emph{activities} infrastructure affects travel choices \citep[][]{Axhausen_SSRL_2006}. 
+Marketing science provides ample evidence that agent interactions influence utility of performing an activity, where it can have both, positive or negative influence \citep[][p.331]{BakerJEtAl_JAMS_1994}, \citep[][]{ErogluAndHarrell_JR_1986, ErogluAndMachleit_JR_1990, ErogluEtAl_JBR_2005, HarrellEtAl_JMR_1980, HuiAndBateson_JCR_1991, PonsEtAl_PsychMark_2006}.
 
-In \citet[][]{HorniEtAl_TRR_2009}, based on the Zürich scenario, a singly-constrained model is presented that introduces competition for space-time slots on the activity infrastructure. The actual load is coupled with time-dependent capacity restraints for every activity location and incorporated explicitly into the agent's destination choice process as detailed below. 
+In \citet[][]{HorniEtAl_TRR_2009}, based on the Zürich scenario, a singly-constrained model is presented that introduces competition for space-time slots on the activity infrastructure. 
+The actual load is coupled with time-dependent capacity restraints for every activity location and incorporated explicitly into the agent's destination choice process as detailed below. 
 
-Activity location load, computed for time bins of 15\,minutes, is derived from events that are delivered by the \gls{mobsim}. The load of one particular iteration combined with time-dependent activity location capacity restraints is considered in the agents' choice process of the succeeding iteration. In detail, this means that the utility function term $S_{dur,q}$, described above, is multiplied by $max(0; 1 - f_{load\ penalty})$ penalizing the agents dependent on the load of the location they frequented. $f_{load\ penalty}$ is a power function, as this has shown to be a good choice for modeling capacity restraints (remember that the well-known cost-flow function by \citet[][]{TA_manual_1964} is a power function). To introduce additional heterogeneity regarding the activity locations, an attractiveness factor $f_{attractiveness}$ is introduced that is defined to be logarithmically dependent on the store size given by the official census of workplaces.
+Activity location load, computed for time bins of 15\,minutes, is derived from events that are delivered by the \gls{mobsim}. 
+The load of one particular iteration combined with time-dependent activity location capacity restraints is considered in the agents' choice process of the succeeding iteration. 
+In detail, this means that the utility function term $S_{dur,q}$, described above, is multiplied by $max(0; 1 - f_{load\ penalty})$ penalizing the agents dependent on the load of the location they frequented. 
+$f_{load\ penalty}$ is a power function, as this has shown to be a good choice for modeling capacity restraints (remember that the well-known cost-flow function by \citet[][]{TA_manual_1964} is a power function). 
+To introduce additional heterogeneity regarding the activity locations, an attractiveness factor $f_{attractiveness}$ is introduced that is defined to be logarithmically dependent on the store size given by the official census of workplaces.
 
 Likewise for demonstration purposes, capacity restraints are exclusively applied to shopping locations, while in principle leisure activity locations could be handled similarly. However, deriving capacity restraints for leisure activity locations is expected to be much more difficult than for shopping locations because data availability is much worse for leisure locations and capacity restraints vary much more between different leisure locations than between different shopping activities (hiking versus going to the movies might be an illustrative example).
 
-The model allows the assignment of individual time-dependent capacities to the activity locations. For the sake of demonstration, the capacities of all shopping facilities can be set equal, where their values can be derived from the shopping trip information given in the National Travel Survey~2005. The total daily capacity is set so that the activity locations located in the region of Zurich satisfy the total daily demand with a reserve of 50\,\%. In detail, the capacity restraint function for a location $l$ is as follows:
+The model allows the assignment of individual time-dependent capacities to the activity locations. For the sake of demonstration, the capacities of all shopping facilities can be set equal, where their values can be derived from the shopping trip information given in the National Travel Survey~2005. The total daily capacity is set so that the activity locations located in the region of Zürich satisfy the total daily demand with a reserve of 50\,\%. In detail, the capacity restraint function for a location $l$ is as follows:
 
 \[
 f_{load\ penalty, \ell}=\alpha_l \cdot \Bigg(\frac{load_{\ell}}{capacity_{\ell}}\Bigg)^{\beta_\ell}
 \]
 with $\alpha_\ell=1/1.5^{\beta_\ell}$, $\beta_\ell=5$. $f_{load\ penalty, \ell}$ is the penalty factor for location $\ell$ as described above.
 
-The simultaneous computation of the score reduction for all agents avoids the last-record problem discussed in \citet[][]{VovshaEtAl_TRR_2002}. Therein, a sequential choice process is proposed where alternatives are removed from the choice set of the later travelers if the locations are already occupied by the earlier travelers. Thereby, the order of the travelers is specified arbitrarily and thus the last-record problem (the last travelers have to travel far to find an available location) is not negligible when modeling heterogeneous travelers. 
+The simultaneous computation of the score reduction for all agents avoids the last-record problem discussed in \citet[][]{VovshaEtAl_TRR_2002}. 
+Therein, a sequential choice process is proposed where alternatives are removed from the choice set of the later travelers if the locations are already occupied by the earlier travelers. 
+Thereby, the order of the travelers is specified arbitrarily and thus the last-record problem (the last travelers have to travel far to find an available location) is not negligible when modeling heterogeneous travelers. 
 
 As expected, the constrained model improves results' quality by reducing the number of implausibly overcrowded activity locations.
 
 % ##################################################################################################################
 \section{Application of the Module}
-The destination innovation module has been successfully applied for the Zürich scenario (Chapter~\ref{ch:zhscenario})) as reported in \citet[][p.99]{Horni_PhDThesis_2013}, for the Tel Aviv model (see Chapter~\ref{ch:telaviv}) and for the MATSim~2030 project. Figure~\ref{fig:zhLEGO} and Figure~\ref{fig:countsLEGO} show that, by means of scaling of the error terms, distance distributions can be nicely fitted, and that thereby the error in count data is decreased.
+The destination innovation module has been successfully applied for the Zürich scenario (Chapter~\ref{ch:zhscenario})) as reported in \citet[][p.99]{Horni_PhDThesis_2013}, for the Tel Aviv model (see Chapter~\ref{ch:telaviv}) and for the \gls{matsim}~2030 project. 
+Figure~\ref{fig:zhLEGO} and Figure~\ref{fig:countsLEGO} show that, by means of scaling of the error terms, distance distributions can be nicely fitted, and that thereby the error in count data is decreased.
 
 \createfigure%
 {Error term runs for the Zürich scenario}%
@@ -185,21 +216,24 @@ The destination innovation module has been successfully applied for the Zürich 
 
 % ##################################################################################################################
 \section{The Module in the MATSim Context}
-The destination innovation module explicitly incorporates unobserved heterogeneity through random error terms. The standard \gls{matsim} utility function, however, does not contain error terms. The randomness measured in empirical data is included implicitly through the stochasticity of the simulation process. For destination innovation, this has led to a dramatic underestimation of total travel demand making inclusion of unobserved heterogeneity inevitable. 
+The destination innovation module explicitly incorporates unobserved heterogeneity through random error terms. 
+The standard \gls{matsim} utility function, however, does not contain error terms. 
+The randomness measured in empirical data is included implicitly through the stochasticity of the simulation process. 
+For destination innovation, this has led to a dramatic underestimation of total travel demand making inclusion of unobserved heterogeneity inevitable. 
 In the future, it should be researched if the standard utility function might also profit from the innovations made for this module.
 
 \gls{matsim} replanning offers different strategies to adapt plans ranging from random mutation to approximate suggestions, to best response answers. 
 Destination innovation is based on best response due to the sheer size of the alternatives set. 
 
 As discussed in Chapter~\ref{ch:scoring}, final goal is the implementation of an estimated utility function. 
-At the moment, however, the standard \gls{matsim} scoring is still based on the Charypar-Nagel function and extended ad hoc by few attributes. 
+At the moment, however, the standard \gls{matsim} scoring is still based on the Charypar-Nagel function (Chapter~\ref{ch:scoring}) and extended ad hoc by few attributes. 
 This is also true for the destination innovation module. 
 Thus, calibration---instead of estimation---of the utility function is performed such that measured travel distances are matched. 
 Calibration is performed by scaling the error terms. 
 
 Although, the destination innovation utility function is based on the discrete choice framework, some conceptual differences to the common application of discrete choice models exist. 
 As shown above, there is no drawing from discrete choice models but maximization of an iteration stable utility function. 
-In relation to that, the set of alternatives is not necessarily limited a priori and, thus, has the notion of a search space and not of a choice set.
+In relation to that, the set of alternatives is not necessarily limited a priori and, thus, we use the notion of a search space and not of a choice set here.
 
 % ##################################################################################################################
 \section{Lessons Learned}
@@ -217,7 +251,7 @@ Although, random elements are not only present in destination choice, it was at 
 % ===============================================================================================
 \section{Further Reading}
 The main information source is \citet[][]{HorniEtAl_unpub_TRB_2012, Horni_PhDThesis_2013}. 
-Technical details and documentation are available at \citet[][]{MATSIM-T-DC_Webpage_2014}. 
+Technical details and documentation are available at \citet[][]{MATSIM-T-DC_Webpage_2015} and in \gls{javadoc}. 
 Further reading related to destination choice is \citet[][]{HorniEtAl_IATBRspec_2013}, looking at parking, or \citet[][]{HorniEtAl_TechRep_IVT_2012}, coupling customers' and retailers' choices or in other words the supply and the demand side.
 
 % ##################################################################################################################
