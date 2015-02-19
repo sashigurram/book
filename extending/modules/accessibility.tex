@@ -15,15 +15,19 @@ In transport science and planning, the term accessibility can refer to at least 
 First, accessibility may be used to describe how well a certain component of the transport infrastructure 
 is useable by citizens, in particular by handicapped people (Faura2012AccessibilityEvaluationTrafficSImulation). 
 In this sense, \textit{accessibility guidelines} tell engineers and planners how to design transport 
-infrastructure elements, such as public transport facilities, to make them accessibile to, i.e. useable 
-for, all citizens. Second, accessibility may be used to describe how easy and convenient the approach 
+infrastructure elements, such as public transport facilities, to make them accessibile, i.e. useable 
+for all citizens. Second, accessibility may be used to describe how easy and convenient the approach 
 towards a given land-use facility is. There are, for instace, studies (Fujiyama2004AccessibleDesignPTFacilities) 
 that seek to improve the accessibility of shopping centers by redesigning the access roads and their 
-connection to major roads. Finally, the term accessibility can be used from a more global perspective to 
+connection to major roads. Finally, the term accessibility can be used in a more global fashion to 
 describe the availability and spatial distribution of activity facilities within a given area, e.g. a 
 metropolitan region, and the ease with which these facilities can be reached from other locations of 
 the region. The accessibility extension of \gls{matsim} is concerned with this notion of accessibility. 
 Its discussion in this chapter draws on \citet{NicolaiNagel2012HiResAccessibilityMethodInBook}.
+
+%MorrisEtAl1978AccessibilityIndicators
+%Essentially it denotes the ease with which activities may be reached from a given location using a 
+%particular transportation system.
 
 
 \section{Introduction}
@@ -32,16 +36,28 @@ schemes \citep{GeursEtAl2012AccessibilityTransportIntroduction}. Not in all cont
 accessibility is discussed, however, it used as a precisely-definded, quantitative measure. While Batty 
 \citep{Batty2009} traces the origins of the concept of accessibility back to location theory and regional 
 economic planning of the 1920s when transport planning began in North America \citep{GeursEtAl2012AccessibilityTransportIntroduction}, 
-Hansen, with his widely-cited 1959 paper \citep(Hansen1959), is generally credited for the first real 
+Hansen, with his widely-cited paper \citep{Hansen1959}, is generally credited for the first real 
 definition of accessibility. He defines accessibility as \textit{the potential of opportunities for interaction} 
 %also said so e.g. in Gulhan p.130
 A bit more illustrative, \citet{DalviMartin1976...} define acessibility as 'the ease with which any 
-land-use activity can be reached from a location using a particular transport system’. \citet(Hansen1959) 
+land-use activity can be reached from a location using a particular transport system’. \citet{Hansen1959} 
 also appears to be the first to have developed a procedure for the quatitaive quantitative consideraton of 
 accessibility.
+
 %It is notable that the development of gravity models, which have since then been the most prominent and 
 %widely-applied type of destination choice models, has originally been intertwined with quantitative 
 %approaches to accessibility analysis (cite Hansen ?????).
+
+%CurtisEtAl2013AccessbilityPolicyInnovation, p.471, definition:
+%Accessibility here is defined as the ease or convenience of reaching a destination and is measured by the number 
+%of people with access to certain land-use activities or facilities (opportunities) as well as to the transport 
+%network itself. This is different to the way some conceive accessibility where it has been used in relation to 
+%the mobility needs of elderly or disabled populations (universal accessibility).
+
+%MorrisEtAl1978AccessibilityIndicators, p.92
+%accessibility indicators provide possibly the most useful and appropriate means of summarising a great deal of 
+%information on the location of households in relation to the distribution of urban activities and the transport 
+%system that connects them (Wachs 1978)
 
 \mnote{typology}
 %Depending on the concrete definition of quantitative accessibility measures, the explanatory power of the 
@@ -89,7 +105,7 @@ from different existing definitons and applied measures of accessibility:
 %typical example is the logsum term, which is discussed further below.
 %\end{enumerate}
 
-In this review, \citet{Geurs2004AccessibilityReview} mention and summarize various approaches applying the concept 
+In this review, \citet{Geurs2004AccessibilityReview} list and summarize typical approaches applying the concept 
 of accessibility, which have their focus on different of the aforementioned components of accessiblity:
 
 \begin{enumerate}
@@ -100,6 +116,9 @@ of accessibility, which have their focus on different of the aforementioned comp
 	\item \textbf{Location-based} measures describe the level of accessibility to spatially distributed activities, such as 
 	the number of jobs within 30 min travel time from origin locations. These kind of measures are typically used 
 	in urban planning and geographical studies.
+	
+	% CurtisEtAl2013AccessbilityPolicyInnovation, p.456
+	% Activity- or destination-based ac- cessibility modelling has expanded rapidly with the coalescing of advanced GIS
 	
 	\item \textbf{Person-based} measures analyze accessibility at the individual level, such as the activities in which an 
 	individual can participate at a given time. These kind of measures are founded in the space–time geography 
@@ -112,37 +131,57 @@ of accessibility, which have their focus on different of the aforementioned comp
 \citet{Geurs2004AccessibilityReview} intersect these typical approaches with the four coponents of accessibility identified 
 above, which leads to a matrix. This matrix illustrates how each of the four aforementioned compoments of accessibility is 
 typically represented in the four different accessibility measures, where each measure is typically concerned with certain weaknesses 
-concerning those accessibility components, which are not the particular focus of the given kind of measure. Accordingly, \citet{Geurs2004AccessibilityReview} assert that it would be desireable if an accessibility measure included 
+in terms of those accessibility components, which are not the particular focus of the given kind of measure. Accordingly, \citet{Geurs2004AccessibilityReview} assert that it would be desireable if an accessibility measure included 
 all four aforementioned components of accessibility. The accessibility extension of \gls{matsim}, as will be described in 
 the following, can be seen as an approach to achieve this goal.
 
 \mnote{latest research}
-In other recent strands of research, as identified by \citet{GeursEtAl2012AccessibilityTransportIntroduction}, the concept of accessibility is also applied to the analysis of social exclusion (\eg by examining the benefit 
+In other recent strands of research, as identified by \citet{GeursEtAl2012AccessibilityTransportIntroduction}, the concept of 
+accessibility is also applied to the analysis of social exclusion (\eg by examining the benefit 
 disadvantaged populations in terms of employment accessibility before and after the implementation of a transport scheme), 
 the economic valuation of accessibility effects (\eg in cost-benefit analyses and studies assessing the impact of changes in 
 public transport accessibility on house prices), and the analysis of behavior with accessibility mesures (\eg walking behavior 
-dependent on different qualities of residential neighbourhood accessibility). 
+dependent on different qualities of residential neighbourhood accessibility).
+
+%CurtisEtAl2013AccessbilityPolicyInnovation, p.456 give some more examples
+
+%MorrisEtAl1978AccessibilityIndicators, p.92
+%The two principal bases of classification are the behavioural dimension mentioned earlier, and a dis- tinction between 
+%“relative accessibility” and “ integral accessibility” developed by Ingram (1971). Relative ac- cessibility describes the 
+%relation or degree of connection between any two points, whereas integral accessibility describes the relation or-degree 
+%of interconnection be- tween a given point and all others within a spatial set of pointst (see Fig. 2.)
 
 %#######################
 
-\section{(Basic) Application OR Potential accessibility} LAND-USE COMPONENT
+\section{(Basic) Application OR Potential accessibility} 
 \mnote{measures in practice}
+\mnote{transport component}
 Today, methods to assess the quality of accessibility
 %(cite BBSR, TUHH, TUM, Curtis, ... ??????????)
 are often used in superordinate planning procedures like regional transport planning, where a central goal is to provide 
 citizens with a certain quality of access to various services. For instance, the approach used by Germany's agency 
 responsible for regional planning calculates travel times to major service facilities like airports or hospitals \citep{BBSR20xxErreichbarkeitsmodell}. %(\url{http://www.bbsr.bund.de/BBSR/DE/Raumbeobachtung/UeberRaumbeobachtung/Komponenten/Erreichbarkeitsmodell/erreichbarkeitsmodell_node.html}),
-The results, typically visualized by mulit-colored maps, give useful insights into the supply of the population with 
-certain services and can therefore assist the planning of the (transport) infrastructure in light of the aforementioned goal to improve 
-this supply. Since in this approach travel times to the \textit{next} airport, to the \textit{next} hospital, and to the \textit{next} 
-autobahn access are caluclated, the implicit assumption is made that citizens' needs are fulfilled by one (i.e the \textit{next} 
+The results, typically visualized by multi-colored maps, give useful insights into the supply of the population with 
+certain services and can therefore assist the planning of the (transport) infrastructure in light of the goal to improve 
+this supply.
+% transport component
+% As such, this definition of an accessibility measure has its focus on the \textbf{trasnport component} of accessibility 
+% as introduced above.
+Since in this approach travel times to the \textit{next} airport, to the \textit{next} hospital, and to the \textit{next} 
+autobahn access are calculated, the implicit assumption is made that citizens' needs are fulfilled by one (i.e the \textit{next} 
 or closest in terms of travel times) facility of a given type.
 
-%################## transport component
+%BuettnerWulfhorstEtAl2013Vulnerability, p.13
+%given number of jobs accessible by a given mode of transport (here: public transport) within a given amount of time (here: 
+%60min) displayed in a colored my by municiplaity, i.e. on a zone-based level; data source: Erreichbarkeitsatlas
+%BuettnerWulfhorstEtAl2013Vulnerability, p.14
+%basically the same for Lyon: Isochrone accessibility to jobs is measured for public transport commuters, in the morning 
+%peak period. Travel time is computed using a “shortest path algorithm”
 
+\mnote{land-use component}
 An accessibility measure becomes insightful, however, if not only the impedance to reach \textit{the nearest} facility 
 serving a particular need is taken into account, but instead a \textit{set of multiple reachable} facilities serving the same 
-need is considered. This is due to the factthat different facilities of the same type may offer a given service in 
+need is considered. This is due to the fact that different facilities of the same type may offer a given service in 
 different qualities. Also, services may become more beneficent when combined with complementary services provided by 
 another facilities of the same type. For instance, a person wishing to make a holiday trip by airplane will likely 
 take into account several airports in her/his vicinity when planning a journey instead of just looking at the flights 
@@ -151,19 +190,19 @@ to reach all of these airports instead of just the impedance to reach the neares
 services may serve as another example. Only taking into account the nearest hospital may be sufficient when looking 
 at siple services like first aid, which can be assumed to be available at almost \textit{any} hospital. In other cases, 
 however, the supply with medical services will be better represented by considering several hospitals in the vicinity 
-because they are likely to offer different kinds of medical treatment that complement each other. 
+because they are likely to offer different kﬂinds of medical treatment that complement each other. 
+% land-use componenent
+The consideration of the set of multiple facilities potentially useful from the perspective of a citizen residing
+at a given location corresponds to respecting the \textbf{land-use component} of accessibility as defined above.
 
 %############## competition effects
 
-By considering various 
-facilities of a given kind, the 
-
-land-use component
-
+\mnote{potential accessibility}
 An approach that pursues the idea of taking into account the whole scope of potential activity facilities is the one 
 developed in Hansen's early study \citep{Hansen1959}, where an accessibility 
-measure referred to as \textit{potential accessibility} is defined. It is specified as the (weighted) sum over the 
-accessibilities of several facilities of a given type and is of the mathematical form
+measure referred to as \textit{potential accessibility} is defined. Such measures of potential accessibility are 
+specified as the (weighted) sum over the 
+accessibilities of several facilities of a given activity type (\eg shopping,leisure etc.) and are of the mathematical form
 %The (quantitative) accessibility measure in the MATSim accessibility extension is of the mathematical form
 \begin{equation}
 	A_i = g\Big( \sum_j a_j \, f(c_{ij}) \Big) \ ,
@@ -172,10 +211,16 @@ accessibilities of several facilities of a given type and is of the mathematical
 where the sum goes over all possible destinations (opportunities) $j$, $a_j$ is an indicator of the attractiveness of 
 the opportunity, $c_{ij}$ is the generalized cost of travel to get from $i$ to $j$, $f(c)$ is an impedance function that 
 typically decreases with increasing distance, and $g(.)$ is an arbitrary, but typically monotonically increasing, function. 
-That is, the accessibility at $i$ is computed from a weighted sum over all possible destinations, where the weight is the 
-product of the destination's attractiveness and the ease to get there. The (quantitative) accessibility measure used 
+%That is, the accessibility at $i$ is computed from a weighted sum over all possible destinations, where the weight is the 
+%product of the destination's attractiveness and the ease to get there.
+The weight is the product of the destination's attractiveness and the ease to get there. 
+The (quantitative) accessibility measure used 
 in the \gls{matsim} accessibility extension is of this mathematical form and may thus be seen 
 as a \textit{potential accessibility} measure.
+
+%MorrisEtAl1978AccessibilityIndicators, p.94
+%the “gravity type” indicators, as introduced by Hansen (1959), lend themselves to a variety of functional forms of 
+%impedance (power, exponential, Gaussian, etc.)
 
 \mnote{ingoing vs. outgoing accessibility}
 At this point, it may be important to note that the above-defined measure quantifies how good the accessibility \textit{to} 
@@ -184,45 +229,86 @@ as ``outgoing'' accessibility, while a measure of ``ingoing'' accessibility woul
 location $j$ is accessible \textit{from} other locations. \citet{NicolaiNagel2012HiResAccessibilityMethodInBook} 
 discuss under which circumstances both measures are interchangeable.
 
-%TRASNPORT COMPONENT ----------------------------
-
 \subsection{Accessibility Computation integrated with Transport Simulation}
-
-
+\mnote{transport component}
 \mnote{uncongested vs. congested network}
 As mentioned above, accessibility computations are oftentimes based on travel times, which serve as an impedance 
-measure. The calculation of these travel times can, however, vary. The most simple approach to calculate a travel time 
+measure. The way of calculating these travel times can, however, vary significantly.
+
+The most simple approach to calculate a travel time 
 between two locations is measuring the Euclidian distance (beeline distance) between these two locations and then, 
 by means of some kind of average speed, approximate the travel time between these two locations. Accoring to 
 \citet{Geurs2004AccessibilityReview}, this is the usual approach in location-, person-, and utility-based accessibility 
 approaches, i.e. those approaches where the focus is not explicitly on the considereation of the transport system.
 
-To make the accessibility measure sensitive to transport infrastructure changes, a better representation of the travel 
-impedance betwen origins and destinations is required. The most common approach appears to be the calculation of travel 
-times by shortest-path algorithms on a network representation of the real-world transport infrastructure, as \eg done by \citet{BBSR20xxErreichbarkeitsmodell}.
-%(\url{http://www.bbsr.bund.de/BBSR/DE/Raumbeobachtung/UeberRaumbeobachtung/Komponenten/Erreichbarkeitsmodell/erreichbarkeitsmodell_node.html})
+%CurtisEtAl2013AccessibilityPolicyInnovation, p.458
+%This led to the development of an impediment measure based on properties most closely related to users’ experience: 
+%that is, travel time, journey transfer and frequency of service, rather than geographical distance. 
+
+In order to strengthen the \textbf{transport component} of accessibility (as introduced above) and, therefore, to make 
+the accessibility measure sensitive to transport infrastructure changes, a better representation of the travel 
+impedance between origins and destinations is required. The most common approach appears to be the calculation of travel 
+times by shortest-path algorithms on a network representation of the real-world transport infrastructure
 Many accessibility computations are embedded into GIS software which offer respective procedures for network-based 
-computations. 
+computations \citep{BBSR20xxErreichbarkeitsmodell}.
+%(\url{http://www.bbsr.bund.de/BBSR/DE/Raumbeobachtung/UeberRaumbeobachtung/Komponenten/Erreichbarkeitsmodell/erreichbarkeitsmodell_node.html})
 %################## cite BBSR, SNAMUTS; MULUTT
+
+%CurtisEtAl2013AccessibilityPolicyInnovation, p.458
+%SNAMUTS is a GIS-based tool designed to measure the accessibility provided by existing or proposed urban public transport networks
+
+%CurtisEtAl2013AccessibilityPolicyInnovation, p.466
+%The model is essentially a destination-based accessibility model run using Arc- GIS software
+
 The accessibility computation in \gls{matsim} offers this type of computation as well. To run it, an 
-accessibility controller listener needs to be added to the \gls{matsim} controller. As input files, a network and a 
+
+accessibility controller listener \eg the \texttt{GridBasedAccessibilityControlerListener}
+
+??????
+
+needs to be added to the \gls{matsim} controller. As input files, a network and a 
 facilities file are necessary. An example for this application is given in 
-%(################# link to the RunAccessibilityComputation 
-class already mentioned).
+%(################# link to the RunAccessibilityComputation class already mentioned).
 
-This may be regarded as a supply-based appraoch, since transport supply and the supply with activity opportunities are 
-taken into account. The utilization of these two supply dimension by users are, however, not considered so far.
+By doing so, the transport and land-use compoents are well-represented.
+network
+facilities.
 
-Therefore, in the approach described above, no effects of competition, neither for the resources 
-of the transport infrastructure (defined by network capacities) nor capacities of activity facilities, 
-are taken into account. It is obvious, however, that these effects are relevant, as opportunities 
-may become unavailbale to citizens if they cannot be reached anymore due to overly high travel times 
-on the network or in cases where capacities of activity facilities are exceeded. The latter can in 
+
+This fashion of performaing an accessibility computation can be regarded as a \textit{supply-based approach}, since 
+transport supply and the supply with activity opportunities are taken into account. The utilization of these two 
+supply dimension by users, i.e. the dimension of the \textit{demand} is, however, not considered in this approach.
+
+Therefore, no \textit{effects of competition}
+% cite Geurs here again
+, neither for the resources of the transport infrastructure (defined by network 
+capacities) nor capacities of activity facilities, are taken into account.
+
+It is obvious, however, that effects of the interaction of supply and demand
+are relevant, as opportunities may become unavailbale to citizens if they cannot be reached anymore due to overly high 
+travel times on the network or in cases where capacities of activity facilities are exceeded. 
+
+The latter can in 
 principle be adressed by specifying facility capacities in the accorinding value in the facilities 
 input file. The according code adaption for observing these capacities in the \gls{matsim} 
-accessibility extension is currently underway  (???). Network capacities and their effects on 
-the adaption of agents' behavior are considered by the \gls{matsim} transport simulation 
-(see chapter ?????? of this book)
+accessibility extension is currently underway  (???). The former -- the observation of network capacities and 
+their effects on the adaption of agents' behavior -- is one of the core features of the \gls{matsim} transport 
+simulation, as described in chapter ?????? of this book.
+
+%the expressiveness of the accessibility calculation can be significantly increased by taking into account 
+%(transport and activity) demand next to the consideration of the supply side (\ie the transport infrastructure supply 
+%and the supply with spatially distributed activity facilities). 
+
+This is also one major argument for the integration of an accessibility computation with the dynamic transport 
+simulation system \gls{matsim}. While other accessibility tool, of which the majority is based on \gls{gis} systems, 
+offer opportunities to calculate travel times on a routed network, they are not able to calculate accessibility 
+changes dependent on the interaction of supply and demand. 
+
+
+
+
+
+
 
 %explained in the next section....
 %\subsection{Accessibility Computation integrated with Transport Simulation}
@@ -232,50 +318,25 @@ the adaption of agents' behavior are considered by the \gls{matsim} transport si
 In order to take these effects into account, the \gls{matsim} accessibility extension 
 needs to be run with a \gls{matsim} transport simulation.
 
-To do so, %####################
-
-%(in the example described above in section "basic application", \gls{matsim} has only been used to provide the 
-%infrastructure for the accessibility computation, while no actual simulation has been performed).
-
-As stated in section ?????????, the expressiveness of the accessibility calculation can be significantly increased 
-by taking into account (transport and activity) demand next to the consideration of the supply side (transport 
-infrastructure and supply with spatially distributed activity facilities). 
-
-This is also one major argument for the 
-integration of an accessibility computation with the dynamic transport simulation system \gls{matsim}. While other 
-accessibility tool, of which the majority is based on \gls{gis} systems, offer opportunities to calculate travel times on 
-a routed network, they are not able to calculate accessibility changes dependent on the interaction of supply and 
-demand. 
-
-Network travel times may be dependent on time of day in that \eg peak- or off-peak travel times may be 
-considered. A more detailed consideration of temporal effects is, however, only possible when the accessibility 
-computation is coupled with a dynamic traffic simulation. (?????????????)
-
-
 In order to observe capacity restriction of the transport network and of activity facilities and the impacts of 
 this effects on the demand and respective changes in levels of accessibilities, the \gls{matsim} accessibility 
 extension needs to be run with a \gls{matsim} transport simulation (in the example described above in section ``basic 
 application'', the \gls{matsim} has only been used to provide the infrastructure for the accessibility computation, 
 while no actual simulation has been performed).
 
-performance of the transport system is obviously dependent of the utilization of transport supply by transport 
-demand. With increasing travel times, for instance, the accessibility of a given location may decrease. To be able 
-to analyze such effects, a transport simulation which represents the interaction of transport supply and demand is 
-needed. This is one major argument why it is reasonable to integrate an accessibility extension into the MATSim framework.
-%=======
-
-
-This is possible in \gls{matsim} can also be done in MATSim by adding an accessibility controller listener to the 
-controller and only network and facilities files
-
 Equally, the interaction of supply and demand concerning the uasge of activity facilities can be considered in 
 the \gls{matsim} accessibility extension. To do so, facilities in the facilities input file need to be equipped 
 with according facilities capacities.
+
+Network travel times may be dependent on time of day in that \eg peak- or off-peak travel times may be 
+considered. A more detailed consideration of temporal effects is, however, only possible when the accessibility 
+computation is coupled with a dynamic traffic simulation. (?????????????)
 
 This way, the accessibility computation can be made dependent upon time-of-day, which is useful in contexts were 
 levels of transport demand varies significantly over the course of the day as, for instance, in contexts where 
 pronounced morning and afternoon peaks exist. This way, accessibility changes related to transport policies and 
 corresponding reaction of decision makers can be considered in a more comprehensive fashion.
+
 
 \mnote{spatial resolution, zones vs. points}
 
@@ -316,9 +377,25 @@ the deficits that traditional transport analysis methods possess in terms of ana
 construction-based like transport demand management schemes.
 %###############################
 
-
-
-
+%p. 454
+%New accessibility tools offer the possibility to guide these policy changes, overcoming restrictions to policy innovation associated with traditional transport planning practice.
+%
+%absence of planning support tools that can inform decision-making about public trans- port networks
+%
+%p. 455f
+%New forms of transport analysis are emerg- ing that can be used, in addition to the tradi- tional transport models, 
+%to expand knowledge and enable a fuller range of policy issues to be examined. Advances in the rise of geographic 
+%information systems (GIS) has allowed for new methods to explore questions of equity and access (Halden, 2002), oil 
+%vulnerability (Dodson and Sipe, 2007), climate change (Hickman et al., 2010) and other emergent concerns. Activity- or 
+%destination-based ac- cessibility modelling has expanded rapidly with the coalescing of advanced GIS, com- prehensive 
+%spatial datasets, exemplar projects and skills development in the planning and transport professions
+%
+%p. 455
+%Public-transport focused accessibility models are also becoming more common.
+%
+%While these new tools, like the traditional transport models, sit within a positivist framework, they expand the field of positiv- ist analysis in new directions. They also rely on a logical and mathematical treatment to provide scientific knowledge
+%
+%The application of each tool has intersected with transport and land- use decision-making, attempting to reveal insights that would influence decision-makers to consider alternative transport futures
 
 \section{Econometric Interpretation????}
 
@@ -471,7 +548,13 @@ public GridBasedAccessibilityControlerListenerV3(ActivityFacilities opportunitie
 
 \subsection{Minimal}
 
+Supply-based approach
+transport component
+land-use component
 ...
+
+
+demand-based
 
 
 
