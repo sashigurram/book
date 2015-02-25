@@ -425,6 +425,7 @@ the accessibility benefits and the economic efficiency of public transport proje
 
 
 \subsection{Spatial Resolution and Computational Aspects}
+%\label{sec:spatial-resoultion}
 \mnote{spatial resolution, zones vs. points}
 In contrast to many other transport simulations, \gls{matsim} is not zone-based, but based on coordinates (see 
 chapter ????? of this book). Therefore, the accessibility computation within \gls{matsim} can also be conducted independent 
@@ -516,7 +517,7 @@ become obsolete.
 %und die Zelle daruber angebunden werden.
 
 %##########################################################################################################################
-%adapted from NicolaiNagel
+%following rather directly adapted from NicolaiNagel
 
 Especially, if the granuality of the grid-based \gls{matsim} accessibility computation is increased, the fact that 
 origin and opportunity locations do not necessarily lie on the network becomes more and more relevant. To keep the 
@@ -541,15 +542,10 @@ the shortest distance to the network.
 %time-dependent Dijkstra shortest path algorithm \citep{LefebvreBalmer2007Fastshortestpath}.  Accessibility of the 
 %same location at a different time-of-day will usually be different, since congestion patterns are different.
 
-%\subsection{Spatial resolution}
-%\label{sec:spat-resol-orig}
-
-When looking at high-resolution accessibility calculations, there are, in fact,
-two resolutions to consider: One that defines for how many origins $i$ the
-accessibility is to be computed. And a second one that defines to what level
-the opportunities $k$ are to be resolved.
-
-
+%When looking at high-resolution accessibility calculations, there are, in fact,
+%two resolutions to consider: One that defines for how many origins $i$ the
+%accessibility is to be computed. And a second one that defines to what level
+%the opportunities $k$ are to be resolved.
 
 %\paragraph{Spatial resolution of the origin} In the present implementation, the origin side can be calculated for
 %two spatial units, cells or zones. Their spatial resolution determines the
@@ -575,51 +571,39 @@ the opportunities $k$ are to be resolved.
 %
 %In the grid-based approach it is then assumed that accessibility for in-between locations should be interpolated.
 %
-%In contrast, for the zone-based approach the accessibility of the measuring point is taken as representative for the whole zone.  In consequence, the choice of the procedure of how to generate the measuring point for the zone-based approach has an influence on the results.  There is no corresponding choice for the grid-based approach, removing one element of arbitrariness compared to the zone-based approach.
+%In contrast, for the zone-based approach the accessibility of the measuring point is taken as 
+%representative for the whole zone.  In consequence, the choice of the procedure of how to generate 
+%the measuring point for the zone-based approach has an influence on the results.  There is no 
+%corresponding choice for the grid-based approach, removing one element of arbitrariness compared 
+%to the zone-based approach.
 
-The following paragraphs concentrate on the cell-based approach.
-%%  that is
-%% qualified for high resolution accessibility calculations. 
-Nevertheless, the
-calculation procedure of the logsum term is the same for both approaches.
-
-
-Opportunity locations such as work places are given by land-use. As stated earlier, they are attached to the nearest network node. 
+%The following paragraphs concentrate on the cell-based approach.
+%Nevertheless, the
+%calculation procedure of the logsum term is the same for both approaches.
 %
-The fact that they are attached to the nearest network \emph{node} rather than the nearest network \emph{element} (i.e.\ including links) is, in fact, the only approximation that the present paper makes with respect to the spatial resolution of opportunities.  
+%Opportunity locations such as work places are given by land-use. As stated earlier, they are attached to the nearest network node. 
 
-%%%%%%%%%%%%% computational
-Exploring the entire network by using the ``least cost path tree'' is
-a computationally expensive task. In order to accelerate the overall
-computing speed, the execution time of the ``least cost path tree'' is
-reduced by the following elements.
+The assumption opportunity locations are attached to the nearest network \emph{node} rather than the nearest 
+network \emph{element} (\eg including links) is, in fact, the only approximation that the \gls{matsim}
+accessibility extension makes with respect to the spatial resolution of opportunities
 
-\paragraph{Origins} 
+\citep{Nicolai}
 
-For each origin location $i$, the nearest node on the road network is
-identified. Locations that share the same node have the same travel
-disutilities on the network.  In this case the ``least cost path
-tree'' is executed only once and the calculated disutilities on the
-network are reused for all $i$ that are mapped on the same node. Only
-the calculation of the travel disutility to overcome the gap between
-location $i$ and the network is done individually.
+This assumption is unlikely to alter accessibility results significantly, but offers huge potential for the
+optimization of computational performance, which has---as stated by many authors
+%##########################################
+%cite Buettner, Kwan
+---often been a major obstacle to higher-resolved accessibility computations. In the concrete case of the
+\gls{matsim} accessibility computation, the exploration of the entire network by the ``least cost path tree''
+is a computationally expensive task.
 
-This implies the approximation that all origins assigned to the same node use the same time-of-day as starting time for the time-dependent least cost path tree algorithm.
-
-\paragraph{Opportunities}
-
-It is, in fact, sufficient to sum over all opportunities $k$ attached to a node
-$j$ only once.  For this, assume that the travel disutility $V_{ik}$ can be
-decomposed as
+Thanks to the aforementioned assumption that opportunity locations are attached to the nearest network \emph{node},
+it is, in fact, sufficient to sum over all opportunities $k$ attached to a node $j$ only once. The 
+travel disutility $V_{ik}$ can be decomposed as
 \begin{equation}
 V_{ik} = V_{ij} + V_{jk} \ \forall k \in j \ ,
 \end{equation}
-where the notation $k \in j$ shall refer to all opportunities $k$ attached to node $j$.
-%%The sum of travel disutility $V_{jk}$ to get from a node $j$ to
-%%opportunity $k$ over all opportunities $k$ that are aggregated on the same node
-%%are included. If the travel disutility from origin $i$ to node $j$ is
-%%$V_{ij}$ and the disutility from node $j$ to opportunity $k$ is $V_{jk}$. 
-Then 
+where $k \in j$ refers to all opportunities $k$ attached to node $j$. With
 \begin{equation}
 \sum_{k \in j} e^{ V_{ik}} 
 %
@@ -631,35 +615,24 @@ Then
 %
 =: e^{ V_{ij}} \cdot Opp_j
 \end{equation} 
-Thus, it is sufficient to compute $Opp_j$ once for every network node $j$, and from then on compute accessibilities by
+it is sufficient to compute $Opp_j$ once for every network node $j$, and compute accessibilities as
 \begin{equation}
 A_i = ln \sum_k e^{ V_{ik}}
 %
 = ln \sum_j e^{ V_{ij}} \cdot Opp_j \ .
 \end{equation}
 
-This is an exact result. The only approximation was already done
-earlier; it is the assumption that all opportunities are reached through the nearest network node, rather than directly from the links.
+Therefore, the loop that performs the caluculation does not have to run over all opportunities $k$, but instead just 
+over (the usually significantly lower numer) of network nodes $j$.
 
-%#############################################################################################################################
+Similarly, for each origin location $i$, the nearest node on the road network is identified so that locations that 
+share the same node have the same travel disutilities on the network. Just as in the case for destinations, the 
+``least cost path tree'' is, therefore, executed only once and the calculated disutilities on the network are reused 
+for all $i$ that are mapped on the same node. Just the calculation of the travel disutility of network access needs
+to be done individually for each origin $i$. \citet{Nicolai} show that due to this runtime optimzation, computation 
+time increases sub-linearly with resolution. At the same time, they find that no significant further insights can be 
+gained by increasing the resolution beyond 100\,meters.
 
-
-USAGE: controlerListener in \gls{matsim}; if various activities and various modes are considered, one such contoler listener 
-is added for each combination
-
-
-\mnote{computational aspects}
-TODO: say something about computation characteristics
-
-runtime optimization
-%
-%
-%
-%
-%
-
-
-\mnote{resolution}
 %from ERAFrica
 Accessibility is conventionally computed for spatial aggregates, such as “zones”, which is problematic in particular 
 for situations where walking is an important mode of transport because of its dependence on small scale details. Recent 
@@ -668,16 +641,18 @@ made it possible to compute accessibility measures with very high spatial resolu
 household location.
 
 %from ERAfrica
+Despite the fact that accessibility is a point measure, i.e. a measure that will be different for every coordinate (x,y), 
+it is typically computed for geographical units such as zones or districts. Besides making the measure dependent on the
+size and shape of the geographical units (“modifiable areas unit problem”, e.g. Openshaw, 1984), this also has the 
+disadvantage of hiding much local detail (e.g. Kwan, 1998), especially when pedestrian accessibility is or should be included.
+A big obstacle to detailed high resolution accessibility calculations is that the effort to reach a destination should 
+not just use Euclidean distance but should instead be calculated on a detailed transport network, preferably separately 
+for every mode of transport. Kwan (1991) uses a special compute server and still is limited to relatively low resolutions.
+Advances in hardware and software have, since then, made it feasible to compute high-resolution accessibility in nearly
+arbitrary resolution in acceptable time on standard hardware (Nicolai \& Nagel, 2013).
 
-Despite the fact that accessibility is a point measure, i.e. a measure that will be different for every coordinate (x,y), it is typically computed for geographical units such as zones or districts. Besides making the measure dependent on the size and shape of the geographical units (“modifiable areas unit problem”, e.g. Openshaw, 1984), this also has the disadvantage of hiding much local detail (e.g. Kwan, 1998), especially when pedestrian accessibility is or should be included.
-A big obstacle to detailed high resolution accessibility calculations is that the effort to reach a destination should not just use Euclidean distance but should instead be calculated on a detailed transport network, preferably separately for every mode of transport. Kwan (1991) uses a special compute server and still is limited to relatively low resolutions. Advances in hardware and software have, since then, made it feasible to compute high-resolution accessibility in nearly arbitrary resolution in acceptable time on standard hardware (Nicolai \& Nagel, 2013).
+%###############################################################################
 
-
-
-resolution can in principal be increased infinitely. Because of the runtime optimization, computation time increases 
-sub-linearly with resolution.
-
-studies showed that no significant further insights can be gained by increasing the resolution beyond 100\,meters.
 
 \mnote{other}
 ADD: different modes, activities
@@ -703,6 +678,29 @@ the transport user language
 
 \section{Data}
 \mnote{data}
+As mentioned above, the availabiliy of data is mostly the main determinant for the lvel of spatial resolution
+on which an accessibility computation is feasable. Since a good quality of structural data is mostly only
+available at some level of administrative zones, \eg municipalities, it is not feasable to conduct many
+approaches of accessibility assessment on a finer spatial resolution.
+
+The accessibility extension of \gls{matsim} can, however, be run on data from \gls{osm} which contains data on
+activitiy facilities on a coordinate-based level, \ie using these data it is not necessary to rely on a zonation
+system. Furthermore, data form \glx{osm} is publicly and freely availbale and its amount and quality of these
+data are steadily increasing. A
+
+
+
+A recent advance is that much more input data is now publicly available, often crowd-sourced. Our primary source of open data will be OpenStreetMap (http://osm.org), which seems to have established itself as a uniform and worldwide accessible standard for crowd-sourced and other geo-data. In fact, the use of OpenStreetMap is favoured in the South African environment, the result of strong advocacy for geospatial data to be more readily available for decision-making and decision support. To that extent, the South African National Geospatial Information (NGI) has started to move all its Geospatial Information System (GIS) data over to OpenStreetMap.
+This offers the unprecedented opportunity to bind the new computational methods, outlined above, together with standardized input data. This would make the approach very portable, that is, it could be easily ported to a different spatial location, to the analysis of other types of services, or even a different spatial scale.
+At present, the transportation network information provided by \gls{osm} is already sufficient in most places to obtain plausible results; this holds, in particular, to urbanized locations also in developing countries. The data stock is also growing at an unprecedented pace, so even if input data is not fully available yet it pays off to invest into methods and infrastructure to harvest that data in the near future. Finally, the types of data covered by OpenStreetMap are ever increasing. Concerning pedestrian access in urban areas, it may already be the best global data source around; for example, it contains a full walk network of Kibera in Nairobi which is more than what google maps can feature (accessed 6-Apr-2013). The services to which access should be provided are often already mapped in OpenStreetMap; if not, neighbourhood organizations may map and add these or other service locations to the existing data infrastructure.
+
+
+
+
+
+
+
+
 %from ERAFrica
 based on the extensive utilisation of voluntary
 geographic information (VGI) such as OpenStreetMap data
