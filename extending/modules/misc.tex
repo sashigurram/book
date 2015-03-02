@@ -8,11 +8,26 @@
 \section{Analysis}
 \label{sec:contrib-analysis}
 
-\createStandardInformationBasic{{\url{http://matsim.org/javadoc} $\to$ analysis}}{
-%\lstinline|RunKNEventsAnalyzer| class
--}{Analysis tools without standard configuration.}{-}
+\createStandardInformationBasic{{\url{http://matsim.org/javadoc} $\to$ analysis}}{%
+%
+No standard invocation. See the \lstinline|RunKNEventsAnalyzer| class for intuition.
+%
+}{%
+%
+Analysis tools without standard configuration.
+%
+}{%
+%
+none
+%
+}
 
 %% \lstinline{org.matsim.contribs.analysis.*}
+
+This contrib collects various analysis tools for \gls{matsim} output.  
+
+One important reason for having this in a contrib rather than in a playground is the \gls{maven} layout of the repository: Contribs can use material from other contribs, but not from the playgrounds.  In consequence, analysis tools that are needed in a contrib needs to be in a contrib themselves.  The analysis contrib is a possible place where to put them.
+
 
 % ##################################################################################################################
 \section{freightChainsFromTravelDiaries}
@@ -48,16 +63,32 @@ Since Sebastian has left science for the time being, he allowed us to take his c
 %
 }{%
 %
-matrixBasedPtRouter
+\lstinline{matrixBasedPtRouter} section of the config file (only available when the matrixbasedptrouter contrib is correctly loaded)
 %
 }{%
--
+%
+Section~3.1 of \citet{NicolaiNagel2013HandbookIntegrationOfTransportLanduse}; \citet{RoederNagel2013SketchPlanningBrussels}
 %
 }
 
-\kai{todo kai}
+The matrix based pt router reads a list of public transit (pt) stops, and constructs ``teleported'' pt routes using the stops nearest to origin and destination.  That is, each resulting trip will approximately look as follows:
+\begin{xml}
+<act type="previous" ... />
+<!-- begin trip -->
+<leg mode="walk" ... />
+<act type="ptInteraction" ... />
+<leg mode="pt" ... />
+<act type="ptInteraction" ... />
+<leg mode="walk" ... />
+<!-- end trip -->
+<act type="next" ... />  
+\end{xml}
 
-The matrix based pt router reads a list of public transit (pt) stops, and constructs pt routes using the stops nearest to origin and destination. Travel times and travel distances between pt stops can be given by corresponding matrices.
+The attributes of the walk and the pt legs will be computed from the coordinates of the locations in the same way as teleportation routing (see Section~\ref{sec:teleportation-routing}), and then taken at face value in the \gls{mobsim} (see Section~\ref{sec:teleportation-qsim}).
+
+Travel times and travel distances between pt stops can alternatively be given by corresponding matrices.  This is particularly useful if a public transit assignment exists and such information can be extracted from that.  This was used by \citet{RoederNagel2013SketchPlanningBrussels} and by \citet{ZoelligRenner_PhDThesis_2014}.
+
+
 
 % ##################################################################################################################
 \section{MATSim4UrbanSim}
@@ -65,8 +96,8 @@ The matrix based pt router reads a list of public transit (pt) stops, and constr
 
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
-\subsection{Basic Information}
-\label{sec:matsim4urbansim-stdInfo}
+%% \subsection{Basic Information}
+%% \label{sec:matsim4urbansim-stdInfo}
 
 \createStandardInformationBasic{%
 \url{http://matsim.org/javadoc} $\to$ matsim4urbansim
@@ -85,18 +116,22 @@ In the UrbanSim config file.
 }
 
 % ##################################################################################################################
-\subsection{Summary}
+%% \subsection{Summary}
 ``MATSim4UrbanSim'' is an adapter package for using \gls{matsim} as a travel model plug-in to \gls{urbansim}, a well-known land use simulation \citep[e.g.][see \url{http://www.urbansim.org}]{WaddellEtc2003UrbanSim}.
 \gls{urbansim} has, for example, submodels for residential location choice, commercial location choice, or development and building construction, thus creating synthetic  potential urban or regional development scenarios under various conditions and constraints. 
 Traffic infrastructure plays a significant role in such developments; for example, very accessible areas are more attractive as residences and for commercial activities. 
 Since accessibility is reduced by congestion, and congestion can only be realistically modeled through a sophisticated model of demand and supply interaction, \gls{urbansim} does not have its own travel model, but delegates that task to external models, such as \gls{matsim}.
 
 To use MATSim4UrbanSim, one first needs to have a running \gls{urbansim} installation. 
-From there, one can add \gls{matsim} to that installation; see Section~\ref{sec:matsim4urbansim-stdInfo} for more information. 
-Basic \gls{matsim} parameters are configured from the \gls{urbansim} configuration file by adding an appropriate section; again, see Section~\ref{sec:matsim4urbansim-stdInfo} for more information. 
+From there, one can add \gls{matsim} to that installation; see %Section~\ref{sec:matsim4urbansim-stdInfo} 
+the documentation mentioned above for more information. 
+Basic \gls{matsim} parameters are configured from the \gls{urbansim} configuration file by adding an appropriate section; again, see 
+%Section~\ref{sec:matsim4urbansim-stdInfo} 
+the documentation mentioned above for more information. 
 It is possible to add a standard \gls{matsim} \gls{configfile} allowing use of the extended \gls{matsim} features, including those added after the adapter package was designed.
 
-The module was applied by \citet[][]{ZoelligRenner_PhDThesis_2014}, but it has not been maintained since 2013 and it is unclear how much of it currently works.
+The module was applied by \citet{CabritaEtcSustaincityHandbookBrusselsChapter} and by \citet[][]{ZoelligRenner_PhDThesis_2014}.
+%% , but it has not been maintained since 2013 and it is unclear how much of it currently works.
 
 % ##################################################################################################################
 
