@@ -13,7 +13,7 @@
 %\kai{Andreas, hast Du Dir mal Gunnars Texte durchgelesen?}
 %\ah{ja. ganzer Abschnitt steht aber jetzt sowieso in Section~\ref{sec:strategymodules}}. The MATSim choice process is performed over the course of iterations, \ie it is based on the interplay of the innovation modules with the \gls{matsim} loop and and not on an isolated choice within a single module. 
 %
-Generally speaking, destination choice represents an optimization problem, where every agent searches for his optimal destination according to an \gls{objectivefunction} and subject to various constraints such as the agent's travel time budget, and also subject to interactions with other agents while competing for space-time slots in the infrastructure. The \gls{matsim} destination innovation module provides a problem-tailored heuristic algorithm to solve this problem along the following lines.
+Generally speaking, destination choice represents an optimization problem, where every agent searches for his or her optimal destination according to an \gls{objectivefunction} and subject to various constraints such as the agent's travel time budget, and also subject to interactions with other agents while competing for space-time slots in the infrastructure. The \gls{matsim} destination innovation module provides a problem-tailored heuristic algorithm to solve this problem along the following lines.
 
 Due to the iterative base of \gls{matsim}, a mechanism ensuring consistent probabilistic choices over the course of iterations is required, which is the main component of the destination innovation module.
 
@@ -37,37 +37,41 @@ This mechanism is also applicable for other choice dimensions.
 \subsection{Error Terms}
 \label{sec:errorterms}
 As will be shown in Chapter~\ref{ch:discretechoice}, \gls{matsim}---as a utility-maximizing model---is related to the discrete choice framework, meaning that this framework can productively guide the \gls{matsim} utility function specification. 
-Utility in discrete choice models is composed of a deterministic part and a random error term representing the unobserved heterogeneity, \ie it subsumes, both, truly, \ie inherently random decisions and the modeler's missing knowledge about the choice and its context. 
+Utility in discrete choice models is composed of a deterministic part and a random error term representing the unobserved heterogeneity, \ie it subsumes, both truly, \ie inherently random decisions and the modeler's missing knowledge about the choice and its context. 
 
 In \gls{matsim}, the utility function for route, mode and time innovation does not contain an explicit random error term (yet). 
-This is at least partially compensated through the stochasticity of the replanning, in Chapter~\ref{ch:discretechoice} denoted as $\eta$.
+This is at least partially compensated through the stochasticity of the replanning, in Chapter~\ref{ch:discretechoice} denoted as $\eta$. \kai{Vielleicht kann man das so sagen.  Ich hätte schärfer argumentiert, dass die ``stochasticity of the decision'' im scale parameter ist (also mu), und eta die ``stochasticity of the mobsim'' ist.  Wenn man SelectBest verwendet, dann ist tendenziell mu=infty.  Wir können uns diese Diskussion jetzt vielleicht sparen und schreiben ``denoted by $\mu$ and $\eta$.'', oder?}
 An example for this might be the following.
 Route and time choices are usually subject to significant competition. 
 The co-evolutionary algorithm of \gls{matsim}, detailed below, essentially assigns the resources in a random manner to the persons. 
 For example, two identical persons may end up with different routes according to the order in which they undergo the replanning. 
 Essentially, this means that an (implicit) random term is present in the choice making.
 
-Replanning does, however, not add enough unobserved heterogeneity to destination choice.
-Further problems might or might not appear when trying to interpret this randomness added implicitly and somewhat unsystematic.%
-\footnote{Choice outcomes do not only depend on implemented choice model, but are also implicitly influenced by the implementation of the algorithm to find the solutions of the utility-maximization. On the other hand, this is the basic idea of \gls{matsim} and thus not a critical concept.
+\st{Replanning}{\orange The above} does, however, not add enough unobserved heterogeneity to destination choice.
+Further problems might or might not appear when trying to interpret this randomness {\orange since it is} added implicitly and somewhat unsystematic{\orange ally}.%
+\footnote{Choice outcomes do not only depend on implemented choice model, but \st{are (naturally)} also \st{implicitly influenced by the implementation of the algorithm to find the solutions of the utility-maximization} \textcolor{orange}{on the algorithm to generate the} \textcolor{orange}{choice set}.  On the other hand, this is the basic idea of \gls{matsim} and thus not a critical concept. \kai{Den vorhergehenden Satz verstehe ich nicht wirklich.  Weglassen?}
 }
-Thus, an explicit random error term $\varepsilon_{n\ell q}$ for every person $n$, alternative $\ell$ and activity $q$, held stable over the iterations, is added to the destination innovation utility function \citep[][]{Horni_PhDThesis_2013}. 
-Research about the necessity of error terms for the remaining choice dimensions is required.
+Thus, an explicit random error term $\varepsilon_{n\ell q}$ for every person $n$, alternative $\ell$ and activity $q$, held stable over the iterations, is added to the {\orange scoring function during the running of the} destination innovation {\orange module} \st{utility function} \citep[][]{Horni_PhDThesis_2013}. 
+Research about the necessity of error terms for the remaining choice dimensions is required. \kai{see research avenues?}
 
 % ======================================================================================================================
 \subsection{Quenched Randomness}
 %In random utility theory, decision makers are assumed to be rational utility maximizers, where the utility is dependent on the characteristics of the alternatives, the choice maker itself and the choice situation. Besides these deterministic components, unobserved heterogeneity must be added by random error terms, often denoted $\varepsilon$. 
-Due to the random error terms, discrete choices are quantified by probabilities, for the logit model for example as $p_{n\ell q} = \exp(V_{n\ell q}) / \sum_L exp(V_{njq})$, where $V_{n\ell q}$ is person $n$'s systematic utility of alternative $\ell$ for activity $q$, which is divided by all remaining choice set's alternatives $j$. When drawing from the distribution specified by $p_{n\ell q}$ for a population, the aggregate choices are reproduced. 
-This is basically also true, when applied in iterative frameworks. 
+Due to the random error terms, discrete choices are quantified by probabilities, for the logit model for example as $p_{n\ell q} = \exp(V_{n\ell q}) / \sum_{j \in L} exp(V_{njq})$, where $V_{n\ell q}$ is person $n$'s systematic utility of alternative $\ell$ for activity $q$ \st{, which is divided by all remaining choice set's alternatives $j$} \kai{wirklich ``remaining''?  logit wäre einfach nur ``all''. Ich würde den Halbsatz aber ohnehin weglassen; alternativ: where the sum goes over ...} . 
+When drawing from the distribution specified by $p_{n\ell 
+  q}$ for a population, the aggregate choices are reproduced. 
+This is basically also true when applied in iterative frameworks. 
 However, iterative frameworks are usually associated with some kind of learning or relaxation mechanism. 
 This mechanism is heavily distorted by repeatedly and randomly drawing from $p_{n\ell q}$ in every iteration. 
-In this case the $\varepsilon_{n\ell q}$ fluctuate from iteration to iteration, which is disastrous for the algorithm's convergence and behaviorally implausible.
+In this case the $\varepsilon_{n\ell q}$ {\orange effectively} fluctuate from iteration to iteration, which is disastrous for the algorithm's convergence and behaviorally implausible.
 
 Instead, the random error terms $\varepsilon$ need to remain fixed from iteration to iteration. 
 The optimization is then performed as a deterministic search based on the resulting utilities $U_{n\ell q}$, \ie an alternative $\ell$ for person $n$ and activity $q$ is selected as 
 \[ 
 \underset{\ell \in choice\: set}{\operatorname{argmax}} U_{nq} \,.
 \] 
+\kai{Das müsste $U_{n \ell q}$ sein, oder?  Sonst funktioniert das mit dem argmax ja gar nicht; es muss ja den Laufindex auch geben.}
+\kai{Würde auch vorschlagen, da noch $= V_{n \ell q} + \varepsilon){n \ell q}$ dranzuschreiben, oder?}
 This includes, via the systematic part $V_{n\ell q}$, the disutility of traveling to destination~$\ell$ for activity~$q$.
 
 As stated above, the random error terms need to remain the same over the iterations (also discussed in Chapter~\ref{ch:discretechoice}). 
@@ -94,23 +98,25 @@ With more conceptual progress, this may eventually be an option, but at this poi
 The developed solution below is generally applicable in econometric microsimulators. The same \emph{stable} error term can be \emph{re-}calculated on the fly by using stable random seeds $s_{n\ell q} = g(k_n, k_\ell, k_q)$, where are uniformly distributed random numbers associated with $k$, $\ell$, and $q$. 
 That is, for each person $n$ a random number $k_n$ is generated and stored, and the same is done with each destination $\ell$. 
 The value for the activity $q$ can be derived from its index in the plan possibly combined with the person's value $k_n$. 
-This reduces the storage space dramatically from $\bar{nq} \times nn \times n\ell$ to $\bar{nq}(nn + n\ell)$, where $nn$ is the number of persons or agents and $n_\ell$ is the number of destinations and $\bar{nq}$ is the average number of discretionary activities in an agent's plan. 
-This means that storage space is reduced to approximately $2 \cdot 4 \cdot 10^{6} \hbox{Byte} = 8 \hbox{MB}$, which can be easily stored even on any modern machine.
+This reduces the storage space dramatically from $\bar{nq} \times nn \times n\ell$ to $\bar{nq}(nn + n\ell)$, where $nn$ is the number of persons or agents and $n_\ell$ is the number of destinations and $\bar{nq}$ is the average number of discretionary activities in an agent's plan.  \kai{Warum jetzt nicht $n_n$, $n_q$ und $n_\ell$? Und warum ``bar''?} 
+This means that storage space is reduced to approximately $2 \cdot 4 \cdot 10^{6} \hbox{Byte} = 8 \hbox{MB}$, which can be easily stored 
+%even 
+on any modern machine.
 
 The distribution of these seeds is essentially irrelevant; any error term distribution can be generated from any basic seed distribution. 
 In the current version $g(k_n, k_\ell, k_q) = (k_n + k_\ell + k_q) \times v_{max}$ is used. $v_{max}$ is the maximum (long) number that can be handled by the specific machine.
 
-To evaluate utility for a person $n$ visiting the destination $\ell$ for activity $q$ a sequence of Gumbel-distributed random numbers $seq_{n\ell q}$ is generated on the fly for every person-alternative-activity combination using the seed $s_{n\ell q}$. 
+To evaluate utility for a person $n$ visiting the destination $\ell$ for activity $q$, a sequence of Gumbel-distributed random numbers $seq_{n\ell q}$ is generated on the fly for every person-alternative-activity combination using the seed $s_{n\ell q}$. 
 Some random number generators have problems in the initial phase of drawing, \eg the first couple of random numbers are correlated or do never cover the complete probability space. As in our procedure the random number generator is constantly re-initialized, for these technical reasons, the error term $\varepsilon_{n\ell q}$ is derived not from the first element but from the $m^{th}$ element of the sequence $seq_{n\ell q}[m]$. 
 Here, $m$ is set to 10. 
 This procedure is valid as the set of all  $m^{th}$ elements of all different sequences is also a pseudo-random sequence following the same distribution as the sequences $seq_{n\ell q}$; clearly, \emph{true} random number generators relying on physical phenomena, such as hardware temperature, are not applicable. 
 
 % ======================================================================================================================
 \subsection{Search Space Construction and Evaluation}
-\gls{matsim} destination innovation is based on best-response rather than random mutation, \ie in every iteration the currently best alternative is chosen. 
+\gls{matsim} destination innovation is based on best-response rather than random mutation, \ie in every iteration the currently best alternative{\orange , \emph{including} the $\varepsilon_{n \ell q}$, } is chosen. 
 This works as long as the inter-iteration changes are small, which is usually given by the relatively small share of agents who re-plan. 
 The best-response approach is adopted due to the usually huge number of alternatives in combination with the search space characteristics. 
-As the discrete search landscape is characterized by random noise because error terms are not (or only locally) spatially correlated (see Figure~\ref{fig:landscape0}). For such problems---as opposed to continuous landscapes (see Figure~\ref{fig:landscape1})---efficient search methods, such as local search methods, generally do not work.
+As the discrete search landscape is characterized by random noise because error terms are not \st{(or only locally)} spatially correlated (see Figure~\ref{fig:landscape0}). For such problems---as opposed to continuous landscapes (see Figure~\ref{fig:landscape1})---efficient search methods, such as local search methods, generally do not work.
 
 % ---------------------------------
 \createfigure%
@@ -132,26 +138,36 @@ As the discrete search landscape is characterized by random noise because error 
 {}
 
 % ---------------------------------
-On the search for the best choice, the large number of alternatives---prohibiting exhaustive search---is restrained as follows (for the detailed derivation see \citet[][p.51 ff.]{Horni_PhDThesis_2013}). It is assumed that travel costs are always negative, and that a person drops activities with negative net utility. Then the maximum potential travel effort a person is willing to invest is constrained by the maximum error term per person and activity. This approach is promising, as very large values for Gumbel-distributed are rare, meaning that a huge space must be searched for only a few persons. 
+On the search for the best choice, the large number of alternatives---prohibiting exhaustive search---is restrained as follows \citet[for the detailed derivation see][p.51 ff.]{Horni_PhDThesis_2013}. It is assumed that travel costs are always negative, and that a person drops activities with negative net utility. Then the maximum potential travel effort a person is willing to invest is constrained by the maximum error term per person and activity. This approach is promising, as very large values for Gumbel-distributed {\orange variables} are rare, meaning that a huge space must be searched for only a few persons. 
 
-This reduction of the search space saves a lot of computation time, however, it is still infeasible and further speed-ups are necessary. Most computation time is due to calculation of travel times, \ie due to routing, for evaluation of the alternatives in the search space. To reduce these huge routing costs, the Dijkstra is not only applied forward---providing one-to-all travel times--but also \emph{backwards} using an average estimated arrival time as initial time. This is an approximation, and thus a \emph{probabilistic} best response is applied, justified by the natural assumption that, during the course of the iterations, the probabilistic choice probably reduces, or even compensates, the errors incurred by approximating travel times. 
+This reduction of the search space saves a lot of computation time, however, it is still infeasible and further speed-ups are necessary. Most computation time is due to calculation of travel times, \ie due to routing, for evaluation of the alternatives in the search space. To reduce these huge routing costs, the Dijkstra\kai{?? references?} algorithm is not only applied forward---providing one-to-all travel times--but also \emph{backwards} using an average estimated arrival time as initial time. This is an approximation, and thus a \emph{probabilistic} best response is applied, justified by the 
+%natural 
+assumption that, during the course of the iterations, the probabilistic choice 
+%probably 
+will reduce
+%, or even compensate, 
+the errors incurred by approximating travel times. 
 
 With this procedure, the required computational effort is dramatically reduced, allowing application of destination innovation to large-scale scenarios.
 
 % ======================================================================================================================
 \subsection{Destination Choice Set Specification}
-While choice set specification is natural for choices with few alternatives, in contrast, for problems with a large universal choice set, usually present for spatial choices, such as destination or route choice, specifying individual choice sets becomes a challenging computational and even more behavioral issue \citep[e.g.,][]{PagliaraTimmermans_TransLett_2009, Thill_PHG_1992, Schuessler_PhDThesis_2010, FrejingerEtAl_TransResB_2009}. 
+\st{While choice set specification is natural for choices with few alternatives, in contrast, for problems with a large universal choice set, usually present for spatial choices, such as destination or route choice, specifying individual choice sets becomes a challenging computational and even more behavioral issue} \citep[e.g.,][]{PagliaraTimmermans_TransLett_2009, Thill_PHG_1992, Schuessler_PhDThesis_2010, FrejingerEtAl_TransResB_2009}. 
+{\orange While choice set specification is natural for choices with few alternatives, in contrast, for problems with a large universal choice set, specifying individual choice sets becomes a challenging computational and \st{even more} behavioral issue.  This is particularly the case for spatial choices such as destination or route choice \citep[e.g.,][]{PagliaraTimmermans_TransLett_2009, Thill_PHG_1992, Schuessler_PhDThesis_2010, FrejingerEtAl_TransResB_2009}.} 
 Estimates are sensitive to choice sets, and, at the same time, no established choice set definition procedure exists for spatial problems. 
-This means that choice sets and, hence, estimates are highly dependent on the modeler, which is an exogenous problem, structurally similar to the well-known \gls{maup}, where results are dependent on modeler's zoning specification.
+This means that choice sets and, hence, estimates are \st{highly} dependent on the modeler\st{, which is an exogenous problem, structurally similar to the well-known %\gls{maup} % does not work with \st{...}
+MAUP, where results are dependent on modeler's zoning specification}.
 
-A prominent extension of the standard discrete choice modeling approach to treat this problem is formed by stochastic choice set models, founded by \citet[][]{Manski_TD_1977, BurnettKPHanson_TRR_1979, BurnettKP_UG_1980}, which integrates the choice set formation step into the estimation procedure by jointly estimating selection of a choice set and the choice of a particular alternative of this choice set \citep[][]{KaplanEtAl_TRB_2009, PagliaraTimmermans_TransLett_2009, Manski_TD_1977, Swait_TransResPartB_2001, HorowitzLouviere_IJRM_1995, BenAkivaBoccara_IJRM_1995, SwaitBenAkiva_TransResPartB_1987, Swait_TransResPartB_2001, MartinezEtAl_TransResPartB_2009, CascettaPapola_TransResPartA_2009, BierlaireEtAl_2_STRC_2009, ScroginEtAl_TechRep_UCF_2004, ManraiAndrews_EJOR_1998, Ansah_TransRes_1977}. 
+A prominent extension of the standard discrete choice modeling approach to treat this problem is formed by stochastic choice set models, founded by \citet[][]{Manski_TD_1977, BurnettKPHanson_TRR_1979, BurnettKP_UG_1980}, which integrates the choice set formation step into the estimation procedure by jointly estimating selection of a choice set and the choice of a particular alternative of this choice set \citep[][]{KaplanEtAl_TRB_2009, PagliaraTimmermans_TransLett_2009, Manski_TD_1977, Swait_TransResPartB_2001, HorowitzLouviere_IJRM_1995, BenAkivaBoccara_IJRM_1995, SwaitBenAkiva_TransResPartB_1987, Swait_TransResPartB_2001, MartinezEtAl_TransResPartB_2009, CascettaPapola_TransResPartA_2009, BierlaireEtAl_2_STRC_2009, ScroginEtAl_TechRep_UCF_2004, ManraiAndrews_EJOR_1998, Ansah_TransRes_1977}. \kai{Would it be possible to reduce the number of references here?  Seems a bit unbalanced compared to other parts of the book or even this chapter (e.g.\ no reference at all for quenched randomness).} 
 Probabilistic choice set formation is conceptually appealing as choice sets are, in principle, not restrained a priori by exogenous criteria as in standard choice set specification. 
 However, the procedure is in general associated with combinatorial complexity, making it computationally intractable. 
 As a consequence, the practical approaches also require mechanisms to reduce the complexity of the choice set specification problem \citep[e.g.,][p.11]{BenAkivaBoccara_IJRM_1995}. 
 \citet[][]{ZhengJieGuo_TRB_2008}, for example, make the moderate assumption of continuous store choice sets (\ie sets without ``holes'') around the trip origin, while the random-constraints model of \citet[][]{BenAkivaBoccara_IJRM_1995} exploits additional information on alternatives' availability for individuals.
 
-Concluding, the destination innovation set specification problem is still unsolved, meaning that the estimated models can only be fully consistently applied for the region, where the model was estimated. 
-For \gls{matsim}, first destination choice model estimation efforts are reported in \citet[][Chapter 5]{Horni_PhDThesis_2013}.
+Concluding, the destination innovation set specification problem is still unsolved, meaning that the estimated models can only be fully consistently applied for the region where the model was estimated. 
+For \gls{matsim}, 
+%first 
+destination choice model estimation efforts are reported in \citet[][Chapter 5]{Horni_PhDThesis_2013}.
 
 % ======================================================================================================================
 \subsection{Facility Load}
@@ -160,8 +176,8 @@ The influence of interaction in \emph{transport} infrastructure for people's rou
 Similarly, it can be reasonably assumed that agent interaction in \emph{activities} infrastructure affects travel choices \citep[][]{Axhausen_SSRL_2006}. 
 Marketing science provides ample evidence that agent interactions influence utility of performing an activity, where it can have both, positive or negative influence \citep[][p.331]{BakerJEtAl_JAMS_1994}, \citep[][]{ErogluAndHarrell_JR_1986, ErogluAndMachleit_JR_1990, ErogluEtAl_JBR_2005, HarrellEtAl_JMR_1980, HuiAndBateson_JCR_1991, PonsEtAl_PsychMark_2006}.
 
-In \citet[][]{HorniEtAl_TRR_2009}, based on the Zürich scenario, a singly-constrained model is presented that introduces competition for space-time slots on the activity infrastructure. 
-The actual load is coupled with time-dependent capacity restraints for every activity location and incorporated explicitly into the agent's destination choice process as detailed below. 
+In \citet[][]{HorniEtAl_TRR_2009}, based on the Zürich scenario, a \st{singly-constrained}\kai{wirklich ``singly''?  Im Sinne des 4 step processes wäre ``singly constrained'' $=$ es steht fest, in welcher Zone wie viele Leute losfahren.  Das ist bei matsim aber immer gegeben (solange die synthetischen Personen nicht zu Hause bleiben können).} model is presented that introduces competition for space-time slots on the activity infrastructure. 
+The actual load is coupled with time-dependent capacity \st{re}{\orange con}straints for every activity location and incorporated explicitly into the agent's destination choice process as detailed below.  \kai{Meiner Intuition nach ist ``constraint'' und ``restraint'' nicht identisch: restraint $=$ Gummiband, constraint $=$ Drahtseil.  Es sieht unten tatsächlich eher nach ``restraint'' aus, aber dann ist es endgültig nicht (singly or doubly) contrained.} 
 
 Activity location load, computed for time bins of 15\,minutes, is derived from events that are delivered by the \gls{mobsim}. 
 The load of one particular iteration combined with time-dependent activity location capacity restraints is considered in the agents' choice process of the succeeding iteration. 
@@ -171,7 +187,7 @@ To introduce additional heterogeneity regarding the activity locations, an attra
 
 Likewise for demonstration purposes, capacity restraints are exclusively applied to shopping locations, while in principle leisure activity locations could be handled similarly. However, deriving capacity restraints for leisure activity locations is expected to be much more difficult than for shopping locations because data availability is much worse for leisure locations and capacity restraints vary much more between different leisure locations than between different shopping activities (hiking versus going to the movies might be an illustrative example).
 
-The model allows the assignment of individual time-dependent capacities to the activity locations. For the sake of demonstration, the capacities of all shopping facilities can be set equal, where their values can be derived from the shopping trip information given in the National Travel Survey~2005. The total daily capacity is set so that the activity locations located in the region of Zürich satisfy the total daily demand with a reserve of 50\,\%. In detail, the capacity restraint function for a location $l$ is as follows:
+The model allows the assignment of individual time-dependent capacities to the activity locations. For the sake of demonstration, the capacities of all shopping facilities can be set equal, where their values can be derived from the shopping trip information given in the National Travel Survey~2005 {\orange as follows:???}. The total daily capacity is set so that the activity locations located in the region of Zürich satisfy the total daily demand with a reserve of 50\,\%. In detail, the capacity restraint function for a location $l$ is as follows:
 
 \[
 f_{load\ penalty, \ell}=\alpha_l \cdot \Bigg(\frac{load_{\ell}}{capacity_{\ell}}\Bigg)^{\beta_\ell}
@@ -189,19 +205,19 @@ As expected, the constrained model improves results' quality by reducing the num
 The destination innovation module has been successfully applied for the Zürich scenario (Chapter~\ref{ch:zhscenario})) as reported in \citet[][p.99]{Horni_PhDThesis_2013}, for the Tel Aviv model (see Chapter~\ref{ch:telaviv}) and for the \gls{matsim}~2030 project. 
 Figure~\ref{fig:zhLEGO} and Figure~\ref{fig:countsLEGO} show that, by means of scaling of the error terms, distance distributions can be nicely fitted, and that thereby the error in count data is decreased.
 
-\createfigure%
+\createfigure[!t!]%
 {Error term runs for the Zürich scenario}%
 {Error term runs for the Zürich scenario}%
 {\label{fig:zhLEGO}}%
 {%
   \createsubfigure%
   {Shopping trips}%
-	{\includegraphics[width=0.99\textwidth,angle=0]{extending/figures/dc/zhShopping.pdf}}%
+	{\includegraphics[trim=0cm 0cm 0cm 2cm, clip,width=0.8\textwidth,angle=0]{extending/figures/dc/zhShopping.pdf}}%
   {\label{fig:zhShopping}}%
   {}%
    \createsubfigure%
   {Leisure trips}%
-  {\includegraphics[width=0.99\textwidth,angle=0]{extending/figures/dc//zhLeisure.pdf}}%
+ {\includegraphics[trim=0cm 0cm 0cm 2cm, clip, width=0.8\textwidth,angle=0]{extending/figures/dc//zhLeisure.pdf}}%
   {\label{fig:zhLeisure}}%
   {}%
 }%
@@ -211,7 +227,7 @@ Figure~\ref{fig:zhLEGO} and Figure~\ref{fig:countsLEGO} show that, by means of s
 {Daily traffic volumes for 123\,links compared to traffic counts}%
 {Daily traffic volumes for 123\,links compared to traffic counts. Per link $k$ the relative error is used, \ie $(vol_{simulated,k}-vol_{counted,k}) / vol_{counted,k}$.}%
 {\label{fig:countsLEGO}}%
-{\includegraphics[width=0.8\textwidth, angle=0]{extending/figures/dc/zhCounts.pdf}}%
+{\includegraphics[width=0.7\textwidth, angle=0]{extending/figures/dc/zhCounts.pdf}}%
 {}
 
 % ##################################################################################################################
