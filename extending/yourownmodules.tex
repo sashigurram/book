@@ -41,6 +41,86 @@ This section describes what could be called the \gls{spi} of \gls{matsim}.
 Historically, the main entry-point for writing a \gls{matsim} \gls{extension} has been to literally extend (in the \gls{java} sense) the \lstinline|Controler| class. Essentially, one would override the methods calling the \gls{mobsim}, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. This is now discouraged. While this pattern worked when a each member of the team was working on extending the \gls{matsim} core by a different aspect, it fails when it comes to integrating those aspects to a single product: There is nothing one can do with a \lstinline|PublicTransportControler|, an \lstinline|EmissionsControler|, a \lstinline|RoadPricingControler| and an \lstinline|OTFVisControler|, if one wants to combine them to visualize the emissions of buses on toll roads.
 
 % =========================================================================================
+\subsection{Initial Demand Generation}
+\label{sec:extending-initial-demand}
+\ah{this section newly added}
+
+% ----------------------------------------------------------------
+\subsubsection{Utils}
+%\ah{
+%This is maybe better somewhere in Chapter~\ref{ch:extensionpoints}.
+%They are not really extension points but something similar helpful for scripting.
+%}
+%%
+%\kai{I would (strongly) vote for Chapter~\ref{ch:extensionpoints}.  ``writing scripts in java'' is a forward reference, and details should go to where it points to.  It is indeed not an ``extension point'', but something like an ``extension programming survival tool''.}
+
+Many modules, in particular, the data containers provide public and static methods to create and manipulate respective elements. 
+These methods are bundled in classes named \lstinline|*Utils|. 
+Factory functionality is provided by these classes.
+\lstinline|PopulationUtils| for example contains a \lstinline|createPopulation(...)| method.
+
+Following utils exist
+\lstinline|ConfigUtils|,
+\lstinline|NetworkUtils|,
+\lstinline|PopulationUtils|,
+\lstinline|ScenarioUtils|,
+\lstinline|ControlerUtils|,
+\lstinline|FacilitiesUtils|,
+\lstinline|VehicleUtils|,
+%
+\lstinline|EventsUtils|,
+\lstinline|CharyparNagelScoringUtils|,
+\lstinline|LanesUtils|,
+\lstinline|QSimUtils|,
+%
+\lstinline|SignalUtils|,
+\lstinline|TripStructureUtils|,
+(\lstinline|ObjectAttributesUtils|), and
+(\lstinline|VectorUtils|).
+
+% ----------------------------------------------------------------
+
+\kai{
+Hallo Andreas,
+ 
+ Haben wir irgendwo im Buch etwas über ``initial input generation'' (also network.xml und plans.xml)?
+ 
+ Ich finde etwas in 2.2, aber das war es dann auch.
+ 
+ Irgendwie finde ich aber doch, dass wir wenigstens minimale Hinweise auf
+ 
+ RunPNetworkGenerator
+ RunPOnePersonPopulationGenerator
+ 
+ geben sollten.
+ 
+ M.E. sind das auch ``scripts-in-java'', und damit auch Kap.32.
+ 
+ Das wäre dann m.E. noch vor 32.2.1, also neu
+ 
+ 32.2.1 initial demand generation
+ 
+ 32.2.2 config group
+ 
+ Oder?
+ 
+ VG Kai
+}
+
+\ah{Stimmt. Ich hatte früher auch mal Kirills Popgen auf dem Schirm, dann aber Initial Demand Generation irgendwie etwas verdrängt, weil es inhaltlich durch die Szenarien abgedeckt ist. Technisch aber natürlich nicht, werde mich die nächsten Tage daran versuchen.
+}
+
+\kai{
+Danke.  M.E. kann das eher kurz sein, mit Verweis auf die Beispiele.
+
+Ist aber der Ort, wo (m.E.) die Factories erklärt werden müssen.
+
+VG
+
+Kai
+}
+
+% =========================================================================================
 \subsection{Config Group}
 \label{sec:config}
 The configuration of a \gls{matsimrun} is a grouped list of key-value pairs, stored in \gls{xml} format in the \gls{configfile} (see Section~\ref{sec:config}).
