@@ -50,11 +50,11 @@ This chapter wants to highlight some of them for further discussion and maybe ac
 
 % 20.6 Learning an action-value function (Q values, Q-learning)
 
-The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the so-called field of \acrfull{cas}. 
-%\kwaah{Has this been spelled out somewhere ?} \ah{yes, gls()}
-\kwaah{Why not Axelrod (1980) or Schelling: ``Schelling, TC 1978. Micromotives and Macrobehavior. Toronto, Canada: George J. McLeod Ltd.'' mit seinem Segregationsmodell} 
-\ah{m.E. ist dies sein Seggregationspaper: \citet[][]{Schelling_TJMS_1971} (Issue 2), \citet[][]{Sakoda_TJMS_1971} (Issue 1) war aber sowieso vorher  gemäss Prof. Hegselmann.}
-\kai{Müsste ich nach dem Urlaub machen.  \url{http://en.wikipedia.org/wiki/File:Map-of-complexity-science.jpg} gäbe ansonsten eine (m.E.\ ganz gute) Idee, welche Autoren man zitieren will.}
+The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the so-called field of \acrfull{cas} \citep[e.g.][]{AxelrodBook,Holland_1992,HraberJonesForrestEcho,PalmerEtAl_PhysicaD_1994}. 
+%% %\kwaah{Has this been spelled out somewhere ?} \ah{yes, gls()}
+%% \kwaah{Why not Axelrod (1980) or Schelling: ``Schelling, TC 1978. Micromotives and Macrobehavior. Toronto, Canada: George J. McLeod Ltd.'' mit seinem Segregationsmodell} 
+%% \ah{m.E. ist dies sein Seggregationspaper: \citet[][]{Schelling_TJMS_1971} (Issue 2), \citet[][]{Sakoda_TJMS_1971} (Issue 1) war aber sowieso vorher  gemäss Prof. Hegselmann.}
+%% \kai{Müsste ich nach dem Urlaub machen.  \url{http://en.wikipedia.org/wiki/File:Map-of-complexity-science.jpg} gäbe ansonsten eine (m.E.\ ganz gute) Idee, welche Autoren man zitieren will.}
 %
 \citet{ArthurBar} addresses a coordination problem, where agents receive a payoff only when less than 60 out of 100 go to an event.  He addresses this by first generating a large number of heuristic predictors for the next round's attendance, such as ``same as in last round'' or ``trend of last four rounds''.  He next gives each agent a randomly selected handful of these strategies, so that agents in general have different sets of predictors.  Then, many rounds of the game are played, where the score of each predictor is updated based on its prediction quality,  
 %\kwaah{payoff?} 
@@ -66,37 +66,29 @@ That approach in turn builds on work by \cite{PalmerEtAl_PhysicaD_1994}, who sim
 \citet{ArthurBar} kept each agent's predictors fixed after initialization.  In contrast,
 \citet{HraberJonesForrestEcho} simulate an artificial ecosystem, where the individual agent strategies are based on so-called genes, which are adapted over the rounds/iterations by a genetic algorithms \citep{Goldberg_1989}.
 
-The focus of \gls{cas} is on many agents, agent interaction, and emergence. \Gls{ai} in contrast concentrated on single agents. In \gls{ai} terms, the original \gls{matsim} agents (those that do day-to-day learning) are very simple active reinforcement learning agents \citep[][Chapter 21.3]{RusselNorvig2010ArtificialIntelligence}. Since these \gls{matsim} agents have only one state and each plan is simply an action, the distinction between Q-learning and utility learning actually collapses, and what remains is the temporal difference 
+The focus of \gls{cas} is on many agents, agent interaction, and emergence. \Gls{ai} in contrast concentrates on single agents. In \gls{ai} terms, the original \gls{matsim} agents (those that do day-to-day learning) are very simple 
+%active 
+reinforcement learning agents \citep[][Chapter 21.3]{RusselNorvig2010ArtificialIntelligence}. Since these \gls{matsim} agents have only one state (the initial/nightly state) and each action is simply a plan, the distinction between Q-learning and utility learning (as defined by \cite{RusselNorvig2010ArtificialIntelligence}) actually collapses, and what remains is the temporal difference 
 %\kwaah{lagged} 
 %\kwaah{Maybe better, given the difficult interpretation of the the iterations.} 
 %\kai{Würde lieber bei ``temporal difference learning'' bleiben, denn das ist der terminus technicus.} 
-learning scheme for the utility, which translated to the \gls{matsim} situation updates the score/performance/utility value of each plan every time it is selected.
+learning (again as defined by \cite{RusselNorvig2010ArtificialIntelligence}) scheme for the utility, which translates to the \gls{matsim} situation which updates the score/performance/utility value of each plan every time it is selected.
 
-\st{That is, overall,} the original \gls{matsim} system has inherited the focus on large systems, interaction, and emergence as well as the approach to strategy innovation from \gls{cas}, while the score updating rather comes from the field of \gls{ai}.
+\st{That is, overall,} \kai{von wem kommt das st?  warum?  Ich meine schon ``That is'', aber vielleicht ist der Text nicht klar genug?} the original \gls{matsim} system has inherited the focus on large systems, interaction, and emergence as well as the approach to strategy innovation from \gls{cas}, while the score updating rather comes from the field of \gls{ai}.
 
-In the meantime, both \gls{ai} and the field of transport simulation \st{have moved on}, \kwaah{switched their focus of interest} increasingly looking at agents that can react immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}. \kai{also below, chk}
+In consequence, a somewhat obvious path to move on is to include more aspects of modern \gls{ai} into the \gls{matsim} agents.  Examples include:
+\begin{itemize}
 
-% -----------------
-\kwaah{
-The question of the need for a meta-search for strategies, as sketched by \citet[][]{ArthurBar} remains an open question. 
-In the \gls{matsim} context all decisions, which are based on explicit search for alternatives, can be studied to see, how far apart the choice set generation strategies of discrete choice modeling, which draw (stratified) (randomly) from the universal choice sets, are from explicit construction strategies. 
-The question would be in the second step to see, what impact these would have on the results and the policy conclusions. 
+\item Extend \gls{matsim} to agents that can react 
+immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}.  See Chapters~\ref{ch:withinday} and~\ref{ch:dts} as well as Section~\ref{sec:researchavenues-withinday}.
 
-A good example is parking search \citep[][]{Waraich_unpub_IATBR_2012}, for which multiple strategies have been documented and which explain the empirical observations \citep[][]{Shoup_2005}. 
-In a discrete choice model context, the distribution of parking preferences can mimic the choice strategies, but the approach would be unable to capture the context specific choice of the strategy. 
-In \gls{matsim} this set of strategies could become the object of a meta-search to see, which agents would retain which strategies and how these would be used by the agents. 
-Empirical work could be conducted to see, if these sets and their distributions match the travelers' practices. 
+\item Improve the \gls{matsim} agents with respect to choice set generation.  This may include both a better creative capability of the agents to come up with innovative new strategies to handle their virtual lifes as well as considerations of consistency between choice set generation and estimated choice models.  See 
 
-In the same vain, one could look at the destination choice for leisure, where different strategies can be observed, although they have not been subject of empirical study yet. 
-If longer term choices were to be added to the \gls{matsim} framework, residential and workplace choice could also be considered. 
+\end{itemize}
 
-The issue of the convergence of the \gls{matsim} plans towards a single optimal structure, can be seen as the absence of search strategies on the plan level. 
-This overlaps strongly with the question of the choice of the number and sequence of activities, where these alternative plans are needed. 
-}
 
-\kai{Finde ich interessant.  Hätte es aber gerne unter einer separaten Überschrift, irgendetwas mit ``search''.  Der ``agent''-Text, der dann erstmal nicht fertig geworden ist, sollte eigentlich eher in die Richtung gehen, wie ``autonom'' unsere Agenten eigentlich sind, also haben die eine eigene innere Uhr, haben die eigene Perception, berechnen die ihre eigenen Routen oder übernehmen sie Vorschläge, etc.  Falls obiges kein separates Kapitel wird, dann wäre es m.E.\ nur ein Teil von dem, was ich meine.}
+In the meantime, both \gls{ai} and the field of transport simulation \st{have moved on}, \kwaah{switched their focus of interest} \kai{Ist das zwingend?  Ich finde ``have moved on'' eigentlich besser, weil es ja kein ``switch'' ist, sondern eine Fortsetzung. Vielleicht weiß jemand eine Formulierung, die weniger colloquial ist.} increasingly looking at agents that can react \kai{also below, chk}
 
-% -----------------
 
 \kai{to do more}
 
@@ -108,7 +100,7 @@ Note the traffic flow models in the transport domain, for example.
 Many agent based models travel demand of travel demand adopted the same approach (ORIENT \citep[][]{Sparmann_TechRep_1980}, ORIENT/RV, MobiTOPP \citep[][]{SchnittgerZumkeller_ETC_2004}, \citep[][]{EmmerinkEtAl_TransResC_1995}) and all the work on intelligent transport system 
 \kwaah{do we have more?})
 , but none of these aim for equilibrium in the sense adopted by \gls{matsim} carried forward from \gls{transims}. 
-If supplied with a learning approach these within-day models should approach equilibrium after many iterations, as the agents with a suitable memory structure would avoid plans which make them worse off. This memory, which would need to be agent-specific and covering the very large set of choice options, makes the approach costly to implement. 
+If supplied with a learning approach these within-day models should approach equilibrium after many iterations, as the agents with a suitable memory structure would avoid plans which make them worse off. This memory, which would need to be agent-specific and covering the very large set of choice options, makes the approach costly to implement. \kai{Meinem Verständnis nach greift obiges spieltheoretisch zu kurz.  MATSim sucht nach einem fixen Plan, der den höchsten Erwartungswert erzeugt.  Dies ist (bei stochastischen Systemen) \emph{nicht} identisch mit einem Regelsatz, der den höchsten Erwartungswert erzeugt ... z.B.\ könnte man beim Überqueren der Autobahn schauen, ob sie gestaut ist, und falls ja, auf der Landstraße weiterfahren.}
 
 Still, there are context where this immediate response ability could be used within \gls{matsim} to explore the choice set more effectively, especially if the choice alternatives are limited in number and in geographic reach. 
 \citet[][]{WaraichEtAl_TechRep_IVT_2013_2}
@@ -175,6 +167,38 @@ However, when looking at differences between the two states before and after a p
 }
 In that sense, one could include some approximation of the error into the analysis of results, possibly similar to Equation~(\ref{eq:ch:economicEval:logsumMaxError}). If the differences in utility levels between the two states are in the same magnitude as $\ln(P)$, it is possible that the signal of the policy effect is smaller than the noise of randomness.
 
+% -----------------
+\kwaah{
+The question of the need for a meta-search for strategies, as sketched by \citet[][]{ArthurBar} remains an open question. 
+In the \gls{matsim} context all decisions, which are based on explicit search for alternatives, can be studied to see, how far apart the choice set generation strategies of discrete choice modeling, which draw (stratified) (randomly) from the universal choice sets, are from explicit construction strategies. 
+The question would be in the second step to see, what impact these would have on the results and the policy conclusions. 
+
+A good example is parking search \citep[][]{Waraich_unpub_IATBR_2012}, for which multiple strategies have been documented and which explain the empirical observations \citep[][]{Shoup_2005}. 
+In a discrete choice model context, the distribution of parking preferences can mimic the choice strategies, but the approach would be unable to capture the context specific choice of the strategy. 
+In \gls{matsim} this set of strategies could become the object of a meta-search to see, which agents would retain which strategies and how these would be used by the agents. 
+Empirical work could be conducted to see, if these sets and their distributions match the travelers' practices. 
+
+In the same vain, one could look at the destination choice for leisure, where different strategies can be observed, although they have not been subject of empirical study yet. 
+If longer term choices were to be added to the \gls{matsim} framework, residential and workplace choice could also be considered. 
+
+The issue of the convergence of the \gls{matsim} plans towards a single optimal structure, can be seen as the absence of search strategies on the plan level. 
+This overlaps strongly with the question of the choice of the number and sequence of activities, where these alternative plans are needed. 
+}
+
+\kai{Finde ich interessant.  Hätte es aber gerne unter einer separaten Überschrift, irgendetwas mit ``search''.  Der ``agent''-Text, der dann erstmal nicht fertig geworden ist, sollte eigentlich eher in die Richtung gehen, wie ``autonom'' unsere Agenten eigentlich sind, also haben die eine eigene innere Uhr, haben die eigene Perception, berechnen die ihre eigenen Routen oder übernehmen sie Vorschläge, etc.  Falls obiges kein separates Kapitel wird, dann wäre es m.E.\ nur ein Teil von dem, was ich meine.}
+
+% -----------------
+
+% ##################################################################################################################
+\section{Transients Versus the Notion of \enquote{Learning}}
+\label{sec:transients-vs-learning}
+As in many other simulations of similar kind, the interpretation of the relaxation procedure (iterations) of \gls{matsim} is unclear. 
+%
+Sometimes the relaxation process is ascribed a behavioral interpretation, for example, day-to-day learning, where also the transition process and not only the final equilibrium has a meaning \citep[][p.128]{LiuEtAl_TransResA_2006}, \citep[][p.523]{NagelBarrett1997feedback}. 
+%
+An opposite perspective exists, where the relaxation procedure is just a numerical method to compute the equilibrium state or states without a behavioral basis of the transitions.
+
+%\vfill\eject
 % ##################################################################################################################
 \section{Utility Function}
 \label{sec:future-of-scoring-function}
@@ -408,16 +432,6 @@ For destination choice an iteration-stable random error term has been successful
 
 A general implementation would obviously be useful. 
 This implementation could incorporate a mechanism to generate the error terms with the correct correlation structures. 
-
-%\vfill\eject
-% ##################################################################################################################
-\section{Transients Versus the Notion of \enquote{Learning}}
-\label{sec:transients-vs-learning}
-As in many other simulations of similar kind, the interpretation of the relaxation procedure (iterations) of \gls{matsim} is unclear. 
-%
-Sometimes the relaxation process is ascribed a behavioral interpretation, for example, day-to-day learning, where also the transition process and not only the final equilibrium has a meaning \citep[][p.128]{LiuEtAl_TransResA_2006}, \citep[][p.523]{NagelBarrett1997feedback}. 
-%
-An opposite perspective exists, where the relaxation procedure is just a numerical method to compute the equilibrium state or states without a behavioral basis of the transitions.
 
 %\vfill\eject
 % ##################################################################################################################
