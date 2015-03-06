@@ -82,39 +82,53 @@ In consequence, a somewhat obvious path to move on is to include more aspects of
 \item Extend \gls{matsim} to agents that can react 
 immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}.  See Chapters~\ref{ch:withinday} and~\ref{ch:dts} as well as Section~\ref{sec:researchavenues-withinday}.
 
-\item Improve the \gls{matsim} agents with respect to choice set generation.  This may include both a better creative capability of the agents to come up with innovative new strategies to handle their virtual lifes as well as considerations of consistency between choice set generation and estimated choice models.  See 
+\item Improve the \gls{matsim} agents with respect to choice set generation.  This may include both a better creative capability of the agents to come up with innovative new strategies to handle their virtual lifes as well as considerations of consistency between choice set generation and estimated choice models.  See Sections~\ref{sec:Evolution-of-choice} and~\ref{sec:choicesets}.
 
 \end{itemize}
 
 
-In the meantime, both \gls{ai} and the field of transport simulation \st{have moved on}, \kwaah{switched their focus of interest} \kai{Ist das zwingend?  Ich finde ``have moved on'' eigentlich besser, weil es ja kein ``switch'' ist, sondern eine Fortsetzung. Vielleicht weiß jemand eine Formulierung, die weniger colloquial ist.} increasingly looking at agents that can react \kai{also below, chk}
+%% In the meantime, both \gls{ai} and the field of transport simulation \st{have moved on}, \kwaah{switched their focus of interest} \kai{Ist das zwingend?  Ich finde ``have moved on'' eigentlich besser, weil es ja kein ``switch'' ist, sondern eine Fortsetzung. Vielleicht weiß jemand eine Formulierung, die weniger colloquial ist.} increasingly looking at agents that can react \kai{also below, chk}
 
 
-\kai{to do more}
+%% \kai{to do more}
 
 % ##################################################################################################################
 \section{Within-Day Replanning and the User Equilibrium}
 \label{sec:researchavenues-withinday}
 Within-day replanning, \ie the ability of the agents to respond to the immediate context is the standard mode of operation for simulation models. 
-Note the traffic flow models in the transport domain, for example. 
-Many agent based models travel demand of travel demand adopted the same approach (ORIENT \citep[][]{Sparmann_TechRep_1980}, ORIENT/RV, MobiTOPP \citep[][]{SchnittgerZumkeller_ETC_2004}, \citep[][]{EmmerinkEtAl_TransResC_1995}) and all the work on intelligent transport system 
-\kwaah{do we have more?})
-, but none of these aim for equilibrium in the sense adopted by \gls{matsim} carried forward from \gls{transims}. 
-If supplied with a learning approach these within-day models should approach equilibrium after many iterations, as the agents with a suitable memory structure would avoid plans which make them worse off. This memory, which would need to be agent-specific and covering the very large set of choice options, makes the approach costly to implement. \kai{Meinem Verständnis nach greift obiges spieltheoretisch zu kurz.  MATSim sucht nach einem fixen Plan, der den höchsten Erwartungswert erzeugt.  Dies ist (bei stochastischen Systemen) \emph{nicht} identisch mit einem Regelsatz, der den höchsten Erwartungswert erzeugt ... z.B.\ könnte man beim Überqueren der Autobahn schauen, ob sie gestaut ist, und falls ja, auf der Landstraße weiterfahren.}
+%
+In the transport domain, note the traffic flow models as an example, where aspects such as acceleration/braking or lane changing are (obviously) computed reactively while the simulation is running, and not before the simulation starts \citep[e.g.][]{Wiedemann_PhDThesis_1974}.
+%
+Many traveller-oriented or agent-based models of travel demand adopt the same approach (ORIENT \citep[][]{Sparmann_TechRep_1980}, ORIENT/RV \citep{AxhausenHerz_JTE_1989}, MobiTOPP \citep[][]{SchnittgerZumkeller_ETC_2004}).
+%
+For many aspects of \acrfull{its} systems, within-day replanning is indispensable \citep[e.g.][]{hall-1993,EmmerinkEtAl_TransResC_1995,Dobler_PhDThesis_2013}.
+%
+%% and all the work on intelligent transport system 
+%% \kwaah{do we have more?})
+None of these systems aim for equilibrium in the sense adopted by \gls{matsim} carried forward from \gls{transims} and ultimately inherited from static assignment.
 
-Still, there are context where this immediate response ability could be used within \gls{matsim} to explore the choice set more effectively, especially if the choice alternatives are limited in number and in geographic reach. 
+One may argue that, if supplied with a learning approach, these within-day models should approach equilibrium after many iterations, as the agents with a suitable memory structure would avoid plans which make them worse off. 
+%
+This memory, which would need to be agent-specific and covering the very large set of choice options, makes the approach costly to implement.
+%
+Importantly, the solutions may be different: When faced with a stochastic environment, an agent that is able to react within-day can be better off than an agent that follows a pre-computed plan. \kai{!!!}
+
+Still, there are context where this immediate response ability can be used within \gls{matsim} to explore the choice set more effectively, especially if the choice alternatives are limited in number and in geographic reach. 
 \citet[][]{WaraichEtAl_TechRep_IVT_2013_2}
 %Waraich et al. (200x) 
 %\kwaah{What is the best reference here?} 
 %\ah{afaik, this approach never come beyond a conceptual paper.}
-proposed a localized within-day, actually within-trip search to find the best parking space around a destination. 
-This localized search reduces the need for full iterations considerably and allows to add behavioral detail at this point, here the type of space, walking distance and parking fee trade-off. 
+proposes a 
+%localized within-day, actually 
+within-trip replanning to find the best parking space around a destination.
+This localized search reduces the need for full iterations considerably and allows to add behavioral detail at this point, here the type of parking, walking distance to final destination, and parking fee trade-off. 
 %In the same spirit, Horni (2015) \kwaah{Gibt es da schon etwas?} \ah{not yet} employs the same approach to address crossing of signalized intersections. 
 
-While within-day replanning can be used as described above within the framework equilibrium search, it can also be added to open up the \gls{matsim} framework to context, where such an equilibrium is inappropriate. 
-\citet[][]{Dobler_PhDThesis_2013} used the \gls{matsim} calculated equilibrium as the starting point for his model of evacuations and the behavior of the evacuees. 
-He also documents that his approach finds a set of executed plans, which is close to the \gls{matsim} equilibrium, but for much lower computing costs. 
-While the benefits of an equilibrium solution in comparison with an approximation have been extensively discussed for aggregate assignment models, for \gls{matsim} the issue is, if these fast approximation could be used to speed up the overall equilibrium search; similar in spirit to start a Frank-Wolf search based on four or five incremental network loadings of the network. 
+While within-day replanning can be used as described above within the framework equilibrium search, it can also be added to open up the \gls{matsim} framework to context where such an equilibrium is inappropriate. 
+%
+\citet[][]{Dobler_PhDThesis_2013} uses the \gls{matsim} calculated equilibrium as the starting point for his model of evacuations and the behavior of the evacuees. 
+He also documents that his approach finds a set of executed plans which is close to the \gls{matsim} equilibrium, but for much lower computing costs. 
+While the benefits of an equilibrium solution in comparison with an approximation have been extensively discussed for aggregate assignment models, for \gls{matsim} the issue is if these fast approximation could be used to speed up the overall equilibrium search; similar in spirit to start a Frank-Wolfe search based on four or five incremental network loadings of the network.\kai{citation?}
 While aggregate assignment has possibilities to identify the routes chosen as belonging to the equilibrium, in the agent-based context research is needed to a) see, if the approach is indeed faster and b) if the resulting set of plans is unbiased by the fast initialization. 
 
 %\vfill\eject
@@ -122,7 +136,20 @@ While aggregate assignment has possibilities to identify the routes chosen as be
 \section{Choice Set Generation}
 \label{sec:choicesets}
 
-\kai{in particular plans removal!! From Benjamin's diss:}
+\kai{in particular plans removal!!}
+
+As described at several places in this book (e.g.\ Sections
+\ref{sec:plans-gener-remov}, 
+\ref{sec:Evolution-of-choice},
+\ref{sec:choice-set}), the \gls{matsim} iterative process in its standard version modifies each agent's choice set ($=$ each agent's set of plans) over the iterations.  
+%
+Clearly, an agent can only select a plan that is generated by this process.  Thus, the definition of the search space is important.
+
+Econometric research, however, 
+
+
+
+\kai{From Benjamin's diss:}
 
 During the plans innovation process of the simulation, the plan with the lowest utility is removed whenever the maximum number of plans are reached for an agent. In consequence, this decreases the probability that heterogeneous plans survive and increases the probability of very similar plans. This, again, increases the likelihood that the final choice set is correlated, \ie containing only plans that are very similar to the best plan \citep[see][for a review on correlation of 
  routes]{Prato2009ChoiceModellingSurvey}.%
