@@ -92,30 +92,29 @@ The exact path name sometimes changes, \eg because of changes at \gls{sourceforg
 \gls{matsim} main distribution is maintained by the \gls{matsim} team.
 
 At the time of writing, the \gls{matsim} main distribution contains following packages:
-
-\kai{@Andreas: M.E.\ hast Du die package names gar nicht geprüft.  Erstens ist es ``contrib'' und nicht ``contribs''.  Zweitens folgen manche gar nicht dieser Konvention, z.B.\ gtfs2matsimtransitschedule.  Drittens ist es bei manchen ``garbled'', z.B.\ fehlt bei roadpricing das ``contrib''.  Viertens ist die Groß-/kleinschreibung der contrib nicht identisch mit der im package name.  Etc.\ -- MZ und ich waren eigentlich zu dem Schluss bekommen, dass wir das gar nicht (mehr) enforcen ... soll jeder contrib Programmierer sich in seinem eigenen Name space austoben (von uns auch auch org.ahorni....).  Die URL Referenzierung erfolgt nur noch über \url{http://matsim.org/javadoc} $\to$ /extension/.  Schlage daher DRINGEND vor, das auch hier so zu machen, also einfach nur die Namen der repositories zu listen.  Ok?}
-
 \begin{itemize}\styleItemize
-\item \lstinline{org.matsim.analysis.*}
-\item \lstinline{org.matsim.api.*} 
-\item \lstinline{org.matsim.core.*}
+\item \lstinline{org.matsim.analysis.*}, containing certain analysis packages that are added by default to every \gls{matsim} run.
+\item \lstinline{org.matsim.api.*}, see Section \ref{sec:extending-core}
+\item \lstinline{org.matsim.core.*}, see Section \ref{sec:extending-core}
 %\footnote{Please note, that at the moment, the core is \emph{not} restricted to this large package as one might naturally assumes. \kai{chk.  Ich hatte das immer anders gesehen: core nur org.matsim.core.* und org.matsim.api.*.}}
-\item \lstinline{org.matsim.counts.*} (see Section~\ref{sec:extending-counts})
-\item \lstinline{org.matsim.facilities.*} (see Section~\ref{sec:extending-facilities})
-\item \lstinline{org.matsim.households.*} (see Section~\ref{sec:extending-households})
-\item \lstinline{org.matsim.jaxb.*}
-\item \lstinline{org.matsim.lanes.*} presented in Chapter~\ref{ch:signalslanes}
-\item \lstinline{org.matsim.matrices.*}
-\item \lstinline{org.matsim.population.*}
-\item \lstinline{org.matsim.pt.*} presented in Chapter~\ref{ch:pt}
-\item \lstinline{org.matsim.run.*}
-\item \lstinline{org.matsim.signalsystems.*} presented in Chapter~\ref{ch:signalslanes}
-\item \lstinline{org.matsim.utils.*}
-\item \lstinline{org.matsim.vehicles.*} (see Section~\ref{sec:extending-vehicles})
-\item \lstinline{org.matsim.vis.*}
-\item \lstinline{org.matsim.visum.*}
-\item \lstinline{org.matsim.withinday.*} presented in Chapter~\ref{ch:withinday}
-\item \lstinline{tutorial.*}
+\item \lstinline{org.matsim.counts.*}, see Section~\ref{sec:extending-counts}
+\item \lstinline{org.matsim.facilities.*}, see Section~\ref{sec:extending-facilities}
+\item \lstinline{org.matsim.households.*}, see Section~\ref{sec:extending-households}
+\item \lstinline{org.matsim.jaxb.*}, containing automatically or semi-automatically generated adapter classes to read \gls{xml} files using \acrshort{jaxb} (\acrlong{jaxb})
+\item \lstinline{org.matsim.lanes.*}, see Chapter~\ref{ch:signalslanes}
+\item \lstinline{org.matsim.matrices.*}, containing  (somewhat ancient) helper classes to deal with matrices, in particular origin-destination-matrices
+\item \lstinline{org.matsim.population.*}, mostly containing a collection of algorithms that go through the population and modify persons or plans.\kai{chk if still there when going to print}
+\item \lstinline{org.matsim.pt.*}, see Chapter~\ref{ch:pt}
+\item \lstinline{org.matsim.run}, see Section \ref{sec:extending-core}
+\item \lstinline{org.matsim.signalsystems.*}, see Chapter~\ref{ch:signalslanes}
+\item \lstinline{org.matsim.utils.*} containing various utilities such as the much-used ObjectAttributes
+% deliberately not lstinline(ObjectAttributes} in order to keep the lstings font for the package names here.  kai, mar'15
+(see Section~\ref{sec:objectAttributes-and-customizable})
+\item \lstinline{org.matsim.vehicles.*}, see Section~\ref{sec:extending-vehicles}
+\item \lstinline{org.matsim.vis.*}, containing helper classes to write \gls{matsim} information, in particular from the \gls{mobsim}, to file.  This has to a large extend been superseded by the \gls{via} visualization package (see Chapter~\ref{ch:via})
+\item \lstinline{org.matsim.visum.*}, containing code to input data from \gls{visum}
+\item \lstinline{org.matsim.withinday.*}, see Chapter~\ref{ch:withinday}
+\item \lstinline{tutorial.*}, containing example code of how to use \gls{matsim}, referenced throughout this book
 \end{itemize}
 
 %---------------------------------------------------------------
@@ -143,6 +142,10 @@ The \gls{matsim} core is maintained by the \gls{matsim} core developers group.
 
 %---------------------------------------------------------------
 \subsection{Contribs}
+
+
+\kai{@Andreas: M.E.\ hast Du die package names gar nicht geprüft.  Erstens ist es ``contrib'' und nicht ``contribs''.  Zweitens folgen manche gar nicht dieser Konvention, z.B.\ gtfs2matsimtransitschedule.  Drittens ist es bei manchen ``garbled'', z.B.\ fehlt bei roadpricing das ``contrib''.  Viertens ist die Groß-/kleinschreibung der contrib nicht identisch mit der im package name.  Etc.\ -- MZ und ich waren eigentlich zu dem Schluss bekommen, dass wir das gar nicht (mehr) durchsetzen ... soll jeder contrib Programmierer sich in seinem eigenen Name space austoben (von uns auch auch org.ahorni....).  Die URL Referenzierung erfolgt nur noch über \url{http://matsim.org/javadoc} $\to$ /extension/.  Habe das daher auch so gemacht, also einfach nur die Namen der repositories zu listen.}
+
 The idea of the \glspl{contribution} part of the repository is to host community contributions considered helpful. 
 Historically, most contributors are from \gls{matsim} team, but this is not a requirement.
 The code is maintained by the corresponding contributor. 
@@ -150,32 +153,35 @@ Code is considered much more stable than the one within playgrounds as shown bel
 \footnote{
 It is currently at \gls{sourceforge} under \url{https://svn.code.sf.net/p/matsim/source/contrib}.  
 }
-The \gls{java} packages often have the root \lstinline{org.matsim.contrib.*}, but this is not enforced.
+The \gls{java} packages often have the root \lstinline{org.matsim.contrib.*}, but this is not mandatory.
 
-At the time of writing, following \glspl{contribution} are in the ``contrib'' repository:
+At the time of writing, there are the following \glspl{contribution} ($=$ extensions which are in the ``contrib'' part of the repository), listed in alphabetical order:
 \begin{itemize}\styleItemize
-\item \lstinline{org.matsim.contribs.accessibility.*} presented in Chapter~\ref{ch:accessibility}
-\item \lstinline{org.matsim.contribs.analysis.*} presented in Section~\ref{sec:contrib-analysis}
-\item \lstinline{org.matsim.contribs.cadytsIntegration.*} presented in Chapter~\ref{ch:cadyts}
-\item \lstinline{org.matsim.contribs.dvrp.*} presented in Chapter~\ref{ch:dts}
-\item \lstinline{org.matsim.contribs.emissions.*} presented in Chapter~\ref{ch:emissions}
-\item \lstinline{org.matsim.contribs.freight.*} presented in Chapter~\ref{ch:freight}
-%\item \lstinline{org.matsim.contribs.freightChains.*} \ah{gehört zu freightChainsFromTravelDiaries}
-\item \lstinline{org.matsim.contribs.freightChainsFromTravelDiaries.*} presented in Section~\ref{sec:freightChainsFromTravelDiaries}
-\item \lstinline{org.matsim.contribs.grips.*} presented in Chapter~\ref{ch:evacuation}
-\item \lstinline{org.matsim.contribs.gtfs2matsimtransitschedule.*} presented in Section~\ref{sec:SemiTool}
-\item \lstinline{org.matsim.contribs.locationchoice.*} presented in Chapter~\ref{ch:destinationchoice}
-\item \lstinline{org.matsim.contribs.matrixbasedptrouter.*} presented in Section~\ref{sec:matrix-based-pt-router}
-\item \lstinline{org.matsim.contribs.matsim4urbansim.*} presented in Section~\ref{sec:matsim4urbansim}
-\item \lstinline{org.matsim.contribs.minibus.*} presented in Chapter~\ref{ch:pt}
-\item \lstinline{org.matsim.contribs.multimodal.*} presented in Chapter~\ref{ch:multimodalsim}
-\item \lstinline{org.matsim.contribs.networkEditor.*}\footnote{This contribution is not presented in the book. Instead, two external editors also developed by MATSim team members are presented in Chapter~\ref{ch:networkeditor}} %presented in Chapter~\ref{ch:networkeditor} \ah{afaik: the 2 presented ones are external}
-\item \lstinline{org.matsim.contribs.otfvis.*} presented in Chapter~\ref{ch:otfvis}
-\item \lstinline{org.matsim.contribs.parking.*} presented in Chapter~\ref{ch:parking}
-\item \lstinline{org.matsim.contribs.roadpricing.*} presented in Chapter~\ref{ch:roadpricing}
+\item \lstinline{accessibility},  
+presented in Chapter~\ref{ch:accessibility}
+\item \lstinline{analysis}, presented in Section~\ref{sec:contrib-analysis}
+\item \lstinline{cadytsIntegration}, 
+presented in Chapter~\ref{ch:cadyts}
+\item \lstinline{dvrp}, presented in Chapter~\ref{ch:dts}
+\item \lstinline{emissions}, presented in Chapter~\ref{ch:emissions}
+\item \lstinline{freight} presented in Chapter~\ref{ch:freight}
+\item \lstinline{freightChainsFromTravelDiaries}, presented in Section~\ref{sec:freightChainsFromTravelDiaries}
+\item \lstinline{grips} presented in Chapter~\ref{ch:evacuation}
+\item \lstinline{gtfs2matsimtransitschedule}, presented in Section~\ref{sec:SemiTool}
+\item \lstinline{integration} is not a true contrib, i.e.\ it does not provide additional functionality.  Instead, it is a place where integration tests that should run daily or weekly (instead of as often as possible) can be committed.
+\item \lstinline{locationchoice}, presented in Chapter~\ref{ch:destinationchoice}
+\item \lstinline{matrixbasedptrouter}, presented in Section~\ref{sec:matrix-based-pt-router}
+\item \lstinline{matsim4urbansim}, presented in Section~\ref{sec:matsim4urbansim}
+\item \lstinline{minibus}, presented in Chapter~\ref{ch:pt}
+\item \lstinline{multimodal}, presented in Chapter~\ref{ch:multimodalsim}
+\item \lstinline{networkEditor}\footnote{This contribution is not presented in the book. Instead, two external editors also developed by MATSim team members are presented in Chapter~\ref{ch:networkeditor}} %presented in Chapter~\ref{ch:networkeditor} \ah{afaik: the 2 presented ones are external}
+\kai{@Andreas: bekommen wir noch einen Eintrag unter ``contributions in short'' hin?}
+\item \lstinline{otfvis}, presented in Chapter~\ref{ch:otfvis}
+\item \lstinline{parking}, presented in Chapter~\ref{ch:parking}
+\item \lstinline{roadpricing}, presented in Chapter~\ref{ch:roadpricing}
 %\item \lstinline{org.matsim.contribs.signals.*} presented in Chapter~\ref{ch:signalslanes} \ah{only a placeholder}
-\item \lstinline{org.matsim.contribs.transEnergySim.*} presented in Chapter~\ref{ch:elvehicles}
-\item \lstinline{org.matsim.contribs.wagonSim.*} presented in Chapter~\ref{ch:wagonSim}
+\item \lstinline{transEnergySim}, presented in Chapter~\ref{ch:elvehicles}
+\item \lstinline{wagonSim}, presented in Chapter~\ref{ch:wagonSim}
 \end{itemize}
 
 %% in the code base 

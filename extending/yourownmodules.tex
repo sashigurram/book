@@ -154,6 +154,27 @@ MyExternalConfigGroup myConfig = ConfigUtils.addOrGetModule(controler.getConfig(
 Furthermore, there is a utility class \lstinline|ReflectiveConfigGroup| which you can use if you want to define the mapping of named parameters to accessors using \gls{java} annotations.  \kai{See ... for an example.}
 
 % =========================================================================================
+\subsection{ObjectAttributes and Customizable}
+\label{sec:objectAttributes-and-customizable}
+
+\gls{matsim} operates on data types such as links, nodes, persons, or vehicles. Many of these data types have attributes, such as free speed (for links) or coordinates (for nodes).  Rather often, one would like additional information for certain data types, such as ``slope'' for links, or ``age'' for persons.  In order to not modify the data types every time this becomes necessary, but still allow experimentation, a helper container called \lstinline{ObjectAttributes} is available.  It essentially attaches arbitrary additional information to objects \emph{that have an \gls{id}}, by a syntax of type
+\begin{lstlisting}
+attribs.putAttribute( id, attribName, attribValue ) ;  
+\end{lstlisting}
+where \lstinline{id} is the objects \gls{id}, \lstinline{attribName} is the name (type) of the attribute to be stored (e.g.\ ``age''), and \lstinline{attribValue} is the value of the attribute (e.g.\ ``24''). 
+
+Importantly, the package provides readers and writers for additional attributes.  It is thus possible for additional code to, say, generate such additional attributes by preprocessing, write them to file, and read them back for every run.  That approach is used, for example, by the Gauteng scenario (Chapter~\ref{ch:gauteng}) to pre-allocate e-tag ownership to persons.
+
+For additional information see the \lstinline{ObjectAttributes} class under \url{http://matsim.org/javadoc} $\to$ core.
+
+Note that there is currently no simple way to similarly attach information to data types that do not have an \gls{id}.  This is, for example, the case with plans, activities, or legs, which are contained inside a data type with an \gls{id} (the person data type), but which do not possess an \gls{id} of their own and are therefore not addressable by \lstinline{ObjectAttributes}.  Some of these non-identifiable data types implement the \gls{java} interface \lstinline{Customizable}, to which additional material can be attached by a syntax of type
+\begin{lstlisting}
+plan.getCustomAttributes.put("myAttribName",myAttribValue) ;
+\end{lstlisting}
+For additional information, see the \lstinline{Customizable} interface under \url{http://matsim.org/javadoc} $\to$ core.
+Note that information contained in \lstinline{Customizable} is not considered standard information by \gls{matsim}.  It is not written to file when writing the corresponding container, it is in consequence not read from file, and it is undefined if it is copied when copying the data object (e.g.\ when cloning plans for the evolutionary algorithm).---This is the status quo; the \gls{matsim} team is thinking about better solutions.
+
+% =========================================================================================
 \subsection{ScenarioElement}
 \label{sec:scenario-extension-point}
 
