@@ -157,7 +157,11 @@ From an econometric/discrete choice perspective (\cf Section~\ref{sec:Evolution-
 
 Section~\ref{sec:Evolution-of-choice} discusses a version of the plans generation/removal process, but makes rather strong assumptions on the capability to compute best response plans.  The following thoughts are a bit less formal and more general.
 
-Assume that plans $i$ for a person $n$ are created with a certain probability $p^{create}_{n,i}$; the person index $n$ will be dropped in the following.  Also assume that plans are removed with probability $p^{remove}_{i}$.  The master equation for the probability $q_{i}$ of plan $i$ to be contained in the choice set becomes
+Assume that plans $i$ for a person $n$ are created with a certain probability $p^{create}_{n,i}$; the person index $n$ will be dropped in the following.  Also assume that plans are removed with probability $p^{remove}_{i}$.  The master equation for the probability $q_{i}$ of plan $i$ to be contained in the choice set becomes in leading order\footnote{%
+%
+In higher order, one would have to correct for the possibility that a plan may appear more than once in the set of plans.
+%
+}
 \[
 \frac{\partial q_{i}}{\partial t}
 %
@@ -191,14 +195,14 @@ Combining this with a choice model that selects with $\sim \exp( \beta^{choice} 
 \begin{equation}
 p_i \sim \exp( \beta^{choice} \, S_i) \cdot q_i
 %
-\sim \exp( (\beta^{choice} + \beta^{create}+ \beta^{remove}) S_i ) \ .
+\sim \exp( (\beta^{choice} + \beta^{create}+ \beta^{remove}) \, S_i ) \ .
 \label{eq:6}
 \end{equation}
 From this, it becomes clear that \gls{matsim} in its current form, even when used with \lstinline{ChangeExpBeta} or \lstinline{SelectExpBeta} instead of \lstinline{SelectBest} for choice, strongly over-weights plans with high scores.  \emph{It is also clear that it is important to include plans removal into all considerations,} since otherwise the very large $\beta^{remove}$ in Equation~(\ref{eq:6}) will still dominate the statistical distribution.
 
 \subsection{Heterogeneity in Plans Removal}
 
-Clearly, not removing the worst plan but removing according to some logit model with a smaller $\beta^{remove}$ would already improve the situation.  In addition, in order to increase diversity, one could use an (inverse) path-size logit \citep[e.g.][]{FrejingerBierlaire2007PathSizeLogit,Prato2009ChoiceModellingSurvey} model, i.e.\
+Clearly, not removing the worst plan but removing according to some logit model with a smaller $\beta^{remove}$ would already improve the situation.  In addition, in order to increase diversity and at the same time to correct for correlations between alternatives, one could use an (inverse) path-size logit \citep[e.g.][]{FrejingerBierlaire2007PathSizeLogit,Prato2009ChoiceModellingSurvey} model, i.e.\
 \[
 p^{remove}_i \sim \exp( - \beta^{remove} \, S_i + \alpha \, PS_i ) \, 
 \]
@@ -303,11 +307,60 @@ An opposite perspective exists, where the relaxation procedure is just a numeric
 
 %\vfill\eject
 % ##################################################################################################################
-\section{Utility Function}
+\section{Scoring/Utility Function}
 \label{sec:future-of-scoring-function}
-The current logarithmic \gls{matsim} utility function is not suitable for modeling activity 
+The current logarithmic \gls{matsim} activity scoring function,
+\[
+S_{act,q} = \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q}) 
+\]
+(\cf Equation~(\ref{eq:matsimUTFact}), is not suitable for modeling activity
 %sequence choice 
-dropping (\citet[][p.127f]{Feil_PhDThesis_2010}, \citet[][]{MATSim_Userguide_2015}). 
+addition and dropping (\citet[][p.127f]{Feil_PhDThesis_2010}, \citet[][]{MATSim_Userguide_2015}).
+%
+As already stated in Section~\ref{sec:scoring-current}, the problem is that in the standard formulation, at the typical duration all activities generate the same score, independent of their actual duration.  In consequence, it makes sense to first drop the longest activity, which is typically the home or the work activity, which clearly is non-sensical.
+
+The property that all activities have the same utility at their typical duration is obtained by computing $t_{0,q}$ from the condition
+\begin{equation}
+10h \cdot \beta_{dur} \stackrel!= S_{act,q} \Big|_{t_{dur,q} = t_{typ,q}}
+=
+\beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{typ,q}/t_{0,q}) 
+\label{eq:7}
+\end{equation}
+and therefore
+\begin{equation}
+t_{0,q} = t_{typ,q} \cdot \exp\left( - \frac{10h}{t_{typ,q}} \right) \ .
+\label{eq:8}
+\end{equation}
+Clearly, Equation~(\ref{eq:7}) could be replaced by the requirement that all activities at their typical duration yield a score proportional to their typical duration, i.e.\
+\[
+const \cdot \beta_{dur} \cdot t_{typ,q} \stackrel!= S_{act,q} \Big|_{t_{dur,q} = t_{typ,q}}
+=
+\beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{typ,q}/t'_{0,q}) \ , 
+\]
+leading to
+\begin{equation}
+t'_{0,q} = t_{typ,q} \cdot \exp( - const ) \ .
+\label{eq:9}
+\end{equation}
+That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{matsim} scoring function would make, in leading order, all activities equally likely to drop.\footnote{%
+%
+According to Equation~(\ref{eq:acts}), to be optimal all $t_{dur,q}$ have to be selected such that all first derivatives $S'_{act,q} = \beta_{dur} \cdot t_{typ,q} / t_{dur,q}$ are the same, and in consequence for optimal time allocation $t_{dur,p}/t_{dur,q} = t_{typ,p}/t_{typ,q}$.  That is, $t_{0,q}$ does not play a role, and both with Equation~(\ref{eq:8}) and with Equation~(\ref{eq:9}) all activities are shortened proportionally when coming under time pressure. -- Activity dropping then will only happen when either the logarithmic form is given up (see under ``Negative Durations'' in Section~\ref{sec:scoring-current}), or when additional effects are included such as the fact that the positive utility of performing the activity should over-compensate the negative utility of traveling to the activity location.
+%
+}
+
+This, however, is still not flexible enough.  
+
+\kai{Baustelle}
+
+Assume the usual \kai{chk} 
+\[
+S_{perf,i}(x) = \beta_{perf} \cdot t_{typ(i)} \cdot \ln(x/t_0) \ .
+\]
+Now assume that the day is spent on one long activity with $t_{typ(i)} = 20h$ and one short activity with $t_{typ(i)} = 4h$.  According to \kai{??}, the optimal time allocation will be 20h:4h.
+
+Now assume that the person gets under time pressure.  We model this by making the day shorter, e.g.\ to 18h.  According to \kai{??}, the allocation will still be 20:4=5:1, i.e.\ 15h:3h.  
+
+ 
 Because of its negative second derivative, \ie its concavity, the log form favors very short activities, which means that the schedule is ever filled-up with short activities, where the usually long home activities are replaced first.%
 \footnote{
 With a fixed number of activities the log form optimum lies as far to the right as the overall budget constraint allows. 
