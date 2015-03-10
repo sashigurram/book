@@ -309,6 +309,9 @@ An opposite perspective exists, where the relaxation procedure is just a numeric
 % ##################################################################################################################
 \section{Scoring/Utility Function}
 \label{sec:future-of-scoring-function}
+
+\subsection{Discussion of the present mathematical form}
+
 The current logarithmic \gls{matsim} activity scoring function,
 \[
 S_{act,q} = \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q}) 
@@ -328,10 +331,10 @@ The property that all activities have the same utility at their typical duration
 \end{equation}
 and therefore
 \begin{equation}
-t_{0,q} = t_{typ,q} \cdot \exp\left( - \frac{10h}{t_{typ,q}} \right) \ .
+t_{0,q} = t_{typ,q} \cdot \exp\left( - \frac{10h}{t_{typ,q}} \right)
 \label{eq:8}
 \end{equation}
-Clearly, Equation~(\ref{eq:7}) could be replaced by the requirement that all activities at their typical duration yield a score proportional to their typical duration, i.e.\
+(\cf Equation (\ref{eq:zero-utility-duration}) with $prio=1$). Equation~(\ref{eq:7}) could be replaced by the requirement that all activities at their typical duration yield a score proportional to their typical duration, i.e.\
 \[
 const \cdot \beta_{dur} \cdot t_{typ,q} \stackrel!= S_{act,q} \Big|_{t_{dur,q} = t_{typ,q}}
 =
@@ -342,40 +345,34 @@ leading to
 t'_{0,q} = t_{typ,q} \cdot \exp( - const ) \ .
 \label{eq:9}
 \end{equation}
-That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{matsim} scoring function would make, in leading order, all activities equally likely to drop.\footnote{%
+That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{matsim} scoring function would make, in leading order, all activities equally likely to drop.
+%% \footnote{%
 %
-According to Equation~(\ref{eq:acts}), to be optimal all $t_{dur,q}$ have to be selected such that all first derivatives $S'_{act,q} = \beta_{dur} \cdot t_{typ,q} / t_{dur,q}$ are the same, and in consequence for optimal time allocation $t_{dur,p}/t_{dur,q} = t_{typ,p}/t_{typ,q}$.  That is, $t_{0,q}$ does not play a role, and both with Equation~(\ref{eq:8}) and with Equation~(\ref{eq:9}) all activities are shortened proportionally when coming under time pressure. -- Activity dropping then will only happen when either the logarithmic form is given up (see under ``Negative Durations'' in Section~\ref{sec:scoring-current}), or when additional effects are included such as the fact that the positive utility of performing the activity should over-compensate the negative utility of traveling to the activity location.
-%
-}
+%% According to Equation~(\ref{eq:acts}), to be optimal all $t_{dur,q}$ have to be selected such that all first derivatives $S'_{act,q} = \beta_{dur} \cdot t_{typ,q} / t_{dur,q}$ are the same, and in consequence for optimal time allocation $t_{dur,p}/t_{dur,q} = t_{typ,p}/t_{typ,q}$.  That is, $t_{0,q}$ does not play a role, and both with Equation~(\ref{eq:8}) and with Equation~(\ref{eq:9}) 
+%% According to Equation~(\ref{eq:optimal-time-allocation}), all activities are shortened proportionally when coming under time pressure. Activity dropping then will only happen when either the logarithmic form is given up (see under ``Negative Durations'' in Section~\ref{sec:scoring-current}), or when additional effects are included such as the fact that the positive utility of performing the activity should over-compensate the negative utility of traveling to the activity location.
+%% %
+%% }
 
-This, however, is still not flexible enough.  \kai{Hier fehlt jetzt die Rechnung, dass die Verhältnisse der durations immer gleich bleiben ... muss m.E.\ noch nach part I.}
-
-\kai{Baustelle}
-
-Assume the usual \kai{chk} 
-\[
-S_{perf,i}(x) = \beta_{perf} \cdot t_{typ(i)} \cdot \ln(x/t_0) \ .
-\]
-Now assume that the day is spent on one long activity with $t_{typ(i)} = 20h$ and one short activity with $t_{typ(i)} = 4h$.  According to \kai{??}, the optimal time allocation will be 20h:4h.
-
-Now assume that the person gets under time pressure.  We model this by making the day shorter, e.g.\ to 18h.  According to \kai{??}, the allocation will still be 20:4=5:1, i.e.\ 15h:3h.  
+This, however, is still not flexible enough.  According to Equation~(\ref{eq:optimal-time-allocation}), in leading order the ratio between activity durations always remains the same.  Thus, for example, if a $home:work:shop = 12h : 8h : 2h$ allocation (with the remaining time for travel) comes under pressure, for example by inserting another activity, then all activities are shortened proportionally, for example to $11h : 7h20min : 1h50min$.  This may, however, not always be correct; for example, it may be the case that persons attempt to maintain their regular working time and rather shorten elsewhere.
 
  
-Because of its negative second derivative, \ie its concavity, the log form favors very short activities, which means that the schedule is ever filled-up with short activities, where the usually long home activities are replaced first.%
-\footnote{
-With a fixed number of activities the log form optimum lies as far to the right as the overall budget constraint allows. 
-In line with consumer theory's utility maximization, all first derivatives are equal and the unique optimum is stable.
+%% Because of its negative second derivative, \ie its concavity, the log form favors very short activities, which means that the schedule is ever filled-up with short activities, where the usually long home activities are replaced first.%
+%% \footnote{
+%% With a fixed number of activities the log form optimum lies as far to the right as the overall budget constraint allows. 
+%% In line with consumer theory's utility maximization, all first derivatives are equal and the unique optimum is stable.
 
-With flexible number of activities their durations wander towards zero duration as the marginal utility is largest at zero, where zero duration itself is a singularity. 
-Additionally, only the activity type with the shortest typical duration will survive the optimization process.} 
-%
-Since this generates completely unrealistic behavior, one is on the search for alternative functional forms. 
+%% With flexible number of activities their durations wander towards zero duration as the marginal utility is largest at zero, where zero duration itself is a singularity. 
+%% Additionally, only the activity type with the shortest typical duration will survive the optimization process.} 
+%% %
+%% Since this generates completely unrealistic behavior, one is on the search for alternative functional forms. 
 
-\ah{curvature param?}
+%% \ah{curvature param?}
 
 % =========================================================================================
 \subsection{Alternative Functional Forms of the Utility Function}
 \label{sec:alternative-functions}
+
+\paragraph{S-shaped function}
 A new S-shaped function, proposed by \citet[][]{Joh_PhDThesis_2004}, was tested by \citet[][p.129ff]{Feil_PhDThesis_2010}. 
 Establishing a positive second derivative near point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. 
 Estimates of the new function based on the Swiss microcensus were provided. 
@@ -391,11 +388,37 @@ There are also technical issues with Joh's S-shaped formulation. % as detailed b
 Away from the upper part of the curve, where it starts to become similar to a logarithmic curve, it grows very rapidly. 
 In estimation this implies dramatic changes over short parameter spans. 
 This makes finding an optimum difficult numerically. 
-Additionally, the problem of the complete diminishing of those activities with longer typical durations, such as home activities, remains the same, when the number and types of activities is flexible.
 
-It might be worth to take another approach based on the observation \citep[][and others]{SchlichEtAl_TransportRev_2004} that activity, location and mode form packages, which are rarely changed. 
-One could think of the optimization task as a knapsack problem, where the traveler creates a Gestalt of the interactions to satisfy his commitments and his desires. 
-\gls{tasha} is a model, which takes a similar stance. 
+\kai{@Andreas: Ich würde härter argumentieren, dass eine activity allocation mit durations, die im konvexen Teil der Nutzenfunktion sitzen, nicht stabil sind.  (Das ist auch der Grund, warum im Bereich der consumer theory alle Nutzen- oder Produktionsfunktionen konkav sind ... z.B.\ Cobb-Douglas.)  Nimm Fig.~\ref{fig:unstable-activity-allocation}.  Erste Aktivität immer bei $t1$.
+\\
+\textbf{Fall 1, zweite Aktivität bei t2:}  Wenn nun, durch zufälliges Wackeln, t1 etwas länger wird und t2 etwas kürzer, dann hat act1 nun eine höhere Steigung als act2, und wird daher zulasten von act2 immer länger werden, bis act2 bei duration$=$0 ist. -- Also: Mehr als eine Aktivität im konvexen Bereich ist nicht möglich.
+\\
+\textbf{Fall 2, zweite Aktivität bei t2':}  Jetzt geht das Argument immer noch, wenn die Krümmung im konvexten Teil stärker ist als im konkaven.  Wenn dann t1 etwas kleiner wird, zugunsten von t2', dann hat anschließend act1 eine kleinere Steigung als act2.  Somit wird es also noch kürzer werden, zugunsten von act2, bis act1 verschwindet. -- Also: Selbst genau eine Aktivität im konvexen Bereich ist unwahrscheinlich.
+\\
+Das wesentliche Problem damit ist m.E.\ folgendes: Selbst wenn diese Form der Nutzenfunktion der Realität entsprechen sollte, kann man sie nicht schätzen, weil es keine Aktivitäten gibt, deren Dauern sich im konvexen Teil befinden. Und dies entspricht m.E.\ auch genau Feil, der die Parameter in diesem Teil nicht schätzen konnte. -- Vielleicht sollte ich mal anfangen, über solche Dinge Paper zu schreiben.
+\\
+(Obiges stand hier schonmal, siehe unten, ging dann aber irgendwie verloren.)
+}
+
+\createfigure[h]{%
+Unstable activity allocations
+}{%
+Unstable activity allocations
+}{%
+\label{fig:unstable-activity-allocation}
+}{%
+\includegraphics[width=0.8\hsize,trim=2cm 4cm 7cm 1cm,clip]{figures/stable-activity-allocations}
+}{}
+
+Additionally, the problem of the complete diminishing of those activities with longer typical durations, such as home activities, remains the same, when the number and types of activities is flexible.\kai{@Andreas: Naja, das hängt ja eigentlich, wie oben, an der ``utility per typical duration'' und wäre entsprechend einstellbar.  Hat Feil aber wohl nicht gemacht.}
+
+It might be worth to take another approach based on the observation of \citet[][]{SchlichEtAl_TransportRev_2004} and others, which is that activity, location and mode together form packages that are rarely changed. 
+One could think of the optimization task as a knapsack problem, where the traveler creates a Gestalt \kai{Kann man das sagen?  Im Bereich der Philosophie ok, aber im Engineering?} of the interactions to satisfy his commitments and his desires. 
+\gls{tasha} is a model that takes a similar stance. 
+
+\paragraph{Polynomial of second degree}
+
+\kai{todo}
 
 % ---------------------------------------------------------------------------------------------------------
 %\subsubsection{Stability Issues With the S-Shaped Function}
@@ -514,7 +537,7 @@ One could think of the optimization task as a knapsack problem, where the travel
 % =========================================================================================
 \subsection{Estimating a Utility Function}
 \label{sec:estimation}
-The challenge is that transport research has amply documented, that the travelers value different elements of their experience at different rates on average and certainly with large variances between each other. 
+The challenge that transport research has amply documented is that the travelers value different elements of their experience at different rates on average and certainly with large variances between each other. 
 Some of these differences might be due to the omission of the daily schedule context, as well as missing interactions with the trip purpose and the omitted or misspecified distribution of the payment responsibilities (the firm paying, the parents paying for young adults, girlfriends paying for their boyfriends etc.). 
 Still, the following differences should be accounted for: 
 %

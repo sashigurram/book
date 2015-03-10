@@ -277,6 +277,58 @@ Activities are scored with concave functions, modeling decreasing returns to spe
 When one assumes that all other things (in particular travel times) are equal, then agents maximize their score when the activity durations are such that all activities have the same slope ($=$ the same marginal utility; red lines).  This follows from basic economic theory (\cf Section~\ref{ch:economicEval:valuingBehavior}), but can also be seen intuitively: If the red lines did not have the same slope, the agent could gain by extending those activities with steeper slope at the expense of the others.  Clearly, this holds only when all other things remain constant, in particular the travel times.
 
 % ====================================================================================
+\subsection{Optimal activity durations}
+\label{sec:optimal-activity-durations}
+
+Let us now assume that a synthetic person wants to allocate durations $t_{dur,q}$ to activities $q$, and neither constraints nor travel are involved, i.e.\ the expression to be optimized is the sum of the logarithmic utility of performing, i.e.
+\[
+\sum_q \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q}) \ .
+\]
+This is an optimization under the time budget constraint that $\sum_q t_{dur,q} = 24\,h$, and therefore solved by the method of Lagrange multipliers.  
+
+\createfigure{%
+Computation of optimal activity durations
+}{%
+Method of Lagrange multipliers to obtain optimal activity durations
+}{%
+\label{fig:optimal-activity-durations}
+}{%
+\fbox{%
+\begin{minipage}{0.98\hsize}
+The Lagrangian is
+\[
+L := \sum_q \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q}) 
+%
++ \mu \cdot \left( 24\,h - \sum_q t_{dur,q} \right) \ .
+\]
+The solution is obtained from
+\[
+0 \stackrel!= \frac{\partial L}{\partial t_{dur,q}}
+= \beta_{dur} \cdot t_{typ,q} / t_{dur,q} - \mu 
+\]
+or
+\[
+t_{dur,q} = \frac{\beta_{dur} \, t_{typ,q}}{\mu} \ .
+\]
+$\mu$ could be obtained from the time budget constraint, but more important is that the above leads to
+\[
+\frac{t_{dur,p}}{t_{dur,q}} = \frac{t_{typ,p}}{t_{typ,q}} \ .
+\]
+\end{minipage}
+}%end fbox
+}{}
+
+This is shown in Figure~\label{fig:optimal-activity-durations}; the important result for the purposes here is that, at optimal allocation, 
+\begin{equation}
+\frac{t_{dur,p}}{t_{dur,q}} = \frac{t_{typ,p}}{t_{typ,q}} \ .
+\label{eq:optimal-time-allocation}
+\end{equation}
+That is, in the absence of travel and further constraints beyond the time budget constraint, time allocation between activities is optimal when the ratio of the actual durations is the same as the ratio of the typical durations.  If, say, $t_{typ,home} = 12\,h$, $t_{typ,work} = 8\,h$ and $t_{typ,shop} = 2\,h$, then the optimal time allocation between three activities of these three types will always follow the ratio $12:8:2 = 6:4:1$.
+
+A more extensive treatment of time allocation can be found in Section~\ref{ch:economicEval:valuingBehavior}.
+
+
+% ====================================================================================
 \subsection{The \enquote{Wrapping Around} of the Utility Function}
 \label{sec:wrap-around}
 The \gls{matsim} \gls{mobsim} typically starts at midnight, and runs until all plans have reached their final activity.  That is, the \gls{mobsim} by itself is not limited to a day.  However, as already stated in Section~\ref{sec:mathematical-form}, the standard scoring function assumes that plans ``wrap around'' to 24-hour days.  In consequence, the last activity is merged with the first activity into one activity. For example, if the first activity ends at 7\,am and the last activity starts at 11\,pm, then it is assumed that this is the \emph{same} activity, with a duration of eight\,hours.
@@ -384,9 +436,10 @@ This section summarizes the current implementation of the default \gls{matsim} s
 \paragraph*{Zero Utility Duration}
 
 The duration at which the utility of an activity is exactly zero is computed by the somewhat cryptic expression
-\[
+\begin{equation}
 t_{0,q} := t_{typ,q} \cdot \exp\left( - \frac{10}{(t_{typ,q}/1\,h) \cdot prio} \right) \ ,
-\]
+\label{eq:zero-utility-duration}
+\end{equation}
 where $prio$ is a configurable parameter. This was originally designed such that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally probable to be dropped in case of shortage of time \citep{CharyparNagel2005ga4acts}. Clearly, this does not work as intended, since as a result activities which accumulate this utility value over a short duration win, and as a result without additional constraints the ``home'' activity gets dropped first, which is clearly not plausible. See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives. In the meantime, the recommendations are:
 \begin{itemize}\styleItemize
 \item Do not set the \lstinline$priority$ value in the config away from its default value.
