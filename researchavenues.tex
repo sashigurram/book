@@ -317,30 +317,36 @@ The current logarithmic \gls{matsim} activity scoring function,
 \[
 S_{act,q} = \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q}) 
 \]
-(\cf Equation~(\ref{eq:matsimUTFact}), is not suitable for modeling activity
+(\cf Equation~(\ref{eq:matsimUTFact}), with $t_{0,q}$ as defined by Equation~(\ref{eq:zero-utility-duration})), is not suitable for modeling activity
 %sequence choice 
 addition and dropping (\citet[][p.127f]{Feil_PhDThesis_2010}, \citet[][]{MATSim_Userguide_2015}).
 %
-As already stated in Section~\ref{sec:scoring-current}, the problem is that in the standard formulation, at the typical duration all activities generate the same score, independent of their actual duration.  In consequence, it makes sense to first drop the longest activity, which is typically the home or the work activity, which clearly is non-sensical.
+As already stated in Section~\ref{sec:scoring-current}, the problem is that 
+%in the standard formulation, 
+at the typical duration all activities generate the same score, independent of their actual duration.  In consequence, it makes sense to first drop the longest activity, since that generates the least amount of utility per time unit. This is typically the home or the work activity, and dropping this first clearly is non-sensical.
 
-The property that all activities have the same utility at their typical duration is obtained by computing $t_{0,q}$ from the condition
+The property that all activities have the same utility at their typical duration is obtained by computing $t_{0,q}$ from the condition\footnote{%
+%
+The notation $S \Big|_{x=a}$ means that the expression $S$ shall be evaluated at $x=a$.
+%
+}
 \begin{equation}
-10h \cdot \beta_{dur} \stackrel!= S_{act,q} \Big|_{t_{dur,q} = t_{typ,q}}
+const \cdot \beta_{dur} \stackrel!= S_{act,q} \Big|_{t_{dur,q} = t_{typ,q}}
 =
 \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{typ,q}/t_{0,q}) 
 \label{eq:7}
 \end{equation}
 and therefore
 \begin{equation}
-t_{0,q} = t_{typ,q} \cdot \exp\left( - \frac{10h}{t_{typ,q}} \right)
+t_{0,q} = t_{typ,q} \cdot \exp\left( - \frac{const}{t_{typ,q}} \right)
 \label{eq:8}
 \end{equation}
-(\cf Equation (\ref{eq:zero-utility-duration}) with $prio=1$). Equation~(\ref{eq:7}) could be replaced by the requirement that all activities at their typical duration yield a score proportional to their typical duration, i.e.\
-\[
+(\cf Equation (\ref{eq:zero-utility-duration}) with $10h \to const$ and $prio \to 1$). Equation~(\ref{eq:7}) could be replaced by the requirement that all activities at their typical durations yield a score proportional to their typical duration, i.e.\
+\begin{equation}
 const \cdot \beta_{dur} \cdot t_{typ,q} \stackrel!= S_{act,q} \Big|_{t_{dur,q} = t_{typ,q}}
 =
 \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{typ,q}/t'_{0,q}) \ , 
-\]
+\end{equation}
 leading to
 \begin{equation}
 t'_{0,q} = t_{typ,q} \cdot \exp( - const ) \ .
@@ -354,7 +360,7 @@ That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{ma
 %% %
 %% }
 
-This, however, is still not flexible enough.  According to Equation~(\ref{eq:optimal-time-allocation}), in leading order the ratio between activity durations always remains the same.  Thus, for example, if a $home:work:shop = 12h : 8h : 2h$ allocation (with the remaining time for travel) comes under pressure, for example by inserting another activity, then all activities are shortened proportionally, for example to $11h : 7h20min : 1h50min$.  This may, however, not always be correct; for example, it may be the case that persons attempt to maintain their regular working time and rather shorten elsewhere.
+This, however, is still not flexible enough.  According to Equation~(\ref{eq:optimal-time-allocation}), in leading order the ratio between activity durations always remains the same.  Thus, for example, if a $home:work:shop = 12h : 8h : 2h$ allocation (with the remaining time for travel) comes under pressure, for example by inserting another activity, then all activities are shortened proportionally, for example to $11h : 7h20min : 1h50min$.  This may, however, not always be behaviorally plausible; for example, it may be the case that persons attempt to maintain their regular working time and rather shorten elsewhere.
 
  
 %% Because of its negative second derivative, \ie its concavity, the log form favors very short activities, which means that the schedule is ever filled-up with short activities, where the usually long home activities are replaced first.%
@@ -375,7 +381,7 @@ This, however, is still not flexible enough.  According to Equation~(\ref{eq:opt
 
 \paragraph{S-shaped function}
 A new S-shaped function, proposed by \citet[][]{Joh_PhDThesis_2004}, was tested by \citet[][p.129ff]{Feil_PhDThesis_2010}. 
-Establishing a positive second derivative near point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. 
+Establishing a positive second derivative near point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. \kai{Ah, jetzt verstehe ich das endlich.  Ja, das ist mathematisch richtig; vollständig konkave (und immer positive) Nutzenfunktionen führen dazu, dass Verbraucher von \emph{jedem} Gut einen kleinen Teil haben wollen. Es gibt also nicht so etwas wie eine minimale Stückelung. -- Bei matsim taucht das Problem aber gar nicht auf, weil der negative Nutzen der Anreise ohnehin diese Stückelung erzwingt.}
 Estimates of the new function based on the Swiss microcensus were provided. 
 This estimation, however, was difficult due to its non-linearities and the difficulty in generating sufficiently large choice sets. 
 In addition many daily activities and their durations are not chosen freely by the individual. 
@@ -424,16 +430,43 @@ It was explained above (Section~\ref{sec:discussion-present-math-form}) that a p
 S'_{act,q} & = & \beta_{perf} \cdot t_{typ,q} / t_{dur,q}
 \qquad
 & \hbox{ and thus } &
-\qquad
+\quad
 S'_{act,q} \Big|_{t_{dur,q} = t_{typ,q}} & = & \beta_{perf}
 \\
 S''_{act,q} & = & - \beta_{perf} \cdot t_{typ,q} / t_{dur,q}^{-2}
 \qquad
 & \hbox{ and thus } &
-\qquad
-S''_{act,q} \Big|_{t_{dur,q} = t_{typ,q}} = - \beta_{perf} / t_{typ,q} \ .
+\quad
+S''_{act,q} \Big|_{t_{dur,q} = t_{typ,q}} & = & - \beta_{perf} / t_{typ,q} \ .
 \\
 \end{matrix}\]
+That is, since $t_{typ,q}$ needs to be used to define the duration where the scoring function has slope $\beta_{perf}$, there is no parameter left to set the second derivative and thus the curvature of each activity type separately.
+
+This implies that one might use all the above insights to simply try with a polynomial of second degree, with the following conditions:
+\[\begin{matrix}
+S_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & const \cdot t_{typ,q} \\
+S'_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & \beta_{perf} \\
+S''_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & \gamma \\
+\end{matrix}\]
+Solving this leads to
+\[
+S_{act,q} = \frac{1}{2} \, \gamma \, t_{dur,q}^2
+%
++ \Big(- \gamma \, t_{typ,q} + \beta_{perf} \Big) \, t_{dur,q}
+%
++ \Big( \frac{1}{2} \, \gamma \, t_{typ,q}^2 - \beta_{perf} \, t_{typ,q} + const \cdot t_{typ,q} \Big) \ ,
+\]
+which is more expressive than it looks at first glance:
+\begin{itemize}
+
+\item $\frac{1}{2} \, \gamma$ in the quadratic term is just there to generate the requested second derivative.
+
+\item $\beta_{perf}$ in the linear term is there to generate the requested slope at $t_{typ,q}$; $- \gamma \, t_{typ,q}$ is there to compensate the contribution of the quadratic term at the same point.
+
+\item Similarly, $\frac{1}{2} \, \gamma \, t_{typ,q}^2 - \beta_{perf} \, t_{typ,q}$ in the constant term are there to compensate for the higher order contributions at $t_{typ,q}$; once that compensation has taken place, $const \cdot t_{typ,q}$ is the term that determines the ``height'' of the scoring function at that point.
+
+\end{itemize}
+
 
 % ---------------------------------------------------------------------------------------------------------
 %\subsubsection{Stability Issues With the S-Shaped Function}
