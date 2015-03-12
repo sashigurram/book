@@ -25,6 +25,9 @@ The following material is an abridged and edited version of \citet{NagelFloetter
 
 \kai{Im Prinzip bin ich einverstanden, das sagt ja auch meine obige Bemerkung.  Ich habe allerdings nicht im Blick, wieviel des Materials tatsächlich woanders gesagt wurde, und was ansonsten vielleicht wegfallen kann.}
 
+\gunnar{Wir m\"ussen ja nicht alles aus dem Buchkapitel auch hier noch einmal sagen. 
+M.E. passt es jetzt so, wie es ist.}
+
 % Despite of the substantial progress made in activity-based demand modeling and computational simulation techniques, many dynamic traffic assignment (DTA) models suffer from simplified behavioral representations. Two major issues are:
 % \begin{enumerate}
 % \item Consistently incorporated choice dimensions rarely go beyond route choice.
@@ -543,6 +546,7 @@ integers. \todoNextRevision{wikipedia linear programming integer unknowns refers
   Wissens auch kombinatorisch ist: Man muss die ``binding constraints'' finden.
   Ich kenne mich damit (und auch mit interior point) aber nicht aus.}
 \kai{Meiner Erinnerung nach stammt der NP-hard-Satz ursprünglich von mir.  Du hattest dann wohl nach einer Quelle gesucht und dabei die wikipedia-Aussage gefunden. -- Beim genauen Lesen ist das aber eigentlich kein Widerspruch: linear programming in real variables is non-exponential; wenn die Lösungen nur noch integer sein dürfen, wird es NP-hard. -- Also fehlt nach wie vor nur noch die Referenz.  Gunnar, wenn Du soweit einverstanden bist, dann schreib' bitte kurz ``ok''; vielleicht finden wir dann noch eine Referenz.}
+\gunnar{OK. Karmarkar scheint hier die Schl\"usselreferenz zu sein:}\citet{karmarkar1984}
 
 As is well known, there may be situations where mixed strategy
 equilibria exist; these are equilibria where the participants draw
@@ -739,7 +743,7 @@ daily plans.
 % </plan>
 % \end{lstlisting}
 \gls{matsim} plans maintain the structure of \gls{dta} in terms of the triple
-(origin, departure time, destination); see Section~\note{REF} for an
+(origin, departure time, destination); see Section~\note{REF to plan example} for an
 example. However, different from \gls{dta}, all activities are chained together.
 
 This widens the behavioral modeling scope dramatically in that all
@@ -912,6 +916,7 @@ P(\text{old} \to \text{new}) \propto \max[ 0, e^{\mu \, (S_{\text{new}} - S_{\te
 where $S_\text{new}$ and $S_\text{old}$ are the (expected) scores of the new
 and the old plan, respectively. 
 \gunnar{Why give this particular functional form?} \kai{Das hat was damit zu tun, dass die lineare Form, EQ~(\ref{eq:10}), oft in genetischen Algorithmen verwendet wird, und ich zeigen wollte, dass alle sinnvollen funktionalen Formen linearisiert identisch sind und man daher keine Religion draus machen sollte. -- Aber praktisch gesehen verwendet \gls{matsim} $P(old \to new) \sim 0.01 \cdot \exp( 0.5 \cdot \beta \cdot (S_{new} - S_{old})$ (leider immer noch ohne renormierende Division, wie von Dir vor langer Zeit angemahnt), und von daher gesehen sollten wir hier wohl auch eher dies verwenden.  Bitte umschreiben, oder wenigstens ein kurzes ``ok'', dann mache ich es, sobald ich dazu komme.}
+\gunnar{OK, aber das solltest dann Du so formulieren wie Du es gerne h\"attest.}
 (Chapter~\ref{ch:scoring} %\ref{sec:adjust-impr-funct}
 gives an example of how a scoring function for all-day plans could
 look like.)  For a small difference between $S_\text{old}$ and $S_\text{new}$,
@@ -1193,24 +1198,26 @@ follows \citep[see, e.g.,][for similar
 
 \begin{enumerate}
 \item \textbf{Initiation:} Generate at least one plan for every
-  person. \gunnar{``person'' $\rightarrow$ ``agent''?} \kai{Ja warum nicht.  Für Ampeln geht es schließlich auch genau so.}
+  agent. 
+ %\gunnar{``person'' $\rightarrow$ ``agent''?} 
+ %\kai{Ja warum nicht.  Für Ampeln geht es schließlich auch genau so.}
 
 \item \textbf{Iterations:} Repeat the following many times.
 
 \begin{enumerate}
 
-\item \textbf{Selection/Choice:} Select, for every person, one of the plans.
+\item \textbf{Selection/Choice:} Select, for every agent, one of the plans.
 
-\item \textbf{Scoring:} Obtain a score for every person's selected
+\item \textbf{Scoring:} Obtain a score for every agent's selected
   plan.  This is done by executing all selected plans simultaneously
   in a simulation, and attaching some performance measure to each
   executed plan.  Clearly, what was the network loading before has now
-  evolved to a full-fledged person-based simulation of daily
+  evolved to a full-fledged agent-based simulation of daily
   activities.  See Section~\ref{sec:adjust-impr-funct} for more detail on
   the scoring.
 
 \item \textbf{Generation of new plans (innovation)/Choice set
-  generation:} For some of the persons, generate new plans, for
+  generation:} For some of the agents, generate new plans, for
   example as ``best replies'' or as mutations of existing plans
   (\eg small departure time changes).
 
@@ -1220,20 +1227,22 @@ follows \citep[see, e.g.,][for similar
 
 \end{algorithm}
 
-Fig.~\ref{fig:maxUtf2} gives a pictorial representation.
-\gunnar{Picture contains too much unexplained detail. Perhaps refer to the
-earlier figure focusing only on the coevolutionary algorithm?} \kai{Habe das jetzt mal ge``clipped''.  Aber generell stammt das nicht von mir, und ich kann mit solchen Diagrammen merkwürdigerweise auch kaum etwas anfangen, insofern muss jemand anders sagen, welche Variante davon hilfreich ist.}
+\gunnar{Ich habe das Bild jetzt rausgenommen. Finde auch nicht, dass es hilft.}
+% Fig.~\ref{fig:maxUtf2} gives a pictorial representation.
+% \gunnar{Picture contains too much unexplained detail. Perhaps refer to the
+% earlier figure focusing only on the coevolutionary algorithm?} \kai{Habe das jetzt mal ge``clipped''.  Aber generell stammt das nicht von mir, und ich kann mit solchen Diagrammen merkwürdigerweise auch kaum etwas anfangen, insofern muss jemand anders sagen, welche Variante davon hilfreich ist.}
+% 
+% % ----------
+% \createfigure%
+% {Basic procedure of transport microsimulations}%
+% {Basic procedure of transport microsimulations\gunnar{See comment in text.} Clip-out from Figure~\ref{maxUtf}.
+% }%
+% {\label{fig:maxUtf2}}%
+% {\includegraphics[width=0.6\textwidth, trim=9.5cm 0cm 9.5cm 6.9cm, clip,angle=0]{understanding/figures/maxUtf.pdf}}%
+% {}
+% 
+% % ----------
 
-% ----------
-\createfigure%
-{Basic procedure of transport microsimulations}%
-{Basic procedure of transport microsimulations\gunnar{See comment in text.} Clip-out from Figure~\ref{maxUtf}.
-}%
-{\label{fig:maxUtf2}}%
-{\includegraphics[width=0.6\textwidth, trim=9.5cm 0cm 9.5cm 6.9cm, clip,angle=0]{understanding/figures/maxUtf.pdf}}%
-{}
-
-% ----------
 Note that this approach is really quite congruent with the SUE
 approach: Every person has a collection of plans, which may be
 interpreted as the choice set.  As in SUE, the choice set may be
