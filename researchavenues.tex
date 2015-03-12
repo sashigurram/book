@@ -341,7 +341,7 @@ and therefore
 t_{0,q} = t_{typ,q} \cdot \exp\left( - \frac{const}{t_{typ,q}} \right)
 \label{eq:8}
 \end{equation}
-(\cf Equation (\ref{eq:zero-utility-duration}) with $10h \to const$ and $prio \to 1$). Equation~(\ref{eq:7}) could be replaced by the requirement that all activities at their typical durations yield a score proportional to their typical duration, i.e.\
+(\cf Equation (\ref{eq:zero-utility-duration}) with $10h \to const$ and $prio \to 1$). In order to make all activities equally important, Equation~(\ref{eq:7}) could be replaced by the requirement that all activities at their typical durations yield a score proportional to their typical duration, i.e.\
 \begin{equation}
 const \cdot \beta_{dur} \cdot t_{typ,q} \stackrel!= S_{act,q} \Big|_{t_{dur,q} = t_{typ,q}}
 =
@@ -360,7 +360,7 @@ That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{ma
 %% %
 %% }
 
-This, however, is still not flexible enough.  According to Equation~(\ref{eq:optimal-time-allocation}), in leading order the ratio between activity durations always remains the same.  Thus, for example, if a $home:work:shop = 12h : 8h : 2h$ allocation (with the remaining time for travel) comes under pressure, for example by inserting another activity, then all activities are shortened proportionally, for example to $11h : 7h20min : 1h50min$.  This may, however, not always be behaviorally plausible; for example, it may be the case that persons attempt to maintain their regular working time and rather shorten elsewhere.
+This, however, is still not flexible enough.  According to Equation~(\ref{eq:optimal-time-allocation}), in the absence of additional effects such as constraints the ratio between activity durations always remains the same.  Thus, for example, if a $home:work:shop = 12h : 8h : 2h$ allocation (with the remaining time for travel) comes under pressure, for example by inserting another activity, then all activities are shortened proportionally, for example to $11h : 7h20min : 1h50min$.  This may, however, not always be behaviorally plausible; for example, it may be the case that persons attempt to maintain their regular working time and rather shorten elsewhere.
 
  
 %% Because of its negative second derivative, \ie its concavity, the log form favors very short activities, which means that the schedule is ever filled-up with short activities, where the usually long home activities are replaced first.%
@@ -381,7 +381,7 @@ This, however, is still not flexible enough.  According to Equation~(\ref{eq:opt
 
 \paragraph{S-shaped function}
 A new S-shaped function, proposed by \citet[][]{Joh_PhDThesis_2004}, was tested by \citet[][p.129ff]{Feil_PhDThesis_2010}. 
-Establishing a positive second derivative near point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. \kai{Ah, jetzt verstehe ich das endlich.  Ja, das ist mathematisch richtig; vollständig konkave (und immer positive) Nutzenfunktionen führen dazu, dass Verbraucher von \emph{jedem} Gut einen kleinen Teil haben wollen. Es gibt also nicht so etwas wie eine minimale Stückelung. -- Bei matsim taucht das Problem aber gar nicht auf, weil der negative Nutzen der Anreise ohnehin diese Stückelung erzwingt.}
+Establishing a positive second derivative near point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. \kai{Ah, jetzt verstehe ich das endlich.  Ja, das ist mathematisch richtig; vollständig konkave (und immer positive) Nutzenfunktionen führen dazu, dass Verbraucher von \emph{jedem} Gut einen kleinen Teil haben wollen. Es gibt also nicht so etwas wie eine minimale Stückelung. -- Bei matsim taucht das Problem aber gar nicht auf, weil (1) unsere utl-fct bei kurzen Dauern ja nicht gegen Null strebt, sondern ohnehin schon negativ ist, und (2) der negative Nutzen der Anreise ohnehin diese Stückelung erzwingt.  In gewissem Sinne war unsere alte Version (vor der Einführung der linearen Verlängerung, siehe Section~\ref{sec:negative-durations}) dann eine stückweise lineare Approximation der Joh-Funktion.}
 Estimates of the new function based on the Swiss microcensus were provided. 
 This estimation, however, was difficult due to its non-linearities and the difficulty in generating sufficiently large choice sets. 
 In addition many daily activities and their durations are not chosen freely by the individual. 
@@ -466,6 +466,9 @@ which is more expressive than it looks at first glance:
 \item Similarly, $\frac{1}{2} \, \gamma \, t_{typ,q}^2 - \beta_{perf} \, t_{typ,q}$ in the constant term are there to compensate for the higher order contributions at $t_{typ,q}$; once that compensation has taken place, $const \cdot t_{typ,q}$ is the term that determines the ``height'' of the scoring function at that point.
 
 \end{itemize}
+An additional advantage of the 2nd degree polynomial would be that a separate linear extension for negative durations (\cf Section~\ref{sec:negative-durations}) would no longer be necessary. 
+%
+Overall, it seems that such a scoring function should be investigated for \gls{matsim}.
 
 
 % ---------------------------------------------------------------------------------------------------------
@@ -593,15 +596,25 @@ Still, the following differences should be accounted for:
 \item Modal preferences either via modal constants or mode-specific valuation of in-vehicle-travel times to capture the comfort and social prestige effects
 \item Walking time 
 \item Transfers as a measure of their inconvenience and risk of the lost connection
-\item Crowding above the disutility of the in-vehicle time for its discomfort
-\item Parking search above the disutility of in-vehicle time for its uncertainty
-\item Type preferences for parking places for the different levels of personal risk and risk for the vehicle
-\item Cost sensitivity by available personal income 
-\item Operating points for the activities
-\item Level and curvature of the activity utilities by purpose
+\item Crowding 
+%above 
+(in addition to the disutility of the in-vehicle time) %% for its discomfort
+\item Parking search 
+%above 
+(in addition to the disutility of in-vehicle time)
+ %% for its uncertainty
+\item 
+%Type 
+Preferences for types of parking places 
+%% for the different levels of personal risk and risk for the vehicle
+\item Cost sensitivity, e.g.\ by available personal income 
+%% \item Operating points for the activities
+\item Typical durations of activities by activity type
+\item Level and curvature of the activity utilities by  %% purpose
+activity type
 \end{itemize}
+The literature has shown finer interactions, as well as further elements, but the above set should cover the key parts of the generalized costs. 
 
-The literature has shown finer interactions, as well as further elements, but this set cover the key parts of the generalized costs. 
 %As shown earlier, the commonly applied \gls{matsim} utility function parameters are derived from \citet[][]{ArnottEtAl_TAER_1993, ChaumetEtAl_2006}. 
 \citet[][]{Kickhoefer_MastersThesis_2009} provides estimates based on data from \citet[][]{VrticEtc2008ReisekostenSVIBericht}. 
 \citet[][]{KickhoeferEtAl2012WelfareBusCorridorKuhmoNectar} translates estimates from \citet[][]{TirachiniEtAl2012CrowdingCongestion} into \gls{matsim} values. 
@@ -611,13 +624,23 @@ The complete set outlined above has not yet been estimated in one consistent est
 Having such a base at hand is important as estimating and applying a \gls{matsim} utility function is non-trivial due to the following. 
 
 %
-Agents optimize \emph{complete day plans} \citep[see also][Section 6.3.1]{MATSim_Userguide_2015}. This means that the utility levels of the single choice dimensions need to be carefully balanced, when applying estimates. Usually it is impossible to apply readily-available functions estimated independently for a single choice dimension. A degenerated example might be the following. All destination alternatives evaluated with a not-well calibrated utility function generate very low utility; in that case the complete activity might be simply dropped. 
+Agents optimize \emph{complete day plans} \citep[see also][Section 6.3.1]{MATSim_Userguide_2015}. This means that the utility levels of the single choice dimensions need to be carefully balanced.
+%% , when applying estimates. 
+Usually it is impossible to 
+apply 
+%readily-available 
+functions estimated independently for a single choice dimension. A degenerated example might be the following. All destination alternatives evaluated with a not-well calibrated utility function generate very low utility; in that case the complete activity might be simply dropped. 
 %
 \benjamin{I dont fully understand the above...what is an inappropriate utility function?} \ah{adapted}
 %
+\kai{Finden wir noch ein besseres Beispiel?  Wie sollen, technisch gesehen, ``destinations'' einen zu niedrigen Nutzen bekommen?  Ich kann mir das nur so vorstellen, dass ein bestimmter Aktivitäten-Typ im Mittel einen zu niedrigen Nutzen bekommt.  Das ist dann aber das gleiche Problem wie oben für activity dropping bereits diskutiert.}
+%
 This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. 
+%
+\kai{Warum nicht?  Wenn ich zwei Pläne haben, die sich in einer choice dimension unterscheiden, dann wechsle ich zur besseren Alternative.  Auf diese Weise sind irgendwann alle choice dimensions im NGG. Was übersehe ich?}
+%
 The inseparability of choice dimensions means that in \gls{matsim} we can only consistently handle choices if the parameters are estimated or postulated consistently. 
-Estimates from independent studies reflect the scale parameter of the Gumbel distribution of the observed choices, which is arbitrarily set to zero for identification purposes, which means that the values cannot be compared 
+Estimates from independent studies reflect the scale parameter of the Gumbel distribution of the observed choices, which is arbitrarily set to zero \kai{one??} for identification purposes, which means that the values cannot be compared 
 %\kwaah{(See Bierlaire, ????)}
 . The elasticities and trade-offs values can be compared, as they removed the scale parameter from their values. 
 %
