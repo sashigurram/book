@@ -588,101 +588,181 @@ Overall, it seems that such a scoring function should be investigated for \gls{m
 %\kai{Wir können aber auch unter research avenues durchaus so etwas wie "alternative functional forms of the utl function" als Überschrift nehmen, und dann kurz erklären, dass Feil es mit der Joh-Fkt probiert hat, aber mit einem Teil der Parameter Schätzprobleme hatte.  M.E. sollte nur das mit dem S nicht in der Überschrift stehen.}
 
 % =========================================================================================
-\subsection{Estimating a Utility Function}
+\subsection{Heterogeneity of Alternatives and Challenges of Estimation}
 \label{sec:estimation}
-%The challenge that transport research has amply documented is that the 
-Travelers value different elements of their experience at different average rates; for example, one usually has different values of travel time savings by mode and by trip purpose. 
-% on average and certainly with large variances between each other. 
-In addition, there are large variances between travelers.  Some of these differences might be due to the omission of the daily schedule context; for example, higher values of time for commuting than for leisure may be caused by the more crowded daily schedule on working days.
-%as well as missing interactions with the trip purpose 
-%Mir nicht wirklich klar. Beispiel?  Oder einfach weglassen.
-An additional complication, in particular with respect to monetary items, arises from
-%and the 
-often omitted or misspecified 
-%distribution 
-assignments of the payment responsibilities (the firm paying, the parents paying for young adults, girlfriends paying for their boyfriends etc.).  However, not all differences stem from the context, and in consequences the following elements should be investigated concerning their explanatory power for a possible inclusion into the \gls{matsim} scoring function:
-%% Still, the following differences should be accounted for:
+
+It is common to differentiate between types of alternatives in the average; e.g., trips by different modes or with different purposes are commonly assigned different values of time.
 %
-\begin{itemize}\styleItemize
-\item Modal preferences, which could, for example, be included as \kai{person-specific???} modal constants or as \kai{person-specific??} mode-specific valuation of in-vehicle-travel times to capture the comfort and social prestige effects
-\item Walking time \kai{Das erscheint mir im Hinblick auf den bereits bestehenden matsim-Status zu unpräzise, da ``walking'' in matsim schon lange drin ist.}
-\item Transfers as a measure of their inconvenience and risk of the lost connection \kai{Das erscheint mir im Hinblick auf den bereits bestehenden matsim-Status zu unpräzise, da ``transfer'' in matsim schon lange drin ist.}
-\item Crowding 
-%above 
-(in addition to the disutility of the in-vehicle time) %% for its discomfort
-\kai{Paul Bouman in Rotterdam.  Ist uns leider nie gelungen, das einzufangen}
-\item Parking search 
-%above 
-(in addition to the disutility of in-vehicle time)
-\kai{Waraich??}
- %% for its uncertainty
-\item 
-%Type 
-Preferences for types of parking places 
-%% for the different levels of personal risk and risk for the vehicle
-\kai{Waraich??}
-\item Cost sensitivity, e.g.\ by available personal income 
-\kai{Kickhoefer??}
-%% \item Operating points for the activities
-\item Typical durations of activities by activity type
-\kai{diese und die nächste stehen etwas ``quer'' im Raum, weil sie sich nicht auf ``zusätzliche Elemente'', sondern auf die allgemeine Parametrisierung beziehen.  Typical durations und ``level'' kann man schon seit Urzeiten kontrollieren; ``curvature'' hingegen fehlt.}
-\item Level and curvature of the activity utilities by  %% purpose
-activity type
+However, there are also large deviations from those averages between travelers.
+%
+A possible approach to address that are so-called taste variations, i.e.\ to make some parameters of the utility function random but fixed per agent, and the parameters of this randomness are made part of the choice model estimation.
+%
+However, some of this apparent randomness may, in fact, be causal.
+%
+For example, higher values of time for commuting than for leisure may be caused by the more crowded daily schedule on working days.  Similarly, the strength of a preference for public transit may be caused by the walking distance to that transit stop that serves the desired destination.
+
+Simulation systems such as \gls{matsim} should be able to explicitly integrate such heterogeneity of the alternatives.  Besides the aspects discussed in Section~\ref{sec:alternative-functions}, it is desirable to know how the following aspects influence the scoring function:
+\begin{itemize}
+
+\item Access/egress times to/from public transit.
+
+\item Transfers between public transit lines.
+
+\item Crowding in public transit vehicles.
+
+\item Parking search.
+
+\item Types of parking (on-street, guarded, sheltered, etc.)
+
+\item Personal or household income
+
 \end{itemize}
-The literature has shown finer interactions, as well as further elements, but the above set should cover the key parts of the generalized costs. 
+Clearly, this list is not complete.
 
-\kai{Mir ist im Moment nicht klar, was wir mit obiger Liste erreichen wollen, wenn wir für die Hälfte der Items bereits eigene Arbeiten haben.}
+For most of these aspects, initial studies within the \gls{matsim} context are available, see, e.g.\ 
+%
+\citet{MoyoNagelptLineCalibration,MoyoNagelptNetCalibration} for access/egress times and transfers to \acrfull{pt}
+%
+\citet{BoumanEtc2013Crowdedness} \kai{some Singapore ref?} for crowdedness,
+%
+\cite{WaraichEtAl_STRC_2013} for parking search,
+%
+or \cite{KickhoeferEtAl_Transportation_2011} for income.
+%
+In some cases, it is even possible to configure these elements through the standard config file, completely without \gls{java} programming.
+%
+It is also quite clear that these issues were addressed outside the \gls{matsim} context.
+%
+A challenge, however, is that it is normally not possible to just collect results from different studies, for the following reasons:
+\begin{itemize}
 
-%As shown earlier, the commonly applied \gls{matsim} utility function parameters are derived from \citet[][]{ArnottEtAl_TAER_1993, ChaumetEtAl_2006}. 
-\citet[][]{Kickhoefer_MastersThesis_2009} provides estimates based on data from \citet[][]{VrticEtc2008ReisekostenSVIBericht}. 
-\citet[][]{KickhoeferEtAl2012WelfareBusCorridorKuhmoNectar} translates estimates from \citet[][]{TirachiniEtAl2012CrowdingCongestion} into \gls{matsim} values. 
-However, with the exception of a few studies \citep[][]{BalmerEtAl_ResRep_datapuls_2010, HuelsmannEtAl2012HotspotPricing, KickhoeferNagel2013EmissionInternalizationNETS, KaddouraEtAl2015PtMarginalSocialCostPricingJTEP}, these estimates have not been considered yet for many other projects, although they represent a valuable base for future comparisons. 
-The complete set outlined above has not yet been estimated in one consistent estimation, and so remains an urgent item for \gls{matsim} research. 
+\item It is not correct to take an estimated utility function and then change the list of attributes.  
+%
+For example, if walking access/egress to/from \gls{pt} is not included in the estimation, then its effect may be partially be included in the alternative-specific constant or in the population density (which may serve as a proxy for the density of \gls{pt} access points).  Just adding the effect of walking access/egress from some other study is thus not correct.
 
-Having such a base at hand is important as estimating and applying a \gls{matsim} utility function is non-trivial due to the following. 
+\item Even when \gls{matsim} is able \emph{in principle} to add these elements, doing so in practice poses a considerable statistical challenge.  For example, one may assume that households inside a zone self-select their precise residential location based on the \gls{pt} accessibility of their regular destinations.  
+%
+In contrast, a typical \gls{matsim} initial demand generation process will first assign residential locations, and then generate their destinations, e.g.\ their workplaces.
+%
+In consequence, persons who might reach their destinations easily by \gls{pt} might have their \gls{matsim} residences far away from the relevant \gls{pt} stop.
 
-%
-Agents optimize \emph{complete day plans} \citep[see also][Section 6.3.1]{MATSim_Userguide_2015}. This means that the utility levels of the single choice dimensions need to be carefully balanced.
-%% , when applying estimates. 
-Usually it is impossible to 
-apply 
-%readily-available 
-functions estimated independently for a single choice dimension. A degenerated example might be the following. All destination alternatives evaluated with a not-well calibrated utility function generate very low utility; in that case the complete activity might be simply dropped. 
-%
-\benjamin{I dont fully understand the above...what is an inappropriate utility function?} \ah{adapted}
-%
-\kai{Finden wir noch ein besseres Beispiel?  Wie sollen, technisch gesehen, ``destinations'' einen zu niedrigen Nutzen bekommen?  Ich kann mir das nur so vorstellen, dass ein bestimmter Aktivitäten-Typ im Mittel einen zu niedrigen Nutzen bekommt.  Das ist dann aber das gleiche Problem wie oben für activity dropping bereits diskutiert.}
-%
-This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. 
-%
-\kai{Warum nicht?  Wenn ich zwei Pläne haben, die sich in einer choice dimension unterscheiden, dann wechsle ich zur besseren Alternative.  Auf diese Weise sind irgendwann alle choice dimensions im NGG. Was übersehe ich?}
-%
-The inseparability of choice dimensions means that in \gls{matsim} we can only consistently handle choices if the parameters are estimated or postulated consistently. 
-Estimates from independent studies reflect the scale parameter of the Gumbel distribution of the observed choices, which is arbitrarily set to zero \kai{one??} for identification purposes, which means that the values cannot be compared 
-%\kwaah{(See Bierlaire, ????)}
-. The elasticities and trade-offs values can be compared, as they removed the scale parameter from their values. 
-%
-\benjamin{Why? The only difference if one has more choice dimensions in the model is that utility differences resulting from some policy will be smaller than with less choice dimensions---\ie influencing the elasticity.} \ah{adapted}
+\end{itemize}
 
-Incorporating a contribution, \eg for parking or destination choice, in combination with absolute utilities is even trickier as the Charypar-Nagel function is non-linear, which means that available parameters---very often linear utility functions---need to be incorporated by approximation procedures and distinction of cases as described in \citet[][p.75ff]{Horni_PhDThesis_2013}. 
-Furthermore, \gls{matsim} utility function includes travel times, while their parameters which are readily available from studies, the quality and potential bias in the calculation of the travel times used for those estimate is rarely challenged. 
-It would be unlikely that these estimates are perfect, given that disaggregate assignment models have until recently only been calibrated against counts and not against observed travel times. 
-The omission of junction models cannot help either. 
-In addition, the travel time estimates are influenced by the underlying mode choice model in that implementation which can bias the results further \citep[][]{Vrtic_PhDThesis_2003}. 
-\gls{gps} or smartphone-based surveys, however, provide this information with higher precision and, thus, they are a promising mean for better model calibration and therefore better description of the non-chosen alternatives in the model .
-
-Furthermore, travel time and activity duration parameter estimates including income need to carefully consider the parameters' relation to the \gls{vtts}. \citet[][p.276]{MeisterEtAl_SVT_2009} for example argue that the average Swiss hourly earnings are much higher than 6\,EUR per hour used in the \gls{matsim} function then. 
-However, the \gls{matsim} is now measured in utils not monetary units. 
-Still, the parameters in utils and monetary terms (such as tolls, parking costs, fares etc., or income-dependent attributes) are often interacted and thus their relation needs to be consistent if they come from different studies.
+It is thus necessary to estimate the scoring function with exactly those attributes that are available in the simulation in sufficient precision.
 %
-\benjamin{I dont see the problem here...parameters define the \gls{vtts}, and are dependent on the variance of the unobserved attributes, no? So measuring in utils or money does not make a difference.} \ah{adapted}
+\citet[][]{Kickhoefer_MastersThesis_2009} has, in consequence, re-estimated his scoring function based on data from \citet[][]{VrticEtc2008ReisekostenSVIBericht}. 
+%
+For the same reasons, it is not possible to combine functions that were independently estimated for different choice dimensions.  This is not even possible when they all contain monetary units.  For example, assume that one has
+\[
+... + \beta_{t} \, t_{trav} + \beta_{m} \, cost + ...
+\]
+for mode choice, and
+\[
+... + \beta_r \, \rho + \beta'_{m} \, cost + ...
+\]
+for parking, where $t_{trav}$ is the travel time, $\rho$ is the crowdedness of a parking lot, and $cost$ is in all cases the monetary cost, e.g.\ for gas, \gls{pt} fare, or parking.  Even then it is not possible to say
+\[
+... + \beta_{t} \, t_{trav} + \beta_{m} \, cost 
+%
++ \beta_r \, \frac{\beta_m}{\beta'_m} \, \rho + ... \ ,
+\]
+since that confuses the scale parameters of the two separate estimations.\footnote{%
+%
+Although, realistically, combining separate estimations via their conversion in monetary terms may be the best one can do in many situations.
+%
+} If only travel time is available as common attribute, the situation gets worse, since the valuation of time in \gls{matsim} is non-linear, and thus operating points for linearization need to be defined, or found by iterative procesures~\citep[][p.75ff]{Horni_PhDThesis_2013}.
 
-%A numerical problem, particularly relevant for activity choice, concerns the functional form of the utility function---As argued in Section~\ref{sec:alternative-functions}, a function offering an additional degree of freedom (the curvature at the typical duration) would be better.
 
-Estimating a utility function for \gls{matsim} is associated with another problem. 
-The function is applied iteratively for a travel demand, which is in the beginning of the relaxation process usually not very similar to the situation for which the function was estimated. 
-In other words, the function is used for a whole range of operating points, whereas it has been estimated for only one possibly completely different working point. 
-The \gls{matsim} function thus must be also correct in the elasticities, to be able to efficiently drive the relaxation process toward the final relaxation point, where the estimated function is valid by construction. 
+
+%% %as well as missing interactions with the trip purpose 
+%% %Mir nicht wirklich klar. Beispiel?  Oder einfach weglassen.
+%% An additional complication, in particular with respect to monetary items, arises from
+%% %and the 
+%% often omitted or misspecified 
+%% %distribution 
+%% assignments of the payment responsibilities (the firm paying, the parents paying for young adults, girlfriends paying for their boyfriends etc.).  However, not all differences stem from the context, and in consequences the following elements should be investigated concerning their explanatory power for a possible inclusion into the \gls{matsim} scoring function:
+%% %% Still, the following differences should be accounted for:
+%% %
+%% \begin{itemize}\styleItemize
+%% \item Modal preferences, which could, for example, be included as \kai{person-specific???} modal constants or as \kai{person-specific??} mode-specific valuation of in-vehicle-travel times to capture the comfort and social prestige effects
+%% \item Walking time \kai{Das erscheint mir im Hinblick auf den bereits bestehenden matsim-Status zu unpräzise, da ``walking'' in matsim schon lange drin ist.}
+%% \item Transfers as a measure of their inconvenience and risk of the lost connection \kai{Das erscheint mir im Hinblick auf den bereits bestehenden matsim-Status zu unpräzise, da ``transfer'' in matsim schon lange drin ist.}
+%% \item Crowding 
+%% %above 
+%% (in addition to the disutility of the in-vehicle time) %% for its discomfort
+%% \kai{Paul Bouman in Rotterdam.  Ist uns leider nie gelungen, das einzufangen}
+%% \item Parking search 
+%% %above 
+%% (in addition to the disutility of in-vehicle time)
+%% \kai{Waraich??}
+%%  %% for its uncertainty
+%% \item 
+%% %Type 
+%% Preferences for types of parking places 
+%% %% for the different levels of personal risk and risk for the vehicle
+%% \kai{Waraich??}
+%% \item Cost sensitivity, e.g.\ by available personal income 
+%% \kai{Kickhoefer??}
+%% %% \item Operating points for the activities
+%% \item Typical durations of activities by activity type
+%% \kai{diese und die nächste stehen etwas ``quer'' im Raum, weil sie sich nicht auf ``zusätzliche Elemente'', sondern auf die allgemeine Parametrisierung beziehen.  Typical durations und ``level'' kann man schon seit Urzeiten kontrollieren; ``curvature'' hingegen fehlt.}
+%% \item Level and curvature of the activity utilities by  %% purpose
+%% activity type
+%% \end{itemize}
+%% The literature has shown finer interactions, as well as further elements, but the above set should cover the key parts of the generalized costs. 
+
+%% \kai{Mir ist im Moment nicht klar, was wir mit obiger Liste erreichen wollen, wenn wir für die Hälfte der Items bereits eigene Arbeiten haben.}
+
+%% %As shown earlier, the commonly applied \gls{matsim} utility function parameters are derived from \citet[][]{ArnottEtAl_TAER_1993, ChaumetEtAl_2006}. 
+%% \citet[][]{Kickhoefer_MastersThesis_2009} provides estimates based on data from \citet[][]{VrticEtc2008ReisekostenSVIBericht}. 
+%% \citet[][]{KickhoeferEtAl2012WelfareBusCorridorKuhmoNectar} translates estimates from \citet[][]{TirachiniEtAl2012CrowdingCongestion} into \gls{matsim} values. 
+%% However, with the exception of a few studies \citep[][]{BalmerEtAl_ResRep_datapuls_2010, HuelsmannEtAl2012HotspotPricing, KickhoeferNagel2013EmissionInternalizationNETS, KaddouraEtAl2015PtMarginalSocialCostPricingJTEP}, these estimates have not been considered yet for many other projects, although they represent a valuable base for future comparisons. 
+%% The complete set outlined above has not yet been estimated in one consistent estimation, and so remains an urgent item for \gls{matsim} research. 
+
+%% Having such a base at hand is important as estimating and applying a \gls{matsim} utility function is non-trivial due to the following. 
+
+%% %
+%% Agents optimize \emph{complete day plans} \citep[see also][Section 6.3.1]{MATSim_Userguide_2015}. This means that the utility levels of the single choice dimensions need to be carefully balanced.
+%% %% , when applying estimates. 
+%% Usually it is impossible to 
+%% apply 
+%% %readily-available 
+%% functions estimated independently for a single choice dimension. A degenerated example might be the following. All destination alternatives evaluated with a not-well calibrated utility function generate very low utility; in that case the complete activity might be simply dropped. 
+%% %
+%% \benjamin{I dont fully understand the above...what is an inappropriate utility function?} \ah{adapted}
+%% %
+%% \kai{Finden wir noch ein besseres Beispiel?  Wie sollen, technisch gesehen, ``destinations'' einen zu niedrigen Nutzen bekommen?  Ich kann mir das nur so vorstellen, dass ein bestimmter Aktivitäten-Typ im Mittel einen zu niedrigen Nutzen bekommt.  Das ist dann aber das gleiche Problem wie oben für activity dropping bereits diskutiert.}
+%% %
+%% This correlation or dependency between choice dimensions is also the reason why a day plan equilibrium does not necessarily include a Nash equilibrium for every single choice dimensions. 
+%% %
+%% \kai{Warum nicht?  Wenn ich zwei Pläne haben, die sich in einer choice dimension unterscheiden, dann wechsle ich zur besseren Alternative.  Auf diese Weise sind irgendwann alle choice dimensions im NGG. Was übersehe ich?}
+%% %
+%% The inseparability of choice dimensions means that in \gls{matsim} we can only consistently handle choices if the parameters are estimated or postulated consistently. 
+%% Estimates from independent studies reflect the scale parameter of the Gumbel distribution of the observed choices, which is arbitrarily set to zero \kai{one??} for identification purposes, which means that the values cannot be compared 
+%% %\kwaah{(See Bierlaire, ????)}
+%% . The elasticities and trade-offs values can be compared, as they removed the scale parameter from their values. 
+%% %
+%% \benjamin{Why? The only difference if one has more choice dimensions in the model is that utility differences resulting from some policy will be smaller than with less choice dimensions---\ie influencing the elasticity.} \ah{adapted}
+
+%% Incorporating a contribution, \eg for parking or destination choice, in combination with absolute utilities is even trickier as the Charypar-Nagel function is non-linear, which means that available parameters---very often linear utility functions---need to be incorporated by approximation procedures and distinction of cases as described in \citet[][p.75ff]{Horni_PhDThesis_2013}. 
+%% Furthermore, \gls{matsim} utility function includes travel times, while their parameters which are readily available from studies, the quality and potential bias in the calculation of the travel times used for those estimate is rarely challenged. 
+%% It would be unlikely that these estimates are perfect, given that disaggregate assignment models have until recently only been calibrated against counts and not against observed travel times. 
+%% The omission of junction models cannot help either. 
+%% In addition, the travel time estimates are influenced by the underlying mode choice model in that implementation which can bias the results further \citep[][]{Vrtic_PhDThesis_2003}. 
+%% \gls{gps} or smartphone-based surveys, however, provide this information with higher precision and, thus, they are a promising mean for better model calibration and therefore better description of the non-chosen alternatives in the model .
+
+%% Furthermore, travel time and activity duration parameter estimates including income need to carefully consider the parameters' relation to the \gls{vtts}. \citet[][p.276]{MeisterEtAl_SVT_2009} for example argue that the average Swiss hourly earnings are much higher than 6\,EUR per hour used in the \gls{matsim} function then. 
+%% However, the \gls{matsim} is now measured in utils not monetary units. 
+%% Still, the parameters in utils and monetary terms (such as tolls, parking costs, fares etc., or income-dependent attributes) are often interacted and thus their relation needs to be consistent if they come from different studies.
+%% %
+%% \benjamin{I dont see the problem here...parameters define the \gls{vtts}, and are dependent on the variance of the unobserved attributes, no? So measuring in utils or money does not make a difference.} \ah{adapted}
+
+%% %A numerical problem, particularly relevant for activity choice, concerns the functional form of the utility function---As argued in Section~\ref{sec:alternative-functions}, a function offering an additional degree of freedom (the curvature at the typical duration) would be better.
+
+%% Estimating a utility function for \gls{matsim} is associated with another problem. 
+%% The function is applied iteratively for a travel demand, which is in the beginning of the relaxation process usually not very similar to the situation for which the function was estimated. 
+%% In other words, the function is used for a whole range of operating points, whereas it has been estimated for only one possibly completely different working point. 
+%% The \gls{matsim} function thus must be also correct in the elasticities, to be able to efficiently drive the relaxation process toward the final relaxation point, where the estimated function is valid by construction. 
 
 % =========================================================================================
 \subsection{Agent-Specific Preferences}
