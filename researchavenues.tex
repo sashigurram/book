@@ -325,7 +325,7 @@ As already stated in Section~\ref{sec:scoring-current}, the problem is that
 %in the standard formulation, 
 at the typical duration all activities generate the same score, independent of their actual duration.  In consequence, it makes sense to first drop the longest activity, since that generates the least amount of utility per time unit. This is typically the home or the work activity, and dropping this first clearly is non-sensical.
 
-The property that all activities have the same utility at their typical duration is obtained by computing $t_{0,q}$ from the condition\footnote{%
+The property that all activities have the same utility at their typical duration is obtained by computing the value of the parameter $t_{0,q}$ from the condition\footnote{%
 %
 The notation $S \Big|_{x=a}$ means that the expression $S$ shall be evaluated at $x=a$.
 %
@@ -360,7 +360,9 @@ That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{ma
 %% %
 %% }
 
-This, however, is still not flexible enough.  According to Equation~(\ref{eq:optimal-time-allocation}), in the absence of additional effects such as constraints the ratio between activity durations always remains the same.  Thus, for example, if a $home:work:shop = 12h : 8h : 2h$ allocation (with the remaining time for travel) comes under pressure, for example by inserting another activity, then all activities are shortened proportionally, for example to $11h : 7h20min : 1h50min$.  This may, however, not always be behaviorally plausible; for example, it may be the case that persons attempt to maintain their regular working time and rather shorten elsewhere.
+This, however, is still not flexible enough.  According to Equation~(\ref{eq:optimal-time-allocation}), in the absence of additional effects such as constraints the ratio between activity durations always remains the same.  Thus, for example, if a $home:work:shop = 12h : 8h : 2h$ allocation (with the remaining time for travel) comes under pressure, 
+%for example by inserting another activity, 
+then all activities are shortened proportionally, for example to $11h : 7h20min : 1h50min$.  This may, however, not always be behaviorally plausible; for example, it may be the case that persons attempt to maintain their regular working time and rather shorten elsewhere.
 
  
 %% Because of its negative second derivative, \ie its concavity, the log form favors very short activities, which means that the schedule is ever filled-up with short activities, where the usually long home activities are replaced first.%
@@ -425,7 +427,7 @@ One could think of the optimization task as a knapsack problem, where the travel
 
 \paragraph{Polynomial of second degree}
 
-It was explained above (Section~\ref{sec:discussion-present-math-form}) that a problem with the present functional form, $\beta_{perf} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$, is that activity durations shrink proportionally when a person gets under time pressure, and sometimes this may not be desired, for example when attempting to maintain 8~hours of work per day.  The mathematical problem behind that is that the curvature of the scoring function at the typical duration cannot be separately controlled for the different activity types.  This becomes clear when taking derivatives:
+It was explained above (Section~\ref{sec:discussion-present-math-form}) that a problem with the present functional form, $\beta_{perf} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$, is that activity durations shrink proportionally when a person gets under time pressure, and sometimes this may not be plausible, for example when attempting to maintain 8~hours of work per day.  The mathematical problem behind this is that the curvature of the scoring function at the typical duration cannot be separately controlled for the different activity types.  This becomes clear when taking derivatives:
 \[\begin{matrix}
 S'_{act,q} & = & \beta_{perf} \cdot t_{typ,q} / t_{dur,q}
 \qquad
@@ -440,15 +442,15 @@ S''_{act,q} & = & - \beta_{perf} \cdot t_{typ,q} / t_{dur,q}^{-2}
 S''_{act,q} \Big|_{t_{dur,q} = t_{typ,q}} & = & - \beta_{perf} / t_{typ,q} \ .
 \\
 \end{matrix}\]
-That is, since $t_{typ,q}$ needs to be used to define the duration where the scoring function has slope $\beta_{perf}$, there is no parameter left to set the second derivative and thus the curvature of each activity type separately.
+That is, since $t_{typ,q}$ needs to be used to define the duration where the scoring function has slope $\beta_{perf}$, there is no parameter left to set the second derivative and thus the curvature of each activity type separately.  In consequence, the current form of the \gls{matsim} scoring function allows no control over how flexible an activity is.
 
-This implies that one might use all the above insights to simply try with a polynomial of second degree, with the following conditions:
+The above indicates that one may want to control for height, slope, and curvature at the typical duration.  This implies that one might want to try a polynomial of second degree, i.e., $S_{act,q} = A \, t_{dur,q}^2 + B \, t_{dur,q} + C$, with the following conditions:
 \[\begin{matrix}
 S_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & const \cdot t_{typ,q} \\
 S'_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & \beta_{perf} \\
 S''_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & \gamma \\
 \end{matrix}\]
-Solving this leads to
+Solving leads to
 \[
 S_{act,q} = \frac{1}{2} \, \gamma \, t_{dur,q}^2
 %
@@ -456,14 +458,14 @@ S_{act,q} = \frac{1}{2} \, \gamma \, t_{dur,q}^2
 %
 + \Big( \frac{1}{2} \, \gamma \, t_{typ,q}^2 - \beta_{perf} \, t_{typ,q} + const \cdot t_{typ,q} \Big) \ ,
 \]
-which is more expressive than it looks at first glance:
+which is, in fact, more expressive than it looks at first glance:
 \begin{itemize}
 
 \item $\frac{1}{2} \, \gamma$ in the quadratic term is just there to generate the requested second derivative.
 
 \item $\beta_{perf}$ in the linear term is there to generate the requested slope at $t_{typ,q}$; $- \gamma \, t_{typ,q}$ is there to compensate the contribution of the quadratic term at the same point.
 
-\item Similarly, $\frac{1}{2} \, \gamma \, t_{typ,q}^2 - \beta_{perf} \, t_{typ,q}$ in the constant term are there to compensate for the higher order contributions at $t_{typ,q}$; once that compensation has taken place, $const \cdot t_{typ,q}$ is the term that determines the ``height'' of the scoring function at that point.
+\item Similarly, $\frac{1}{2} \, \gamma \, t_{typ,q}^2 - \beta_{perf} \, t_{typ,q}$ in the constant term are there to compensate for the higher order contributions at $t_{typ,q}$; once that compensation has taken place, $const \cdot t_{typ,q}$ is the term that determines the ``height'' of the scoring function at $t_{dur,q} = t_{typ,q}$.
 
 \end{itemize}
 An additional advantage of the 2nd degree polynomial would be that a separate linear extension for negative durations (\cf Section~\ref{sec:negative-durations}) would no longer be necessary. 
@@ -685,7 +687,7 @@ The \gls{matsim} function thus must be also correct in the elasticities, to be a
 % =========================================================================================
 \subsection{Agent-Specific Preferences}
 \label{sec:agent-specific-prefs}
-\gls{matsim} scenarios so far consider a relatively small set of agent attributes, essentially due to missing suitable data to derive detailed attributes for large populations \citep[][]{MuellerFloetteroed_unpub_hEART_2014}. 
+\gls{matsim} scenarios so far consider a relatively small set of agent attributes, essentially because of missing suitable data to derive detailed attributes for large populations \citep[][]{MuellerFloetteroed_unpub_hEART_2014}. 
 Some studies, however, used larger sets of attributes. 
 \citet{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome} estimated individual income-contingent utility functions. 
 \citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014} incorporated agent-specific travel preferences and individual income-dependent marginal utilities of money; the preference values however, were assigned randomly. 
@@ -696,18 +698,22 @@ As natural consideration of agent-specific preferences is one of the corner-ston
 % =========================================================================================
 \subsection{Frozen Randomness for Other Choice Dimensions Than Destination Choice}
 \label{sec:future-frozen-randomness}
-For destination choice an iteration-stable random error term has been successfully applied to incorporate the unobserved heterogeneity not included by the stochasticity of the co-evolutionary process. Other choice dimensions, already implemented but in particular, future implementations concerning activity choice might also add explicit agent-specific error terms.  
 
-A general implementation would obviously be useful. 
-This implementation could incorporate a mechanism to generate the error terms with the correct correlation structures. 
+For destination choice an iteration-stable random error term has been successfully applied to incorporate the unobserved heterogeneity not included by the stochasticity of the co-evolutionary process (see Chapter~\ref{ch:destinationchoice}). Other choice dimensions
+%, already implemented but in particular, future implementations concerning activity choice 
+might also benefit from explicit agent-specific error terms.  
+%% A general implementation would obviously be useful. 
+This 
+%implementation 
+could incorporate a mechanism to generate the error terms with the correct correlation structures. 
 
 %\vfill\eject
 % ##################################################################################################################
 \section{Double-Queue Mobsim}
 \label{sec:researchavenues-double-queue-mobsim}
-The standard \gls{matsim} \gls{mobsim} \gls{qsim} implements a single-queue model as described in Chapter~\ref{ch:kinematicwaves}. The associated \gls{fd} (flow vs. density) is horizontal for medium densities, and falls to zero very steeply at very high densities. This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards traveling speed of $L/s$ ($L$ is the length of respective link) rather than the conventional approx. 15\,kilometers per hour.
+The standard \gls{matsim} \gls{mobsim} \gls{qsim} implements a single-queue model as described in Chapter~\ref{ch:kinematicwaves}. The associated \gls{fd} (flow vs. density) is horizontal for medium densities, and falls to zero very steeply at very high densities. This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards traveling speed of $L/1\,s$ ($L$ is the length of respective link) rather than the conventional approx.\  15\,kilometers per hour.
 
-The \gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) and the deprecated \gls{deqsim} (Section~\ref{sec:deqsim}) implement a double-queue model with backward traveling gaps. Currently, implementation work and tests are performed to include this also in \gls{qsim}; performance problems with the inclusion of a large number of holes is the remaining issue to be solved.
+The \gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) and the deprecated \gls{deqsim} (Section~\ref{sec:deqsim}) implement a double-queue model with backward traveling gaps. Currently, implementation work and tests are performed to include this also in \gls{qsim}; performance problems with the inclusion of a large number of ``holes'' is the remaining issue to be solved. \kai{chk before going to print; it may be ok now thanks to Amit}
 
 %\kai{Siehe auch Material in basicprocedure.tex}
 %
