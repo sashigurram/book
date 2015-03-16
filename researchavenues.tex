@@ -50,7 +50,7 @@ This chapter wants to highlight some of them for further discussion and maybe ac
 
 % 20.6 Learning an action-value function (Q values, Q-learning)
 
-The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the so-called field of \acrfull{cas} \citep[e.g.][]{AxelrodBook,Holland_1992,HraberJonesForrestEcho,PalmerEtAl_PhysicaD_1994}. 
+The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the field of \acrfull{cas} \citep[e.g.][]{AxelrodBook,Holland_1992,HraberJonesForrestEcho,PalmerEtAl_PhysicaD_1994}. 
 %% %\kwaah{Has this been spelled out somewhere ?} \ah{yes, gls()}
 %% \kwaah{Why not Axelrod (1980) or Schelling: ``Schelling, TC 1978. Micromotives and Macrobehavior. Toronto, Canada: George J. McLeod Ltd.'' mit seinem Segregationsmodell} 
 %% \ah{m.E. ist dies sein Seggregationspaper: \citet[][]{Schelling_TJMS_1971} (Issue 2), \citet[][]{Sakoda_TJMS_1971} (Issue 1) war aber sowieso vorher  gemäss Prof. Hegselmann.}
@@ -73,14 +73,32 @@ reinforcement learning agents \citep[][Chapter 21.3]{RusselNorvig2010ArtificialI
 %\kwaah{Maybe better, given the difficult interpretation of the the iterations.} 
 %\kai{Würde lieber bei ``temporal difference learning'' bleiben, denn das ist der terminus technicus.} 
 learning (again as defined by \cite{RusselNorvig2010ArtificialIntelligence}) scheme for the utility, which translates to the \gls{matsim} situation which updates the score/performance/utility value of each plan every time it is selected.
+\kwaah{In the late 1990's transport science addressed the process of learning in the context of the new possibilities of 'intelligent transport systems'. It used various smoothing techniques to integrate data from iteration to iteration reflecting the tradition of the field. See 
 
-\st{That is, overall,} \kai{von wem kommt das st?  warum?  Ich meine schon ``That is'', aber vielleicht ist der Text nicht klar genug?} the original \gls{matsim} system has inherited the focus on large systems, interaction, and emergence as well as the approach to strategy innovation from \gls{cas}, while the score updating rather comes from the field of \gls{ai}.
+Chang, G.-L. and Mahmassani, H. S. (1989) The Dynamics of Commuting Decision Behaviour in Urban Transportation Networks, in Bernard G. (ed.), 15–26. 
+
+Hatcher, S. G. and Mahmassani, H. S. (1992) Daily Variability of Route and Trip Scheduling Decisions for the Evening Commute, Transportation Research Record 1357, 72–81. 
+Mahmassani, H. S. and Liu, Y.-H. (1999) Dynamics of Commuting Decision Behaviour under Advanced Traveller Information Systems, Transportation Research Part C: Emerging Technologies 7: 2–3, 91–107.
+
+Polak, J.W. and F. Oladeine (2002) An empirical model of travellers' day-to-day learning in the presence of uncertain travel times, Working paper, Centre for Transport Studies, Imperial College, London.
+
+Arentze, T.A. and H.J.P. Timmermans (2004) A learning-based transportation oriented simulation system. Transportation Research Part B: Methodological, 38 (7) 613-633.
+Axhausen, K.W., I. Dimitropoulos and E. Dimitrakopolou (1995) Adapting to change: some evidence from a simple learning model, paper presented at the 23rd European Transport Forum, Warwick, September 1995.
+}
+
+That is, overall,
+%\kai{von wem kommt das st?  warum?  Ich meine schon ``That is'', aber vielleicht ist der Text nicht klar genug?} \ah{kwa}
+the original \gls{matsim} system has inherited the focus on large systems, interaction, and emergence as well as the approach to strategy innovation from \gls{cas}, while the score updating rather comes from the field of \gls{ai}.
 
 In consequence, a somewhat obvious path to move on is to include more aspects of modern \gls{ai} into the \gls{matsim} agents.  Examples include:
 \begin{itemize}
 
 \item Extend \gls{matsim} to agents that can react 
-immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}.  See Chapters~\ref{ch:withinday} and~\ref{ch:dts} as well as Section~\ref{sec:researchavenues-withinday}.
+immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}. \kwaah{Add reference to 
+
+Axhausen, K.W. (1990) A simultaneous simulation of activity chains, in P.M. Jones (ed.) New Approaches in Dynamic and Activity-based Approaches to Travel Analysis, 206-225, Avebury, Aldershot. 
+}
+See Chapters~\ref{ch:withinday} and~\ref{ch:dts} as well as Section~\ref{sec:researchavenues-withinday}.
 
 \item Improve the \gls{matsim} agents with respect to choice set generation.  This may include both a better creative capability of the agents to come up with innovative new strategies to handle their virtual lifes as well as considerations of consistency between choice set generation and estimated choice models.  See Sections~\ref{sec:Evolution-of-choice} and~\ref{sec:choicesets}.
 
@@ -128,7 +146,7 @@ While within-day replanning can be used as described above within the framework 
 %
 \citet[][]{Dobler_PhDThesis_2013} uses the \gls{matsim} calculated equilibrium as the starting point for his model of evacuations and the behavior of the evacuees. 
 He also documents that his approach finds a set of executed plans which is close to the \gls{matsim} equilibrium, but for much lower computing costs. 
-While the benefits of an equilibrium solution in comparison with an approximation have been extensively discussed for aggregate assignment models, for \gls{matsim} the issue is if these fast approximation could be used to speed up the overall equilibrium search; similar in spirit to start a Frank-Wolfe search based on four or five incremental network loadings of the network.\kai{citation?}
+While the benefits of an equilibrium solution in comparison with an approximation have been extensively discussed for aggregate assignment models, for \gls{matsim} the issue is if these fast approximation could be used to speed up the overall equilibrium search; similar in spirit to start a Frank-Wolfe search based on four or five incremental network loadings of the network.\kai{citation?} \kwaah{Kai: would a reference to VISUM be good enough ? }
 While aggregate assignment has possibilities to identify the routes chosen as belonging to the equilibrium, in the agent-based context research is needed to a) see, if the approach is indeed faster and b) if the resulting set of plans is unbiased by the fast initialization. 
 
 %\vfill\eject
@@ -147,7 +165,8 @@ Clearly, an agent can only select a plan that is generated by this process.  Thu
 
 Econometric research \citep[e.g.][Chapter 8 and 9]{BenAkivaLerman_1985} points out that it is not sufficient if certain alternatives are eventually discovered by the search process; rather, it is important that they are generated with statistical weights that are consistent with the choice model.
 %
-This, however, is somewhat at odds with the \acrfull{cas} approach, where solutions are generated somewhat arbitrarily.  For example, \citet{ArthurBar} ``create[s] `an alphabet soup' of predictors'' that are ``randomly ladle[d] out''.  That is, research is needed to clarify under which conditions the statistical properties of the choice set need to be tightly consistent with the choice model, and when not.
+This, however, is somewhat at odds with the \acrfull{cas} approach, where solutions are generated somewhat arbitrarily.  For example, \citet{ArthurBar} ``create[s] `an alphabet soup' of predictors'' that are ``randomly ladle[d] out''. \kwaah{He uses strategies not choices, which may be are the same in his simple application, but in the parking context just define a choice set. }  
+That is, research is needed to clarify under which conditions the statistical properties of the choice set need to be tightly consistent with the choice model, and when not.
 
 Having said that, in the \gls{matsim} context it turns out to be important to not only look at plans generation/innovation (e.g.\ Sections~\ref{sec:timechoice}--\ref{sec:modechoice}), but also at plans removal.  The default \gls{matsim} approach is to remove the plan with the worst score.  This is, however, problematic both from a \gls{cas} and an econometric perspective.  
 %
@@ -252,8 +271,12 @@ Also the approach of \cite[][, also see Chapter~\ref{ch:destinationchoice} of th
 \subsection{Using the Logsum for Economic Evaluation}
 
 As discussed in Section~\ref{ch:economicEval:valuingBehavior:output2Eval}, using the \gls{logsum} over all plan scores of an agent is attractive both for theoretical and for operational reasons.  Clearly, the statistics of this in the \gls{matsim} context needs to be better understood.
+\kwaah{ Especially the choice set for which the log sum term is calculated given the discussion above about plan addition and removal. Approaches in which a set of plans is kept constant for a final set of iterations might be needed.
 
-\kai{Wollen wir hier wirklich mehr schreiben?  Wenn, dann sollte es ein ``research program'' sein.}
+De Jong, G., A.J. Daly, M. Pieters und T. van der Hoorn (2007) The logsum as an evaluation measure: Review of the literature and new results, Transportation Research A, 41 (9) 874-889.
+}
+
+\kai{Wollen wir hier wirklich mehr schreiben?  Wenn, dann sollte es ein ``research program'' sein.}\kwaah{noch mehr?}
 
 %% \kai{Mir scheint, dass vieles aus der folgenden Diskussion eigentllich im econ Chapter untergebracht werden kann oder schon ist.}
 
@@ -304,6 +327,8 @@ As in many other simulations of similar kind, the interpretation of the relaxati
 Sometimes the relaxation process is ascribed a behavioral interpretation, for example, day-to-day learning, where also the transition process and not only the final equilibrium has a meaning \citep[][p.128]{LiuEtAl_TransResA_2006}, \citep[][p.523]{NagelBarrett1997feedback}. 
 %
 An opposite perspective exists, where the relaxation procedure is just a numerical method to compute the equilibrium state or states without a behavioral basis of the transitions.
+
+\kwaah{What is the research question here ?}
 
 %\vfill\eject
 % ##################################################################################################################
@@ -695,7 +720,7 @@ since that confuses the scale parameters of the two separate estimations.\footno
 %
 Although, realistically, combining separate estimations via their conversion in monetary terms may be the best one can do in many situations.
 %
-} If only travel time is available as common attribute, the situation gets worse, since the valuation of time in \gls{matsim} is non-linear, and thus operating points for linearization need to be defined, or found by iterative procesures~\citep[][p.75ff]{Horni_PhDThesis_2013}.
+} If only travel time is available as common attribute, the situation gets worse, since the valuation of time in \gls{matsim} is non-linear, and thus operating points for linearization need to be defined, or found by iterative procedures~\citep[][p.75ff]{Horni_PhDThesis_2013}.
 
 
 
@@ -816,7 +841,7 @@ could incorporate a mechanism to generate the error terms with the correct corre
 % ##################################################################################################################
 \section{Double-Queue Mobsim}
 \label{sec:researchavenues-double-queue-mobsim}
-The standard \gls{matsim} \gls{mobsim} \gls{qsim} implements a single-queue model as described in Chapter~\ref{ch:kinematicwaves}. The associated \gls{fd} (flow vs. density) is horizontal for medium densities, and falls to zero very steeply at very high densities. This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards traveling speed of $L/1\,s$ ($L$ is the length of respective link) rather than the conventional approx.\  15\,kilometers per hour.
+The standard \gls{matsim} \gls{mobsim} \gls{qsim} implements a single-queue model as described in Chapter~\ref{ch:kinematicwaves}. The associated \gls{fd} (flow vs. density) is horizontal for medium densities, and falls to zero very steeply at very high densities. This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards traveling speed of $L/1\,s$ ($L$ is the length of respective link) rather than the conventional approx.\ 15\,kilometers per hour. \kwaah{Adding references to Charypar's work on the topic}
 
 The \gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) and the deprecated \gls{deqsim} (Section~\ref{sec:deqsim}) implement a double-queue model with backward traveling gaps. Currently, implementation work and tests are performed to include this also in \gls{qsim}; performance problems with the inclusion of a large number of ``holes'' is the remaining issue to be solved. \kai{chk before going to print; it may be ok now thanks to Amit}
 
