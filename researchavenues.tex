@@ -4,7 +4,7 @@
 
 \hfill \textbf{Authors:} Kai Nagel, Kay W.\ Axhausen, Benjamin Kickhöfer, Andreas Horni
 
-\begin{center} \includegraphics[width=0.3\textwidth, angle=0]{frontmatter/figures/MATSimBook} \end{center}
+\begin{center} \includegraphics[width=0.4\textwidth, angle=0]{figures/stable-activity-allocations} \end{center}
 
 % ##################################################################################################################
 The on-going work and the interest documented in the many scenarios shows 
@@ -82,7 +82,8 @@ Mahmassani, H. S. and Liu, Y.-H. (1999) Dynamics of Commuting Decision Behaviour
 
 Polak, J.W. and F. Oladeine (2002) An empirical model of travellers' day-to-day learning in the presence of uncertain travel times, Working paper, Centre for Transport Studies, Imperial College, London.
 
-Arentze, T.A. and H.J.P. Timmermans (2004) A learning-based transportation oriented simulation system. Transportation Research Part B: Methodological, 38 (7) 613-633.
+\citet[][]{ArentzeTimmermans_TransResB_2004}
+
 Axhausen, K.W., I. Dimitropoulos and E. Dimitrakopolou (1995) Adapting to change: some evidence from a simple learning model, paper presented at the 23rd European Transport Forum, Warwick, September 1995.
 }
 
@@ -94,10 +95,10 @@ In consequence, a somewhat obvious path to move on is to include more aspects of
 \begin{itemize}
 
 \item Extend \gls{matsim} to agents that can react 
-immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007}. \kwaah{Add reference to 
-
-Axhausen, K.W. (1990) A simultaneous simulation of activity chains, in P.M. Jones (ed.) New Approaches in Dynamic and Activity-based Approaches to Travel Analysis, 206-225, Avebury, Aldershot. 
-}
+immediately, rather than having to wait for the next iteration or round.  In transport, this is sometimes called en-route or within-day replanning \citep[e.g.,][]{EmmerinkEtAl_TransResC_1995,balijepalli-2007, Axhausen_Jones_1990}. 
+%\kwaah{Add reference to 
+%Axhausen, K.W. (1990) A simultaneous simulation of activity chains, in P.M. Jones (ed.) New Approaches in Dynamic and Activity-based Approaches to Travel Analysis, 206-225, Avebury, Aldershot. 
+%}
 See Chapters~\ref{ch:withinday} and~\ref{ch:dts} as well as Section~\ref{sec:researchavenues-withinday}.
 
 \item Improve the \gls{matsim} agents with respect to choice set generation.  This may include both a better creative capability of the agents to come up with innovative new strategies to handle their virtual lifes as well as considerations of consistency between choice set generation and estimated choice models.  See Sections~\ref{sec:Evolution-of-choice} and~\ref{sec:choicesets}.
@@ -146,7 +147,9 @@ While within-day replanning can be used as described above within the framework 
 %
 \citet[][]{Dobler_PhDThesis_2013} uses the \gls{matsim} calculated equilibrium as the starting point for his model of evacuations and the behavior of the evacuees. 
 He also documents that his approach finds a set of executed plans which is close to the \gls{matsim} equilibrium, but for much lower computing costs. 
-While the benefits of an equilibrium solution in comparison with an approximation have been extensively discussed for aggregate assignment models, for \gls{matsim} the issue is if these fast approximation could be used to speed up the overall equilibrium search; similar in spirit to start a Frank-Wolfe search based on four or five incremental network loadings of the network.\kai{citation?} \kwaah{Kai: would a reference to VISUM be good enough ? }
+While the benefits of an equilibrium solution in comparison with an approximation have been extensively discussed for aggregate assignment models, for \gls{matsim} the issue is if these fast approximation could be used to speed up the overall equilibrium search; similar in spirit to start a Frank-Wolfe search based on four or five incremental network loadings of the network.
+\kai{citation?} 
+\kwaah{Kai: would a reference to VISUM be good enough ? }
 While aggregate assignment has possibilities to identify the routes chosen as belonging to the equilibrium, in the agent-based context research is needed to a) see, if the approach is indeed faster and b) if the resulting set of plans is unbiased by the fast initialization. 
 
 %\vfill\eject
@@ -168,7 +171,7 @@ Econometric research \citep[e.g.][Chapter 8 and 9]{BenAkivaLerman_1985} points o
 This, however, is somewhat at odds with the \acrfull{cas} approach, where solutions are generated somewhat arbitrarily.  For example, \citet{ArthurBar} ``create[s] `an alphabet soup' of predictors'' that are ``randomly ladle[d] out''. \kwaah{He uses strategies not choices, which may be are the same in his simple application, but in the parking context just define a choice set. }  
 That is, research is needed to clarify under which conditions the statistical properties of the choice set need to be tightly consistent with the choice model, and when not.
 
-Having said that, in the \gls{matsim} context it turns out to be important to not only look at plans generation/innovation (e.g.\ Sections~\ref{sec:timechoice}--\ref{sec:modechoice}), but also at plans removal.  The default \gls{matsim} approach is to remove the plan with the worst score.  This is, however, problematic both from a \gls{cas} and an econometric perspective.  
+Having said that, in the \gls{matsim} context it turns out to be important to not only look at plans generation/innovation (\eg Sections~\ref{sec:timechoice}--\ref{sec:modechoice}), but also at plans removal.  The default \gls{matsim} approach is to remove the plan with the worst score.  This is, however, problematic both from a \gls{cas} and an econometric perspective.  
 %
 From a \gls{cas} perspective, such an approach simply does not generate enough diversity, since similar scores rather often mean similar plans, and so the approach has a tendency to remove the most different plan, typically leading to a set of plans that are all quite similar.
 %
@@ -219,9 +222,10 @@ p_i \sim \exp( \beta^{choice} \, S_i) \cdot q_i
 \end{equation}
 From this, it becomes clear that \gls{matsim} in its current form, even when used with \lstinline{ChangeExpBeta} or \lstinline{SelectExpBeta} instead of \lstinline{SelectBest} for choice, strongly over-weights plans with high scores.  \emph{It is also clear that it is important to include plans removal into all considerations,} since otherwise the very large $\beta^{remove}$ in Equation~(\ref{eq:6}) will still dominate the statistical distribution.
 
+% =======================================================================================
 \subsection{Heterogeneity in Plans Removal}
 
-Clearly, not removing the worst plan but removing according to some logit model with a smaller $\beta^{remove}$ would already improve the situation.  In addition, in order to increase diversity and at the same time to correct for correlations between alternatives, one could use an (inverse) path-size logit \citep[e.g.][]{FrejingerBierlaire2007PathSizeLogit,Prato2009ChoiceModellingSurvey} model, i.e.\
+Clearly, not removing the worst plan but removing according to some logit model with a smaller $\beta^{remove}$ would already improve the situation.  In addition, in order to increase diversity and at the same time to correct for correlations between alternatives, one could use an (inverse) path-size logit \citep[e.g.][]{FrejingerBierlaire2007PathSizeLogit,Prato2009ChoiceModellingSurvey} model, \ie
 \[
 p^{remove}_i \sim \exp( - \beta^{remove} \, S_i + \alpha \, PS_i ) \, 
 \]
@@ -246,8 +250,8 @@ Such an approach is experimentally available as \lstinline{PathSizeLogitSelector
 %%  %
 %%  }
 
-\subsection{Heterogeneity in plans generation}
-
+% =======================================================================================
+\subsection{Heterogeneity in Plans Generation}
 %% This requires (i) the generation of more heterogeneous plans \citep[see, e.g.,][for such attempts in the \acrshort{pt} and in the car mode, respectively]{Moyo2013PhD, NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}; and (ii) the implementation of a \gls{pathsizelogitmodel} in the plans removal process \citep[see, e.g.,][]{Grether2014PhD}.
 %% %
 
@@ -265,18 +269,15 @@ Furthermore, there is no research which has studied a replanning technique invol
 
 Also the approach of \cite[][, also see Chapter~\ref{ch:destinationchoice} of this book]{Horni_PhDThesis_forth} can be seen in this sense: Attaching random error term to each location-person-pair means that even two persons at exactly the same home location with exactly the same activity pattern will select different locations for their activities.  So far, this describes heterogeneity between persons.  However, the approach also generates more heterogeneity per person, since the destinations that will be attractive to each synthetic person will be spatially more spread out than otherwise.
 
-
-
-
+% =======================================================================================
 \subsection{Using the Logsum for Economic Evaluation}
-
 As discussed in Section~\ref{ch:economicEval:valuingBehavior:output2Eval}, using the \gls{logsum} over all plan scores of an agent is attractive both for theoretical and for operational reasons.  Clearly, the statistics of this in the \gls{matsim} context needs to be better understood.
-\kwaah{ Especially the choice set for which the log sum term is calculated given the discussion above about plan addition and removal. Approaches in which a set of plans is kept constant for a final set of iterations might be needed.
+%\kwaah{ 
+Especially the choice set for which the log sum term is calculated given the discussion above about plan addition and removal. Approaches in which a set of plans is kept constant for a final set of iterations might be needed \citep[][]{DeJongEtAl_ResRep_AVV_2005}.
+%}
 
-De Jong, G., A.J. Daly, M. Pieters und T. van der Hoorn (2007) The logsum as an evaluation measure: Review of the literature and new results, Transportation Research A, 41 (9) 874-889.
-}
-
-\kai{Wollen wir hier wirklich mehr schreiben?  Wenn, dann sollte es ein ``research program'' sein.}\kwaah{noch mehr?}
+%\kai{Wollen wir hier wirklich mehr schreiben?  Wenn, dann sollte es ein ``research program'' sein.}
+%\kwaah{noch mehr?}
 
 %% \kai{Mir scheint, dass vieles aus der folgenden Diskussion eigentllich im econ Chapter untergebracht werden kann oder schon ist.}
 
@@ -296,9 +297,9 @@ De Jong, G., A.J. Daly, M. Pieters und T. van der Hoorn (2007) The logsum as an 
 %% }
 %% In that sense, one could include some approximation of the error into the analysis of results, possibly similar to Equation~(\ref{eq:ch:economicEval:logsumMaxError}). If the differences in utility levels between the two states are in the same magnitude as $\ln(P)$, it is possible that the signal of the policy effect is smaller than the noise of randomness.
 
-\subsection{Deliberate search strategies}
-
-\kwaah{
+% =======================================================================================
+\subsection{Deliberate Search Strategies}
+%\kwaah{
 The question of the need for a meta-search for strategies, as sketched by \citet[][]{ArthurBar} remains an open question. 
 In the \gls{matsim} context all decisions, which are based on explicit search for alternatives, can be studied to see, how far apart the choice set generation strategies of discrete choice modeling, which draw (stratified) (randomly) from the universal choice sets, are from explicit construction strategies. 
 The question would be in the second step to see, what impact these would have on the results and the policy conclusions. 
@@ -313,7 +314,7 @@ If longer term choices were to be added to the \gls{matsim} framework, residenti
 
 The issue of the convergence of the \gls{matsim} plans towards a single optimal structure, can be seen as the absence of search strategies on the plan level. 
 This overlaps strongly with the question of the choice of the number and sequence of activities, where these alternative plans are needed. 
-}
+%}
 
 %% \kai{Finde ich interessant.  Hätte es aber gerne unter einer separaten Überschrift, irgendetwas mit ``search''.  Der ``agent''-Text, der dann erstmal nicht fertig geworden ist, sollte eigentlich eher in die Richtung gehen, wie ``autonom'' unsere Agenten eigentlich sind, also haben die eine eigene innere Uhr, haben die eigene Perception, berechnen die ihre eigenen Routen oder übernehmen sie Vorschläge, etc.  Falls obiges kein separates Kapitel wird, dann wäre es m.E.\ nur ein Teil von dem, was ich meine.}
 
@@ -322,13 +323,19 @@ This overlaps strongly with the question of the choice of the number and sequenc
 % ##################################################################################################################
 \subsection{Transients Versus the Notion of \enquote{Learning}}
 \label{sec:transients-vs-learning}
+\ah{check if this and earlier ones are actually SUBsections}
+
 As in many other simulations of similar kind, the interpretation of the relaxation procedure (iterations) of \gls{matsim} is unclear. 
 %
 Sometimes the relaxation process is ascribed a behavioral interpretation, for example, day-to-day learning, where also the transition process and not only the final equilibrium has a meaning \citep[][p.128]{LiuEtAl_TransResA_2006}, \citep[][p.523]{NagelBarrett1997feedback}. 
 %
 An opposite perspective exists, where the relaxation procedure is just a numerical method to compute the equilibrium state or states without a behavioral basis of the transitions.
+%
+Although, this interpretation ambiguity did not hamper development process so far---also due to the fact, that for discrete choice modeling, the same ambiguity exists---
+it is obvious that future question about adoption of behavioral versus statistical methods 
+requires clarification on \gls{matsim} interpretation.
 
-\kwaah{What is the research question here ?}
+%\kwaah{What is the research question here ?}
 
 %\vfill\eject
 % ##################################################################################################################
@@ -408,7 +415,8 @@ then all activities are shortened proportionally, for example to $11h : 7h20min 
 
 \paragraph{S-shaped function}
 A new S-shaped function, proposed by \citet[][]{Joh_PhDThesis_2004}, was tested by \citet[][p.129ff]{Feil_PhDThesis_2010}. 
-Establishing a positive second derivative near point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. \kai{Ah, jetzt verstehe ich das endlich.  Ja, das ist mathematisch richtig; vollständig konkave (und immer positive) Nutzenfunktionen führen dazu, dass Verbraucher von \emph{jedem} Gut einen kleinen Teil haben wollen. Es gibt also nicht so etwas wie eine minimale Stückelung. -- Bei matsim taucht das Problem aber gar nicht auf, weil (1) unsere utl-fct bei kurzen Dauern ja nicht gegen Null strebt, sondern ohnehin schon negativ ist, und (2) der negative Nutzen der Anreise ohnehin diese Stückelung erzwingt.  In gewissem Sinne war unsere alte Version (vor der Einführung der linearen Verlängerung, siehe Section~\ref{sec:negative-durations}) dann eine stückweise lineare Approximation der Joh-Funktion.}
+Establishing a positive second derivative near point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. 
+\kai{Ah, jetzt verstehe ich das endlich.  Ja, das ist mathematisch richtig; vollständig konkave (und immer positive) Nutzenfunktionen führen dazu, dass Verbraucher von \emph{jedem} Gut einen kleinen Teil haben wollen. Es gibt also nicht so etwas wie eine minimale Stückelung. -- Bei matsim taucht das Problem aber gar nicht auf, weil (1) unsere utl-fct bei kurzen Dauern ja nicht gegen Null strebt, sondern ohnehin schon negativ ist, und (2) der negative Nutzen der Anreise ohnehin diese Stückelung erzwingt.  In gewissem Sinne war unsere alte Version (vor der Einführung der linearen Verlängerung, siehe Section~\ref{sec:negative-durations}) dann eine stückweise lineare Approximation der Joh-Funktion.}
 Estimates of the new function based on the Swiss microcensus were provided. 
 This estimation, however, was difficult due to its non-linearities and the difficulty in generating sufficiently large choice sets. 
 In addition many daily activities and their durations are not chosen freely by the individual. 
@@ -437,9 +445,9 @@ Das wesentliche Problem damit ist m.E.\ folgendes: Selbst wenn diese Form der Nu
 }
 
 \createfigure[h]{%
-Unstable activity allocations
+Unstable activity allocations%
 }{%
-Unstable activity allocations
+Unstable activity allocations%
 }{%
 \label{fig:unstable-activity-allocation}
 }{%
@@ -475,7 +483,7 @@ One could think of the optimization task as a knapsack problem, where the travel
 {}
 
 % ---------------------------
-\paragraph{Polynomial of second degree}
+\paragraph{Polynomial of Second Degree}
 
 It was explained above (Section~\ref{sec:discussion-present-math-form}) that a problem with the present functional form, $\beta_{perf} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$, is that activity durations shrink proportionally when a person gets under time pressure, and sometimes this may not be plausible, for example when attempting to maintain 8~hours of work per day.  The mathematical problem behind this is that the curvature of the scoring function at the typical duration cannot be separately controlled for the different activity types.  This becomes clear when taking derivatives:
 \[\begin{matrix}
@@ -641,11 +649,11 @@ Overall, it seems that such a scoring function should be investigated for \gls{m
 \subsection{Heterogeneity of Alternatives and Challenges of Estimation}
 \label{sec:estimation}
 
-It is common to differentiate between types of alternatives in the average; e.g., trips by different modes or with different purposes are commonly assigned different values of time.
+It is common to differentiate between types of alternatives in the average; \eg trips by different modes or with different purposes are commonly assigned different values of time.
 %
 However, there are also large deviations from those averages between travelers.
 %
-A possible approach to address that are so-called taste variations, i.e.\ to make some parameters of the utility function random but fixed per agent, and the parameters of this randomness are made part of the choice model estimation.
+A possible approach to address that are so-called taste variations, \ie to make some parameters of the utility function random but fixed per agent, and the parameters of this randomness are made part of the choice model estimation.
 %
 However, some of this apparent randomness may, in fact, be causal.
 %
@@ -710,7 +718,7 @@ for mode choice, and
 \[
 ... + \beta_r \, \rho + \beta'_{m} \, cost + ...
 \]
-for parking, where $t_{trav}$ is the travel time, $\rho$ is the crowdedness of a parking lot, and $cost$ is in all cases the monetary cost, e.g.\ for gas, \gls{pt} fare, or parking.  Even then it is not possible to say
+for parking, where $t_{trav}$ is the travel time, $\rho$ is the crowdedness of a parking lot, and $cost$ is in all cases the monetary cost, \eg for gas, \gls{pt} fare, or parking.  Even then it is not possible to say
 \[
 ... + \beta_{t} \, t_{trav} + \beta_{m} \, cost 
 %
@@ -841,7 +849,8 @@ could incorporate a mechanism to generate the error terms with the correct corre
 % ##################################################################################################################
 \section{Double-Queue Mobsim}
 \label{sec:researchavenues-double-queue-mobsim}
-The standard \gls{matsim} \gls{mobsim} \gls{qsim} implements a single-queue model as described in Chapter~\ref{ch:kinematicwaves}. The associated \gls{fd} (flow vs. density) is horizontal for medium densities, and falls to zero very steeply at very high densities. This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards traveling speed of $L/1\,s$ ($L$ is the length of respective link) rather than the conventional approx.\ 15\,kilometers per hour. \kwaah{Adding references to Charypar's work on the topic}
+The standard \gls{matsim} \gls{mobsim} \gls{qsim} implements a single-queue model as described in Chapter~\ref{ch:kinematicwaves}. The associated \gls{fd} (flow vs. density) is horizontal for medium densities, and falls to zero very steeply at very high densities. This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards traveling speed of $L/1\,s$ ($L$ is the length of respective link) rather than the conventional approx.\ 15\,kilometers per hour \citep[see also][]{CharyparEtAl_TRB_2009}. 
+%\kwaah{Adding references to Charypar's work on the topic}
 
 The \gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) and the deprecated \gls{deqsim} (Section~\ref{sec:deqsim}) implement a double-queue model with backward traveling gaps. Currently, implementation work and tests are performed to include this also in \gls{qsim}; performance problems with the inclusion of a large number of ``holes'' is the remaining issue to be solved. \kai{chk before going to print; it may be ok now thanks to Amit}
 
