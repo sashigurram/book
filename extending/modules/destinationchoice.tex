@@ -5,6 +5,8 @@
 
 \begin{center} \includegraphics[width=0.5\textwidth, angle=0]{extending/figures/dc/zhLeisure.pdf} \end{center}
 
+\editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
+
 \createStandardInformation{locationchoice}{\lstinline|RunLocationChoiceBestResponse|}{locationchoice}{\citet[][]{HorniEtAl_unpub_TRB_2012, Horni_PhDThesis_2013}}
 
 % ##################################################################################################################
@@ -193,15 +195,15 @@ destination choice model estimation efforts are reported in \citet[][Chapter 5]{
 % ======================================================================================================================
 \subsection{Facility Load}
 \label{sec:facilityload}
-The influence of interaction in \emph{transport} infrastructure for people's route and departure time choice was recognized early \citep[e.g.,][]{Pigou_1920, Knight_QJE_1924, Wardrop_PICE_1952}. 
-Similarly, it can be reasonably assumed that agent interaction in \emph{activities} infrastructure affects travel choices \citep[][]{Axhausen_SSRL_2006}. 
-Marketing science provides ample evidence that agent interactions influence utility of performing an activity, where it can have both positive and negative influence \citep[][p.331]{BakerJEtAl_JAMS_1994}, \citep[][]{ErogluAndHarrell_JR_1986, ErogluAndMachleit_JR_1990, ErogluEtAl_JBR_2005, HarrellEtAl_JMR_1980, HuiAndBateson_JCR_1991, PonsEtAl_PsychMark_2006}.
+The influence of interaction in \emph{transport} infrastructure for people's route and departure time choice was recognized almost a century ago \citep[e.g.,][]{Pigou_1920, Knight_QJE_1924, Wardrop_PICE_1952}. 
+It can also be reasonably assumed that agent interaction in \emph{activities} infrastructure affects travel choices \citep[][]{Axhausen_SSRL_2006}. 
+Marketing science provides ample evidence that agent interactions influence utility (positively or negatively) of performing an activity \citep[][p.331]{BakerJEtAl_JAMS_1994}, \citep[][]{ErogluAndHarrell_JR_1986, ErogluAndMachleit_JR_1990, ErogluEtAl_JBR_2005, HarrellEtAl_JMR_1980, HuiAndBateson_JCR_1991, PonsEtAl_PsychMark_2006}.
 
 In \citet[][]{HorniEtAl_TRR_2009}, based on the Zürich scenario, a 
 %\st{singly-constrained}
 %\kai{wirklich ``singly''?  Im Sinne des 4 step processes wäre ``singly constrained'' $=$ es steht fest, in welcher Zone wie viele Leute losfahren.  Das ist bei matsim aber immer gegeben (solange die synthetischen Personen nicht zu Hause bleiben können).} 
-model is presented introducing competition for space-time slots on the activity infrastructure. 
-The actual load is coupled with time-dependent capacity restraints
+model is presented introducing competition for activity infrastructure space-time slots. 
+The actual load is coupled with time-dependent capacity restraints.
 %\st{re}{\orange con}straints 
 %for every activity location and incorporated explicitly into the agent's destination choice process as detailed below.  
 %\kai{Meiner Intuition nach ist ``constraint'' und ``restraint'' nicht identisch: restraint $=$ Gummiband, constraint $=$ Drahtseil.  Es sieht unten tatsächlich eher nach ``restraint'' aus, aber dann ist es endgültig nicht (singly or doubly) contrained.} 
@@ -210,8 +212,8 @@ The actual load is coupled with time-dependent capacity restraints
 Activity location load, computed for 15\,minute time bins, is derived from events delivered by the \gls{mobsim}. 
 The load of one particular iteration, combined with time-dependent activity location capacity restraints, is considered in the agents' choice process of the succeeding iteration. 
 In detail, this means that the utility function term $S_{dur,q}$, described above, is multiplied by $max(0; 1 - f_{load\ penalty})$, penalizing agents dependent on the load of the location they frequented. 
-$f_{load\ penalty}$ is a power function, as this has proved to be a good choice for modeling capacity restraints (remember that the well-known cost-flow function by \citet[][]{TA_manual_1964} is a power function). 
-To introduce additional heterogeneity on activity locations, an attractiveness factor $f_{attractiveness}$ is introduced, defined to be logarithmically dependent on the store size given by the official workplaces census.
+$f_{load\ penalty}$ is a power function; this has proved to be a good choice for modeling capacity restraints (remember that the well-known cost-flow function by \citet[][]{TA_manual_1964} is a power function). 
+To introduce additional activity location heterogeneity, an attractiveness factor $f_{attractiveness}$ is introduced, defined to be logarithmically dependent on the store size given by the official workplaces census.
 
 Also for demonstration purposes, capacity restraints are exclusively applied to shopping locations; in principle, leisure activity locations could be handled similarly. However, deriving capacity restraints for leisure activity locations is expected to be much more difficult than for shopping locations, because far less data is available for leisure locations and capacity restraints vary much more between different leisure locations than between different shopping activities (hiking versus going to the movies might be a good example).
 
@@ -267,19 +269,19 @@ Figure~\ref{fig:zhLEGO} and Figure~\ref{fig:countsLEGO} show that, through error
 
 % ##################################################################################################################
 \section{The Module in the MATSim Context}
-The destination innovation module explicitly incorporates unobserved heterogeneity through random error terms. 
-The standard \gls{matsim} utility function, however, does not contain error terms. 
-The randomness measured in empirical data is included implicitly through the stochasticity of the simulation process, including the possible randomness in the choice itself. 
-For destination innovation, this has led to a dramatic underestimation of total travel demand making inclusion of unobserved heterogeneity inevitable.
+The destination innovation module explicitly incorporates unobserved heterogeneity through random error terms; 
+the standard \gls{matsim} utility function, however, does not contain error terms. 
+Randomness measured in empirical data is included implicitly through the simulation process stochasticity , including possible randomness in the choice itself. 
+For destination innovation, this has led to a dramatic underestimation of total travel demand, making inclusion of unobserved heterogeneity inevitable.
 %
-The problem clearly is that it is not possible to make all choices at the same level: Destination choice is conditional on mode choice which in turn is conditional on route choice, and it is well known from hierarchical choice modeling that the randomness, expressed by the logit model scale parameter, needs to be larger on the higher level decisions.  In that sense, the approach of the present chapter is to replace the need for more randomness in the choice model by directly including that randomness into the utility function. And that randomness needs to be quenched, since otherwise the iterative procedure will just average it out.
+Clearly, the problem is the impossibility of making all choices at the same level; destination choice is conditional on mode choice which, in turn, is conditional on route choice. Hierarchical choice modeling has clearly showed that randomness, expressed by the logit model scale parameter, needs to be larger in higher level decisions.  This chapter addresses replacing the need for more randomness in the choice model by directly including randomness into the utility function; that randomness must be quenched, otherwise the iterative procedure will just average it out.
 %
 %\kai{Habe das nochmal eingefügt.  M.E.\ steht der erste Teil so im Ben-Akiva, irgendwo im Umfeld von nested logit.  
 %Das ist mir aber auch erst relativ spät halbwegs klar geworden, also sozusagen nachdem es bei Dir so funktioniert hat, ist mir klar geworden, dass die Theorie das genau so vorher sagt.}
 %\ah{Danke.}
-In the future, it should be researched if the standard utility function might also profit from the innovations made for this module.
+Whether the standard utility function might also profit from the innovations made for this module should be a topic for future research .
 
-\gls{matsim} replanning offers different strategies to adapt plans ranging from random mutation via approximate suggestions to best response answers. 
+\gls{matsim} replanning offers different strategies to adapt plans, ranging from random mutation via approximate suggestions to best response answers. 
 Destination innovation is based on best response to handle the sheer size of the alternatives set. 
 
 %\textcolor{gray}{\tiny As discussed in Chapter~\ref{ch:scoring}, final goal is the implementation of an estimated utility function. 
@@ -290,27 +292,27 @@ Destination innovation is based on best response to handle the sheer size of the
 %\kai{Andreas, hängst Du sehr an diesem Absatz?  Im BVWP-Umfeld gab es erbitterte Auseinandersetzungen, ob man die ``estimated'' oder die ``calibrated'' utl fct nehmen sollten.  Die Betreiber der Verkehrsmodelle argumentierten, dass eine Kalibrierung an beobachteten ($=$ revealed) Verkehrsströmen mindestens genauso gut seien wie eine Schätzung basierend auf stated preference.  Ich selber habe, wenigstens im Prinzip, große Sympathie für diesen Ansatz (was mir nicht passt, ist, dass diese Kalibrierung im BVWP-Prozess eine black box ist), und mindestens würde ich Daly unterstützen, der bei hEART-Stockholm sagte, dass die beiden Gruppen sich ``einigen'' müssten. -- Ich finde aber, dass das alles zu kompliziert ist für hier.}
 %\ah{Spannend, aber tatsächlich zu weites Feld für hier. Rausgenommen.}
 
-Although the destination innovation utility function is based on the discrete choice framework, some conceptual differences to the common application of discrete choice models exist. 
-As shown above, there is no drawing from discrete choice models but maximization of an iteration stable utility function. 
-In relation to that, the set of alternatives is not necessarily limited a priori and, thus, we use the notion of a search space and not of a choice set here.
+Although the destination innovation utility function is based on discrete choice framework, some conceptual differences about the common discrete choice models application persist. 
+As shown above, there is no drawing from discrete choice models, but instead, maximization of an iteration-stable utility function. 
+Apropos, the set of alternatives is not necessarily limited a priori; thus, we use the notion of a search space and not of a choice set here.
 
 % ##################################################################################################################
 \section{Lessons Learned}
-Two interesting lessons have been learning while developing the destination innovation module. 
-The first is a lesson of interdependence of preferences and space and,  thus, the necessity to evaluate them in combination. 
-When looking at distance distributions (\eg Figure~\ref{fig:zhLEGO}) one might think that the functional form directly represents the preferences. 
-This is not necessarily the case. 
-In our simulations, it is the result of a \emph{linear} travel disutility, but applied in geographic space where the number of opportunities increases with the \emph{square} of the radius, in other words, with the \emph{square} of the travel distance. 
-A similar emergent effect is present when scaling the random error terms. 
-Although, both negative and positive error terms are enlarged and the average remains stable, the distribution gets more skewed toward the tail, as for the agents' choices the maximum values and not average values are relevant.
+Two interesting lessons were learned while developing the destination innovation module: 
+first, a lesson on preferences and space interdependence and the necessity to evaluate them in combination. 
+When looking at distance distributions (\eg Figure~\ref{fig:zhLEGO}) one might think that the functional form directly represents the preferences, but 
+this is not necessarily the case. 
+In our simulations, it is the result of a \emph{linear} travel disutility, but applied in geographic space, where number of opportunities increases with the \emph{square} of the radius, in other words, with the \emph{square} of travel distance. 
+A similar emergent effect appears when scaling random error terms. 
+Although both negative and positive error terms are enlarged and the average remains stable, distribution gets more skewed toward the tail; for agents' choices,  maximum values, not average values, are relevant.
 
 The second lesson concerns simulation results' variability. 
-Although random elements are not only present in destination choice, it was at the time of its development, the largest contributor of endogenous variability and made necessary the experiments presented by \citet[][]{HorniEtAl_TechRep_IVT_2011_b} (see also Section~\ref{sec:Statistical-analysis-of}).
+Although random elements are not present only in destination choice, it was the largest contributor of endogenous variability when it was developed, necessitating the experiments presented by \citet[][]{HorniEtAl_TechRep_IVT_2011_b} (see also Section~\ref{sec:Statistical-analysis-of}).
 
 % ===============================================================================================
 \section{Further Reading}
-The main information source is \citet[][]{HorniEtAl_unpub_TRB_2012, Horni_PhDThesis_2013}. 
-Technical details and documentation are available at \citet[][]{MATSIM-DC_Webpage_2015} and in \gls{javadoc}. 
-Further reading related to destination choice is \citet[][]{HorniEtAl_IATBRspec_2013}, looking at parking, or \citet[][]{HorniEtAl_TechRep_IVT_2012}, coupling customers' and retailers' choices or in other words the supply and the demand side.
+The main information source is \citet[][]{HorniEtAl_unpub_TRB_2012, Horni_PhDThesis_2013}; 
+technical details and documentation are available at \citet[][]{MATSIM-DC_Webpage_2015} and in \gls{javadoc}. 
+Further reading related to destination choice is: \citet[][]{HorniEtAl_IATBRspec_2013},for parking, or \citet[][]{HorniEtAl_TechRep_IVT_2012}, about coupling customers' and retailers' choices or, in other words, supply and demand.
 
 % ##################################################################################################################
