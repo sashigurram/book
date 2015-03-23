@@ -14,7 +14,7 @@
 \section{Introduction}
 For most \gls{matsim} users, Via's (Chapter~\ref{ch:via}) free branch will be a good solution for their visualization needs. However, if project demand reaches beyond the given (and fixed) abilities of the Via free version, there is another---though not as stylish---option for \gls{matsim} output visualization, the \gls{otfvis}. 
 
-The short term for ``On the Fly Visualizer'', OTFVis was designed to support actual visualization of live simulation runs with \gls{matsim}. Therefore, one purpose of the \gls{otfvis} is the debugging of \gls{matsim} (input) data. Nonetheless, playing prerecorded movie (\gls{mvi}) files created from \gls{matsim} events is another way to use \gls{otfvis}. Generally speaking, \gls{otfvis} serves as an open-source counterpart to the possibilities Via gives the \gls{matsim} community. The \gls{otfvis} is written in \gls{java} and available as source code to extend for different \gls{matsim} projects' special needs. Hence, it is possible and desirable to actually extend the \gls{otfvis} functionality, incorporating the user's own data sets and visualizations.
+The short term for ``On the Fly Visualizer'', \gls{otfvis} was designed to support actual visualization of live simulation runs with \gls{matsim}. Therefore, one purpose of the \gls{otfvis} is the debugging of \gls{matsim} (input) data. Nonetheless, playing prerecorded movie (\gls{mvi}) files created from \gls{matsim} events is another way to use \gls{otfvis}. Generally speaking, \gls{otfvis} serves as an open-source counterpart to the possibilities Via gives the \gls{matsim} community. The \gls{otfvis} is written in \gls{java} and available as source code to extend for different \gls{matsim} projects' special needs. Hence, it is possible and desirable to actually extend the \gls{otfvis} functionality, incorporating the user's own data sets and visualizations.
 
 % ################################################################################################################
 \section{Using \gls{otfvis}} 
@@ -32,7 +32,7 @@ so, to acquire a working version, a ``nightly build'' needs to be downloaded as 
 There, one finds the latest \lstinline|otfvis-version-SNAPSHOT-build.zip| file available for download. 
 Unzip it to the place where the \lstinline|matsim.jar| already resides; don't forget to extract the \lstinline|libs|-directories found in the respective zip files. 
 
-\gls{otfvis} demands substantial \gls{ram} (depending on your simulation size /\gls{mvi} file); to successfully launch the visualizer, a command line like 
+\gls{otfvis} demands substantial \gls{ram} (depending on your simulation size/\gls{mvi} file); to successfully launch the visualizer, a command line like 
 \begin{lstlisting}
 java -Xmx500m -cp MATSim-XXX.jar:otfvis/otfvis-XXX.jar org.MATSim.contrib.otfvis.OTFVis
 \end{lstlisting}
@@ -232,12 +232,12 @@ The specific design goals for the visualizer were:
 \subsection{Readers and Writers}
 \gls{otfvis} was designed to be minimally dependent on the \gls{mobsim} used. Data formats applied within the \gls{mobsim} should be abstracted from data used in \gls{otfvis}, meaning that any data passed to the visualizer will have to run through some stages of abstraction.
 
-The first stage is a writer-reader pair, responsible for transferring a certain set of data to the \gls{otfvis}. The writer will understand the data format of the hosting \gls{mobsim} and convert it to simple data types, like float or string values. A set of these writers, all using a joint byte buffer to aggregate the data, will be called after each mobsim step to accumulate data. This array of bytes is then sent to the visualizer, which, in the original design, could be run anywhere in your network.
+The first stage is a writer-reader pair, responsible for transferring a certain set of data to the \gls{otfvis}. The writer will understand the data format of the hosting \gls{mobsim} and convert it to simple data types, like float or string values. A set of these writers, all using a joint byte buffer to aggregate the data, will be called after each \gls{mobsim} step to accumulate data. This array of bytes is then sent to the visualizer, which, in the original design, could be run anywhere in your network.
 
 For each writer, there has to be a sibling-reader class, responsible for reading back extracted data from the byte buffer. 
 It is crucial to ensure that these pairs work synchronously. Most Writer/Reader-pairs are implemented in the same class, since having the source-code at the same place reduces errors in the synchronization.
 
-Apparently, it can be necessary, or at least useful, to have different ways of visualizing data on the \gls{otfvis} frontend. Thus, actual readers are not responsible for the drawing of a certain data set. A third kind of class is responsible for that, the drawer classes.
+Apparently, it can be necessary, or at least useful, to have different ways of visualizing data on the \gls{otfvis} front-end. Thus, actual readers are not responsible for the drawing of a certain data set. A third kind of class is responsible for that, the drawer classes.
 
 % ============================================================================================
 \subsection{Visualization of the Data}
@@ -256,7 +256,8 @@ To ease this issue, ``layers'' have been introduced to \gls{otfvis}.
 Any drawer (responsible for a bit of information) can be assigned to a layer and 
 these layers will ultimately be summoned to draw the screen's content. 
 It is up to the layer to optimize the execution of the drawers when necessary. 
-For example, a network layer might store all network info from the drawer in one array, or display a list to optimize drawing of the network; (often in \gls{opengl}, it is advisable to rather let the hardware decide what to draw."\Karen:  {please check this last half-sentence to make sure I got the meaning right... Thanks!} 
+For example, a network layer might store all network info from the drawer in one array, or display a list to optimize drawing of the network; (often in \gls{opengl}, it is advisable to rather let the hardware decide what to draw. 
+%\Karen{please check this last half-sentence to make sure I got the meaning right... Thanks!} \ah{correct}
 It might be faster to have all complete data residing in graphics hardware memory, rather than to transfer the reduced information set every frame). There are three layers predefined in \gls{otfvis}. 
 The \lstinline|networkLayer| contains the static street net, the \lstinline|agentLayer| the actual dynamic agents and a third layer, the \lstinline|miscellaneousLayer|,  contains additional data.
 
