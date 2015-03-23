@@ -166,25 +166,56 @@ Merging the two approaches was the natural solution, as he then designed it for 
 Given the need to model the flow of traffic on the roads as part of the daily dynamics the approach of Schwerdtfeger, an \gls{ifv} colleague, was a natural and computationally-efficient choice. 
 \citet[][]{Schwerdtfeger_VolmulerHamerslag_1984} had developed a meso-scopic simulation of traffic flow, which retained the agent-resolution, but employed macroscopic link-performance functions to calculate the speeds on the links. 
 
-The work of \citet[][]{Swiderski_CarpenterJones_1983}, a second \gls{ifv} colleague, had alerted him to the need to account for the constraints imposed by the mental maps of travelers. As a full implementation of a mental map is impossible even with today's computers he chose to condition the route choices of the travelers on their travel time expectations, which were based on shortest-paths over an empty network initially. The agents reconsidered their routes at every junction, if the experienced travel time deviated beyond a fixed threshold from the expected travel times. 
+The work of \citet[][]{Swiderski_CarpenterJones_1983}, a second \gls{ifv} colleague, had alerted him to the need to account for the constraints imposed by the mental maps of travelers. As a full implementation of a mental map is impossible even with today's computers he chose to condition the route choices of the travelers on their travel time expectations, which were based on shortest-paths over an empty network initially. The agents reconsidered their routes at every junction, if the experienced travel time deviated beyond an adaptive threshold from the expected travel times. 
 
 This architecture is mirrored in MATSim's architecture of modeling competition  on the network and for facilities \citep[][]{HorniEtAl_TRR_2009} and then replanning before the next iteration. The framework was used to iterate \citep[][]{Axhausen_Jones_1990} the expectations via shortest-paths based on stored mean travel times from the last iteration, but no formal tests of equilibrium were conducted, nor was the number of iterations extensive. (See \citet[][]{Dobler_PhDThesis_2013} that such an approach can approximate the equilibrium travel times with rather few iterations.)
 
 % -----------------------------------------------------------------------------------
 \subsubsection{EUROTOPP etc.}
-The  first framework program of the European Union gave the chance to continue with the work in a larger context, but unfortunately this extended version of ORIENT/RV never went beyond the design stage \citep[][]{AxhausenGoodwin1991}. The EUROTOPP approach was later implemented in a changed from at the \gls{ifv} again by Zumkeller and his students, who had been one of the partners of the first framework project \citep[][]{SchnittgerZumkeller_ETC_2004}.
+The  first framework program of the European Union gave the chance to continue with the work in a larger context, but unfortunately this extended version of ORIENT/RV never went beyond the design stage \citep[][]{AxhausenGoodwin1991}. The EUROTOPP approach was later implemented in a changed form at the \gls{ifv} again by Zumkeller and his students, who also had been one of the partners of the first framework project \citep[][]{SchnittgerZumkeller_ETC_2004}.
 
-Moving to Oxford, London and then Innsbruck in relatively short order kept him from initiating serious work on a \gls{largescale} simulation system. 
+\ah{Merging this somewhere below ...}
+\kwaah{Moving to Oxford, London and then Innsbruck in relatively short order kept him from initiating serious work on a \gls{largescale} simulation system. 
 The focus switched to data collection and choice modeling. 
 The collaboration on travel demand simulation with Nagel began, when he also joined \gls{eth} in 1999. 
+While this was low key at the beginning, the move of Balmer and Charypar to his group after Nagel's departure to TU Berlin jumped started the further work, which is now documented in the rest of this book.}
+
+% -----------------------------------------------------------------------------------
+\ah{Following needs to be merged into ``Joint Work'' but with a specialized focus. ``Focus Berlin''/''Focus Zürich''?}
+\subsubsection{``Best Response'' and Further Dimensions}
+The direction of the work in Zürich aimed so far to address further behavioral dimensions beyond the core of mode and route choice (See Figure~\ref{fig:dimensions} \kwaah{The figure should go to the research avenues or the introduction maybe}). While destination, departure-time, mode and route choice are the core of the transport modeling enterprise and were addressed in \gls{matsim} from the start in one-way or another, it is clear, that there are more dimensions to consider and those listed in the figure are only the more prominent ones, as for examples the class of service on a rail journey is ignored or the intensity of activity engagement. 
+
+MATSim takes the activity chain, the schedule, as given from the initial demand generation process, while modern ``activity based-models'' make it sensitive to accessibility understood the log sum term of the included destination and mode choice model (route choice is generally excluded in those models) (See Ben-Akiva, Bowman and Gopinath, 1996 for the first example). The computational overhead costs of calculating the set of non-chosen alternatives become prohibitive at the scale for which \gls{matsim} is designed, so alternative approaches were explored. Meister developed a genetic algorithm on a household-basis to find optimal schedules for all members simultaneously (reported in Meister, Frick and Axhausen, 2005), but only its time-of-day choice element saw use in later scenarios (Meister, Balmer, Axhausen and Nagel, 2006). Feil set himself the task to find a best-response, but computationally fast approach to the optimization of the number and sequence of activities into a schedule \citep[][]{Feil_PhDThesis_2010}. While he made substantial progress using a tabu-search and a cloning-approach, it is still to slow, as it currently stands, but Fourie's PSim (see Chapter~\ref{ch:psim}) might remove that constraint.
+
+As best-response approaches these two are at odds with the general co-evolution approach of \gls{matsim}. One would have to show with extensive tests that these comprehensive optimizations contribute to a faster convergence of the overall population then more limited random searches, \eg local switches in order, or local additions or subtractions of activities. Still, as Nagel (xxxx) \kwaah{Das Argument, dass die ln Funktion mit dem induzierten Verkehr Schwierigkeiten macht taucht ja früh auf. Was sollte hier zitiert werden?} and \citet{Feil_PhDThesis_2010} point out (see also Section~\ref{sec:future-of-scoring-function}), the basic \gls{matsim} scoring function with its log-transformation of activity duration cannot cope with addition and subtraction of activities, as it favors a solution with many shorter activities. Given the policy interest of induced demand effects, a solution will need to be found in further work. 
+
+The need to address parking is obvious and even more obvious when combined with the consideration of electric vehicles and their current necessity to be recharged during the course of a day. 
+Waraich addressed both aspects by finally integrating a local search into the overall \gls{matsim} iteration scheme to identify the preferred parking space in the vicinity of the final destination (Chapter~\ref{ch:parking}). 
+Dobler's approach \citep[][]{Dobler_PhDThesis_2013} to evacuation is similar, but for obvious reasons does not iterate. 
+%In this local search he is similar to Horni's destination choice approach (Chapter~\ref{ch:destinationchoice}) and it can be extended with personalized values of walking time. \ah{dc != lcoal search} 
+His local search can be extended with personalized values of walking time.
+
+\ah{destination choice (Chapter~\ref{ch:destinationchoice}).}
+
+The group composition for joint travel and joint activities is crucial to make progress on a number of fronts, but especially to understand destination choice and activity generation. Gliebe and Koppelman (2005), Zhang, Timmermans and Borgers (2005), for example, had proposed discrete choice models for household activity allocation, but these approaches cannot be integrated easily into \gls{matsim} due to their computational costs. They are also too restrictive with their exclusive focus on the household. Based on parallel empirical work on social networks (see Larsen, Axhausen and Urry, 2006; Kowald et al., 2013) Dubernet is currently exploring new game theoretic approaches to co-ordinate the timings and activities of households and wider social networks, which are constructed using the approach of Arentze, Kowald and Axhausen (2013), as earlier simulation---based approaches to network formation were found to be too computationally expensive \citep[e.g.,][]{Hackney_PhDThesis_2009}.
+
+The question of expenditure division has not been touched by transport planning, as it has focused on single-travelers or household-based groups at most. The field's understanding of both the patterns of expenditure and of the styles of allocation inside a household are poor, which is no surprise as the relevant questions are missing in its surveys. First tests for the necessary survey works are currently on-going. It is expected that this will lead to a better understanding of activity participation and of the values of time travelers bring to their decisions. This issue obviously interacts with joint activity participation and travel.
+
+%\ah{maybe change to bullets}
+% ----------
+\createfigure%
+{Behavioral dimensions to be included in a fuller scheduling model}%
+{Behavioral dimensions to be included in a fuller scheduling model}%
+{\label{fig:dimensions}}%
+{\includegraphics[width=0.8\textwidth, angle=0]{understanding/figures/dimensions.png}}%
+{\citet[][]{Axhausen_unpub_NYC_2014} \ah{add missing refs}}
+% ----------
 
 % ========================================================================================================
 \subsection{Joint Work: MATSim in \protect\gls{java} (TU Berlin and ETH Zürich)}
 \label{sec:matsim-in-java}
 %\subsection{MATSim in \protect\gls{java} (TU Berlin)}
 %\ah{A few sentences about Kay W. Axhausen, the (history of the) elements brought into MATSim by him, and the history of the start of the great collabo.}
-
-\kwaah{While this \ah{replace} was low key at the beginning, the move of Balmer and Charypar to his group after Nagel's departure to TU Berlin jumped started the further work, which is now documented in the rest of this book.}
 
 Michael Balmer wrote his dissertation about demand modeling for \gls{matsim}, \ie about the upstream process that leads to initial plans
 \citep{Balmer2007phd}.  That project, other than the main \gls{matsim} code at that time, was written in \gls{java}.  Together with the assessment that \gls{java} would be the better language than \gls{cpp} to continue development at TU Berlin transport engineering, it was decided to use Michael Balmer's code as starting point for a \gls{java} version.  Arguments for \gls{java} included:
