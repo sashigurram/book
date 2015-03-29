@@ -7,14 +7,19 @@
 \begin{center} \includegraphics[width=0.4\textwidth, angle=0]{understanding/figures/waves/fig0.pdf} \end{center}
 
 % ##################################################################################################################
+
+\newcommand{\SINGLEQUEUESIM}{\gls{qsim}}
+\newcommand{\DOUBLEQUEUESIM}{\gls{jdeqsim}}
+
 \section{\label{sec:Introduction}Introduction}
 
 \gls{matsim} comes with a number of \glspl{mobsim}. These differ from the
 implementation perspective (time-stepping vs.\ event-based, degree
 of parallelism), but they constitute all (at least approximate) solvers
 of the same underlying traffic flow model. The present chapter attempts
-to explain this (from the technical mobsim specification alone not
-obvious) fact and clarifies (the implications of) currently made simplifications.
+to explain this from the technical mobsim specification alone not
+obvious fact and clarifies currently made simplifications and their
+implications.
 
 At the heart of \gls{matsim}'s traffic flow model is the flow-density relationship
 (also called \gls{fd}) shown in Figure~\ref{fig:Fundamental-diagram}.
@@ -35,8 +40,8 @@ $\varrho$ (in vehicles per length unit) on that road.
 
 The \gls{fd} is defined as the minimum of a sending function $S(\varrho)$
 (solid) and a receiving function $R(\varrho)$ (dashed), resulting
-overall in a triangular curve that is parametrized by the maximum
-velocity $\hat{v}$, the maximum density $\hat{\varrho}$ and the
+overall in a triangular curve that is parametrized by the free flow speed $v$, 
+the maximum density $\hat{\varrho}$ and the
 backward shockwave speed $w$. The maximum velocity is an observable
 parameter that can be set in the network file (\texttt{freespeed}
 attribute of the \texttt{link} element). The maximum density equals
@@ -48,10 +53,15 @@ out to be the ratio of the length of a vehicle to the safety time
 gap adopted by drivers in congested conditions. This parameter turns
 out to be fairly constant; a vehicle length of 7.5\,meters and a time
 gap of 2\,seconds leads to a value of 13.5\,kilometers per hour. 
-\note{Can it be set somewhere, or is there a hardcoded value?} 
-\kai{QSim: Ist generell noch nicht implementiert, also auch nicht konfigurierbar.  Jdeqsim: Andreas, könntest Du das bitte mal nachschauen?}
-\ah{in \gls{jdeqsim} this can be configured by parameter \lstinline|gapTravelSpeed|. Note: The default is there 15\,meters per second (not km/h). 
-Car size is configured with \gls{jdeqsim} parameter \lstinline|carSize| (default: 7.5\,meters).}
+The backward wave speed can be set in the \DOUBLEQUEUESIM\ through the
+\lstinline|gapTravelSpeed| parameter; it cannot be set in the
+\SINGLEQUEUESIM.
+% \note{Can it be set somewhere, or is there a hardcoded value?} 
+% \kai{QSim: Ist generell noch nicht implementiert, also auch nicht konfigurierbar.  
+% Jdeqsim: Andreas, könntest Du das bitte mal nachschauen?}
+% \ah{in \gls{jdeqsim} this can be configured by parameter \lstinline|gapTravelSpeed|. 
+% Note: The default is there 15\,meters per second (not km/h). 
+% Car size is configured with \gls{jdeqsim} parameter \lstinline|carSize| (default: 7.5\,meters).}
 
 The considered \gls{fd} alone applies only in stationary conditions, where
 it predicts that (i) flow increases linearly with density at low densities
@@ -59,7 +69,7 @@ it predicts that (i) flow increases linearly with density at low densities
 density at high densities (\ie in congested conditions); and (iii)
 in-between it attains a maximal value that constitutes the flow capacity
 \begin{eqnarray}
-\hat{q} & = & \frac{\hat{v}w\hat{\varrho}}{\hat{v}+w}\label{eq:flow-cap}
+\hat{q} & = & \frac{vw\hat{\varrho}}{v+w}\label{eq:flow-cap}
 \end{eqnarray}
  of the link. This parameter represents the maximum throughput of
 the link in the absence of any other flow constraint (such as downstream
@@ -71,7 +81,7 @@ and flow change over space and time) is possible by inserting the
 \gls{fd} into a continuity equation (which intuitively models vehicle conservation,
 in the sense that vehicles cannot vanish or spontaneously appear on
 a road segment without on- and off-ramps). This leads to the \gls{kwm} 
-of traffic flow \citep[KWM;][]{lighthill-1955,richards-1956},
+of traffic flow \citep[][]{lighthill-1955,richards-1956},
 where the sending and receiving function receive an intuitive interpretation:
 The instantaneous flow across any interface, possibly with different
 densities prevailing and \glspl{fd} applying up- and downstream of that interface,
@@ -97,18 +107,18 @@ state of the link. In symbols, one is interested in the instantaneous
 receiving flow rate $R$ of the link's upstream end and the instantaneous
 sending flow rate $S$ of the link's downstream end. Multiplying these
 rates by the duration $\delta$ of a simulation time step then yields
-the maximum number of vehicles that can enter and leave the link,
-respectively.
+the maximum number of vehicles that can enter respectively leave the link
+during a time step.
 
 \gls{matsim} also needs to compute these quantities. The way in which it
 does so is rooted in Newell's {}''simplified theory of kinematic
-waves'' \citep{newell-1993}, which provides a simple recipe for
+waves'' \citep{newell-1993}, which provides a tracktable recipe for
 computing the flow and the density anywhere inside of a link given
-that one keeps track of the cumulative flow at the link's up- and
+that one keeps track only of the flows at the link's up- and
 downstream interface. In terms of the continuum model (\ie one that
 allows for real-valued flows and densities at real-valued locations
 and times) specified by \citet{newell-1993}, the cumulative in- and
-outflow of the link are defined as
+outflow of a link are defined as
 \begin{eqnarray}
 N^{\text{in}}(t) & = & \int_{0}^{t}q^{\text{in}}(z)dz\label{eq:cum-in}\\
 N^{\text{out}}(t) & = & \int_{0}^{t}q^{\text{out}}(z)dz\label{eq:cum-out}
@@ -133,22 +143,28 @@ R(t) & = & \min\left\{ \hat{\varrho}L-\left[N^{\text{in}}(t)-N^{\text{out}}(t+\d
 S(t) & = & \min\left\{ \left[N^{\text{in}}(t+\delta-L/v)-N^{\text{out}}(t)\right],\,\hat{q}\delta\right\} .\label{eq:S-yperman}
 \end{eqnarray}
 where $L$ is the length of the link and $\delta$ is the (small)
-discrete time step length.
+discrete time step length. \citet{yperman-phd} provides some 
+intuition for this otherwise rather formal specification.
 
 The connection to \gls{matsim} can now be made explicit by labeling the
 two bracketed terms in \MyEqRef{eq:R-yperman} and \MyEqRef{eq:S-yperman}
 as {}``upstream queue'' UQ and {}``downstream queue'' DQ \citep{osorio-2011a,osorio-2013b}:
 \begin{eqnarray}
 \text{UQ}(t) & = & N^{\text{in}}(t)-N^{\text{out}}(t+\delta-L/|w|)\label{eq:UQ-nonrek}\\
- & = & \text{UQ}(t-\delta)+\delta\left[q^{\text{in}}(t-\delta)-q^{\text{out}}(t-L/|w|)\right]\label{eq:UQ-rek}\\
-\text{DQ}(t) & = & N^{\text{in}}(0,t+\delta-L/v)-N^{\text{out}}(t)\label{eq:DQ-nonrek}\\
- & = & \text{DQ}(t-\delta)+\delta\left[q^{\text{in}}(t-L/v)-q^{\text{out}}(t-\delta)\right]\label{eq:DQ-rek}
+\text{DQ}(t) & = & N^{\text{in}}(0,t+\delta-L/v)-N^{\text{out}}(t)\label{eq:DQ-nonrek}.
 \end{eqnarray}
-where the respective recursive formulation results from \MyEqRef{eq:cum-in}
-and \MyEqRef{eq:cum-out} in combination with the assumption that
-flow rates are held constant throughout a simulation time step. These
-recursive definitions now turn out to be the continuum version of
-how the \note{REF double-queue mobsim} updates its link model: In
+These expressions can be given a recursive meaning. Evaluating
+$\text{UQ}(t) - \text{UQ}(t - \delta)$ yields 
+$[N^{\text{in}}(t) - N^{\text{in}}(t-\delta)] - [N^{\text{out}}(t+\delta-L/|w|) - N^{\text{out}}(t-L/|w|) ]$,
+which under the assumption that flow rates are held constant throughout a simulation time step
+simplifies into $\delta [ q^{\text{in}}(t-\delta) - q^{\text{out}}(t-L/|w|) ]$.
+From this (and symmetric operations for DQ), one obtains
+\begin{eqnarray}
+\text{UQ}(t) & = & \text{UQ}(t-\delta)+\delta\left[q^{\text{in}}(t-\delta)-q^{\text{out}}(t-L/|w|)\right]\label{eq:UQ-rek}\\
+\text{DQ}(t) & = & \text{DQ}(t-\delta)+\delta\left[q^{\text{in}}(t-L/v)-q^{\text{out}}(t-\delta)\right].\label{eq:DQ-rek}
+\end{eqnarray}
+These recursive definitions turn out to be the continuum version of
+how the \DOUBLEQUEUESIM\ updates its link model: In
 every time step, all vehicles that have just left the link are taken
 out of the DQ and all vehicles that have entered the link $L/v$ time
 units ago (corresponding to the free-flow travel time) are inserted
@@ -161,24 +177,24 @@ and (\ref{eq:S-yperman}) yields
 R(t) & = & \min\left\{ \hat{\varrho}L-\text{UQ}(t),\,\hat{q}\delta\right\} \label{eq:R-matsim}\\
 S(t) & = & \min\left\{ \text{DQ}(t),\,\hat{q}\delta\right\} \label{eq:S-matsim}
 \end{eqnarray}
-which again corresponds to the way in which the \note{REF double-queue mobsim}
+which again corresponds to the way in which the \DOUBLEQUEUESIM\ 
 evaluates the boundary conditions of a link: The amount of flow that
-is allowed to enter the link is given by the space in its UQ, and
-the amount of flow that is allowed to leave the link is given by the
+is allowed to enter the link is limited by the space in its UQ, and
+the amount of flow that is allowed to leave the link is limited by the
 number of vehicles in its DQ. 
-\note{Is this description compatible with the actual implementation?} 
-\kai{Das muss ich im Moment auf die jdeqsim beziehen, weil die QSim das ja noch gar nicht implementiert hat.  Bei der jdeqsim kenne ich mich aber nicht aus.  --  Aber das, was wir in der QSim derzeit probieren, sieht so aus.}
+% \note{Is this description compatible with the actual implementation?} 
+% \kai{Das muss ich im Moment auf die jdeqsim beziehen, weil die QSim das ja noch gar nicht implementiert hat.  Bei der jdeqsim kenne ich mich aber nicht aus.  --  Aber das, was wir in der QSim derzeit probieren, sieht so aus.}
 
 A \gls{mobsim} that implements the rules \MyEqRef{eq:UQ-rek}, \MyEqRef{eq:DQ-rek}
 and \MyEqRef{eq:R-matsim}, \MyEqRef{eq:S-matsim} implements a \gls{kwm}-consistent
-link model. This is almost the case for the \note{REF double-queue mobsim},
+link model. This is almost the case for the \DOUBLEQUEUESIM,
 which, in its implementation as of December 2014, has the sole deficiency
 of not limiting the link's inflow to its flow capacity. 
-\note{Is this correct?} 
-\kai{Kenne mich mit jdeqsim nicht aus.  Man kann da irgendetwas einstellen.  Das, was wir in der QSim derzeit ausprobieren, wird keine link inflow capacity restriction haben.}
-\ah{in \gls{jdeqsim} there is \emph{no} maximum inflow capacity, there is only the \lstinline|minimumInFlowCapacity| parameter to prevent gridlocks.}
+% \note{Is this correct?} 
+% \kai{Kenne mich mit jdeqsim nicht aus.  Man kann da irgendetwas einstellen.  Das, was wir in der QSim derzeit ausprobieren, wird keine link inflow capacity restriction haben.}
+% \ah{in \gls{jdeqsim} there is \emph{no} maximum inflow capacity, there is only the \lstinline|minimumInFlowCapacity| parameter to prevent gridlocks.}
 %
-Further, the \note{REF single-queue mobsim(s)} turns out to be a
+The \SINGLEQUEUESIM\ turns out to be a
 particular instance of the same model where the backward wave speed
 is set to $\left|w\right|=L/\delta$. Inserting this into \MyEqRef{eq:UQ-rek}
 leads to
@@ -186,18 +202,18 @@ leads to
 \text{UQ}(t) & = & \text{UQ}(t-\delta)+\delta\left[q^{\text{in}}(t-\delta)-q^{\text{out}}(t-\delta)\right],
 \end{eqnarray}
 which represents nothing but the total number of vehicles in the link.
-This corresponds indeed to the behavior of the \note{REF single-queue mobsim(s)},
+This corresponds indeed to the behavior of the \SINGLEQUEUESIM,
 where the inflow to a link is limited only by the available space
 in the link as a whole. Letting $\left|w\right|=L/\delta$ means that
-the \note{REF single-queue mobsim(s)} behave like a \gls{kwm} with an extremely
+the \SINGLEQUEUESIM\ behaves like a \gls{kwm} with an extremely
 high backward shockwave speed, which physically means that a queue
 on the link does not dissolve from its downstream end but moves {}''en
-block'' over the link.
+block'' over the link. 
 
 % ##################################################################################################################
 \section{\label{sec:Node-model}Node Model}
 All \glspl{mobsim} in \gls{matsim} implement the same node model. Somewhat surprisingly,
-this node model can be traced back at least to \note{when?}, whereas
+this node model can be traced back at least to \gunnar{Kai?}, whereas
 the literature based on which its consistency with the \gls{kwm} can be
 established is only a few years old \citep{tampere-2010b,floetteroed-2011a,corthout-2012}. 
 
@@ -274,23 +290,24 @@ within the intersection may be modeled (\cf Chapter~\ref{ch:signalslanes}).
 %\note{I think Dominik has done something like this. Need to find a reference.} \kai{Andreas: Das wäre die ''lanes core extension''.}\ah{gracias}
 However, some caution is needed when implementing such extensions.
 The present node model is, due to its simplicity, guaranteed to yield
-unique node flows. This property should be revisited when turning
+unique node flows. This property needs to be revisited when turning
 to more complicated specifications \citep{corthout-2012}.
 
 % ##################################################################################################################
 \section{\label{sec:kinematicwaves-summary}Summary}
 This chapter demonstrated that \gls{matsim}'s mobility simulation is already
 very close to implementing a particle-discretized instance of the
-\gls{kwm}. For full consistency, one needs to (i) use the \note{REF double-queue mobsim}
+\gls{kwm}. For full consistency, one needs to (i) use the \DOUBLEQUEUESIM\ 
+(or to implement a realistic backward wave speed in the \SINGLEQUEUESIM)
 and to (ii) limit the inflow of a link by its flow capacity (which
-corresponds to the maximum of its triangular \gls{fd}). \note{Is this correct? Or is there already ``full consistency'' with the KWM?.}
-
+corresponds to the maximum of its triangular \gls{fd}). 
+%\note{Is this correct? Or is there already ``full consistency'' with the KWM?.}
 %%\kai{Folgend einige Sätze von AH, die eingearbeitet oder verworfen werden müssten.  M.E.\ interessant vor allem im Hinblick auf MFD.}
-
-\ah{
-\gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) is the double-queue \gls{mobsim}, which is \emph{not} the default \gls{mobsim}.
-
-\gls{qsim} (Section~\ref{sec:using-qsim}) is the single-queue \gls{mobsim}, currently extended as shown in research avenues in Section~\ref{sec:researchavenues-double-queue-mobsim}.
-}
+% 
+% \ah{
+% \gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) is the double-queue \gls{mobsim}, which is \emph{not} the default \gls{mobsim}.
+% 
+% \gls{qsim} (Section~\ref{sec:using-qsim}) is the single-queue \gls{mobsim}, currently extended as shown in research avenues in Section~\ref{sec:researchavenues-double-queue-mobsim}.
+% }
 
 % ##################################################################################################################
