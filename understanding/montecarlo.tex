@@ -182,13 +182,13 @@ That is, the new information $Z^{k}$ is not only a transformation
 of the current network conditions $S^{k}$ but may also be based on
 the previously available information $Z^{k-1}$.
 
-The conditional distributions \MyEqRef{eq:choice-model}-\MyEqRef{eq:learning-model}
+The conditional distributions \MyEqRef{eq:choice-model}--(\ref{eq:learning-model})
 are detailed elsewhere in this book: Chapter~\ref{ch:discretechoice} 
 describes the plan selection mechanisms leading to $P(D\mid S^{k-1})$,
 Chapter~\ref{ch:kinematicwaves} explains the physical processes underlying
-$P(S\mid D^{k})$, and Chapter~\note{REF?} \ah{Interesting, but not treated explicitly anywhere. Different cases: Regular repl.: plan set is subject to slow diffusion. Within-day-repl: instantaneous update} specifies the information
-update logic behind $P(Z\mid S^{k})$. A greater level of detail is,
-however, not needed for the purposes of the present chapter.
+$P(S\mid D^{k})$, and Chapter~\ref{ch:scoring}
+%% \note{REF?} \ah{Interesting, but not treated explicitly anywhere. Different cases: Regular repl.: plan set is subject to slow diffusion. Within-day-repl: instantaneous update} 
+specifies at least some part of the information update logic behind $P(Z\mid S^{k})$. A greater level of detail is, however, not needed for the purposes of the present chapter.
 
 
 \subsection{\label{sub:Markov-chain-perspective}Markov Chain Perspective}
@@ -252,7 +252,11 @@ express how the information $Z^{k}$ available to the population in
 iteration $k$ carries over to the information $Z^{k+1}$ that is
 available in iteration $k+1$. This relationship is given by
 \begin{eqnarray}
-T_{y}^{x} & = & \sum_{s}\sum_{d}P(Z^{k+1}=x\mid S^{k}=s,Z^{k}=y)P(S^{k}=s\mid D^{k}=d)P(D^{k}=d\mid Z^{k}=y).\label{eq:matsim-transition-distr}
+T_{y}^{x} & = & \sum_{s}\sum_{d}
+%
+P(Z^{k+1}\!=\!x\mid S^{k}\!=\!s,Z^{k}\!=\!y)
+\, P(S^{k}\!=\!s\mid D^{k}\!=\!d) 
+\, P(D^{k}\!=\!d\mid Z^{k}\!=\!y) .\label{eq:matsim-transition-distr}
 \end{eqnarray}
 Each argument of the double sum represents the probability of one
 particular sequence of given information $y$, resulting travel demand
@@ -316,7 +320,42 @@ from a single simulation run, meaning that it is not necessary to
 run replications.
 \label{it:self-averaging}
 \end{enumerate}
-MATSim in its {}``standard configuration'' is likely to be have
+
+With respect to \gls{matsim}, the following holds:
+\begin{itemize}
+
+\item Periodicity is already broken if there exists a nonzero probability of staying in
+the same state. This is possible in MATSim 
+%if agents have a finite memory
+because the following sequence of events may occur by chance:
+%% as often as the agent memory is long: 
+(i) no agent uses plan innovation,
+(ii) all agents select the same plan as in the previous iteration, 
+(iii) the mobility simulation creates identical congestion and travel time patterns 
+%% as in the previous iteration.
+such that $Z^k$ from \MyEqRef{eq:learning-model} remains the same as $Z^{k-1}$; practically, this means that all plan scores remain the same. \kai{@Gunnar: Habe das mal umgeschrieben, weil in der praktischen Implementierung die Agenten kein Memory haben; sie merken sich nur den geglätteten Score.}  
+
+The above is a rather formal argument; more intuitively, the stochasticity in \gls{matsim} means that even if the system returns multiple times exactly to a state where it has been before, it is improbable that it does so with the same number of steps. \kai{@Gunnar: pls chk the above.}
+
+%% \gunnar{Kai, Du hattest Folgendes geschrieben: ``Periodicity is easily broken by stochasticity.  
+%% Given the many sources of stochasticity in MATSim, it is improbable that deterministic cycles exist.''
+%% Ich finde das problematisch, weil MCs ``by design'' stochastisch sind; periodicity und stochasticity
+%% schliessen einander nicht aus.} \kai{Vielleicht einfach so: das Diagramm 9.3(links) kommt in matsim sozusagen nicht vor.}
+
+%% \kai{Mir würde es plausibel erscheinen, wenn wir das auf einen bestimmten Zustand beziehen.  Wenn wir davon ausgehen, dass Innovation ausgeschaltet ist, dann fällt (i) weg.  Danach bleibt dann die Frage, was ein ``state'' ist; wenn dies der Vektor der gewählten Pläne ist, dann reicht (ii) bereits aus für ``staying in same state''.  Wenn die ``plan scores'' zu ``state'' dazu gehören, dann brauchen wir auch noch, dass die scores bereits konvergiert sind.}
+
+\item With plan innovation (see Section~\ref{sec:innovation}) switched on, the system is in general not irreducible:
+%% The MATSim property that causes problems when it comes to irreducibility are the changes to the set of possible plans per agent: 
+Every time a new plan is added somewhere, the previous subspace of the state space where the plan was not available \emph{cannot} be reached any more until that plan is removed; similarly, every time a plan is removed, the previous subspace of the state space where the plan was available cannot be reached any more until the plan is re-created again. (Chapter~\ref{ch:discretechoice} discusses this in greater detail and also suggests a cure to this problem.)
+
+Even if plans creation and removal could be modelled such that irreducibility was guaranteed, the dynamics of this process would, due to the size of the state space, be slow.
+
+ %% that it would be impractial to sample over the resulting iterations. Thus, although the above item~\ref{it:self-averaging} would be formally correct, one would never have enough iterations to put it to practical use.  \gunnar{Sind wir da sicher? Wenn wir uns nur f\"ur niedrigdimensionale projections interessieren, dann mag es durchaus sein, dass sich diese projections hinreichend schnell durchmischen. Ich bin zumindest nicht daf\"ur, die M\"oglichkeit von vorneherein auszuschliessen.}
+
+
+\end{itemize}
+
+MATSim in its {}``standard configuration'' is likely to have
 these properties if the plan choice sets of all agents are a priori
 defined, meaning technically that all {}``plan innovation'' modules
 are switched off and that only {}``plan selection'' modules are
