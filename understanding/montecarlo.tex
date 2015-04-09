@@ -163,32 +163,34 @@ meaning that the travel demand of iteration $k$ follows a probability
 distribution that is conditional on the information $Z^{k-1}$ that
 was available to the agents at the end of iteration $k-1$.
 
+\kai{@Gunnar: Wir haben $S$ für score im Buch.  Habe daher aus Deinem $S$ mal $C$ gemacht; das entspricht auch der Notation in der Lehrveranstaltung Verkehrstelematik ($C$ $=$ ``conditions'').}
+
 Step~\ref{enu:All-travelers-execute} runs the (stochastic) mobility
 simulation that moves all agents jointly through the network. In symbols,
 this becomes
 \begin{equation}
-S^{k}\sim P(S\mid D^{k}),\label{eq:network-loading-model}
+C^{k}\sim P(S\mid D^{k}),\label{eq:network-loading-model}
 \end{equation}
 meaning that the network conditions of iteration $k$ follows a probability
 distribution that is conditional on the demand $D^{k}$. 
 
 Step~\ref{enu:All-travelers-observe} updates (possibly in a stochastic
 way) the information available to all agents using the new network
-conditions $S^{k}$. This is written as
+conditions $C^{k}$. This is written as
 \begin{equation}
-Z^{k}\sim P(Z\mid S^{k},Z^{k-1}).\label{eq:learning-model}
+Z^{k}\sim P(Z\mid C^{k},Z^{k-1}).\label{eq:learning-model}
 \end{equation}
 That is, the new information $Z^{k}$ is not only a transformation
-of the current network conditions $S^{k}$ but may also be based on
+of the current network conditions $C^{k}$ but may also be based on
 the previously available information $Z^{k-1}$.
 
 The conditional distributions \MyEqRef{eq:choice-model}--(\ref{eq:learning-model})
 are detailed elsewhere in this book: Chapter~\ref{ch:discretechoice} 
-describes the plan selection mechanisms leading to $P(D\mid S^{k-1})$,
+describes the plan selection mechanisms leading to $P(D\mid C^{k-1})$,
 Chapter~\ref{ch:kinematicwaves} explains the physical processes underlying
 $P(S\mid D^{k})$, and Chapter~\ref{ch:scoring}
 %% \note{REF?} \ah{Interesting, but not treated explicitly anywhere. Different cases: Regular repl.: plan set is subject to slow diffusion. Within-day-repl: instantaneous update} 
-specifies at least some part of the information update logic behind $P(Z\mid S^{k})$. A greater level of detail is, however, not needed for the purposes of the present chapter.
+specifies at least some part of the information update logic behind $P(Z\mid C^{k})$. A greater level of detail is, however, not needed for the purposes of the present chapter.
 
 
 \subsection{\label{sub:Markov-chain-perspective}Markov Chain Perspective}
@@ -241,7 +243,7 @@ $Z$. Of these, only the information $Z$ qualifies as a state variable:
 If one knows $Z^{k}$, it is possible to draw the next day's travel
 demand $D^{k+1}$ based on \MyEqRef{eq:choice-model}, to insert this
 demand into \MyEqRef{eq:network-loading-model} and obtain the network
-conditions $S^{k+1}$, and to finally use both $S^{k+1}$ and $Z^{k}$
+conditions $C^{k+1}$, and to finally use both $C^{k+1}$ and $Z^{k}$
 to obtain an updated $Z^{k+1}$ through \MyEqRef{eq:learning-model}.
 This last step is what disqualifies $D$ and $S$ as state variables
 because an evaluation of \MyEqRef{eq:learning-model} is not possible
@@ -254,8 +256,8 @@ available in iteration $k+1$. This relationship is given by
 \begin{eqnarray}
 T_{y}^{x} & = & \sum_{s}\sum_{d}
 %
-P(Z^{k+1}\!=\!x\mid S^{k}\!=\!s,Z^{k}\!=\!y)
-\, P(S^{k}\!=\!s\mid D^{k}\!=\!d) 
+P(Z^{k+1}\!=\!x\mid C^{k}\!=\!s,Z^{k}\!=\!y)
+\, P(C^{k}\!=\!s\mid D^{k}\!=\!d) 
 \, P(D^{k}\!=\!d\mid Z^{k}\!=\!y) .\label{eq:matsim-transition-distr}
 \end{eqnarray}
 Each argument of the double sum represents the probability of one

@@ -44,11 +44,11 @@ An agent's plans in a given iteration may be considered the agent's \imp{choice 
 %
 Choice is typically based on the score; higher score plans are more likely to be selected.  
 %
-This is discussed in more detail in Chapter~\ref{ch:abta} and~\ref{ch:discretechoice}.  For the time being, note that the three steps of replanning must cooperate for the approach to work; the plans removal step should remove ``bad'' plans and the innovation step should generate ``good'' plans; in both cases, ``good'' means `` able to obtain a high score in the mobsim/scoring''.  Fortunately, due to its evolutionary concept, the approach is fairly robust; the innovation step does not always have to generate good solutions; it is sufficient if \emph{some} of the solutions are good and lead to a high score.
+This is discussed in more detail in Chapter~\ref{ch:abta} and~\ref{ch:discretechoice}.  For the time being, note that the three steps of replanning must cooperate for the approach to work; the plans removal step should remove ``bad'' plans and the innovation step should generate ``good'' plans; in both cases, ``good'' means ``able to obtain a high score in the mobsim/scoring''.  Fortunately, due to its evolutionary concept, the approach is fairly robust; the innovation step does not always have to generate good solutions; it is sufficient if \emph{some} of the solutions are good and lead to a high score.
 
 However, it is clear that scoring is a central element of \gls{matsim}.  Only solutions obtaining a high score will be selected by the agent and survive the plans removal step.  Thus, the scoring function needs to be ``correct'' for a given scenario, meaning, more or less, that plans ``performing well'' obtain a higher score than plans that do ``not perform well''.  Whether a performance is good or not, is, in the end, decided by travelers living in a region---some may prefer a congested car trip to a destination, others may prefer a crowded, but affordable, trip by public transit, while others may prefer using the bicycle, even in bad weather.
 
-The typical way to bridge this gap is to use econometric \imp{\gls{utility}} functions; for example, from random utility models \citep[e.g.][]{BenAkivaLerman_1985,Train_2003}, for the score.  However, in \gls{ai}, utility may also be used in a more general way: for example, the \gls{score}, that each individual agent (or the system as a whole), wants to, or should, optimize \citep{RusselNorvig2010ArtificialIntelligence}.  For these reasons, the terms ``\gls{score}'' and ``\gls{utility}'' are mostly interchangeable in the \gls{matsim} context.  Since we will need the concept of a marginal utility sometimes, this chapter will mostly speak of 'utility'; it is a bit unusual to talk about 'marginal score'.
+The typical way to bridge this gap is to use econometric \imp{\gls{utility}} functions; for example, from random utility models \citep[e.g.][]{BenAkivaLerman_1985,Train_2003}, for the score.  However, in \gls{ai}, utility may also be used in a more general way: for example, the \gls{score}, that each individual agent (or the system as a whole), wants to, or should, optimize \citep{RusselNorvig2010ArtificialIntelligence}.  For these reasons, the terms ``\gls{score}'' and ``\gls{utility}'' are mostly interchangeable in the \gls{matsim} context.  Since we will need the concept of a marginal utility, this chapter will mostly speak of 'utility', since it is a bit unusual to talk about 'marginal score'.
 
 The user can configure numerous parameters to calibrate the
 %choice behavior.
@@ -434,6 +434,40 @@ For an adaptive \gls{algorithm}, a penalty like this needs to be defined so that
 \paragraph*{First and Last Activity not the Same}
 
 Clearly, the wrap-around approach fails if the first and last activity are not the same.  The present code does not look at locations, but gives a warning and problematic results if they are different types.
+
+\subsection{Score averaging}
+\label{sec:score-averaging}
+
+The score $S$ that is computed according to the rules given in this chapter is not assigned directly to the plan, rather, it is exponentially smoothed according to
+\begin{equation}
+S^k = \alpha \, S + (1-\alpha) \, S^{k-1} \ ,  
+\label{eq:score-averaging}
+\end{equation}
+where $S^k$ is the new memorized score, $S^{k-1}$ is the previously memorized score, $S$ is the score obtained from the plan's execution in the \gls{mobsim}, and $\alpha$ is a ``learning'' or ``blending'' parameter.  The default value of $\alpha$ is one; it can be configured by the line
+\begin{xml}
+   <param name="learningRate" value="..." />
+\end{xml}
+in the config file.
+
+Non-executed plans just keep their score.
+
+\subsection{Forcing scores to convergence}
+\label{sec:score-msa}
+
+For many situations, both practical and theoretical (see Section~\ref{sec:score-convergence}), it is desirable that each plan's score converges to its expectation value.  Equation (\ref{eq:score-averaging}) will not achieve that; it just dampens the fluctuations.  A well known approach to force convergence to the expectation value is the \acrfull{msa}: \kai{chk equation}
+\begin{equation}
+S^m = \frac{1}{m} \, S + \frac{m-1}{m} \, S^{m-1} \ .
+\label{eq:score-msa}
+\end{equation}
+This resembles Equation~(\ref{eq:score-averaging}), with two important differences: (1) The fixed blending parameter $\alpha$ is now replaced by a variable $1/m$, and (2) $m$ is not the iteration number but counts how often a plan was executed and thus scored.  This is necessary in \gls{matsim} since a plan is not executed and scored in every iteration.
+
+This behavior can be switched on by the config option
+\begin{xml}
+   <param name="fractionOfIterationsToStartScoreMSA" value="..." />
+\end{xml}
+The default value is 0.8, meaning that \gls{msa} score averaging starts after 80\% of the iterations.  This is plausibly used together with innovation switch off (Section~\ref{sec:innovation-switchoff}), meaning that \gls{msa} operates on a fixed set of plans.
+
+
 
 % ##################################################################################################################
 \section{Typical Scoring Function Parameters and Their Calibration}
