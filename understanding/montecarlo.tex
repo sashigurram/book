@@ -323,7 +323,7 @@ run replications.
 \label{it:self-averaging}
 \end{enumerate}
 
-With respect to \gls{matsim}, the following holds:
+With respect to \gls{matsim}, the following holds: \kai{@Gunnar: Das habe ich aufgrund unsere Diskussionen neu versucht; schaust Du es bitte durch?  Danke.}
 \begin{itemize}
 
 \item Periodicity is already broken if there exists a nonzero probability of staying in
@@ -346,7 +346,7 @@ The above is a rather formal argument; more intuitively, the stochasticity in \g
 
 %% \kai{Mir würde es plausibel erscheinen, wenn wir das auf einen bestimmten Zustand beziehen.  Wenn wir davon ausgehen, dass Innovation ausgeschaltet ist, dann fällt (i) weg.  Danach bleibt dann die Frage, was ein ``state'' ist; wenn dies der Vektor der gewählten Pläne ist, dann reicht (ii) bereits aus für ``staying in same state''.  Wenn die ``plan scores'' zu ``state'' dazu gehören, dann brauchen wir auch noch, dass die scores bereits konvergiert sind.}
 
-\item With plan innovation (see Section~\ref{sec:innovation}) switched on, the system is in general not irreducible:
+\item With plan innovation (see Sections~\ref{sec:strategymodules}, \ref{sec:innovation-switchoff} and~\ref{sec:innovation}) switched on, the system is in general not irreducible:
 %% The MATSim property that causes problems when it comes to irreducibility are the changes to the set of possible plans per agent: 
 Every time a new plan is added somewhere, the previous subspace of the state space where the plan was not available \emph{cannot} be reached any more until that plan is removed; similarly, every time a plan is removed, the previous subspace of the state space where the plan was available cannot be reached any more until the plan is re-created again. (Chapter~\ref{ch:discretechoice} discusses this in greater detail and also suggests a cure to this problem.)
 
@@ -355,74 +355,31 @@ Even if plans creation and removal could be modelled such that irreducibility wa
  %% that it would be impractial to sample over the resulting iterations. Thus, although the above item~\ref{it:self-averaging} would be formally correct, one would never have enough iterations to put it to practical use.  \gunnar{Sind wir da sicher? Wenn wir uns nur f\"ur niedrigdimensionale projections interessieren, dann mag es durchaus sein, dass sich diese projections hinreichend schnell durchmischen. Ich bin zumindest nicht daf\"ur, die M\"oglichkeit von vorneherein auszuschliessen.}
 
 
-\end{itemize}
-
-MATSim in its {}``standard configuration'' is likely to have
-these properties if the plan choice sets of all agents are a priori
-defined, meaning technically that all {}``plan innovation'' modules
-are switched off and that only {}``plan selection'' modules are
-used. This is only {}``likely'' because the notion of a {}``standard
+\item With plan innovation switched off, 
+MATSim in its {}``standard configuration'' is likely to 
+% have
+%% these properties if the plan choice sets of all agents are a priori
+%% defined, meaning technically that all {}``plan innovation'' modules
+%% are switched off and that only {}``plan selection'' modules are
+%% used. 
+be irreducible.  This is only {}``likely'' because the notion of a {}``standard
 configuration'' itself is not rigorously specified here. The arguments
 behind this follow \citet{cascetta-1989}, who presents a related
 result for a much simpler, trip-based traffic simulation that only
 allows for route choice. Observing that travel plans are, technically,
 paths in a rather complicated decision network then allows to carry
 this result over to MATSim. See also \citet{NagelEtc2000tristan-succ} and \citep{floetteroed-2010e}.
-%
-\kai{Mir scheint das Abstimmungsproblem vor allem darin zu liegen, dass wir uns einigen müssen, auf welchen Zustand wir unsere Argumentation beziehen.  Ich bin immer ausgegangen von ``innovation switched off and scores converged/forced to convergence''.  Du scheinst einen anderen Zustand im Kopf zu haben, aber welchen genau?}
-%
-Intuitively:
-%  \kai{gunnar, pls chk next paragraphs} 
-\begin{itemize}
 
-\item 
+\kai{@Gunnar: Du erwähnst in Deiner Email etwas von ``finite score memories''.  Kann leider nicht sagen, wie sich das überträgt: matsim in std config hat eigentlich gar kein memory.  Von vorherigen Iterationen übrig bleiben nur die scores, die evtl.\ auch noch gemittelt sind.  Es kann allerdings sein, dass es sehr lange her ist, dass ein Plan zum letzten Mal angefasst wurde, und der Score daher sehr alt ist.
 
-Periodicity is broken if there exists a nonzero probability of staying in
-the same state. This is possible in MATSim if agents have a finite memory
-because the following sequence of events may occur by chance as often as the 
-agent memory is long: 
-(i) no agent uses a plan mutator, 
-(ii) all agents select the same plan as in the previous iteration, 
-(iii) the mobility simulation creates identical congestion and travel time patterns as in the previous iteration.
+Normalerweise ist es damit erledigt, denn das mit dem ``finite memory'' hat, so wie ich es kenne, eigentlich nur etwas mit dem ``finite state space'' zu tun.
 
-\gunnar{Kai, Du hattest Folgendes geschrieben: ``Periodicity is easily broken by stochasticity.  
-Given the many sources of stochasticity in MATSim, it is improbable that deterministic cycles exist.''
-Ich finde das problematisch, weil MCs ``by design'' stochastisch sind; periodicity und stochasticity
-schliessen einander nicht aus.} \kai{Vielleicht einfach so: das Diagramm 9.3(links) kommt in matsim sozusagen nicht vor.}
+Außerdem hat (normalerweise) jeder Plan in jeder Iteration eine non-zero proba, gewählt zu werden, m.E.\ eine weitere Versicherung gegen ``Probleme''.
+}
 
-\kai{Mir würde es plausibel erscheinen, wenn wir das auf einen bestimmten Zustand beziehen.  Wenn wir davon ausgehen, dass Innovation ausgeschaltet ist, dann fällt (i) weg.  Danach bleibt dann die Frage, was ein ``state'' ist; wenn dies der Vektor der gewählten Pläne ist, dann reicht (ii) bereits aus für ``staying in same state''.  Wenn die ``plan scores'' zu ``state'' dazu gehören, dann brauchen wir auch noch, dass die scores bereits konvergiert sind.}
+\item In the particular case of the scores being additionally forced to their expected values (Section~\ref{sec:score-msa}), the system eventually draws agent behavior from fixed choice distribution and hence varies independently from one iteration to the next.
 
-\item 
-
-\gunnar{Kai, Du hattest Folgendes geschrieben:
-``The reducible state of Figure (\ldots) 
-%Figure~\ref{fig:Example-of-(ir)reducibility}~left 
-will eventually become irreducible when the system moves from high traffic 
-to gridlock, since then it cannot go back.  One can therefore argue that 
-reducibility is related to transients, and the problem is that one does 
-not know when the transients are over.'' 
-Das verstehe ich nicht. (Ir)reducibility ist eine Eigenschaft der MC an sich.
-Eventuell meinst Du, dass die transients bestimmen, in welchem 
-``irreducible set'' die MC landet, und dass es mehrere solcher sets geben
-mag?}
-
-\kai{Ich hab' das halt so gelernt, dass jede MC irgendwann in einem irreducible set landet, wenn man nur lange genug wartet.}
-
-The MATSim property that causes problems when it comes to irreducibility 
-are the changes to the set of possible plans per agent: 
-Every time a new plan is added somewhere, the previous subspace of the state space where the plan 
-was not available \emph{cannot} be reached any more until that plan is removed; similarly, every time 
-a plan is removed, the previous subspace of the state space where the plan was available cannot be 
-reached any more until the plan is re-created again. (Chapter~\ref{ch:discretechoice}
-discusses this in greater detail and also suggests a cure to this problem.)
-
-Even if plans creation and removal could be modelled such that irreducibility was guaranteed, 
-the dynamics of this process would, due to the size of the state space, be so slow that it would be 
-impractial to sample over the resulting iterations. Thus, although the above item~\ref{it:self-averaging} 
-would be formally correct, one would never have enough iterations to put it to practical use.
-\gunnar{Sind wir da sicher? Wenn wir uns nur f\"ur niedrigdimensionale projections interessieren,
-dann mag es durchaus sein, dass sich diese projections hinreichend schnell durchmischen. Ich bin
-zumindest nicht daf\"ur, die M\"oglichkeit von vorneherein auszuschliessen.}
+In the case of the config option \lstinline|ChangeExpBeta|, instead a Gibbs sampling approach is used.  Thus, iterations are correlated by the sampling process, but the process still ensures that the system samples from the underlying distribution.
 
 \end{itemize}
 
