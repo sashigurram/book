@@ -19,7 +19,7 @@ pdf:
 	pdflatex -interaction=nonstopmode ${NAME}
 
 quick:
-	pdflatex ${NAME}
+	xelatex ${NAME}
 
 kaimain:
 	pdflatex "\def\user{kai}\input{main}"
