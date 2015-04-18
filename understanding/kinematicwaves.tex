@@ -13,13 +13,7 @@
 
 \section{\label{sec:Introduction}Introduction}
 
-\gls{matsim} comes with a number of \glspl{mobsim}. These differ from the
-implementation perspective (time-stepping vs.\ event-based, degree
-of parallelism), but they constitute all (at least approximate) solvers
-of the same underlying traffic flow model. The present chapter attempts
-to explain this from the technical mobsim specification alone not
-obvious fact and clarifies currently made simplifications and their
-implications.
+\gls{matsim} comes with a number of \glspl{mobsim} (\cf Sections~\ref{sec:using-mobsims},~\ref{sec:deqsim}), the most important ones currently being the so-called QSim and the so-called JDEQSim. These differ from the implementation perspective (time-stepping vs.\ event-based, degree of parallelism), but they constitute all (at least approximate) solvers of the same underlying traffic flow model. The present chapter attempts to explain this from the technical mobsim specification alone not obvious fact and clarifies currently made simplifications and their implications.
 
 At the heart of \gls{matsim}'s traffic flow model is the flow-density relationship
 (also called \gls{fd}) shown in Figure~\ref{fig:Fundamental-diagram}.
@@ -54,8 +48,8 @@ gap adopted by drivers in congested conditions. This parameter turns
 out to be fairly constant; a vehicle length of 7.5\,meters and a time
 gap of 2\,seconds leads to a value of 13.5\,kilometers per hour. 
 The backward wave speed can be set in the \DOUBLEQUEUESIM\ through the
-\lstinline|gapTravelSpeed| parameter; it cannot be set in the
-\SINGLEQUEUESIM.
+\lstinline|gapTravelSpeed| parameter; it currently cannot be set in the
+\SINGLEQUEUESIM. \kai{chk before going to print}
 % \note{Can it be set somewhere, or is there a hardcoded value?} 
 % \kai{QSim: Ist generell noch nicht implementiert, also auch nicht konfigurierbar.  
 % Jdeqsim: Andreas, könntest Du das bitte mal nachschauen?}
@@ -213,7 +207,7 @@ block'' over the link.
 % ##################################################################################################################
 \section{\label{sec:Node-model}Node Model}
 All \glspl{mobsim} in \gls{matsim} implement the same node model. Somewhat surprisingly,
-this node model can be traced back at least to \gunnar{Kai?}, whereas
+this node model can be traced back at least to \cite[][under the name of ``fair intersections'']{CetinBurriNagel2003queue}, whereas
 the literature based on which its consistency with the \gls{kwm} can be
 established is only a few years old \citep{tampere-2010b,floetteroed-2011a,corthout-2012}. 
 
@@ -237,8 +231,8 @@ downstream are not exceeded. The meaning of this is explained in Section~\ref{se
 intuitively most important implication of this principle is that the
 advancement of a queuing vehicle is not affected by the vehicles
 behind it.
-\item A {}``supply constraint interaction rule'' is satisfied. It defined
-how how the limited receiving flow of a downstream link is shared
+\item A {}``supply constraint interaction rule'' is satisfied. It defines
+how the limited receiving flow of a downstream link is shared
 by competing upstream link. In practical terms, a right-of-way specification.
 \end{enumerate}
 \citet{floetteroed-2011a} specify an {}``incremental node model''
@@ -311,3 +305,12 @@ corresponds to the maximum of its triangular \gls{fd}).
 % }
 
 % ##################################################################################################################
+
+% Local Variables:
+% mode: latex
+% mode: reftex
+% mode: visual-line
+% TeX-master: "../main"
+% comment-padding: 1
+% fill-column: 9999
+% End: 

@@ -18,7 +18,7 @@ plan choice set generation problem.
 
 Discrete choice theory goes back to work by \citet{Luce1965PreferenceUtility} and 
 \citet{McFadden1975DiscreteChoiceModel}. Two standard textbooks in this area are 
-\citet{Ben-AkivaBook} and \citet{Train2003discreteChoiceBook}. The theory is typically used 
+\citet{Ben-AkivaBook} and \citet{Train_2003}. The theory is typically used 
 to describe individual choices among \emph{mutually exclusive} alternatives. 
 Discrete choice models typically do not perfectly predict individual choices.
 \citet{Luce1965PreferenceUtility} distinguished between two possible interpretations of this phenomenon:
@@ -108,7 +108,7 @@ p(\boldsymbol{\eta}_{n})d\boldsymbol{\eta}_{n}\label{eq:mixture-of-logit}
 where $p(\boldsymbol{\eta}_{n})$ is the probability density function of 
 $\boldsymbol{\eta}_{n}=(\boldsymbol{\eta}_{ni})$, \ie the joint probability
 density function of the random disturbances of all alternatives of individual $n$.
-\citep{train-2003}. This formulation comprises most if not all \gls{matsim}
+\citep{Train_2003}. This formulation comprises most if not all \gls{matsim}
 configurations currently used. It represents the \lstinline{ExpBetaPlanSelector}
 and the equivalent \lstinline{ExpBetaPlanChanger}. It also comprises
 the \lstinline{BestPlanSelector} because that is equivalent to the \lstinline{ExpBetaPlanSelector}
@@ -205,77 +205,78 @@ estimated from real data, just as any other parameter of that model.
 \gunnar{Der Fokus dieses Abschnittes sollte auf der day-to-day correlation der epsilons liegen.
 Benjamin, willst Du Dich einmal daran versuchen, das hier einzubauen?}
 
-\begin{oframed}
+%% \begin{oframed}
 
-\citet{McFadden1975DiscreteChoiceModel} built his \gls{rum} by introducing a \emph{random component} into the utility formulation:
-%
-\begin{equation}
-U_i = V_i + \varepsilon_i \ ,
-\end{equation}
-%
-where $U_i$ is the utility of alternative $i$, which is \emph{perceived} by the individual; $V_i$ is the observed or systematic part of utility%
-%
-%described by the utility function (see Equation~\ref{XXX})%
-%
-%\benjamin{Some reference to the utility function of a plan}
-%%
-%\benjamin{I would strongly recommend to use $V_p$ instead of $U_p$ for the utility of a plan even though this is not entirely true, since some of the $\epsilon$ is already captured by the simulation noise that Gunnar called $\eta$...In consequence, the score is NOT equal to $V_p$, right?}
-%%
-%\benjamin{Maybe remove the \acrshort{matsim} reference here completely, and deal with the issue above in the \acrshort{matsim} section below?}
-%%
-%\kai{intuition to remove reference to matsim here.}
-%%
-%\benjamin{Agreed. Removed it, and copied my comment further down.}
-%
-; and $\varepsilon_i$ is a random component of utility.
-%
-As a result, the random component allows to chose options which do not have the highest utility with respect to $V_i$.
-%% for choices that are -- according to the systematic parts of utility calculated by the utility functions -- \emph{irrational}. In consequence, there is a \emph{probability} to select the option with the highest $V_p$, as well as (lower) probabilities to select the other options with lower $V_p$. 
-%
-% Habe obiges mal rausgestrichen, weil man m.E. Annahmen über eps (meiner Intuition nach: Mittelwert=0) machen muss, damit die Aussage wirklich stimmt.  kai, oct'14
-
-Assuming that all $\varepsilon_i$ are independent and identically distributed (i.i.d.)\ following a Gumbel distribution, this leads to an \gls{mnl} model with the choice probability $P_i$ for alternative $i$:
-%
-\begin{equation}
-P_{i} = \frac{e^{\mu \cdot V_i}}{\sum_{j=1}^{J} e^{\mu \cdot V_{j}}} \ ,
-\label{eq:ch:economicEval:logit}
-\end{equation}
-%
-%% \kai{Notation für die Summe im Nenner habe ich so noch nie gesehen.  chk}
+%% \citet{McFadden1975DiscreteChoiceModel} built his \gls{rum} by introducing a \emph{random component} into the utility formulation:
 %% %
-%% \benjamin{Habe es mal anders notiert. Ben-Akiva schreibt $\sum_{j \in C_n}$, wobei $C_n$ das choice set des Individuums ist. Allerdings bekommen wir mit $j$ als Index an anderen Stellen Probleme...}
-%
-where $J$ is the total number of alternatives in the choice set, and $\mu$ is related to the variance of the random component.%
+%% \begin{equation}
+%% U_i = V_i + \varepsilon_i \ ,
+%% \end{equation}
+%% %
+%% where $U_i$ is the utility of alternative $i$, which is \emph{perceived} by the individual; $V_i$ is the observed or systematic part of utility%
+%% %
+%% %described by the utility function (see Equation~\ref{XXX})%
+%% %
+%% %\benjamin{Some reference to the utility function of a plan}
+%% %%
+%% %\benjamin{I would strongly recommend to use $V_p$ instead of $U_p$ for the utility of a plan even though this is not entirely true, since some of the $\epsilon$ is already captured by the simulation noise that Gunnar called $\eta$...In consequence, the score is NOT equal to $V_p$, right?}
+%% %%
+%% %\benjamin{Maybe remove the \acrshort{matsim} reference here completely, and deal with the issue above in the \acrshort{matsim} section below?}
+%% %%
+%% %\kai{intuition to remove reference to matsim here.}
+%% %%
+%% %\benjamin{Agreed. Removed it, and copied my comment further down.}
+%% %
+%% ; and $\varepsilon_i$ is a random component of utility.
+%% %
+%% As a result, the random component allows to chose options which do not have the highest utility with respect to $V_i$.
+%% %% for choices that are -- according to the systematic parts of utility calculated by the utility functions -- \emph{irrational}. In consequence, there is a \emph{probability} to select the option with the highest $V_p$, as well as (lower) probabilities to select the other options with lower $V_p$. 
+%% %
+%% % Habe obiges mal rausgestrichen, weil man m.E. Annahmen über eps (meiner Intuition nach: Mittelwert=0) machen muss, damit die Aussage wirklich stimmt.  kai, oct'14
 
-From the modeler's perspective, $\mu$ describes how rational (with respect to the model) decision makers behave, given a difference in the systematic part between utilities of alternatives. To give an example on the influence of $\mu$ on the choice probabilities of $J=2$ alternatives $a$ and $b$ with $V_b > V_a$: following Equation~\ref{eq:ch:economicEval:logit}, the corresponding choice probabilities are given by
-%
-\[
-P_a = \frac{1}{1 + e^{\mu(V_b - V_a)}} \qquad P_b = \frac{1}{1 + e^{\mu(V_a - V_b)}} \qquad .
-\]
+%% Assuming that all $\varepsilon_i$ are independent and identically distributed (i.i.d.)\ following a Gumbel distribution, this leads to an \gls{mnl} model with the choice probability $P_i$ for alternative $i$:
+%% %
+%% \begin{equation}
+%% P_{i} = \frac{e^{\mu \cdot V_i}}{\sum_{j=1}^{J} e^{\mu \cdot V_{j}}} \ ,
+%% \label{eq:ch:economicEval:logit}
+%% \end{equation}
+%% %
+%% %% \kai{Notation für die Summe im Nenner habe ich so noch nie gesehen.  chk}
+%% %% %
+%% %% \benjamin{Habe es mal anders notiert. Ben-Akiva schreibt $\sum_{j \in C_n}$, wobei $C_n$ das choice set des Individuums ist. Allerdings bekommen wir mit $j$ als Index an anderen Stellen Probleme...}
+%% %
+%% where $J$ is the total number of alternatives in the choice set, and $\mu$ is related to the variance of the random component.%
 
-%
-As one can see, the choice probabilities only depend on the difference between the systematic parts of utility $V_a - V_b$,%
-%
-\footnote{
-%
-It can therefore be argued that with the use of Discrete Choice Theory, one has already left the ground of an ordinal scale of utility, since the difference in utility influences the choice probabilities.
-%
-}
-%
-and on the parameter $\mu$.
-%
-For $\mu \to 0$, this results in a completely random choice behavior and choice probabilities of $P_a = P_b = \frac{1}{2}$.
-%
-For $\mu \to \infty$, this results in a completely ``rational'' behavior and choice probabilities of $P_a = 0$ and $P_b = 1$.
-%
-The first case corresponds to a very large variance, the latter to a very small variance of the difference between the random components $\varepsilon_b - \varepsilon_a$.
+%% From the modeler's perspective, $\mu$ describes how rational (with respect to the model) decision makers behave, given a difference in the systematic part between utilities of alternatives. To give an example on the influence of $\mu$ on the choice probabilities of $J=2$ alternatives $a$ and $b$ with $V_b > V_a$: following Equation~\ref{eq:ch:economicEval:logit}, the corresponding choice probabilities are given by
+%% %
+%% \[
+%% P_a = \frac{1}{1 + e^{\mu(V_b - V_a)}} \qquad P_b = \frac{1}{1 + e^{\mu(V_a - V_b)}} \qquad .
+%% \]
+
+%% %
+%% As one can see, the choice probabilities only depend on the difference between the systematic parts of utility $V_a - V_b$,%
+%% %
+%% \footnote{
+%% %
+%% It can therefore be argued that with the use of Discrete Choice Theory, one has already left the ground of an ordinal scale of utility, since the difference in utility influences the choice probabilities.
+%% %
+%% }
+%% %
+%% and on the parameter $\mu$.
+%% %
+%% For $\mu \to 0$, this results in a completely random choice behavior and choice probabilities of $P_a = P_b = \frac{1}{2}$.
+%% %
+%% For $\mu \to \infty$, this results in a completely ``rational'' behavior and choice probabilities of $P_a = 0$ and $P_b = 1$.
+%% %
+%% The first case corresponds to a very large variance, the latter to a very small variance of the difference between the random components $\varepsilon_b - \varepsilon_a$.
 
 
-A remaining issue then is that the randomness that is explicitly contained in MATSim needs to be consistent with the discrete choice model.\footnote{
-%
-\benjamin{Some pointer to Gunnar's chapter where it is discussed under what conditions $S_{n,i} = V_{n,i}$ or $S_{n,i} = U_{n,i}$ or something completely else.}
-%
-}
+An issue is that the randomness that is explicitly contained in MATSim needs to be consistent with the discrete choice model.
+%% \footnote{
+%% %
+%% \benjamin{Some pointer to Gunnar's chapter where it is discussed under what conditions $S_{n,i} = V_{n,i}$ or $S_{n,i} = U_{n,i}$ or something completely else.}
+%% %
+%% }
 %
 For example, the propensity to use public transit might depend on the distance to the next transit stop, or how well that stop connects to the destination to which the person is traveling.  \acrshort{matsim} will pick up such effects explicitly.  Only a choice model which considers the same attributes will be consistent; otherwise, some of the above effect will be considered as random from the point of view of the analyst and thus be moved into the $\varepsilon_i$, and subsequently into the scale parameter $\mu$.
 
@@ -297,7 +298,7 @@ That is, the score $S_{n,i}$ would be directly interpreted as the total utility 
 Such an approach can currently not be applied out-of-the-box for \acrshort{matsim} for other choice dimensions than destination choice (Chapter~\ref{ch:destinationchoice}).
 To date, it needs to be programmed explicitly in \gls{java}, research to extend this to all choice dimensions is underway (Section~\ref{sec:future-frozen-randomness}). 
 
-\end{oframed}
+%% \end{oframed}
 
 
 
