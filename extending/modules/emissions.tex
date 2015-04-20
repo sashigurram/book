@@ -9,7 +9,7 @@
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
 \createStandardInformation{emissions}{\lstinline|RunEmissionToolOnlineExample| class, \lstinline|RunEmissionToolOfflineExample| class}{emissions}
-{\citet{HuelsmannEtAl_LAS_2011,KickhoeferEtAl_VanoutriveVerhetsel_2013,KickhoeferNagel2011MappingEmissions,KickhoeferNagel2012EmissionInternalization,HuelsmannEtAl_GerikeEtAl_2013,Kickhoefer_PhDThesis_2014,KickhoeferKern_MobilTUM_2014}}
+{\citet{HuelsmannEtAl_LAS_2011,KickhoeferEtAl_VanoutriveVerhetsel_2013,KickhoeferNagel2011MappingEmissions,KickhoeferNagel2013EmissionInternalizationNETS,HuelsmannEtAl_GerikeEtAl_2013,Kickhoefer_PhDThesis_2014,KickhoeferKern_MobilTUM_2014}}
 
 % ##################################################################################################################
 This chapter presents the emission modeling tool developed and tested by \citet{HuelsmannEtAl_LAS_2011} and further improved by \citet{KickhoeferEtAl_VanoutriveVerhetsel_2013}. The text in this chapter is a slightly updated version of the emission modeling tool description in \citet{Kickhoefer_PhDThesis_2014}.
@@ -24,8 +24,6 @@ Section~\ref{ch:emissions:relatedWork} reviews literature for other attempts to 
 \section{Integrated Approaches for Modeling Transport and Emissions}
 \label{ch:emissions:relatedWork}
 %
-%\benjamin{This section maybe does not need to go into the MATSim book. Opinions?}
-%
 Over the last two decades, the modeling of transport-related environmental 
 externalities has received increasing attention in transportation science.
 %
@@ -39,38 +37,35 @@ aggregated figures to estimate air pollution in Beijing and Belgium,
 respectively. Neither approach mentions any particular underlying 
 transport model. It seems that transport related emissions are based on
 aggregated origin-destination matrices or aggregated demand functions. These 
-two studies are on a very different level of aggregation than the \gls{emt} in 
-this thesis, and a comparison does not seem constructive.
+two studies are on a very different level of aggregation than the \gls{emt}, and a comparison does not seem constructive.
 
 \citet{BeckxEtAl_EnvPlannB_2009} use a sophisticated 
 activity-based model to simulate activity schedules for roughly 30\,\% of all 
 households in the Netherlands. Traffic assignment for passenger cars is 
 performed by using an aggregated ``all-or-nothing'' assignment approach, 
 resulting in hourly aggregated traffic flows on the network. Based on the 
-average speed for a trip, the \gls{mimosa} then 
+average speed for a trip, the \acrshort{mimosa} model then 
 calculates emission and fuel consumption rates, possibly dependent on vehicle 
 category. The idea of using an activity-based model to simulate 
 time-dependent emissions is similar to the \gls{emt}. In contrast to the 
 latter, the underlying transport in \citet{BeckxEtAl_EnvPlannB_2009} 
-does not account for congestion effects and different traffic situations. 
+does not account for congestion effects and different traffic states. 
 Additionally, similar macroscopic emission models are typically unable to 
 capture certain microscopic behavior accurately 
 \citep[see, e.g.,][]{AhnRakha_TransResD_2008}. 
 
-\citet{HirschmannEtAl_ITSC_2010} link the microscopic traffic flow simulator ``\gls{vissim}'' with the instantaneous 
-emission model ``\gls{phem}''.%
+\citet{HirschmannEtAl_ITSC_2010} link the microscopic traffic flow simulator \acrshort{vissim} with the instantaneous emission model \acrshort{phem}.%
 %
 \footnote{
 %
-The model uses speed trajectories as input and was tested against this thesis emission 
-modeling tool in a paper by 
-\citet{HuelsmannEtAl_LAS_2011}.
+The \acrshort{phem} model uses speed trajectories as input and was tested against the output of the \gls{emt} by \citet{HuelsmannEtAl_LAS_2011}.
 %
-}%
+}
+%
 At first glance, this approach seems very promising, as it also builds the 
 basis for the \gls{hbefa} database. In contrast to the \gls{emt}, it is not 
 suitable for large-scale scenarios due to the computational complexity of 
-\gls{vissim}.
+\acrshort{vissim}.
 %
 In \citet{Kraschl-HirschmannEtAl_FISTS_2011}, the same authors attempt to 
 develop a parametrization of fuel consumption based on average speeds of 
@@ -80,12 +75,11 @@ model would need to allow for more input variables (\eg vehicle category,
 traffic state, etc.) and provide more differentiated outputs, \eg 
 different emission types.
 
-In a similar study, \citet{SongEtAl_TRR_2012} couples \gls{vissim} with the emission modeling tool ``\gls{moves}''. They find 
-that the \gls{vissim}-simulated, vehicle-specific power distribution for 
+In a similar study, \citet{SongEtAl_TRR_2012} couple \acrshort{vissim} with the emission modeling tool \acrshort{moves}. They find 
+that the \acrshort{vissim}-simulated, vehicle-specific power distribution for 
 passenger cars deviates significantly from the observed distribution, meaning that the estimated emissions also contain significant errors. Here 
 again, the proposed model cannot be used for large-scale scenarios. Additionally, it seems questionable whether such detailed 
-modeling will prove to be superior to less detailed models like \gls{emt} in 
-this thesis.
+modeling will prove to be superior to less detailed models as the \gls{emt}.
 
 \citet{WismansEtAl_TRB_2013} compare passenger car emission 
 estimates of static and dynamic traffic assignment models. They claim that 
@@ -98,12 +92,12 @@ hotspots are, in consequence, also predicted at the wrong locations and/or
 with the wrong amplitude.
 %
 To counter these disadvantages, they couple a static and a dynamic traffic assignment model with 
-the exhaust emission model ``\gls{artemis}''. Large differences in air 
+the exhaust emission model \acrshort{artemis}. Large differences in air 
 pollutant emissions are found and hotspot locations differ.
 
 \citet{HatzopoulouMiller_TransResD_2010} develop a methodology for 
-calculating exhaust emissions, using \gls{matsim} as meso-scopic transport 
-model. The approach is therefore fairly similar to the \gls{emt} of this thesis.
+calculating exhaust emissions, using \gls{matsim} as transport 
+model. The approach is therefore similar to the \gls{emt}.
 %
 In contrast to that study, the \gls{emt} does not assume fixed exhaust 
 emissions per time unit. It uses a more detailed calculation of emissions based 
@@ -243,32 +237,17 @@ In order to further process warm and cold-start emissions, so-called
 events stream. The definition of emission events follows the \gls{matsim} 
 framework that uses events for storing disaggregated information in 
 \gls{xml} format. The following section provides more information 
-on the emission tool software structure.
+on the \gls{emt}'s software structure.
 
 % ##################################################################################################################
 \section{Software Structure}
 \label{ch:emissions:structure}
 The information in this section refers to code that can be found in the 
-\gls{matsim} repository.%
-%
-\footnote{
-%
-The exact location at the time of writing is 
-\url{https://svn.code.sf.net/p/matsim/source/contrib/trunk/emissions}.
-%
-}
-In the following, the software structure of the \gls{emt} at 
-revision 30\,058 is described. For information on how to use the tool, please 
-refer to \lstinline|package-info.java| in the corresponding package.%
-%
-\footnote{
-%
-This information can also be accessed via the \gls{javadoc} page for the emissions contribution; see \url{http://matsim.org/javadoc}.
-%
-}
+\gls{matsim} repository. In the following, the software structure of the \gls{emt} at 
+revision 30\,058 is described. For information on how to use the tool, please use the entry points listed at the beginning of this Chapter~\ref{ch:emissions}.
 %
 
-Figure~\ref{ch:emissions:fig:emissionTool} shows the simplified software structure of the emission modeling tool. The core of the tool is the \lstinline|EmissionModule| which needs to be created before the simulation starts. There are also two public methods that must be called: \lstinline|createLookupTables()| and \lstinline|createEmissionHandler()|.
+Figure~\ref{ch:emissions:fig:emissionTool} shows the simplified software structure of the \gls{emt}. The core of the tool is the \lstinline|EmissionModule| which needs to be created before the simulation starts. There are also two public methods that must be called: \lstinline|createLookupTables()| and \lstinline|createEmissionHandler()|.
 %
 % ------------
 \createfigure%
@@ -279,7 +258,7 @@ Figure~\ref{ch:emissions:fig:emissionTool} shows the simplified software structu
 {}
 
 % ------------
-The former creates lookup tables from input data that has to be exported from the \gls{hbefa} database. The path to these input files can be configured in the \lstinline|EmissionsConfigGroup|. Mandatory input are files for the creation of \lstinline|roadTypeMapping|, \lstinline|emissionVehicles|, \lstinline|avgHbefaWarmTable|, and \lstinline|avgHbefa-Cold-Table|.
+The former creates lookup tables from input data that has to be exported from the \gls{hbefa} database. The path to these input files can be configured in the \lstinline|EmissionsConfigGroup|. Mandatory input are files for the creation of \lstinline|roadTypeMapping|, \lstinline|emissionVehicles|, \lstinline|avgHbefaWarmTable|, and \lstinline|avgHbefaColdTable|.
 %
 The first lookup table maps road types from the \gls{matsim} network to \gls{hbefa} road types. For this mapping, it is necessary to classify the network road types into \gls{hbefa} categories; this requires some transport engineering knowledge.
 %
@@ -296,6 +275,6 @@ The last two mandatory lookup tables (\lstinline|avgHbefaWarmTable| and \lstinli
 %
 The latter information is depicted in Figure~\ref{ch:emissions:fig:emissionTool} as variables of the two classes \lstinline|WarmEmissionHandler| and \lstinline|ColdEmissionHandler|. These two handlers implement several \gls{matsim} \lstinline|EventHandler| interfaces to extract necessary information from the simulation. After gathering this information, the \lstinline|WarmEmissionHandler| asks its \lstinline|WarmEmissionAnalysisModule| to reconstruct the key and look up the emission factors in the respective table. Similarly, the \lstinline|ColdEmissionHandler| asks the \lstinline|ColdEmissionAnalysisModule|. These analysis modules then create \lstinline|Warm/ColdEmissionEvents|, which follow the \gls{matsim} \lstinline|Event| interface definition. Finally, the resulting events stream is written in a joint emission events file by a separate \lstinline|EventsManager|.
 
-For the calculation of emissions dependent on agent-specific vehicle characteristics, \lstinline|emissionVehicles| must contain that specific information, the corresponding flag in the \lstinline|EmissionsConfigGroup| needs to be switched on, and detailed emission factor tables also need to be exported from \gls{hbefa} and provided to the \lstinline|EmissionModule| with two additional input files: \lstinline|detailed\-HbefaWarmTable| and \lstinline|detailedHbefaColdTable|.
+For the calculation of emissions dependent on agent-specific vehicle characteristics, \lstinline|emissionVehicles| must contain that specific information, the corresponding flag in the \lstinline|EmissionsConfigGroup| needs to be switched on, and detailed emission factor tables also need to be exported from \gls{hbefa} and provided to the \lstinline|EmissionModule| with two additional input files: \lstinline|detailedHbefaWarmTable| and \lstinline|detailedHbefaColdTable|.
 
 % ##################################################################################################################

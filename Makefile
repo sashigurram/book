@@ -6,7 +6,7 @@ newpdf:
 	-xelatex  -interaction=nonstopmode ${NAME}
 	makeglossaries ${NAME}
 	makeindex ${NAME}
-	bibtex ${NAME}
+	bibtex -min-crossrefs=99 ${NAME}
 	xelatex -interaction=nonstopmode ${NAME}
 	xelatex -interaction=nonstopmode ${NAME}
 
@@ -14,7 +14,7 @@ pdf:
 	-pdflatex  -interaction=nonstopmode ${NAME}
 	makeglossaries ${NAME}
 	makeindex ${NAME}
-	bibtex ${NAME}
+	bibtex -min-crossrefs=99 ${NAME}
 	pdflatex -interaction=nonstopmode ${NAME}
 	pdflatex -interaction=nonstopmode ${NAME}
 
