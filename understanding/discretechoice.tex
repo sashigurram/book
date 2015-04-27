@@ -18,7 +18,7 @@ plan choice set generation problem. Parts of the following text are taken from \
 
 Discrete choice theory goes back to work by \citet{Luce1965PreferenceUtility} and 
 \citet{McFadden1975DiscreteChoiceModel}. Two standard textbooks in this area are 
-\citet{Ben-AkivaBook} and \citet{Train_2003}. The theory is typically used 
+\citet{Ben-AkivaBook} and \citet{Train_2003}. The theory is mainly used 
 to describe individual choices among \emph{mutually exclusive} alternatives. 
 Discrete choice models typically do not perfectly predict individual choices.
 \citet{Luce1965PreferenceUtility} distinguished between two possible interpretations of this phenomenon:
@@ -65,7 +65,7 @@ the scoring and selection protocols are responsible of representing
 adequate perceptional and behavioral mechanisms. The notions of {}``choice''
 and {}``selection'' are subsequently used interchangeably (\cf Section~\ref{sec:selectors}).
 
-The usual selection protocol of \gls{matsim} resembles an \gls{mnl}
+The usual selection protocol of \gls{matsim} resembles a \gls{mnl}
 choice model. Letting $S_{ni}$ be the score of plan $i$ of agent
 $n$, one has
 \begin{eqnarray}
@@ -75,7 +75,7 @@ with $\mu$ controlling the preference for higher scores.
 It is set to one in the remainder of this section. Only if the score
 of a plan was a deterministic number representing an expected value, 
 then this would constitute a plain \gls{mnl} choice model with $\mu$ taking the role
-of a scale parameter. Such behavior can be approximated in \acrshort{matsim} by
+of a scale parameter \citep[see, e.g.,][p.45]{Train_2003}). Such behavior can be approximated in \acrshort{matsim} by
 \begin{itemize}
 \styleItemize
 \item setting the configuration option \verb$fractionOfIterationsToDisableInnovation$ below one,  
@@ -84,6 +84,8 @@ meaning that for the remaining fraction of iterations innovation will be switche
 \item setting the configuration option \verb$fractionOfIterationsToStartScoreMSA$ below one, 
 meaning that for the remaining fraction of iterations scores will be averaged according to the \gls{msa}.
 \end{itemize}
+%
+\benjamin{Ich verstehe nur bedingt, warum diese 2 Punkte zu einem ``plain MNL choice model'' führen sollen; denn die choice set generation (welche in diesem Teil des Kapitels gar nicht behandelt wird), kommt hier auf einmal doch vor...diese 2 Punkte beziehen sich doch eher auf Eq.~\ref{eq:unconditional-choice-proba}, oder?}
 
 Without this particular configuration, things are somewhat more complicated.
 Assume that the attribute vector $\mathbf{x}_{ni}$ of the alternatives in \MyEqRef{eq:ExpBetaPlanSelector}
@@ -107,7 +109,7 @@ p(\boldsymbol{\eta}_{n})d\boldsymbol{\eta}_{n}\label{eq:mixture-of-logit}
 \end{eqnarray}
 where $p(\boldsymbol{\eta}_{n})$ is the probability density function of 
 $\boldsymbol{\eta}_{n}=(\boldsymbol{\eta}_{ni})$, \ie the joint probability
-density function of the random disturbances of all alternatives of individual $n$.
+density function of the random disturbances of all alternatives of individual $n$
 \citep{Train_2003}. This formulation comprises most if not all \gls{matsim}
 configurations currently used. It represents the \lstinline{ExpBetaPlanSelector}
 and the equivalent \lstinline{ExpBetaPlanChanger}. It also comprises
@@ -132,7 +134,11 @@ Additional complexity results from the simulated network conditions
 being in turn the consequence of simulated travel behavior that is
 again defined through \MyEqRef{eq:mixture-of-logit}. This circular
 dependency is natural, given that \gls{matsim} is mainly a transport planning
-model, (see Chapter~\ref{ch:montecarlo}). Indeed, just as a representation
+model (see Chapter~\ref{ch:montecarlo}).
+%
+\benjamin{Dies verstehe ich nicht, klingt ein wenig abwertend. Wieso muss das in einer Transportsimulation so sein? Wie wäre es denn wenn MATSim eine Börsensimulation wäre? Ähnlich oder? Ansonsten sehr schön formuliert, man versteht, dass wir auch nicht wissen, was alles in $\boldsymbol{\eta}_n$ drinsteckt :)}
+%
+Indeed, just as a representation
 of the mutual demand/supply dependency is essential in transport planning,
 the circular definition of the $\boldsymbol{\eta}_n$ terms adds realism to \gls{matsim}:
 \begin{enumerate}
@@ -155,8 +161,14 @@ results from combining a stochastic mobility simulation with a best-response
 plan selection hence constitutes only a limited, so to say {}``mechanical''
 perspective on travel behavior.)
 
+\subsection{\label{sec:convergence}???Convergence under Stochastic Network Conditions???}
+%
 How to insert the randomness of the simulated network conditions into
-$\boldsymbol{\eta}_n$ is a delicate problem. The notion of {}``learning'' again
+$\boldsymbol{\eta}_n$ is a delicate problem.
+%
+\benjamin{Führen wir Randomness in $\boldsymbol{\eta}_n$ ein oder existiert sie nicht einfach aufgrund der Simulation, des Verhaltensmodells etc.? Vielleicht umformulieren?} 
+%
+The notion of {}``learning'' again
 enters the picture, and again it is not particularly helpful, cf.
 Chapter~\ref{ch:montecarlo}: If the simulation iterations really represented
 simulated days, a model of real human learning would be needed in
@@ -183,6 +195,8 @@ is the concrete score observed in that iteration. The learning rate $\alpha$
 controls how strongly the filtered score is smoothed out, and hence
 it controls the variability of $\boldsymbol{\eta}_n$. \gls{matsim} enables this mechanism
 through the \lstinline{learningRate} parameter.
+%
+\benjamin{Was ist denn dann die praktische Empfehlung für $\alpha$? Welcher Wert ist sinnvoll?}
 
 Assuming for simplicity that upon convergence the unfiltered stationary score
 $S_{ni}^{\infty}$ fluctuates independently from iteration to
@@ -199,11 +213,27 @@ through a learning process. One merely has constructed a parametrization
 of the distribution $p(\boldsymbol{\eta}_n)$. In the resulting
 mixture model \MyEqRef{eq:mixture-of-logit}, $\alpha$ should be
 estimated from real data, just as any other parameter of that model.
+%
+\benjamin{Wenn man das schätzen soll, frage ich mich wie das praktisch geht. Was für Daten braucht man? Außerdem sehe ich gar kein $\alpha$ in Eq.~\ref{eq:mixture-of-logit}; man müsste dann ggf. erklären, wo es sich dort versteckt. Denn ich sehe, dass es mehrere $\beta$ gibt, aber...}
 
-\section{\label{sec:stochasticity-and-repeated-choices}Stochasticity and Repeated Choices}
-
+\subsection{\label{sec:stochasticity-and-repeated-choices}Stochasticity and Repeated Choices -- ???Sources of Stochasticity???}
+%
 \gunnar{Der Fokus dieses Abschnittes sollte auf der day-to-day correlation der epsilons liegen.
 Benjamin, willst Du Dich einmal daran versuchen, das hier einzubauen?}
+%
+\gunnar{Wenn man es hier l\"asst, sollte zumindest der (terminologische) Zusammenhang zur Mainstream-Literatur
+sichergestellt werden. Es gab da mal eine Diskussion \"uber ``quenched/frozen randomness'' vs. ``random effect model'',
+die hatte irgendwie ein Ende gefunden, aber ich weiss nicht mehr, was der Konsens war.
+
+Zudem frage ich mich, ob es hier auch einen Bezug zu ``Sobol''- oder ``Niederreiter''-Sequenzen gibt, 
+von welchen mir gesagt wurde, dass sie irgendwie random number sequences anhand eines niedrigdimensionalen 
+``Startvektors'' initialisieren. Solche Sequenzen kommen offenbar bei der Sch\"atzung simulationsbasierter choice 
+models zum Einsatz kommen.
+
+Ich habe mir das aber selber noch nicht angeschaut.
+}
+%
+\benjamin{Ja, habe ich versucht. Allerdings finde ich die Ankopplung als eigene Section eher unglücklich. Habe mal einen Vorschlag gemacht, wie man Teile von deinem Text vorher in eine Subsection schieben könnte, und dies hier dann die zweite Subsection von ``Evaluating Choice Models...'' werden könnte.}
 
 %% \begin{oframed}
 
@@ -313,10 +343,15 @@ Alternatively, \acrshort{matsim} can generate choice sets of agents within the i
 %
 %\benjamin{Some reference to the loop.}%
 %
-. At the time of writing, there exist three methodological issues with the latter approach:
+.
+
+\subsection{Issues}
+\label{sec:Evolution-of-choice:issues}
+%
+At the time of writing, there exist three methodological issues when generating on-the-fly choice sets with \acrshort{matsim}:
 %
 \begin{enumerate}\styleEnumerate
-\item \textbf{Choice set incomplete}: The maximum number of plans $J$ in the choice set of every agent is limited by memory constraints. That is, the choice set for the decision making is unlikely to be complete.
+\item \textbf{Choice set incomplete}: The maximum number of plans $J$ in the choice set of every agent is limited by computer memory constraints. That is, the choice set for the decision making is unlikely to be complete.
 %
 \item \textbf{Plans correlation from innovation}: Plans might be correlated. This is very likely if they are modified or replaced by best-response re-planning modules (\eg the route choice module), since they have a tendency to always generate the same answer. Yet also random mutations in general result in correlated plans, since the concept of a mutation in fact implies an only small change away from the parent.  This violates the required IIA (Independence from Irrelevant Alternatives) 
 % _from_ !!
@@ -328,7 +363,7 @@ A possible approach to increase the diversity in route choice is investigated by
 %
 }
 
-\item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to keep similar, \ie  correlated, plans when the number of plans has grown beyond $P$.  The reason for this is that the current plans remover removes the plan with the lowest score, which typically also is the one most different from the other plans.  As a result, typically only very similar plans with very similar scores remain in the choice set.\footnote{%
+\item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to keep similar, \ie  correlated, plans when the number of plans has grown beyond $J$.  The reason for this is that the current plans remover removes the plan with the lowest score, which typically also is the one most different from the other plans.  As a result, typically only very similar plans with very similar scores remain in the choice set.\footnote{%
 %
 A possible approach to maintain diversity in plans removal would be to give penalties to the scores of plans that are similar to other plans.  This penalty could be taken directly from approaches such as the path size logit \citep{DaganzoSheffi1977SUE,FrejingerBierlaire2007PathSizeLogit}.  For early attempts within \acrshort{matsim} see \cite{Grether2014PhD} (Chapter~6) and \cite{NeumannEtAlPassengerArrivalPatterns}.
 %
@@ -336,9 +371,12 @@ A possible approach to maintain diversity in plans removal would be to give pena
 %
 \end{enumerate}
 %
-These three issues might lead to biased behavior, and also have consequences for economic evaluation. 
-A discussion of these aspects, as well as a presentation of possible solutions is given in Chapter~\ref{ch:economicEval}.
+These three issues might lead to biased behavior, which also has consequences for economic evaluation (see Chapter~\ref{ch:economicEval}).
 
+\subsection{Possible Solution}
+\label{sec:Evolution-of-choice:solution}
+\benjamin{Das ist ein harter Bruch an dieser Stelle. M.E. müsste konkreter formuliert werden, welche(s) der drei oben aufgeführten Probleme das folgende versucht zu lösen. Auch die Fußnoten von oben könnten hier hinein... Habe mal eine Subsection eingefügt...müsste aber sicher noch etwas besser anmoderiert werden...}
+%
 This section now turns in greater detail to the question what it means to insert a plan
 innovation mechanism into \gls{matsim}'s iterated simulation logic. The
 modeling of a choice set is, even in the discrete choice community,
@@ -414,7 +452,11 @@ proposed.
 % ?? --  Ich finde das mit dem $C$ ohne $n$-Index schwer zu lesen; vielleicht doch $\tilde C_n$?}
 
 Assume that the plan innovation yields exactly
-one new plan $i_{\text{in}}$ through a best-response against the
+one new plan $i_{\text{in}}$ through a best-response
+%
+\benjamin{Ist ``best-response'' irgendwo definiert? Wäre an dieser Stelle extrem hilfreich. }
+%
+against the
 last iteration. The corresponding plan innovation distribution is
 approximated by $e^{\mu_{\text{inno}}S_{ni}}/\sum_{j\in \mathcal{U}_n}e^{\mu_{\text{inno}}S_{nj}}$,
 with a very large $\mu_{\text{inno}}$. Assuming further that $i_{\text{in}}$
@@ -450,16 +492,28 @@ $S_{ni_{\text{in}}}$ and $S_{ni_{\text{out}}}$ to be independent
 random variables, whereas $S_{ni_{\text{in}}}$ is (due to the best
 response) always maximal among all alternatives given the most recent
 iteration. One should hence evaluate this expression by computing
-both scores from the network conditions of two randomly selected stationary
+both scores from the network conditions of two
+%
+\benjamin{Warum 2 und nicht z.B. 5?}
+%
+randomly selected stationary
 iterations.
 
 This allows to select plans according to (\ref{eq:global-choice-model})
 from an unconstrained choice set even though one enumerates only a
 small subset of the full choice set, which is updated through a computationally
-efficient best-response mechanism. In summary, one does the following
+efficient best-response mechanism.
+%
+\benjamin{Wie vorhin: Best-response wäre gut, wenn es irgendwo erklärt wäre. Außerdem sagen wir ja unter \ref{sec:Evolution-of-choice:issues} eigentlich, dass wir die ``diversity in choice'' erhöhen wollen, oder? Macht best-response nicht genau das Gegenteil? Möglicherweise macht der Algo unten \emph{als Ganzes} etwas anderes, ich würde es aber gerne verstehen  wie das mit unseren anderen Ideen zusammenhängt... :)}
+%
+In summary, one does the following
 for each agent in each iteration:
 \begin{compactenum}
-\item Randomly select a given plan for removal and compute a new best response
+\item Randomly select a given plan for removal
+%
+\benjamin{Ist das nicht im diametralen Widerspruch zu dem, was wir an anderer Stelle versuchen? Nämlich die Pläne über ein (Pathsize-)Logit-Modell rauszuwerfen und nicht zufällig...Kai?}
+%
+and compute a new best response
 plan against the last iteration.
 \item Is, based on network conditions from two randomly selected stationary
 iterations, the new plan better than the one selected for removal?
@@ -473,14 +527,22 @@ newly generated plan, and select a new plan from the new choice set.
 This at first glance counter-intuitive behavior can be motivated as follows:
 %\kai{previous sentence changed; pls check} 
 Best response creates new plans that are by chance
-better than any other plan in a given iteration. Best response is
+better
+%
+\benjamin{Hier wird nun endgültig klar, dass man best-response erklären muss. Was z.B. der Router in MATSim macht ist best-response basierend auf der letzten Iteration. Ich glaube, das ist das, was du hier willst, oder? Allerdings aggregiert er eben Reisezeiten in 15~min Timebins, und deshalb kann die ex-post Erfahrung eines neuen Superplans auch wieder schlecht sein...}
+%
+than any other plan in a given iteration. Best response is
 hence corrected for by accepting the new plan only if it is by chance
 worse than a randomly selected alternative plan, with both plans being
 evaluated in randomly selected stationary iterations.
 
 Note that the correctness of this approach depends on the ability
 of the best-response plan innovation to create plans that are sufficiently
-variable, in the sense that the plan choice set innovation process
+variable, 
+%
+\benjamin{Inwieweit kann denn ein best-response Algo variable Pläne liefern? Ich glaube, ich habe hier etwas nicht verstanden...}
+%
+in the sense that the plan choice set innovation process
 is irreducible \citep{ross-2006}.
 
 % ##################################################################################################################
@@ -491,6 +553,8 @@ terminology of discrete choice modeling. The implications of evaluating
 stochastic scores when selecting a plan were explained. Further, a
 cure to the possibly detrimental effect of using best-response plan
 innovation modules was suggested.
+%
+\benjamin{Ich fände es hilfreich, wenn es hier irgendwelche ``Take-away messages'' gäbe. Im Sinne von: ``Wenn wir valide choice sets in MATSim reingeben, dann bekommen wir brauchbare Entscheidungen der Agenten, die ein MNL-model auch erzeugen würde''. Oder: ``Wenn dies und jenes implemtiert wird, dann sind wir uns relativ sicher, dass wir in-the-loop einigermaßen sinnvolle choice sets erzeugen''. Sonst muss man später beim Zitieren immer suchen, wo man zwischen den Zeilen irgendwas findet, das man zur Argumentation braucht...}
 
 % ##################################################################################################################
 
