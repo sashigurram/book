@@ -72,22 +72,31 @@ $n$, one has
 P_{n}(i\mid C_{n}) & = & \frac{e^{\mu S_{ni}}}{\sum_{j\in C_{n}}e^{\mu S_{nj}}}\label{eq:ExpBetaPlanSelector}
 \end{eqnarray}
 with $\mu$ controlling the preference for higher scores.
-It is set to one in the remainder of this section. Only if the score
+It is set to one in the remainder of this section. 
+
+\subsubsection{Case 1: score deterministic value}
+
+Only if the score
 of a plan was a deterministic number representing an expected value, 
 then this would constitute a plain \gls{mnl} choice model with $\mu$ taking the role
-of a scale parameter \citep[see, e.g.,][p.45]{Train_2003}). Such behavior can be approximated in \acrshort{matsim} by
+of a scale parameter \citep[see, e.g.,][p.45]{Train_2003}). 
+Such behavior 
+can be approximated in \acrshort{matsim} by the following config settings:
 \begin{itemize}
 \styleItemize
-\item setting the configuration option \verb$fractionOfIterationsToDisableInnovation$ below one,  
-meaning that for the remaining fraction of iterations innovation will be switched off, 
-\ie the choice sets will remain fixed from then on;
-\item setting the configuration option \verb$fractionOfIterationsToStartScoreMSA$ below one, 
-meaning that for the remaining fraction of iterations scores will be averaged according to the \gls{msa}.
+\item A fixed choice set $C_n$ is obtained by setting the configuration option \verb$fractionOfIterationsToDisableInnovation$ below one,  
+meaning that for the remaining fraction of iterations innovation will be switched off.
+%% \ie the choice sets will remain fixed from then on;
+\item Score convergence to its expectation value can be achieved by setting the configuration option \verb$fractionOfIterationsToStartScoreMSA$ below one, 
+meaning that for the remaining fraction of iterations scores will be averaged according to the \acrfull{msa}.
 \end{itemize}
 %
 \benjamin{Ich verstehe nur bedingt, warum diese 2 Punkte zu einem ``plain MNL choice model'' führen sollen; denn die choice set generation (welche in diesem Teil des Kapitels gar nicht behandelt wird), kommt hier auf einmal doch vor...diese 2 Punkte beziehen sich doch eher auf Eq.~\ref{eq:unconditional-choice-proba}, oder?}
 
+\subsubsection{Case 2: more general case}
+
 Without this particular configuration, things are somewhat more complicated.
+
 Assume that the attribute vector $\mathbf{x}_{ni}$ of the alternatives in \MyEqRef{eq:ExpBetaPlanSelector}
 is defined through (a transformation of) the network conditions observed
 during the last iteration(s). Assume further that the score is a linear
@@ -108,7 +117,7 @@ P_{n}(i\mid C_{n}) & = &
 p(\boldsymbol{\eta}_{n})d\boldsymbol{\eta}_{n}\label{eq:mixture-of-logit}
 \end{eqnarray}
 where $p(\boldsymbol{\eta}_{n})$ is the probability density function of 
-$\boldsymbol{\eta}_{n}=(\boldsymbol{\eta}_{ni})$, \ie the joint probability
+$\boldsymbol{\eta}_{n}=(\boldsymbol{\eta}_{ni})_i$ \kai{chk 2nd index $i$}, \ie the joint probability
 density function of the random disturbances of all alternatives of individual $n$
 \citep{Train_2003}. This formulation comprises most if not all \gls{matsim}
 configurations currently used. It represents the \lstinline{ExpBetaPlanSelector}
@@ -132,13 +141,15 @@ one can only draw from it.
 
 Additional complexity results from the simulated network conditions
 being in turn the consequence of simulated travel behavior that is
-again defined through \MyEqRef{eq:mixture-of-logit}. This circular
-dependency is natural, given that \gls{matsim} is mainly a transport planning
-model (see Chapter~\ref{ch:montecarlo}).
-%
-\benjamin{Dies verstehe ich nicht, klingt ein wenig abwertend. Wieso muss das in einer Transportsimulation so sein? Wie wäre es denn wenn MATSim eine Börsensimulation wäre? Ähnlich oder? Ansonsten sehr schön formuliert, man versteht, dass wir auch nicht wissen, was alles in $\boldsymbol{\eta}_n$ drinsteckt :)}
-%
-Indeed, just as a representation
+again defined through \MyEqRef{eq:mixture-of-logit}. 
+%% This circular
+%% dependency is natural, given that \gls{matsim} is mainly a transport planning
+%% model (see Chapter~\ref{ch:montecarlo}).
+%% %
+%% \benjamin{Dies verstehe ich nicht, klingt ein wenig abwertend. Wieso muss das in einer Transportsimulation so sein? Wie wäre es denn wenn MATSim eine Börsensimulation wäre? Ähnlich oder? Ansonsten sehr schön formuliert, man versteht, dass wir auch nicht wissen, was alles in $\boldsymbol{\eta}_n$ drinsteckt :)}
+%% %
+%% Indeed, 
+Just as a representation
 of the mutual demand/supply dependency is essential in transport planning,
 the circular definition of the $\boldsymbol{\eta}_n$ terms adds realism to \gls{matsim}:
 \begin{enumerate}
@@ -161,7 +172,9 @@ results from combining a stochastic mobility simulation with a best-response
 plan selection hence constitutes only a limited, so to say {}``mechanical''
 perspective on travel behavior.)
 
-\subsection{\label{sec:convergence}???Randomness and Self-Consistent State???}
+\subsection{Illustrative example how this could be put to use}
+
+%% \subsection{\label{sec:convergence}???Randomness and Self-Consistent State???}
 %
 \benjamin{Alternativer Titel: ``Convergence under Stochastic Network Conditions''}
 %
@@ -305,7 +318,7 @@ Ich habe mir das aber selber noch nicht angeschaut.
 %% The first case corresponds to a very large variance, the latter to a very small variance of the difference between the random components $\varepsilon_b - \varepsilon_a$.
 
 
-As pointed out at the beginning of this section, the score of a particular plan of a particular individual\emdash as a result of stochastic network conditions\emdash varies over iterations. 
+As pointed out at the beginning of this section, the score of a particular plan of a particular individual---as a result of stochastic network conditions---varies over iterations. 
 
 An issue is that the randomness that is explicitly contained in MATSim needs to be consistent with the discrete choice model.
 %% \footnote{
@@ -457,6 +470,7 @@ proposed.
 % \end{eqnarray}
 % ?? --  Ich finde das mit dem $C$ ohne $n$-Index schwer zu lesen; vielleicht doch $\tilde C_n$?}
 
+\paragraph*{Illustratative example}
 Assume that the plan innovation yields exactly
 one new plan $i_{\text{in}}$ through a best-response
 %
