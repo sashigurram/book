@@ -13,18 +13,21 @@
 This chapter (i) attempts to reconcile \gls{matsim}'s mechanisms of plan
 {}``mutation'', {}``selection'' and {}``execution'', borrowed from evolutionary computation, with a 
 %mainstream
-discrete choice perspective, and (ii) and sketches a solution to the
+discrete choice perspective, and (ii) and sketches a possible solution to the
 plan choice set generation problem. Parts of the following text are taken from \citet[][Section~2.3]{Kickhoefer_PhDThesis_2014}.
 
 Discrete choice theory goes back to work by \citet{Luce1965PreferenceUtility} and 
-\citet{McFadden1975DiscreteChoiceModel}. Two standard textbooks in this area are 
-\citet{Ben-AkivaBook} and \citet{Train_2003}. The theory is mainly used 
+\citet{McFadden1975DiscreteChoiceModel}. Two standard textbooks in this area are by
+\citet{Ben-AkivaBook} and by \citet{Train_2003}. The theory is mainly used 
 to describe individual choices among \emph{mutually exclusive} alternatives. 
 Discrete choice models typically do not perfectly predict individual choices.
-\citet{Luce1965PreferenceUtility} distinguished between two possible interpretations of this phenomenon:
-(1) People chose randomly among their alternatives, rendering their behavior inherently unpredictable.
+\citet{Luce1965PreferenceUtility} distinguish between two possible interpretations of this phenomenon:
+(1) People choose randomly among their alternatives, rendering their behavior inherently unpredictable.
 (2) The choice only \emph{appears} to be random since the modeler does not include all relevant 
-decision variables in the model. However, both perspectives lead to the same result, namely the adaptation
+decision variables in the model. 
+%However, 
+Both perspectives lead to the same result, namely the %adaptation
+introduction
 of probabilistic choice models.
 
 Let $\mathcal{U}_n$ be the universal set of all plans that may ever be considered
@@ -38,10 +41,10 @@ P_{n}(i\mid \mathcal{U}_n) & = & \sum_{C_{n}\subset \mathcal{U}_n}P_{n}(i\mid C_
 which means the following. Selecting a plan requires a plan choice
 set. The term $P_{n}(C_{n}\mid \mathcal{U}_n)$ represents the probability that
 this concrete choice set is $C_{n}$, which must be a subset of $\mathcal{U}_n$.
-Technically, the plan innovation modules draw from this distribution.
+Technically, the plan \emph{innovation} modules draw from this distribution.
 The term $P_{n}(i\mid C_{n})$ represents the probability that agent
 $n$ selects plan $i$ given that its concrete choice set is $C_{n}$.
-Technically, the plan selection modules draw from this distribution.
+Technically, the plan \emph{selection} modules draw from this distribution.
 The product of these terms hence represents the probability that both
 the choice set $C_{n}$ is available and that plan $i$ is chosen out
 of that set. The probability of selecting plan $i$ independently
@@ -74,26 +77,26 @@ P_{n}(i\mid C_{n}) & = & \frac{e^{\mu S_{ni}}}{\sum_{j\in C_{n}}e^{\mu S_{nj}}}\
 with $\mu$ controlling the preference for higher scores.
 It is set to one in the remainder of this section. 
 
-\subsubsection{Case 1: score deterministic value}
+\subsection{Case 1: Score is or converges towards a deterministic value}
 
 Only if the score
 of a plan was a deterministic number representing an expected value, 
-then this would constitute a plain \gls{mnl} choice model with $\mu$ taking the role
-of a scale parameter \citep[see, e.g.,][p.45]{Train_2003}). 
+then Equation~(\ref{eq:ExpBetaPlanSelector}) would constitute a plain \gls{mnl} choice model with $\mu$ taking the role
+of a scale parameter \citep[see, e.g.,][p.45]{Train_2003}. 
 Such behavior 
-can be approximated in \acrshort{matsim} by the following config settings:
+can be approximated in \acrshort{matsim} by the following configuration settings:
 \begin{itemize}
 \styleItemize
-\item A fixed choice set $C_n$ is obtained by setting the configuration option \verb$fractionOfIterationsToDisableInnovation$ below one,  
-meaning that for the remaining fraction of iterations innovation will be switched off.
+\item A fixed choice set $C_n$ is eventually obtained by setting the configuration option \verb$fractionOfIterationsToDisableInnovation$ below one,  
+meaning that for the remaining fraction of iterations beyond the configured value, innovation will be switched off.
 %% \ie the choice sets will remain fixed from then on;
 \item Score convergence to its expectation value can be achieved by setting the configuration option \verb$fractionOfIterationsToStartScoreMSA$ below one, 
 meaning that for the remaining fraction of iterations scores will be averaged according to the \acrfull{msa}.
 \end{itemize}
 %
-\benjamin{Ich verstehe nur bedingt, warum diese 2 Punkte zu einem ``plain MNL choice model'' führen sollen; denn die choice set generation (welche in diesem Teil des Kapitels gar nicht behandelt wird), kommt hier auf einmal doch vor...diese 2 Punkte beziehen sich doch eher auf Eq.~\ref{eq:unconditional-choice-proba}, oder?}
+%% \benjamin{Ich verstehe nur bedingt, warum diese 2 Punkte zu einem ``plain MNL choice model'' führen sollen; denn die choice set generation (welche in diesem Teil des Kapitels gar nicht behandelt wird), kommt hier auf einmal doch vor...diese 2 Punkte beziehen sich doch eher auf Eq.~\ref{eq:unconditional-choice-proba}, oder?}
 
-\subsubsection{Case 2: more general case}
+\subsection{Case 2: More general}
 
 Without this particular configuration, things are somewhat more complicated.
 
@@ -117,7 +120,7 @@ P_{n}(i\mid C_{n}) & = &
 p(\boldsymbol{\eta}_{n})d\boldsymbol{\eta}_{n}\label{eq:mixture-of-logit}
 \end{eqnarray}
 where $p(\boldsymbol{\eta}_{n})$ is the probability density function of 
-$\boldsymbol{\eta}_{n}=(\boldsymbol{\eta}_{ni})_i$ \kai{chk 2nd index $i$}, \ie the joint probability
+$\boldsymbol{\eta}_{n}=(\boldsymbol{\eta}_{ni})_i$ \kai{@Gunnar: I added 2nd index $i$, pls chk}, \ie the joint probability
 density function of the random disturbances of all alternatives of individual $n$
 \citep{Train_2003}. This formulation comprises most if not all \gls{matsim}
 configurations currently used. It represents the \lstinline{ExpBetaPlanSelector}
@@ -167,18 +170,20 @@ the random error terms of the postulated behavioral model are indeed
 outputs of the mobility simulation. Simulated travel time (variability)
 is such a case. Unobserved preferences of the decision maker, however,
 are not an output of the mobility simulation and hence need to be
-captured otherwise. (The extreme case of a choice distribution that
-results from combining a stochastic mobility simulation with a best-response
-plan selection hence constitutes only a limited, so to say {}``mechanical''
-perspective on travel behavior.)
+captured otherwise. 
+%% (The extreme case of a choice distribution that
+%% results from combining a stochastic mobility simulation with a best-response
+%% plan selection hence constitutes only a limited, so to say {}``mechanical''
+%% perspective on travel behavior.)
 
-\subsection{Illustrative example how this could be put to use}
 
-%% \subsection{\label{sec:convergence}???Randomness and Self-Consistent State???}
-%
-\benjamin{Alternativer Titel: ``Convergence under Stochastic Network Conditions''}
-%
-\benjamin{Alternativer Titel: ``Stochastic Network Conditions and Stationary Distribution''}
+\subsection{Illustrative example of how this could be used}
+
+%% %% \subsection{\label{sec:convergence}???Randomness and Self-Consistent State???}
+%% %
+%% \benjamin{Alternativer Titel: ``Convergence under Stochastic Network Conditions''}
+%% %
+%% \benjamin{Alternativer Titel: ``Stochastic Network Conditions and Stationary Distribution''}
 %
 How to insert the randomness of the simulated network conditions into
 $\boldsymbol{\eta}_n$ is a delicate problem.
@@ -186,17 +191,16 @@ $\boldsymbol{\eta}_n$ is a delicate problem.
 \benjamin{Führen wir Randomness in $\boldsymbol{\eta}_n$ ein oder existiert sie nicht einfach aufgrund der Simulation, des Verhaltensmodells etc.? Vielleicht umformulieren?} 
 %
 The notion of {}``learning'' again
-enters the picture, and again it is not particularly helpful, cf.
-Chapter~\ref{ch:montecarlo}: If the simulation iterations really represented
-simulated days, a model of real human learning would be needed in
+enters the picture, and again it is not particularly helpful, cf.~Chapter~\ref{ch:montecarlo}: If the simulation iterations really represented
+simulated days, then a model of real human learning would be needed in
 order to combine a sequence of past network conditions into an instantaneous
 $\boldsymbol{\eta}_n$ realization. Without a sound instance of such a learning model,
 a behavioral justification of \MyEqRef{eq:mixture-of-logit} cannot
 be given.
 
 However, another perspective on this problem is possible, continuing
-the arguments of Chapter~\ref{ch:montecarlo}. It is argued there that
-the sole purpose of \gls{matsim}'s iterative mechanism is to attain a realistic
+the arguments of Chapter~\ref{ch:montecarlo}. It is argued there that one can consider
+the sole purpose of \gls{matsim}'s iterative mechanism to attain a realistic
 stationary distribution. If so, then the sole purpose of the simulated
 $\boldsymbol{\eta}_n$s is to yield a realistic stationary choice distribution. To
 illustrate this perspective, consider the following moving-average score
@@ -233,121 +237,126 @@ estimated from real data, just as any other parameter of that model.
 %
 \benjamin{Wenn man das schätzen soll, frage ich mich wie das praktisch geht. Was für Daten braucht man? Außerdem sehe ich gar kein $\alpha$ in Eq.~\ref{eq:mixture-of-logit}; man müsste dann ggf. erklären, wo es sich dort versteckt. Denn ich sehe, dass es mehrere $\beta$ gibt, aber...}
 
-\subsection{\label{sec:stochasticity-and-repeated-choices}Stochasticity and Repeated Choices -- ???Sources of Stochasticity???}
-%
-\gunnar{Der Fokus dieses Abschnittes sollte auf der day-to-day correlation der epsilons liegen.
-Benjamin, willst Du Dich einmal daran versuchen, das hier einzubauen?}
-%
-\gunnar{Wenn man es hier l\"asst, sollte zumindest der (terminologische) Zusammenhang zur Mainstream-Literatur
-sichergestellt werden. Es gab da mal eine Diskussion \"uber ``quenched/frozen randomness'' vs. ``random effect model'',
-die hatte irgendwie ein Ende gefunden, aber ich weiss nicht mehr, was der Konsens war.
+\kai{Hier stand ein Abschnitt über ``frozen randomness''.  Ich habe das jetzt wg.\ Nichtkonvergenz der Diskussion nach ``research avenues'' befördert.  Hoffe mal, dass wir uns dort dann über das wording einigen können, sonst haben wir ein Problem, wenn wir noch nicht einmal die Forschungsfrage formulieren können. :--)}
 
-Zudem frage ich mich, ob es hier auch einen Bezug zu ``Sobol''- oder ``Niederreiter''-Sequenzen gibt, 
-von welchen mir gesagt wurde, dass sie irgendwie random number sequences anhand eines niedrigdimensionalen 
-``Startvektors'' initialisieren. Solche Sequenzen kommen offenbar bei der Sch\"atzung simulationsbasierter choice 
-models zum Einsatz kommen.
+%% \subsection{\label{sec:stochasticity-and-repeated-choices}Stochasticity and Repeated Choices -- ???Sources of Stochasticity???}
+%% %
+%% \gunnar{Der Fokus dieses Abschnittes sollte auf der day-to-day correlation der epsilons liegen.
+%% Benjamin, willst Du Dich einmal daran versuchen, das hier einzubauen?}
+%% %
+%% \gunnar{Wenn man es hier l\"asst, sollte zumindest der (terminologische) Zusammenhang zur Mainstream-Literatur
+%% sichergestellt werden. Es gab da mal eine Diskussion \"uber ``quenched/frozen randomness'' vs. ``random effect model'',
+%% die hatte irgendwie ein Ende gefunden, aber ich weiss nicht mehr, was der Konsens war.}
 
-Ich habe mir das aber selber noch nicht angeschaut.
-}
-%
-\benjamin{Ja, habe ich versucht. Allerdings finde ich die Ankopplung als eigene (Main)Section eher unglücklich. Habe mal einen Vorschlag gemacht, wie man Teile von deinem Text vorher in eine Subsection schieben könnte, und dies hier dann die zweite Subsection von ``Evaluating Choice Models...'' werden könnte.}
 
-%% \begin{oframed}
+%% %% \gunnar{Zudem frage ich mich, ob es hier auch einen Bezug zu ``Sobol''- oder ``Niederreiter''-Sequenzen gibt, 
+%% %% von welchen mir gesagt wurde, dass sie irgendwie random number sequences anhand eines niedrigdimensionalen 
+%% %% ``Startvektors'' initialisieren. Solche Sequenzen kommen offenbar bei der Sch\"atzung simulationsbasierter choice 
+%% %% models zum Einsatz kommen.
 
-%% \citet{McFadden1975DiscreteChoiceModel} built his \gls{rum} by introducing a \emph{random component} into the utility formulation:
-%% %
-%% \begin{equation}
-%% U_i = V_i + \varepsilon_i \ ,
-%% \end{equation}
-%% %
-%% where $U_i$ is the utility of alternative $i$, which is \emph{perceived} by the individual; $V_i$ is the observed or systematic part of utility%
-%% %
-%% %described by the utility function (see Equation~\ref{XXX})%
-%% %
-%% %\benjamin{Some reference to the utility function of a plan}
-%% %%
-%% %\benjamin{I would strongly recommend to use $V_p$ instead of $U_p$ for the utility of a plan even though this is not entirely true, since some of the $\epsilon$ is already captured by the simulation noise that Gunnar called $\eta$...In consequence, the score is NOT equal to $V_p$, right?}
-%% %%
-%% %\benjamin{Maybe remove the \acrshort{matsim} reference here completely, and deal with the issue above in the \acrshort{matsim} section below?}
-%% %%
-%% %\kai{intuition to remove reference to matsim here.}
-%% %%
-%% %\benjamin{Agreed. Removed it, and copied my comment further down.}
-%% %
-%% ; and $\varepsilon_i$ is a random component of utility.
-%% %
-%% As a result, the random component allows to chose options which do not have the highest utility with respect to $V_i$.
-%% %% for choices that are -- according to the systematic parts of utility calculated by the utility functions -- \emph{irrational}. In consequence, there is a \emph{probability} to select the option with the highest $V_p$, as well as (lower) probabilities to select the other options with lower $V_p$. 
-%% %
-%% % Habe obiges mal rausgestrichen, weil man m.E. Annahmen über eps (meiner Intuition nach: Mittelwert=0) machen muss, damit die Aussage wirklich stimmt.  kai, oct'14
+%% %% Ich habe mir das aber selber noch nicht angeschaut.
+%% %% }
 
-%% Assuming that all $\varepsilon_i$ are independent and identically distributed (i.i.d.)\ following a Gumbel distribution, this leads to an \gls{mnl} model with the choice probability $P_i$ for alternative $i$:
-%% %
-%% \begin{equation}
-%% P_{i} = \frac{e^{\mu \cdot V_i}}{\sum_{j=1}^{J} e^{\mu \cdot V_{j}}} \ ,
-%% \label{eq:ch:economicEval:logit}
-%% \end{equation}
-%% %
-%% %% \kai{Notation für die Summe im Nenner habe ich so noch nie gesehen.  chk}
+%% %% \kai{Für mich hört sich das verwandt an zu Halting-Sequenzen o.ä.  Das sind Sequenzen, die insbesondere vieldimensionale Räume gleichmäßiger überdecken als reine Zufallszahlen, aber doch kein periodisches Gitter bilden.  Chandra Bhat benutzt so etwas auch.  Man könnte einen Zusammenhang mit dem Thema hier konstruieren, aber das scheint mir nicht sofort naheliegend und damit bestenfalls (wenn jemand es ausformulieren will) research avenues.}
+
+%% \benjamin{Ja, habe ich versucht. Allerdings finde ich die Ankopplung als eigene (Main)Section eher unglücklich. Habe mal einen Vorschlag gemacht, wie man Teile von deinem Text vorher in eine Subsection schieben könnte, und dies hier dann die zweite Subsection von ``Evaluating Choice Models...'' werden könnte.}
+
+%% %% \begin{oframed}
+
+%% %% \citet{McFadden1975DiscreteChoiceModel} built his \gls{rum} by introducing a \emph{random component} into the utility formulation:
 %% %% %
-%% %% \benjamin{Habe es mal anders notiert. Ben-Akiva schreibt $\sum_{j \in C_n}$, wobei $C_n$ das choice set des Individuums ist. Allerdings bekommen wir mit $j$ als Index an anderen Stellen Probleme...}
-%% %
-%% where $J$ is the total number of alternatives in the choice set, and $\mu$ is related to the variance of the random component.%
+%% %% \begin{equation}
+%% %% U_i = V_i + \varepsilon_i \ ,
+%% %% \end{equation}
+%% %% %
+%% %% where $U_i$ is the utility of alternative $i$, which is \emph{perceived} by the individual; $V_i$ is the observed or systematic part of utility%
+%% %% %
+%% %% %described by the utility function (see Equation~\ref{XXX})%
+%% %% %
+%% %% %\benjamin{Some reference to the utility function of a plan}
+%% %% %%
+%% %% %\benjamin{I would strongly recommend to use $V_p$ instead of $U_p$ for the utility of a plan even though this is not entirely true, since some of the $\epsilon$ is already captured by the simulation noise that Gunnar called $\eta$...In consequence, the score is NOT equal to $V_p$, right?}
+%% %% %%
+%% %% %\benjamin{Maybe remove the \acrshort{matsim} reference here completely, and deal with the issue above in the \acrshort{matsim} section below?}
+%% %% %%
+%% %% %\kai{intuition to remove reference to matsim here.}
+%% %% %%
+%% %% %\benjamin{Agreed. Removed it, and copied my comment further down.}
+%% %% %
+%% %% ; and $\varepsilon_i$ is a random component of utility.
+%% %% %
+%% %% As a result, the random component allows to chose options which do not have the highest utility with respect to $V_i$.
+%% %% %% for choices that are -- according to the systematic parts of utility calculated by the utility functions -- \emph{irrational}. In consequence, there is a \emph{probability} to select the option with the highest $V_p$, as well as (lower) probabilities to select the other options with lower $V_p$. 
+%% %% %
+%% %% % Habe obiges mal rausgestrichen, weil man m.E. Annahmen über eps (meiner Intuition nach: Mittelwert=0) machen muss, damit die Aussage wirklich stimmt.  kai, oct'14
 
-%% From the modeler's perspective, $\mu$ describes how rational (with respect to the model) decision makers behave, given a difference in the systematic part between utilities of alternatives. To give an example on the influence of $\mu$ on the choice probabilities of $J=2$ alternatives $a$ and $b$ with $V_b > V_a$: following Equation~\ref{eq:ch:economicEval:logit}, the corresponding choice probabilities are given by
-%% %
-%% \[
-%% P_a = \frac{1}{1 + e^{\mu(V_b - V_a)}} \qquad P_b = \frac{1}{1 + e^{\mu(V_a - V_b)}} \qquad .
-%% \]
+%% %% Assuming that all $\varepsilon_i$ are independent and identically distributed (i.i.d.)\ following a Gumbel distribution, this leads to an \gls{mnl} model with the choice probability $P_i$ for alternative $i$:
+%% %% %
+%% %% \begin{equation}
+%% %% P_{i} = \frac{e^{\mu \cdot V_i}}{\sum_{j=1}^{J} e^{\mu \cdot V_{j}}} \ ,
+%% %% \label{eq:ch:economicEval:logit}
+%% %% \end{equation}
+%% %% %
+%% %% %% \kai{Notation für die Summe im Nenner habe ich so noch nie gesehen.  chk}
+%% %% %% %
+%% %% %% \benjamin{Habe es mal anders notiert. Ben-Akiva schreibt $\sum_{j \in C_n}$, wobei $C_n$ das choice set des Individuums ist. Allerdings bekommen wir mit $j$ als Index an anderen Stellen Probleme...}
+%% %% %
+%% %% where $J$ is the total number of alternatives in the choice set, and $\mu$ is related to the variance of the random component.%
 
-%% %
-%% As one can see, the choice probabilities only depend on the difference between the systematic parts of utility $V_a - V_b$,%
-%% %
-%% \footnote{
-%% %
-%% It can therefore be argued that with the use of Discrete Choice Theory, one has already left the ground of an ordinal scale of utility, since the difference in utility influences the choice probabilities.
-%% %
-%% }
-%% %
-%% and on the parameter $\mu$.
-%% %
-%% For $\mu \to 0$, this results in a completely random choice behavior and choice probabilities of $P_a = P_b = \frac{1}{2}$.
-%% %
-%% For $\mu \to \infty$, this results in a completely ``rational'' behavior and choice probabilities of $P_a = 0$ and $P_b = 1$.
-%% %
-%% The first case corresponds to a very large variance, the latter to a very small variance of the difference between the random components $\varepsilon_b - \varepsilon_a$.
+%% %% From the modeler's perspective, $\mu$ describes how rational (with respect to the model) decision makers behave, given a difference in the systematic part between utilities of alternatives. To give an example on the influence of $\mu$ on the choice probabilities of $J=2$ alternatives $a$ and $b$ with $V_b > V_a$: following Equation~\ref{eq:ch:economicEval:logit}, the corresponding choice probabilities are given by
+%% %% %
+%% %% \[
+%% %% P_a = \frac{1}{1 + e^{\mu(V_b - V_a)}} \qquad P_b = \frac{1}{1 + e^{\mu(V_a - V_b)}} \qquad .
+%% %% \]
+
+%% %% %
+%% %% As one can see, the choice probabilities only depend on the difference between the systematic parts of utility $V_a - V_b$,%
+%% %% %
+%% %% \footnote{
+%% %% %
+%% %% It can therefore be argued that with the use of Discrete Choice Theory, one has already left the ground of an ordinal scale of utility, since the difference in utility influences the choice probabilities.
+%% %% %
+%% %% }
+%% %% %
+%% %% and on the parameter $\mu$.
+%% %% %
+%% %% For $\mu \to 0$, this results in a completely random choice behavior and choice probabilities of $P_a = P_b = \frac{1}{2}$.
+%% %% %
+%% %% For $\mu \to \infty$, this results in a completely ``rational'' behavior and choice probabilities of $P_a = 0$ and $P_b = 1$.
+%% %% %
+%% %% The first case corresponds to a very large variance, the latter to a very small variance of the difference between the random components $\varepsilon_b - \varepsilon_a$.
 
 
-As pointed out at the beginning of this section, the score of a particular plan of a particular individual\textemdash as a result of stochastic network conditions\textemdash varies over iterations. 
+%% As pointed out at the beginning of this section, the score of a particular plan of a particular individual\textemdash as a result of stochastic network conditions\textemdash varies over iterations. 
 
-An issue is that the randomness that is explicitly contained in MATSim needs to be consistent with the discrete choice model.
-%% \footnote{
+%% An issue is that the randomness that is explicitly contained in MATSim needs to be consistent with the discrete choice model.
+%% %% \footnote{
+%% %% %
+%% %% \benjamin{Some pointer to Gunnar's chapter where it is discussed under what conditions $S_{n,i} = V_{n,i}$ or $S_{n,i} = U_{n,i}$ or something completely else.}
+%% %% %
+%% %% }
 %% %
-%% \benjamin{Some pointer to Gunnar's chapter where it is discussed under what conditions $S_{n,i} = V_{n,i}$ or $S_{n,i} = U_{n,i}$ or something completely else.}
+%% For example, the propensity to use public transit might depend on the distance to the next transit stop, or how well that stop connects to the destination to which the person is traveling.  \acrshort{matsim} will pick up such effects explicitly.  Only a choice model which considers the same attributes will be consistent; otherwise, some of the above effects will be considered as random from the point of view of the analyst and thus be moved into the $\varepsilon_i$, and subsequently into the scale parameter $\mu$.
+
+%% The interpretation in Section~\ref{ch:economicEval:describingBehavior:discreteChoice:quenchedVsAnnealed} assumes that each \acrshort{matsim} agent performs repeated random draws according to its choice set and its choice model. 
 %% %
-%% }
-%
-For example, the propensity to use public transit might depend on the distance to the next transit stop, or how well that stop connects to the destination to which the person is traveling.  \acrshort{matsim} will pick up such effects explicitly.  Only a choice model which considers the same attributes will be consistent; otherwise, some of the above effects will be considered as random from the point of view of the analyst and thus be moved into the $\varepsilon_i$, and subsequently into the scale parameter $\mu$.
+%% In other words:
+%% %
+%% \begin{itemize}\styleItemize
+%% \item It is assumed that the scores $S_{n,i}$ have converged and correspond to the systematic parts of utility $V_{n,i}$. In consequence, also the choice probabilities $P_{n,i}$ have converged.
+%% %
+%% \item However, making repeated random draws from these probabilities effectively \emph{parametrizes} the effect of randomly re-drawing the $\varepsilon_{n,i}$, and then taking the option $i$ where $U_{n,i} = V_{n,i} + \varepsilon_{n,i}$ is maximal. That is, the alternative with the highest utility might vary.
+%% \end{itemize}
+%% %
 
-The interpretation in Section~\ref{ch:economicEval:describingBehavior:discreteChoice:quenchedVsAnnealed} assumes that each \acrshort{matsim} agent performs repeated random draws according to its choice set and its choice model. 
-%
-In other words:
-%
-\begin{itemize}\styleItemize
-\item It is assumed that the scores $S_{n,i}$ have converged and correspond to the systematic parts of utility $V_{n,i}$. In consequence, also the choice probabilities $P_{n,i}$ have converged.
-%
-\item However, making repeated random draws from these probabilities effectively \emph{parametrizes} the effect of randomly re-drawing the $\varepsilon_{n,i}$, and then taking the option $i$ where $U_{n,i} = V_{n,i} + \varepsilon_{n,i}$ is maximal. That is, the alternative with the highest utility might vary.
-\end{itemize}
-%
+%% Alternatively, the approach presented in Chapter~\ref{ch:destinationchoice} ``freezing'' the epsilons directly into the plans can be applied.  
+%% In this interpretation, each plan $i$ obtains a fixed $\varepsilon_{n,i}$ at construction, which only changes when the plan changes. 
+%% In consequence, once the choice set becomes fixed, also each plan's $\varepsilon_{n,i}$ becomes fixed, and the choice model should then deterministically select the plan with the highest score \emph{including the plan's $\varepsilon_{n,i}$}.
+%% That is, the score $S_{n,i}$ would be directly interpreted as the total utility $U_{n,i}$.
+%% Such an approach can currently not be applied out-of-the-box for \acrshort{matsim} for other choice dimensions than destination choice (Chapter~\ref{ch:destinationchoice}).
+%% To date, it needs to be programmed explicitly in \gls{java}, research to extend this to all choice dimensions is underway (Section~\ref{sec:future-frozen-randomness}). 
 
-Alternatively, the approach presented in Chapter~\ref{ch:destinationchoice} ``freezing'' the epsilons directly into the plans can be applied.  
-In this interpretation, each plan $i$ obtains a fixed $\varepsilon_{n,i}$ at construction, which only changes when the plan changes. 
-In consequence, once the choice set becomes fixed, also each plan's $\varepsilon_{n,i}$ becomes fixed, and the choice model should then deterministically select the plan with the highest score \emph{including the plan's $\varepsilon_{n,i}$}.
-That is, the score $S_{n,i}$ would be directly interpreted as the total utility $U_{n,i}$.
-Such an approach can currently not be applied out-of-the-box for \acrshort{matsim} for other choice dimensions than destination choice (Chapter~\ref{ch:destinationchoice}).
-To date, it needs to be programmed explicitly in \gls{java}, research to extend this to all choice dimensions is underway (Section~\ref{sec:future-frozen-randomness}). 
-
-%% \end{oframed}
+%% %% \end{oframed}
 
 
 
@@ -358,15 +367,17 @@ Environment}
 
 The choice set of agents can in principle be pre-computed and then be fed into the \acrshort{matsim} simulation. However, this would need to be done for every system state (\eg before and after a policy change).
 %
-Alternatively, \acrshort{matsim} can generate choice sets of agents within the iterative loop (Section~\ref{sec:inbrief})
+Alternatively, \acrshort{matsim} can generate choice sets of agents within the iterative loop (Section~\ref{sec:inbrief}).
 %
 %\benjamin{Some reference to the loop.}%
 %
-.
+
 
 \subsection{Issues}
 \label{sec:Evolution-of-choice:issues}
-%
+
+\kai{Mit Benjamin besprochene Tendenz, diese section hier wieder rauszunehmen und sie woanders unterzubringen.  Ansonsten passt das u.E.\ nicht gut zusammen: Die issues machen doch sehr deutliche Aussagen über eine Reihe von Herausforderungen.  Die Theorie ist hingegen \emph{ein} (wenn auch wichtiger) Lösungsansatz; andere Ansätze, die stärker heuristisch ABER dafür bereits implementiert sind, gibt es ja auch.  --- Ich überlasse das Verschieben aber mal Benjamin.}
+
 At the time of writing, there exist three methodological issues when generating on-the-fly choice sets with \acrshort{matsim}:
 %
 \begin{enumerate}\styleEnumerate
@@ -380,13 +391,13 @@ model.\footnote{%
 %
 A possible approach to increase the diversity in route choice is investigated by \citet{NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}.
 %
-}
+} Also see Section~\ref{sec:heterogeneity-in-plans-generation}.
 
 \item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to keep similar, \ie  correlated, plans when the number of plans has grown beyond $J$.  The reason for this is that the current plans remover removes the plan with the lowest score, which typically also is the one most different from the other plans.  As a result, typically only very similar plans with very similar scores remain in the choice set.\footnote{%
 %
 A possible approach to maintain diversity in plans removal would be to give penalties to the scores of plans that are similar to other plans.  This penalty could be taken directly from approaches such as the path size logit \citep{DaganzoSheffi1977SUE,FrejingerBierlaire2007PathSizeLogit}.  For early attempts within \acrshort{matsim} see \cite{Grether2014PhD} (Chapter~6) and \cite{NeumannEtAlPassengerArrivalPatterns}.
 %
-}
+} Also see Section~\ref{sec:heterogeneity-in-plans-removal}.
 %
 \end{enumerate}
 %
