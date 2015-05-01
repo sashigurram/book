@@ -2,25 +2,667 @@
 \label{ch:bdi}
 % ##################################################################################################################
 
-\hfill \textbf{Authors:} Lin Padgham, Dhirendra Singh, ...
+\hfill \textbf{Authors:} Lin Padgham, Dhirendra Singh
 
-%\begin{center} \includegraphics[width=0.65\textwidth, angle=0]{path-to-example-figure.png} \end{center}
+\begin{center} \includegraphics[width=0.65\textwidth, angle=0]{extending/figures/bdi/fig-taxi-gptree.jpg} \end{center}
 
 % ##################################################################################################################
-
-Please keep an eye on the copyrights of your earlier published work.
-
 \section{Introduction}
+\label{sec:bdi-intro}
+In this chapter we introduce an extension to MATSim that allows a
+developer to program (some of) the decision making of an agent in a
+Belief Desire Intention (BDI) system, while the actual actions, and
+perception of the environment happen within MATSim. This allows for
+sophisticated modeling of human-like agents, within a BDI
+framework, using the concepts of goals, hierarchical abstract plans,
+which contain sub-goals, and percepts which are information from the
+environment, as well as beliefs about the current situation. For
+example we have used it to model residents in a 
+bushfire evacuation as well as an incident controller in an evacuation
+scenario. The residents may receive percepts about the bushfire from
+the fire simulation as well as warnings and messages from the incident
+controller agent. They may
+have goals to pick up children, check on neighbors, communicate with
+other family members etc. Their plans will result in
+decision making which at various points includes actions which are then
+executed within MATSim.
 
-\section{Module's Key Functionality}
+In the standard usage of MATSim the intelligence in the behavior of
+the individual agents arises from the  co-evolutionary algorithms in
+the replanning phase. This is based on agents evaluating via a scoring
+function, the plan they have executed during a given day, and
+modifying this to obtain a new plan until all agents have sufficiently good
+plans and the system reaches a stable state. This approach however
+does not work for applications where one cannot assume that the agents
+adjust and refine their behavior over many iterations, to eventually
+obtain their standard modus operandi. For applications such as
+emergency management, agents must react immediately to the situation
+as it evolves, doing so in an ``intelligent'' manner. 
 
-\section{Application of the Module}
-
-\section{The Module in the MATSim Context}
-
-\section{Further Reading}
+The chapter on Within-Day Replanning introduces two approaches to the
+mobsim component which address the need to be more reactive to the
+evolving situation. The first allows a centralized MATSim process to
+identify sets of agents that should have their plans modified, then
+runs one or more processes to adjust the plans of these agents. The
+second takes the approach of rewriting the agent so that instead of
+following a specified plan, the agent invokes a decision making
+process at all possible decision points. By integrating a BDI agent
+platform with MATSim \cite{ecai} we allow autonomous individual
+decision making to be programmed in specialized and powerful systems
+that have been developed specifically for this purpose, balancing
+reactive behavior and goal based commitment. Different BDI platforms
+have different strengths but are in general based on a simplified
+psychological/philosophical view of how people behave, facilitating a
+high level specification of complex human behavior. These systems have
+been demonstrated to be very efficient for building complex
+applications \cite{benfield}.  Providing the appropriate system
+interface support is developed, any BDI system can be coupled to
+MATSim as described here. We have currently used three different BDI
+systems, for which the system level interface is available.  The
+decisions made in the BDI system are then inserted into the MATSim
+plans of the relevant agents, allowing the MATSim agents to operate in
+the same efficient manner as in standard MATSim.
 
 % ##################################################################################################################
+\section{Software Structure}
+\label{sec:bdi-structure}
+Our framework supports the independent execution of MATSim and the BDI platform, with 
+synchronization via the infrastructure provided.
+They can either run within a single process (in
+separate synchronized threads or in a single thread sequentially), or in two
+separate processes (synchronizing using inter-process communication, such as
+sockets). The former is of course considerably more efficient. 
+%
+Conceptually, for every MATSim agent whose decision making is to be
+done in the BDI system, a BDI agent must be created. The BDI counterpart can
+be regarded as ``the brain'' associated with the MATSim agent. It is
+possible to have BDI agents with no MATSim counterpart and vice
+versa. For example, in our bushfire application, the incident
+controller has no MATSim agent, as he does not move on the road
+network. He receives information about the fire, and has some static
+location information, and his role in the simulation is to issue
+warnings and evacuation advisories, which in turn affects the resident
+agents. There may also be MATSim agents that do not have a BDI
+counterpart. For example in a taxi modeling application, there may be
+MATSim agents using the road network, but without any need for
+modeling of complex decision making, and these may exist only within
+MATSim. 
+
+Figure~\ref{architecture} shows the basic architecture of the
+two parallel systems and the information which is passed between them
+at each timestep.
+
+\begin{figure*}
+\centering
+\resizebox{0.75\textwidth}{!}{
+\input{extending/figures/bdi/fig-integration.tex}
+}
+\caption{Conceptual BDI-ABMS integration architecture}
+\label{architecture}
+\end{figure*} 
+
+The structure of the data components passed between the MATSim agent
+and its BDI counterpart is shown in Table~\ref{interfacedata} and
+consists of {\it BDI Actions}\footnote{We call these actions BDI
+  Actions to distinguish them from actions in the ABMS which may
+  include lower level or additional actions.}, {\it Percepts} and {\it
+  Queries}. As indicated in Figure~\ref{architecture} BDI-actions are
+always initiated by the BDI system. Their status field however can be
+modified by both systems.  When a BDI action such as
+\texttt{DriveTo(loc)} is decided by the BDI agent, the BDI system
+sets the status of this action to be ``INITIATED''. MATSim will then
+set its status to ``RUNNING'' which will likely stay in this state for
+some number of steps. When the \texttt{loc} destination is reached
+the MATSim routine will set the status to ``PASSED'' and the BDI
+system will continue reasoning about the next piece of agent
+behaviour. If desired, the MATSim routine can also detect situations
+which should be conveyed as ``FAILED'' and pass this to the BDI
+counterpart. For example if there is a BDI action to meet at a
+location and time, and the MATSim agent is delayed in traffic, the BDI
+action implementation in MATSim can be programmed to detect the
+passing of the deadline and set the status to ``FAILED'' at which
+point the BDI agent will attempt failure recovery (as part of the BDI
+infrastructure). The BDI system can also set the status to 
+``ABORTED''---for example if some information arrives, requiring a different
+action---in which case it is canceled within MATSim. The BDI system
+can also set status to ``SUSPENDED'' though this is not currently
+implemented.
+
+\Omit{
+ Our MATSim infrastructure will initially set
+the status of an ``INITIATED'' action to be ``RUNNING'', and when it
+completes it will be set to ``PASSED''.  It can also be set to ``FAILED''
+by MATSim, based on an application specific assessment relevant to the
+logic of the BDI-action. The BDI system can set the status to ``ABORTED'' and
+potentially ``SUSPENDED'', which will cause MATSim to cease executing
+the relevant BDI-action either permanently or temporarily.
+}
+
+\begin{table}[h]
+Components of the data package provided to specific agents via the
+interface:\\ 
+\begin{tabular}{ @{}p{0.15\textwidth} | p{0.8\textwidth}@{}}
+\hline\noalign{\smallskip}
+{Component Type} & {Component fields}\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+{BDI action} & $<instance\_id, action\_type, parameters, status>$  \\
+{Percept} & $<percept\_type, parameters, value>$
+(parameters and value may be complex objects) \\
+{Query} & $<query, response>$ \\
+\noalign{\smallskip}\hline
+\end{tabular}
+
+~\\~\\BDI action status:\\
+\begin{tabular}{ @{}p{0.15\textwidth} | p{0.8\textwidth}@{}}
+\hline\noalign{\smallskip}
+{State} & {Description}\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+INITIATED & Initiated by BDI agent and to be executed\\
+RUNNING & Being executed, set by the simulation agent\\
+PASSED & Completion detected and set by the simulation agent \\
+FAILED & Failure condition detected and set by the simulation agent \\
+DROPPED & Aborted by the BDI agent \\
+SUSPENDED & Temporarily suspended by the BDI agent  \\
+\noalign{\smallskip}\hline
+\end{tabular}
+\caption{Data passed between the BDI and ABMS systems} 
+\label{interfacedata}
+\end{table}
+
+%To manage the BDI actions we define a \texttt{MatsimAction}
+%class which has all BDI-action strings, and maps these to the appropriate
+%MATSim function calls. The \texttt{actionHandler} class then defines
+%all these functions. 
+
+To manage the BDI actions, we provide a \texttt{MatsimAgentManager} class, that
+is responsible for updating BDI actions status' for all agents.
+At each step the \texttt{MatsimAgentManager.updateActions(\ldots)} function
+  identifies from the information package supplied by the BDI system,
+  all the agents who are initiating, aborting or suspending
+  actions. These are the agents which may require their MATSim plans
+  to be modified.  For each agent that has some action with  
+  status ``INITIATED'', the action is passed to the agent's action handler 
+  class \texttt{MatsimActionHandler} via a call to
+  \texttt{MatsimActionHandler.processAction(agentID, actionID, params)}.
+  This function, based on the action, calls an appropriate helper
+  function that performs required modifications to the MATSim plan, and other
+  relevant bookkeeping, to ensure that success and failure are observed
+  (via appropriate MATSim callbacks) and that status is notified back
+  to the BDI system.  
+%
+For example, for a \texttt{DriveTo} action, a
+\texttt{processDriveTo(agentID, loc)} function is executed to determine the leg 
+associated with \texttt{loc}, obtain a route using the MATSim router, and
+insert this into the MATSim agent's plan. The standard MATSim execution then
+follows this plan at each subsequent step. 
+If the \texttt{processAction} function returns a success
+  status, indicating that the action was handled successfully, then
+  \texttt{updateActions} changes the status for this
+  action to ``RUNNING'', otherwise sets it to ``FAILED.''   
+  
+  In general, a running
+  action can also subsequently fail in the ABMS for some reason For
+  instance, a \texttt{DriveTo(loc)} action could fail due to a
+  road-closure in a bushfire evacuation simulation.
+  While this
+  functionality is supported by our infrastructure, it is is not currently used
+  in the applications we have built with MATSim so far. Failing actions will
+  soon be added for some applications.
+  Aborting and suspending are also not currently
+  implemented for MATSim.  This would be done by having appropriate
+  functions declared which reset the plan contents of the agent to be
+  in a holding state (doing activity with infinite end time),
+  maintaining the removed contents of a suspended plan in some data
+  structure for eventual resumption.
+  
+Percepts capture the information which has been identified as
+necessary for the reasoning of the BDI agent. Typically this is any
+information which leads to triggering of a BDI-goal, or which may
+cause an executing goal/plan to be re-evaluated. An example is
+approaching a destination. MATSim callbacks are used to capture the relevant
+information within MATSim, and this is then provided to the BDI
+counterpart via our infrastructure. The appropriate MATSim event is
+caught with
+\\ \texttt{AgentActivityEventHandler.handleEvent(event-type)}.  The
+\texttt{handleEvent(event-type)} function then firstly checks if the
+agent receiving the event is one that is registered for a percept that
+triggers on this event type, and if so, calls the appropriate function
+to calculate the value of the percept and add it to the percept
+container for that agent, to be sent to the BDI system. Termination
+conditions (PASSED and FAILED) of BDI actions are also detected in a similar
+manner.
+Instead of passing back the percept in these cases, the relevant
+action and its status is edited and passed back.  For example, a BDI
+action \texttt{DriveTo(loc)} should succeed when the agent reaches the
+link closest to this location. To achieve this we implement 
+\texttt{handleEvent(PersonArrivalEvent)}, which will then trigger for every
+agent arriving anywhere. If the agent has a current (\texttt{DriveTo})
+BDI action being monitored then \texttt{arrivedAtDest(agentID,loc)} is
+called to ascertain whether the \texttt{PersonArrivalEvent} caught
+does match the link closest to the coordinates of the desired
+destination. If it does, the action status of that \texttt{DriveTo} action for
+that agent is changed to PASSED and the action is removed from the monitoring
+list.
+
+This approach conveniently uses MATSim callback
+infrastructure. However we note that it will generate an event that
+must be processed, any time any agent arrives anywhere, although most
+will not be an arrival at a desired destination. This is a
+substantial overhead, and we may eventually consider collecting (some)
+percepts and state information for determining action status, in a
+separate, more efficient global processing at the end of the step.
+
+Queries are defined for any information which the BDI system may want
+to request from MATSim during its reasoning process. Typically queries
+are based on the context conditions of plans, which must be evaluated
+to determine if a plan is applicable. Each query structure must be
+defined, and the code must be supplied on the MATSim side to call the
+relevant functions to provide the response. 
+In a similar way to the \texttt{MatsimActionHandler} class, we have a
+\texttt{MatsimQueryHandler} 
+class which contains a \texttt{queryPercept(agent,query,response)}
+function.
+This function then uses the \texttt{query} string received to extract the
+percept type and make a specific function call to obtain and provide the
+results. For example if an agent \texttt{agentID} sends a
+\texttt{queryPercept(agentID, ``RequestLocation agentX'', loc)} query to
+request the location \texttt{loc} of another agent \texttt{agentX}, then the
+\texttt{queryPercept} 
+function will execute the clause:
+\begin{verbatim}
+if percept_type = "RequestLocation"
+   loc = getLocation("agentX")
+\end{verbatim}
+The \texttt{agentID} of
+the requesting agent, obtained from the data package, is always
+provided to the query response function, in case it is required, 
+although in this case it is not.
+Queries can be made at any point
+during the BDI execution and are responded to immediately. They must
+not have any effect within the MATSim simulation.
+
+A number of commonly used BDI actions, percepts and queries are
+defined as part of our integration infrastructure. New ones can be
+added as part of developing a specific application, as described in
+section \ref{usage}.
+%
+This structure allows all high level decision making to be done by the
+individual agents, but within the BDI-system which is designed and
+optimized for this purpose, in terms of both representation and
+execution. On the MATSim side specified functions simply modify the
+agents' MATSim plans (in parallel if desired), retaining the standard
+MATSim simulation execution where each agent just follows its MATSim
+plan.  This approach allows for both simplicity and efficiency at the
+lower level.
+
+% ##################################################################################################################
+\section{Building an Application Using BDI Agents}
+\label{sec:bdi-usage}
+We focus here only on what must be done to integrate  BDI agent
+reasoning with MATSim. To learn about BDI design and development we
+refer the reader to \cite{prometheusbook}, as well as the excellent
+``practicals'' (tutorials) available as part of the JACK
+platform\footnote{\url{http://aosgrp.com/products/jack/}}. In figure
+\ref{taxigptree} we show a part of a  
+design of a taxi agent in an application involving taxis operating
+within MATSim. We see here that the percept \texttt{ClosetoDest}
+(potentially) triggers a plan \texttt{GrabJob}. Plans have context
+conditions which indicate whether or not they are viable in the
+current situation, as a response to a percept or a way of achieving a
+goal. Let us assume in this example that the plan \texttt{GrabJob} has
+the context condition \texttt{(Location(self,loc))} 
+$\wedge$ \texttt{board.job.loc} $\wedge$
+\texttt{(distance(board.job.loc,loc)} $<$
+\texttt{4km}). Thus the figure at the left of the diagram can be
+understood as the rule: \\
+\texttt{ClosetoDest $\wedge$ 
+Location(self,loc) $\wedge$
+  board.job.loc $\wedge$
+  (distance(board.job.loc,loc) $<$ 4km)
+$\rightarrow$
+  GrabJob} 
+
+There are two pieces of information in this rule that must come from
+MATSim. One is the information that the agent is close to its
+destination (\texttt{ClosetoDest}) and the other is the agent's
+current location (\texttt{Location(self,loc)}).  We could have MATSim
+send the agent location at every step. However, this is unnecessary
+overhead and we instead send \texttt{ClosetoDest} as a percept, which
+then requires the BDI agent to query its location in order to evaluate
+whether there are jobs on the board whose location is such that an
+instance of \texttt{GrabJob} should be triggered.  This gives us an
+example of a percept and a query required in MATSim. On the right hand
+component in figure \ref{taxigptree} we see four different actions
+which will have a corresponding BDI-action on the MATSim side. We will
+focus here on the \texttt{DriveTo} action, but the \texttt{PickUp} and
+\texttt{DropOff} would be realised in a similar way, using MATSim
+activities rather than legs.
+
+In general, the following must be done:
+\begin{itemize}\styleItemize
+\item every plan trigger which is information from MATSim must
+be defined as a percept; 
+\item all information which is required from
+MATSim, but which is not a trigger, must be defined either as a
+percept (and then stored locally) or as a query; 
+\item all actions which should be executed in MATSim must be defined.
+\end{itemize}
+%
+In the rest of this section we describe exactly what must be provided
+in the MATSim application files for each of these to work as
+expected. Instructions and examples for the BDI application can be
+found in the integration repository at \url{}.
+
+\begin{figure}
+\begin{center}
+%\centering
+%\resizebox{0.75\textwidth}{!}{
+\includegraphics[width=0.75\textwidth]{extending/figures/bdi/fig-taxi-gptree.jpg}
+%}
+\caption{Excerpt of taxi design}
+\label{taxigptree}
+\end{center}
+\end{figure}
+
+% ===========================================================================
+\subsection{The \texttt{ClosetoDest} Percept}
+All functions for collecting percepts for the BDI system are defined
+in the \texttt{AgentActivityEventHandler} class. Perusal of the existing
+functions can ascertain whether the desired percept is already
+calculated. For example \texttt{arriveAtDest} is already defined for use as a
+BDI percept. 
+%
+If the percept collection function already exists, all that needs to
+happen is to ensure that the agent of the appropriate type is
+registered for this percept within the relevant function.
+For example, in \texttt{arriveAtDest()} we have:
+\begin{verbatim}
+if agent.type = taxi
+   AND agent.loc = dest(agent) \* obtained from infrastructure data *\
+       // collect and package this percept
+\end{verbatim}
+If we now want this percept provided to agents of type commuter we
+must make the first line:
+\begin{verbatim}
+if ((agent.type = taxi) OR (agent.type = commuter))
+   AND agent.loc = dest(agent) \* obtained from infrastructure data *\
+       // collect and package this percept
+\end{verbatim}
+
+The \texttt{arriveAtDest} function is triggered by the MATSim
+\texttt{enterLink} event using MATSim provided callbacks. So
+we have defined \texttt{handleEvent(enterLink)} to call all percept
+  collection functions triggered by this event -- in this case
+  \texttt{arriveAtDest}. 
+
+The \texttt{ClosetoDest} percept will be triggered by the same MATSim
+event \texttt{enterLink}, so to add this we must add the call to
+\texttt{ClosetoDest} in the \texttt{handleEvent(enterLink)} and then
+  define our \texttt{ClosetoDest} function within the
+  \texttt{AgentActivityEventHandler} class.  We only want to send the
+  \texttt{ClosetoDest} percept when we first come within the defined
+  distance of our destination, not at every step. Therefore the
+  \texttt{ClosetoDest} function must first check whether this percept
+  has already been sent to this agent, for the current destination. If
+  so, nothing more is done. If not it is ascertained whether the link
+  entered is within the desired ``close-to'' distance, and if so the
+  percept is registered. For efficiency the first link that
+    is ``close-to'' the dest can be calculated and recorded when the
+    \texttt{DriveTo} action is initiated, in which case all that is required is
+    to check whether the entered link-ID is the same as the recorded
+    ``close-to'' link-ID.
+
+In principle percepts could also be calculated in a function that was
+executed after all the agents had been stepped. The important thing is
+that when it occurs, the percept is recorded in the percept data
+package for that agent. Further work is required to ascertain which
+percept collection methods will be most efficient with very large
+numbers of agents.
+
+% ===========================================================================
+\subsection{The \texttt{RequestLocation} Query}
+Queries are defined in and managed through the \texttt{MatsimQueryHandler}
+class.
+A function \texttt{queryPercept(agent,query,response)} responds to a query by
+extracting out the specific query and calling the relevant defined
+function. So, for example, in order to respond to the
+\texttt{queryPercept(ownID,``RequestLocation agentID'',loc)} query from an
+agent, \texttt{queryPercept} will contain the code:
+\begin{verbatim}
+if percept_type = "RequestLocation"
+   loc = getLocation("agentID")
+\end{verbatim}
+The \texttt{getLocation} function will then ascertain the location of
+\texttt{agentID}, storing the value in \texttt{loc}. 
+%
+If the query is already defined in MATSim, nothing further is required
+in order to use it in an application.
+
+% ===========================================================================
+\subsection{The \texttt{DriveTo} BDI-Action}
+The \texttt{DriveTo(loc)} BDI action is of course the most basic and
+commonly used BDI action in MATSim, and is therefore already
+implemented in our infrastructure. As long as the appropriate BDI
+action and parameters are passed in the information package from the
+BDI system, nothing further is required within MATSim. However, for
+the purpose of illustration, we will assume it has not yet been
+implemented, and we will go through the steps of defining a new BDI
+action with this as an example.
+
+The \texttt{MATSimActionList} class defines the mappings for all BDI
+actions in the system and the MATSim function calls that realize those
+BDI actions.  Any new BDI action must first be added to this list.
+
+The \texttt{MATSimActionHandler} defines all the functions that
+realize the BDI actions, as well as a \texttt{processAction} function
+which handles all BDI action strings from the BDI system,
+calling the appropriate helper functions. Thus any new BDI action must have
+its implementation defined within this class, and must have the appropriate
+call to the function added within \texttt{processAction}.  Let us call
+the relevant function that we will add \texttt{processDriveTo}. This function
+will always need the \texttt{agentID} as a parameter as well as
+whatever parameters are provided in the action package. So in our
+example we will have the function \texttt{processDriveTo(agentID, loc)}
+which needs to be defined. 
+%
+The function for the new action must do two key tasks:
+\begin{tightenumerate}
+\item obtain the MATSim plan of the relevant agent, and modify it so
+  that regular MATSim execution of the plan will have the desired
+  effect.
+
+Generally when the plan is accessed it will have a single dummy
+activity with end-time infinity. The end time of this activity must be
+set to now, and a leg must be instantiated with the link corresponding
+to the destination \texttt{loc} as the end point, and the links to be
+followed as calculated by the router. This leg must then be inserted
+into the plan, followed by a new dummy activity instance with end time
+infinity. 
+
+\item place the action instance into the list of actions being
+  monitored. 
+\end{tightenumerate}
+
+It is also necessary to set up recognition of when the action has
+finished, so that this information can be sent back to the BDI system
+and the agent can continue to reason about its next actions.  This is
+done via the MATSim callbacks provided, in the same way as for
+detecting percepts. However, the corresponding function, instead of
+placing information in the percept package for the agent, will modify
+the \texttt{status} of the relevant BDI action instance in the
+information package to PASSED, and remove the instance from the list
+of actions being monitored. It is also possible to define a condition
+under which the action should be considered to have FAILED
+and to detect this in a similar way. Alternatively failure can be
+managed by sending a percept, and having the BDI agent abort the
+action as a result\footnote{The simplest way in JACK is to use a
+  maintenance condition relying on a belief that is modified as the
+  result of a percept.}.
+
+The current structure assumes that multiple actions of a single agent
+cannot be executed in parallel (a reasonable assumption for
+MATSim). It is the responsibility of the BDI system to only ever have
+one BDI action per agent active.
+
+Further instructions, as well as examples can be found in our
+BDI-MATSim integration repository.
+
+% ===========================================================================
+\subsection{Discussion}
+An important aspect of the design of a simulation using BDI agents
+within MATSim is the decision as to what level of abstraction the BDI
+actions should be described at. So far we have tended to have BDI
+actions map to a single \texttt{leg} or \texttt{activity} within a
+MATSim plan. However, it is certainly easy to think of BDI actions
+which combine several such components. Straightforward examples would
+be doing grocery shopping, or taking kids to school - both involving a
+leg to a destination, an activity at that destination, and a return
+leg. There are no immediately obvious advantages associated with BDI
+actions at higher levels of abstraction (requiring coding of these
+actions in MATSim) vs using lower level BDI actions with the higher
+level coded as BDI plans/goals. Future experience and experimentation
+may provide insights that can guide decisions.
+
+% ##################################################################################################################
+\section{Examples}
+\label{sec:bid-examples}
+We describe here two different example uses of BDI agents within
+MATSim: a bushfire evacuation simulation, where MATSim is
+being used because traffic flow is a crucial component in bushfire
+evacuation, and a taxi application which was developed as a
+demonstrator for integration of a BDI system with MATSim \cite{ecai}. We make
+some comparison of this approach to incorporating taxis, as compared to
+that described in chapter \ref{ch:dts} for
+incorporating dynamically scheduled vehicles, and with the approaches
+to ``within-day replanning'' described in Chapter \ref{ch:withinday}.
+
+%
+Both our example applications use only the \texttt{Mobsim} engine
+(\texttt{QSim}) of MATSim and do not do any repeated daily cycles
+with plan scoring and modification. There are undoubtedly applications which
+could benefit from a combination of BDI agents and agents which evolve using
+MATSim's scoring and replanning, but we have not yet investigated such.
+
+% ===========================================================================
+\subsection{Bushfire example}
+The bushfire example (currently) involves modeling of residents and
+their decision making behavior about what to do regarding a nearby
+bushfire. Potential driving activities include picking up children
+from a school or other facility, checking on neighbors or friends,
+and driving to a local or further afield destination, possibly via a
+specified route. Decision making may involve various factors such as
+time of day, beliefs as to what other family members are doing,
+warnings and notifications from emergency services, observations of
+neighbors, etc. In one approach we have focused on incorporating
+well developed and validated actual models of human decision making in
+a bushfire situation, developed by a collaborator. Our contribution
+has been to integrate this with MATSim, using our integration
+framework, to provide data about any traffic related issues, thus
+providing a more valuable simulation to planners. In our other
+approach we model both residents, and also an incident
+controller. Here our focus has been on technical issues to do with
+providing an interactive simulation suitable for use by emergency
+services personnel and/or communities for exploration of potential
+strategies. 
+
+In the interactive version, the incident controller assigns specified
+evacuation centers, and routes, to residents in certain sections of
+the town being evacuated. Evacuation of different areas may be started
+at different times. Residents follow the instructions of the incident
+controller with some probability based on their individual situation
+(currently modeled very superficially). Following the suggested route
+is achieved by driving via suggested way points  (using the \texttt{DriveTo} BDI
+action),  with the BDI agent (potentially) re-assessing as each
+waypoint is reached. An alternative would be to define a new BDI
+action \texttt{DriveToViaWaypoints}. One issue that arose during the
+development of this simulation, was that as roads became congested,
+MATSim routing algorithms began developing very circuitous routes,
+sometimes going back towards the fire threat. There were two issues
+here with regard to developing a realistic simulation: one was that
+realistically people would not choose their routes based on global
+knowledge of current congestion; the other was that regardless of
+congestion people would not head back into the fire zone. The current
+solution is to use a routing algorithm which does not take account of
+current road speeds, using only static speed limits. Going forward one
+may want to assume some knowledge of congestion (based on radio
+broadcasts or other social media). A research question is how to best
+achieve sharing of responsibility for realistic behavior between
+MATSim and the BDI decision making program, with respect to route
+selection. 
+
+% ===========================================================================
+\subsection{Taxi Example}
+The taxi prototype application was developed purely as a proof of
+concept which allowed decisions to be made dynamically by the BDI
+brain on an ongoing basis, then carried out by the MATSim execution
+engine. There is a simple taxi administrator in the BDI system, which
+generates jobs, posts them to a notice board, and confirms requests
+from taxis to take specific jobs. Taxis have plans which allow them to
+take jobs from the board, go to a taxi rank or take a break. After
+taking a job from the board the taxi drives to the pick-up address,
+picks up the passenger, and then drives to the destination and drops
+them off. When the taxi is getting close to the destination it looks
+on the job board for nearby jobs, and if something suitable is found,
+it requests it from the administrator. The only BDI action implemented
+in this application is a simple \texttt{DriveTo}. The
+\texttt{ClosetoDest} percept was used as described in section
+\ref{usage}. This application was tested with the Berlin road network
+and the 15\,963 agents in the MATSim sample files, with all agents
+operating as BDI taxi agents. Profiling showed that by far the
+majority of the execution time was spent in route planning, with very
+little in the BDI reasoning or communication with the BDI system.
+
+% ===========================================================================
+\subsection{Discussion}
+Both evacuation and taxis are discussed in chapters~\ref{ch:withinday} and~\ref{ch:dts} 
+as applications requiring a reactive approach to planning
+rather than iteration over many days to find the preferred plan. There
+is discussion in Chapter~\ref{ch:dts} of the two implementation options: one
+which replaces the MATSim agent with an agent that considers what to
+do at each relevant decision point (particularly intersections); and
+the other which leaves the agent code as is, but modifies the agent's
+plans when certain events occur. The BDI approach has the computational
+advantages of the latter, in that only a small subset of the agents
+require changes to their plans at any simulation step, and many
+existing MATSim routines can be used to modify the plans. However, it
+also has many of the advantages of the former approach in that the
+agents are still fully autonomous, in that all decision making occurs
+within the BDI system. By registering for any percepts which could
+potentially cause the agent to change its mind, the agent remains
+fully in control at all times. However, it only needs to decide its next action
+when it completes the current high level action---which will almost
+certainly be orders of magnitude less often than at each intersection
+---or when a percept arrives which indicates a need to reconsider. The
+provision of the ability to drop current BDI actions (legs or
+activities), provides the same level of reactive autonomy as the fully
+reactive within day replanning agent, but at what we believe is a
+lower computational cost. 
+%
+Perhaps more importantly than the computational cost savings is the
+fact that the agent decision making can be programmed in a framework
+that is at a high level of abstraction, using goals, plans and
+beliefs, within existing highly efficient platforms such as JACK
+\cite{jackref}, Jadex \cite{jadex2005} or Jason \cite{jason}. Design
+tools for developing such agents also already exist
+\cite{prometheusbook}. One study has shown that using a BDI language
+makes program development hugely more efficient than programming in
+java \cite{benfield}. The close mapping between intuitively
+understandable design diagrams, and the program code which implements
+this in a BDI system, is also highly advantageous for validating
+design of realistic agents with domain experts. We have discussed
+design of resident agents in a sandbagging flood scenario, with
+emergency services personnel having a deep understanding of the
+domain, and found the representation to be effective. We consider that
+this representational aspect can be a significant advantage when
+compared to programming the agent using the \texttt{DynAgentLogic}
+facility described in Chapter~\ref{ch:dts}.
+%\label{ch:dts} 13
+%\label{ch:withinday}7
+
+% ##################################################################################################################
+
+
+
 
 
 
