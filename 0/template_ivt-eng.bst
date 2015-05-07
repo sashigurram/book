@@ -929,6 +929,7 @@ FUNCTION {book}
   if$
   format.date2 output
   format.isbn output
+  output.doi
   new.sentence
   format.note output
   fin.entry
