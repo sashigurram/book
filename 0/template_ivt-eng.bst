@@ -91,6 +91,7 @@ ENTRY
     chapter
     client
     comment
+    doi
     edition
     editor
     howpublished
@@ -257,6 +258,14 @@ FUNCTION {format.url}
     { "" }
     { "\urlprefix\url{" url * "}" * }
   if$
+}
+
+FUNCTION {output.doi}
+{ 
+    doi empty$
+        { skip$ }
+        { "\href{http://dx.doi.org/" doi * "}{doi:" * doi * "}" * output }
+    if$
 }
 
 INTEGERS { nameptr namesleft numnames }
@@ -886,6 +895,7 @@ FUNCTION {article}
     }
   if$
   format.issn output
+  output.doi
   new.sentence
   format.note output
   fin.entry
