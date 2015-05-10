@@ -177,10 +177,10 @@ captured otherwise.
 %% plan selection hence constitutes only a limited, so to say {}``mechanical''
 %% perspective on travel behavior.)
 
-
-\subsection{Illustrative Example of How This Could be Used}
+%\subsection{Illustrative Example of How This Could be Used}
 %
-\benjamin{Re-think title (coming from Kai, I guess...what does `this' refer to? Maybe just `Illustrative Example'?)}
+%\benjamin{Re-think title (coming from Kai, I guess...what does `this' refer to?
+% Maybe just `Illustrative Example'?)}
 
 %% %% \subsection{\label{sec:convergence}???Randomness and Self-Consistent State???}
 %% %
@@ -376,7 +376,6 @@ necessary for such an endeavor are in principle available
 %% %% \end{oframed}
 
 
-
 % ##################################################################################################################
 \section{Evolution of Choice Sets in a Simulated
 Environment}
@@ -429,16 +428,22 @@ As Equation~(\ref{eq:unconditional-choice-proba}) at the beginning of this chapt
 The simplest illustration of this mechanism is to observe that alternatives that never appear in the choice set cannot be chosen. Similarly, including certain alternatives with a low (high) probability in the choice set decreases (increases) their probability of being chosen, given that the choice model is not changed. When the synthetic choice sets in a policy study are very different from the alternatives that are used in the real world, it is quite improbable that the simulation will display correct aggregated quantities, and it is even more improbable that the simulation will provide useful sensitivities to policy measures.
 
 These types of biases have been well recognized in the discrete choice community,
-even though their focus is arguably more on estimation than on simulation.
+even though focus of this community is arguably more on estimation than on
+simulation.
 The problem is particularly prominent in route choice modeling because the combinatorial
 size of the universal route choice set prohibits its enumeration.
 Drawing further from the discrete choice literature \citep[specifically][]{frejinger-2010}, 
-the following interpretations can be given to ``plan mutation'' and ``plan innovation'' in \gls{matsim}. 
+different interpretations can be given to ``plan mutation'' and ``plan
+innovation'' in \gls{matsim}. 
 %
-\benjamin{Ich finde diese Absätze hier sehr gut. Hier konkret ist komisch, dass zunächst steht, dass `folgende Interpretationen gegeben werden können', und im folgenden Satz steht, dass `dies schwierig ist'. Re-phrase?}
+% \benjamin{Ich finde diese Absätze hier sehr gut. Hier konkret ist komisch, 
+% dass zunächst steht, dass `folgende Interpretationen gegeben werden können', 
+% und im folgenden Satz steht, dass `dies schwierig ist'. Re-phrase?}
 %
-It is difficult to interpret mutation and innovation as \emph{perceptional models} of travel plan choice set formation,
-given that this would require to somehow validate them against real and unobservable choice sets.
+
+An interpretation of mutation and innovation as
+\emph{perceptional models} of travel plan choice set formation is hindered by
+the need to validate them against real and unobservable choice sets.
 Alternatively, one may assume that travelers consider the universal choice set and that the choice of infeasible 
 alternatives is impeded by correspondingly low utility values. In this setting, mutation and innovation
 constitute \emph{sampling techniques} that serve the \emph{computational} purpose of reducing the universal choice
@@ -446,23 +451,31 @@ set to a small, representative subset.
 
 However, one still faces the problem from above that the concrete sampling protocol has a concrete effect on the simulated behavior. The cure when \emph{estimating} choice models is to correct for the sampling based on known sampling probabilities \citep[e.g.][Chapter 9]{ben-akiva-1985}, even though these probabilities can be rather difficult to obtain \citep{floetteroed-2012b, frejinger-2009}. The problem appears to be even less explored when it comes to \emph{simulation}. 
 
-\gls{matsim}'s currently implemented mutation and innovation procedures constitute concrete, yet heuristic, approaches to the choice set simulation problem that may very well allow for valid predictions at the system level.
+\gls{matsim}'s currently implemented mutation and innovation procedures
+constitute concrete, yet heuristic, approaches to the choice set generation
+problem that may very well allow for valid predictions at the system level.
 %
-\gunnar{Hier k\"onnte man jetzt zitieren und, wenn es denn passt, kurz umreissen, was da passiert, oder auf das betreffende Modul in Teil 2 verweisen.}
+\gunnar{Benjamin, wenn Du hier etwas zitiert wissen m\"ochtest, dann
+erg\"anze bitte die Referenzen.}
 %
-\benjamin{Gute Idee.}
+%\benjamin{Gute Idee.}
 %
-Possible biases induced by these procedures are, however, rather difficult to identify.
+Possible biases induced by these procedures can, however, be rather difficult
+to identify.
 %
-\benjamin{Wirklich? Identifizert haben wir sie ja schon (s. den Issue-Teil von mir, der jetzt wieder im Economic-Eval Kapitel steht). Quantifizieren ist schon schwieriger...re-phrase?}
+%\benjamin{Wirklich? Identifizert haben wir sie ja schon (s. den Issue-Teil von
+% mir, der jetzt wieder im Economic-Eval Kapitel steht). Quantifizieren ist schon schwieriger...re-phrase?}
 
-It therefore appears worthwhile to revisit the plan choice set simulation
+It therefore appears worthwhile to revisit the plan choice set generation
 %
-\benjamin{Simulation der Generation? Ist das dasselbe? Sonst haben wir immer Generation oder Innovation verwendet...}
+%\benjamin{Simulation der Generation? Ist das dasselbe? Sonst haben wir immer
+%Generation oder Innovation verwendet...}
 %
-problem from a statistical perspective. The purpose of the following presentation is more to establish a corresponding mindset than to deliver a complete solution recipe.
+problem from a statistical perspective. 
+The purpose of the following presentation is more to establish a corresponding 
+mindset than to deliver a complete solution recipe.
 
-\subsection{Illustrative Example of Unbiased Choice Set Simulation} 
+\subsection{Towards Unbiased Choice Set Generation} 
 
 \gls{matsim} performs in every iteration the following operations for each
 agent: (1) update of the choice set and (2) choice of a plan from
@@ -527,10 +540,14 @@ one new plan $i_{\text{in}}$ through a best-response
 %\benjamin{Ist ``best-response'' irgendwo definiert? Wäre an dieser Stelle extrem hilfreich.}
 %\gunnar{Ja, das sollte wohl schon in Teil 1 auftauchen, z.B. im Zusammenhang mit den ``replanning strategies''.}
 %
-against the
-last iteration (see Section~\ref{sec:inbrief}).
+against the last iteration.
+\gunnar{``Best response'' wird bereits zuvor verwendet und auch dort nicht
+definiert -- sollte es eine Erkl\"arung brauchen, dann sollte die wohl bei der
+ersten Verwendung erfolgen (und best response vielleicht einen Eintrag im
+Glossar bekommen.)}
 %
-\benjamin{Habe den pointer mal eingefügt. Fraglich ist dann, ob man die default time mutation für deinen Ansatz durch ein best-response module ersetzen müsste? Und: wie Kai dort anmerkt, ist `tatsächliches best-response halt eigentlich nicht möglich'...}
+%\benjamin{Habe den pointer mal eingefügt. Fraglich ist dann, ob man die default
+% time mutation für deinen Ansatz durch ein best-response module ersetzen müsste? Und: wie Kai dort anmerkt, ist `tatsächliches best-response halt eigentlich nicht möglich'...}
 %
 The corresponding plan innovation distribution is
 approximated by $e^{\mu_{\text{inno}}S_{ni}}/\sum_{j\in \mathcal{U}_n}e^{\mu_{\text{inno}}S_{nj}}$,
@@ -578,7 +595,7 @@ either score from the network conditions of
 %
 a different, randomly selected stationary iteration.
 %
-\benjamin{One or more different randomly selected iterations?}
+%\benjamin{One or more different randomly selected iterations?}
 
 This allows to select plans according to (\ref{eq:global-choice-model})
 from an unconstrained choice set even though one enumerates only a
@@ -599,17 +616,17 @@ for each agent in each iteration:
 \begin{compactenum}
 \item Randomly select a given plan for removal
 %
-\benjamin{Ist das nicht im diametralen Widerspruch zu dem, was wir an anderer Stelle versuchen? 
-Nämlich die Pläne über ein (Pathsize-)Logit-Modell rauszuwerfen und nicht zufällig...Kai?}
+% \benjamin{Ist das nicht im diametralen Widerspruch zu dem, was wir an anderer Stelle versuchen? 
+% Nämlich die Pläne über ein (Pathsize-)Logit-Modell rauszuwerfen und nicht zufällig...Kai?}
 %
-\gunnar{Nein, es ist nur eine Beschreibung, wie der Metropolis-Hastings Algorithmus 
-durch ... ... (andreas: see source (Kompilierfehler!))
+% \gunnar{Nein, es ist nur eine Beschreibung, wie der Metropolis-Hastings Algorithmus 
+% durch ... ... (andreas: see source (Kompilierfehler!))
 %(\ref{eq:limiting-accept-proba}) 
-die konkrete Zielverteilung ... (andreas: see source (Kompilierfehler!))
+% die konkrete Zielverteilung ... (andreas: see source (Kompilierfehler!))
 %(\ref{eq:global-choice-model}) 
-realisiert.}
+% realisiert.}
 %
-\benjamin{Ja, sehe ich ein. Pathsize-Ansätze etc. sind dann einfach andere Ideen, wie man zu realistischeren choice sets kommen kann. Werde ich mal in EconomicEval so schreiben.}
+% \benjamin{Ja, sehe ich ein. Pathsize-Ansätze etc. sind dann einfach andere Ideen, wie man zu realistischeren choice sets kommen kann. Werde ich mal in EconomicEval so schreiben.}
 %
 and compute a new best-response plan against the last iteration.
 \item Is, based on network conditions from two randomly selected stationary
@@ -646,20 +663,22 @@ variable,
 %\gunnar{Aus dem gleichen Grund, aus dem der Dijkstra-Router immer wieder neue Routen erzeugt.}
 %
 in the sense that the plan choice set innovation process
-is irreducible \citep{ross-2006}.
+is irreducible \citep[][see also
+Section~\ref{sec:Existence-and-uniqueness} for an intuitive definition of
+irreducibility]{ross-2006}.
 
 %
-\benjamin{Insgesamt frage ich mich, ob dieser Ansatz nicht arg vom initialen choice set 
-(aus dem zufällig ein Plan zum Entfernen ausgewählt wird) abhängt.}
+% \benjamin{Insgesamt frage ich mich, ob dieser Ansatz nicht arg vom initialen choice set 
+% (aus dem zufällig ein Plan zum Entfernen ausgewählt wird) abhängt.}
 %
-\gunnar{Metropolis-Hastings garantiert diese Unabh\"angigkeit, wenngleich (siehe voriger Abschnitt)
-``the correctness of this approach depends on the ability
-of the best-response plan innovation to create plans that are sufficiently
-variable, in the sense that the plan choice set innovation process is irreducible.''}
+% \gunnar{Metropolis-Hastings garantiert diese Unabh\"angigkeit, wenngleich (siehe voriger Abschnitt)
+% ``the correctness of this approach depends on the ability
+% of the best-response plan innovation to create plans that are sufficiently
+% variable, in the sense that the plan choice set innovation process is irreducible.''}
 %
-\benjamin{Ok, vielleicht muss man `irreducible' ein bisschen erläutern?}
+% \benjamin{Ok, vielleicht muss man `irreducible' ein bisschen erläutern?}
 %
-\benjamin{Wenn jemand mit dem schlechtesten aller denkbaren Pläne startet, ist mir immer noch nicht klar, wie dann bessere in das choice set kommen sollen. Aber vielleicht muss man das mal in der Praxis (oder in einem Testszenario) anschauen.}
+% \benjamin{Wenn jemand mit dem schlechtesten aller denkbaren Pläne startet, ist mir immer noch nicht klar, wie dann bessere in das choice set kommen sollen. Aber vielleicht muss man das mal in der Praxis (oder in einem Testszenario) anschauen.}
 
 % Nehmen wir mal an, ein Agent hat am Anfang genau einen Plan, der ist extrem schlecht. 
 % Wie bekomme ich dann mit obigem Algo jemals bessere Pläne in das choice set? 
