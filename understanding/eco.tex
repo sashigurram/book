@@ -8,11 +8,12 @@
 
 % ##################################################################################################################
 
-This chapter aims to explain how the agent-based framework of \acrshort{matsim} can be interpreted from a microeconomic perspective, and how it can be used for the economic evaluation of transport policies, e.g. for \gls{bca}. The text of this chapter is partly taken from \citet[][Section~2.3]{Kickhoefer_PhDThesis_2014}.
+This chapter aims to explain how the agent-based framework of \acrshort{matsim} can be interpreted from a micro\-economic perspective, and how it can be used for the economic evaluation of transport policies, e.g. for \gls{bca}. The text of this chapter is partly taken from \citet[][Section~2.3]{Kickhoefer_PhDThesis_2014}.
 
 Typically, the process of economic policy evaluation consists of three steps:
 %
-First, forecasting the changes in the system by modeling user's reactions to a policy (Section~\ref{ch:economicEval:describingBehavior}).
+First, forecasting the changes in the system by modeling user's reactions to a policy
+(Section~\ref{ch:economicEval:describingBehavior}).
 %
 Second, assigning some (potentially monetary) valuation to these changes (Section~\ref{ch:economicEval:valuingBehavior}).
 %
@@ -22,395 +23,424 @@ As will be shown in the next sections, these steps are neither completely indepe
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\vfill\eject
-\section{Describing Human Behavior}
+\section{Revisiting MATSim's Behavioral Simulation}
 \label{ch:economicEval:describingBehavior}
-Estimating benefits of a policy intervention relies on a sound descriptive model that is capable to predict the resulting behavioral changes of individuals. The following sections will therefore shortly present the concept of aggregated elasticities, followed by a presentation of Discrete Choice Theory and its relationship to the \acrshort{matsim} choice model.
+%
+\benjamin{Kai, ich habe diese section eigentlich komplett neu geschrieben, vor dem Hintergrund des discrete choice chapters. Dadurch ist das meiste rausgeflogen. Ich wäre über ein kurzes Gegenlesen deinerseits sehr froh.}
+%
+Estimating benefits of a policy intervention relies on a sound descriptive model that is capable to predict the resulting behavioral changes of individuals.
+%
+%The following sections will therefore shortly present the concept of aggregated elasticities, followed by a presentation of Discrete Choice Theory and its relationship to the \acrshort{matsim} choice model.
+%
+As explained in Section~\ref{sec:inbrief}, agents in \gls{matsim} optimize their mobility behavior over several iterations by taking the behavior of other agents into account. Even if one assumes homogeneous preferences of individuals in the behavioral parameters of their utility functions (see Section~\ref{sec:typicalParams}), activity locations and activity patterns of agents typically differ. In consequence, the simulation deals with heterogeneous decision makers. It therefore seems reasonable to interpret the simulation from a discrete choice modeling perspective (see Chapter~\ref{ch:discretechoice}). Another attractive reason to follow this interpretation might be that there exist well-established approaches to estimate changes in user benefits and system welfare from discrete choice models.
+
+As shown by \cite{NagelFloetteroed2009IatbrResourceInBook}, the \acrshort{matsim} choice model is equivalent to a standard \gls{mnl} model, given that valid choice sets have been found for all individuals, and that the score of each plan has converged to its expectation value (self-consistent state).
+%
+Unfortunately, the above conditions are not necessarily met by the current \acrshort{matsim} implementation, in particular when it is used to generate choice sets on-the-fly within the iterative loop (Section~\ref{sec:inbrief}).
+%
+\benjamin{Kai, pls check the above paragraph. Is the formulation correct?}
+%
+For these reasons, there exist three methodological issues at the time of writing:
+%
+\begin{enumerate}\styleEnumerate
+%
+\item \textbf{Choice set incomplete}: The maximum number of plans $J$ in the choice set of every agent is limited by memory constraints. That is, the choice set for the decision making is unlikely to be complete.
+%
+\item \textbf{Plans correlation from innovation}: Plans might be correlated. This is very likely if they are modified or replaced by best-response re-planning modules (\eg the route choice module), since they have a tendency to always generate the same answer. Yet also random mutations in general result in correlated plans, since the concept of a mutation in fact implies an only small change away from the parent.  This violates the required IIA (Independence from Irrelevant Alternatives) property of the choice set that is needed for an \gls{mnl} model.
+%
+\item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to keep similar, \ie  correlated, plans when the number of plans has grown beyond $J$.  The reason for this is that the current plans remover removes the plan with the lowest score, which typically also is the one most different from the other plans.  As a result, typically only very similar plans with very similar scores remain in the choice set.
+%
+\end{enumerate}
+%
+These three issues might lead to biased behavior, and would then also have consequences for economic evaluation. Several possible cures of these shortcomings have been discussed in Section~\ref{sec:Evolution-of-choice}. For the remainder of this chapter, it will therefore be assumed that the above issues are solved, and that a self-consistent solution has been found for the system states before and after the policy change.
+%
+Nonetheless, the following text will provide a short discussion of possible impacts of the above issues on policy appraisal results, wherever it seems to add to a better understanding.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Aggregated Elasticities}
-\label{ch:economicEval:describingBehavior:elasticities}
-%
-%\benjamin{Kai, do we want to include elasticities in the book at all?}
+%\subsection{Aggregated Elasticities}
+%\label{ch:economicEval:describingBehavior:elasticities}
 %%
-%\kai{finde ich passend}
+%%\benjamin{Kai, do we want to include elasticities in the book at all?}
+%%%
+%%\kai{finde ich passend}
+%%%
+%%\benjamin{Ok, dann lassen wir es drin.}
 %%
-%\benjamin{Ok, dann lassen wir es drin.}
+%Historically, aggregated elasticities are probably the most popular concept that is used for behavioral forecasting in transport planning \citep[see, e.g.,][]{deJong2001Elasticities, 
+%GrahamGlaister2002FuelPriceElasticities, ParrySmall2005OptimalGasolineTax}.
+%%
+%In the simplest case, elasticities describe the change of travel demand as reaction to a monetary price change for the whole market, always relative to the status quo. Assuming an initial price level of $p_0$, a final price level of $p_1$, an initial travel demand $q_0$, and a final travel demand of $q_1$, the price elasticity of demand is defined by:
+%%
+%\begin{equation}
+%\eta_{q,p} = \frac{\frac{q_{1} - q_{0}}{q_{0}}}{\frac{p_{1} - p_{0}}{p_{0}}}
+%\end{equation}
+%%
+%That is, a relative change in the price level by $1\%$ is predicted to lead to change in travel demand of $\eta_{q,p} \%$.
+%%
+%The advantage of elasticities is that they can relatively easily be obtained from market observations, \ie from measuring a change in quantities for a known price change. Instead of price changes, also changes in travel times or other behaviorally relevant parameters can be used, resulting, \eg in travel time elasticity of demand.
 %
-Historically, aggregated elasticities are probably the most popular concept that is used for behavioral forecasting in transport planning \citep[see, e.g.,][]{deJong2001Elasticities, 
-GrahamGlaister2002FuelPriceElasticities, ParrySmall2005OptimalGasolineTax}.
-%
-In the simplest case, elasticities describe the change of travel demand as reaction to a monetary price change for the whole market, always relative to the status quo. Assuming an initial price level of $p_0$, a final price level of $p_1$, an initial travel demand $q_0$, and a final travel demand of $q_1$, the price elasticity of demand is defined by:
-%
-\begin{equation}
-\eta_{q,p} = \frac{\frac{q_{1} - q_{0}}{q_{0}}}{\frac{p_{1} - p_{0}}{p_{0}}}
-\end{equation}
-%
-That is, a relative change in the price level by $1\%$ is predicted to lead to change in travel demand of $\eta_{q,p} \%$.
-%
-The advantage of elasticities is that they can relatively easily be obtained from market observations, \ie from measuring a change in quantities for a known price change. Instead of price changes, also changes in travel times or other behaviorally relevant parameters can be used, resulting, \eg in travel time elasticity of demand.
-
-However, the values depend on the particular circumstances of the measurement. Additionally, the measurement might be biased by changes in the system that occur simultaneously to the price/time changes.
-%
-There are many studies in the literature to determine price or travel time elasticities for mode choice, departure time choice, destination choice, travel frequency, car ownership, and activity location choice \citep[for an extensive literature review see, 
-e.g.,][]{deJong2001Elasticities}. The attempt of obtaining more and more disaggregated values for single origin-destination relations, different trip purposes, income groups, etc., makes the observation very difficult, and technically leads to the estimation of individual elasticities for every person under consideration.
-%
-For this reason, the use of aggregated elasticities is rather inconvenient in the context of agent-based modeling where the focus is on the individual's decision making. 
+%However, the values depend on the particular circumstances of the measurement. Additionally, the measurement might be biased by changes in the system that occur simultaneously to the price/time changes.
+%%
+%There are many studies in the literature to determine price or travel time elasticities for mode choice, departure time choice, destination choice, travel frequency, car ownership, and activity location choice \citep[for an extensive literature review see, 
+%e.g.,][]{deJong2001Elasticities}. The attempt of obtaining more and more disaggregated values for single origin-destination relations, different trip purposes, income groups, etc., makes the observation very difficult, and technically leads to the estimation of individual elasticities for every person under consideration.
+%%
+%For this reason, the use of aggregated elasticities is rather inconvenient in the context of agent-based modeling where the focus is on the individual's decision making. 
 %
 %% These models are therefore more suitable for the use of Discrete Choice Theory in order to describe and predict human mobility behavior.
 %
 % Falls obiger Satz drinbleiben soll, müsste er m.E. reformuliert werden: Discrete Choice Theory is more suitable for agent-based modelling (und nicht andersherum).  Kai, oct'14
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Discrete Choice Theory}
-\label{ch:economicEval:describingBehavior:discreteChoice}
-%
-\benjamin{Do we want to discuss Discrete Choice Theory here, or is it already somewhere else in the book? Gunnar? The following text could be removed or moved to a section about the choice model of \acrshort{matsim}...}
-%
-\kai{good question.}
-\gunnar{See below.}
-
-%% \subsubsection{Theoretical Foundations}
-\label{ch:economicEval:describingBehavior:discreteChoice:foundations}
-% leave that label; it should still work. kai
-%
-
-\gunnar{$\rightarrow$ Das hier befindet sich jetzt schon im ``discrete choice''-Kapitel. $\rightarrow$}
-
-Discrete Choice Theory goes back to work by \citet{Luce1965PreferenceUtility} and \citet{McFadden1975DiscreteChoiceModel}. Two standard textbooks in this area are \citet{BenAkivaLerman_1985} and \citet{Train_2003}. The theory is typically used to describe individual choices among \emph{mutually exclusive} alternatives. In order to apply it to the real world, two additional preconditions need to be met \citep[p.16]{Train_2003}:
-%
-First, \emph{all} relevant alternatives need to be known (= choice set).
-%
-Second, the number of alternatives needs to be finite.
-%
-These alternatives need to be described by their attributes.
-%
-Preferences of individuals can be estimated based on survey data, which consists of different stated and/or revealed individual choices (see Chapter~\ref{sec:estimation}).
-%
-
-However, the estimated parameters typically do not reproduce all individual choices correctly, or -- in other words -- individuals do not always choose the alternative with the highest utility according to their assumed utility functions; this observation violates the assumption about the consistency and transitivity of preferences. For this reason, there was a strong need for methodological improvement.
-%
-\citet{Luce1965PreferenceUtility} distinguished between two possible interpretations of this observed choice behavior:
-%
-\begin{itemize}\styleItemize
-\item Either, people chose randomly among their alternatives (Constant Utility Model).
-%
-\item Or, the choice only \emph{appears} to be random, since the observer does not include all relevant decision variables in the model.
-\end{itemize}
-%
-
-\gunnar{$\leftarrow$ Das hier befindet sich jetzt schon im ``discrete choice''-Kapitel. $\leftarrow$}
-
-\gunnar{$\rightarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\rightarrow$}
-
-Since the latter interpretation is still in line with the necessary assumptions on consistency and transitivity of preferences, \citet{McFadden1975DiscreteChoiceModel} built his \gls{rum} by introducing a \emph{random component} into the utility formulation:
-%
-\begin{equation}
-U_i = V_i + \varepsilon_i \ ,
-\end{equation}
-%
-where $U_i$ is the utility of alternative $i$, which is \emph{perceived} by the individual; $V_i$ is the observed or systematic part of utility%
-%
-%described by the utility function (see Equation~\ref{XXX})%
-%
-%\benjamin{Some reference to the utility function of a plan}
+%\subsection{Discrete Choice Theory}
+%\label{ch:economicEval:describingBehavior:discreteChoice}
 %%
-%\benjamin{I would strongly recommend to use $V_p$ instead of $U_p$ for the utility of a plan even though this is not entirely true, since some of the $\epsilon$ is already captured by the simulation noise that Gunnar called $\eta$...In consequence, the score is NOT equal to $V_p$, right?}
+%\benjamin{Do we want to discuss Discrete Choice Theory here, or is it already somewhere else in the book? Gunnar? The following text could be removed or moved to a section about the choice model of \acrshort{matsim}...}
 %%
-%\benjamin{Maybe remove the \acrshort{matsim} reference here completely, and deal with the issue above in the \acrshort{matsim} section below?}
+%\kai{good question.}
+%\gunnar{See below.}
+%
+%%% \subsubsection{Theoretical Foundations}
+%\label{ch:economicEval:describingBehavior:discreteChoice:foundations}
+%% leave that label; it should still work. kai
 %%
-%\kai{intuition to remove reference to matsim here.}
+%
+%\gunnar{$\rightarrow$ Das hier befindet sich jetzt schon im ``discrete choice''-Kapitel. $\rightarrow$}
+%
+%Discrete Choice Theory goes back to work by \citet{Luce1965PreferenceUtility} and \citet{McFadden1975DiscreteChoiceModel}. Two standard textbooks in this area are \citet{BenAkivaLerman_1985} and \citet{Train_2003}. The theory is typically used to describe individual choices among \emph{mutually exclusive} alternatives. In order to apply it to the real world, two additional preconditions need to be met \citep[p.16]{Train_2003}:
 %%
-%\benjamin{Agreed. Removed it, and copied my comment further down.}
+%First, \emph{all} relevant alternatives need to be known (= choice set).
+%%
+%Second, the number of alternatives needs to be finite.
+%%
+%These alternatives need to be described by their attributes.
+%%
+%Preferences of individuals can be estimated based on survey data, which consists of different stated and/or revealed individual choices (see Chapter~\ref{sec:estimation}).
+%%
 %
-; and $\varepsilon_i$ is a random component of utility.
+%However, the estimated parameters typically do not reproduce all individual choices correctly, or -- in other words -- individuals do not always choose the alternative with the highest utility according to their assumed utility functions; this observation violates the assumption about the consistency and transitivity of preferences. For this reason, there was a strong need for methodological improvement.
+%%
+%\citet{Luce1965PreferenceUtility} distinguished between two possible interpretations of this observed choice behavior:
+%%
+%\begin{itemize}\styleItemize
+%\item Either, people chose randomly among their alternatives (Constant Utility Model).
+%%
+%\item Or, the choice only \emph{appears} to be random, since the observer does not include all relevant decision variables in the model.
+%\end{itemize}
+%%
 %
-As a result, the random component allows to chose options which do not have the highest utility with respect to $V_i$.
-%% for choices that are -- according to the systematic parts of utility calculated by the utility functions -- \emph{irrational}. In consequence, there is a \emph{probability} to select the option with the highest $V_p$, as well as (lower) probabilities to select the other options with lower $V_p$. 
+%\gunnar{$\leftarrow$ Das hier befindet sich jetzt schon im ``discrete choice''-Kapitel. $\leftarrow$}
 %
-% Habe obiges mal rausgestrichen, weil man m.E. Annahmen über eps (meiner Intuition nach: Mittelwert=0) machen muss, damit die Aussage wirklich stimmt.  kai, oct'14
-
-Assuming that all $\varepsilon_i$ are independent and identically distributed (i.i.d.)\ following a Gumbel distribution, this leads to an \gls{mnl} model with the choice probability $P_i$ for alternative $i$:
+%\gunnar{$\rightarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\rightarrow$}
 %
-\begin{equation}
-P_{i} = \frac{e^{\mu \cdot V_i}}{\sum_{j=1}^{J} e^{\mu \cdot V_{j}}} \ ,
-\label{eq:ch:economicEval:logit}
-\end{equation}
+%Since the latter interpretation is still in line with the necessary assumptions on consistency and transitivity of preferences, \citet{McFadden1975DiscreteChoiceModel} built his \gls{rum} by introducing a \emph{random component} into the utility formulation:
+%%
+%\begin{equation}
+%U_i = V_i + \varepsilon_i \ ,
+%\end{equation}
+%%
+%where $U_i$ is the utility of alternative $i$, which is \emph{perceived} by the individual; $V_i$ is the observed or systematic part of utility%
+%%
+%%described by the utility function (see Equation~\ref{XXX})%
+%%
+%%\benjamin{Some reference to the utility function of a plan}
+%%%
+%%\benjamin{I would strongly recommend to use $V_p$ instead of $U_p$ for the utility of a plan even though this is not entirely true, since some of the $\epsilon$ is already captured by the simulation noise that Gunnar called $\eta$...In consequence, the score is NOT equal to $V_p$, right?}
+%%%
+%%\benjamin{Maybe remove the \acrshort{matsim} reference here completely, and deal with the issue above in the \acrshort{matsim} section below?}
+%%%
+%%\kai{intuition to remove reference to matsim here.}
+%%%
+%%\benjamin{Agreed. Removed it, and copied my comment further down.}
+%%
+%; and $\varepsilon_i$ is a random component of utility.
+%%
+%As a result, the random component allows to chose options which do not have the highest utility with respect to $V_i$.
+%%% for choices that are -- according to the systematic parts of utility calculated by the utility functions -- \emph{irrational}. In consequence, there is a \emph{probability} to select the option with the highest $V_p$, as well as (lower) probabilities to select the other options with lower $V_p$. 
+%%
+%% Habe obiges mal rausgestrichen, weil man m.E. Annahmen über eps (meiner Intuition nach: Mittelwert=0) machen muss, damit die Aussage wirklich stimmt.  kai, oct'14
 %
-%% \kai{Notation für die Summe im Nenner habe ich so noch nie gesehen.  chk}
-%% %
-%% \benjamin{Habe es mal anders notiert. Ben-Akiva schreibt $\sum_{j \in C_n}$, wobei $C_n$ das choice set des Individuums ist. Allerdings bekommen wir mit $j$ als Index an anderen Stellen Probleme...}
+%Assuming that all $\varepsilon_i$ are independent and identically distributed (i.i.d.)\ following a Gumbel distribution, this leads to an \gls{mnl} model with the choice probability $P_i$ for alternative $i$:
+%%
+%\begin{equation}
+%P_{i} = \frac{e^{\mu \cdot V_i}}{\sum_{j=1}^{J} e^{\mu \cdot V_{j}}} \ ,
+%\label{eq:ch:economicEval:logit}
+%\end{equation}
+%%
+%%% \kai{Notation für die Summe im Nenner habe ich so noch nie gesehen.  chk}
+%%% %
+%%% \benjamin{Habe es mal anders notiert. Ben-Akiva schreibt $\sum_{j \in C_n}$, wobei $C_n$ das choice set des Individuums ist. Allerdings bekommen wir mit $j$ als Index an anderen Stellen Probleme...}
+%%
+%where $J$ is the total number of alternatives in the choice set, and $\mu$ is related to the variance of the random component.%
 %
-where $J$ is the total number of alternatives in the choice set, and $\mu$ is related to the variance of the random component.%
-
+%%\footnote{
+%%
+%When estimating behavioral parameters $\hat{\beta}$ from survey data, one actually obtains the true parameter value $\beta$ times the inverse variance of the error term distribution $\mu = \frac{1}{\sigma}$, \ie $\hat{\beta} = \frac{\beta}{\sigma}$ \citep[see, e.g.,][p.45, where $\sigma$ is defined as \emph{scale parameter}]{Train_2003}. The scale parameter is therefore present in \emph{all} estimated behavioral parameters of the utility function.
+%%
+%%}
+%
+%From the modeler's perspective, $\mu$ describes how rational (with respect to the model) decision makers behave, given a difference in the systematic part between utilities of alternatives. To give an example on the influence of $\mu$ on the choice probabilities of $J=2$ alternatives $a$ and $b$ with $V_b > V_a$: following Equation~\ref{eq:ch:economicEval:logit}, the corresponding choice probabilities are given by
+%%
+%\[
+%P_a = \frac{1}{1 + e^{\mu(V_b - V_a)}} \qquad P_b = \frac{1}{1 + e^{\mu(V_a - V_b)}} \qquad .
+%\]
+%
+%%
+%As one can see, the choice probabilities only depend on the difference between the systematic parts of utility $V_a - V_b$,%
+%%
 %\footnote{
-%
-When estimating behavioral parameters $\hat{\beta}$ from survey data, one actually obtains the true parameter value $\beta$ times the inverse variance of the error term distribution $\mu = \frac{1}{\sigma}$, \ie $\hat{\beta} = \frac{\beta}{\sigma}$ \citep[see, e.g.,][p.45, where $\sigma$ is defined as \emph{scale parameter}]{Train_2003}. The scale parameter is therefore present in \emph{all} estimated behavioral parameters of the utility function.
-%
+%%
+%It can therefore be argued that with the use of Discrete Choice Theory, one has already left the ground of an ordinal scale of utility, since the difference in utility influences the choice probabilities.
+%%
 %}
-
-From the modeler's perspective, $\mu$ describes how rational (with respect to the model) decision makers behave, given a difference in the systematic part between utilities of alternatives. To give an example on the influence of $\mu$ on the choice probabilities of $J=2$ alternatives $a$ and $b$ with $V_b > V_a$: following Equation~\ref{eq:ch:economicEval:logit}, the corresponding choice probabilities are given by
+%%
+%and on the parameter $\mu$.
+%%
+%For $\mu \to 0$, this results in a completely random choice behavior and choice probabilities of $P_a = P_b = \frac{1}{2}$.
+%%
+%For $\mu \to \infty$, this results in a completely ``rational'' behavior and choice probabilities of $P_a = 0$ and $P_b = 1$.
+%%
+%The first case corresponds to a very large variance, the latter to a very small variance of the difference between the random components $\varepsilon_b - \varepsilon_a$.
 %
-\[
-P_a = \frac{1}{1 + e^{\mu(V_b - V_a)}} \qquad P_b = \frac{1}{1 + e^{\mu(V_a - V_b)}} \qquad .
-\]
-
+%Overall, it is important to note that individual choice behavior can again be used to calculate any desired aggregated elasticity, \eg for different subpopulations.
 %
-As one can see, the choice probabilities only depend on the difference between the systematic parts of utility $V_a - V_b$,%
-%
-\footnote{
-%
-It can therefore be argued that with the use of Discrete Choice Theory, one has already left the ground of an ordinal scale of utility, since the difference in utility influences the choice probabilities.
-%
-}
-%
-and on the parameter $\mu$.
-%
-For $\mu \to 0$, this results in a completely random choice behavior and choice probabilities of $P_a = P_b = \frac{1}{2}$.
-%
-For $\mu \to \infty$, this results in a completely ``rational'' behavior and choice probabilities of $P_a = 0$ and $P_b = 1$.
-%
-The first case corresponds to a very large variance, the latter to a very small variance of the difference between the random components $\varepsilon_b - \varepsilon_a$.
-
-Overall, it is important to note that individual choice behavior can again be used to calculate any desired aggregated elasticity, \eg for different subpopulations.
-
-\gunnar{$\leftarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\leftarrow$}
+%\gunnar{$\leftarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\leftarrow$}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Discrete Choice Theory and MATSim}
-\label{ch:economicEval:describingBehavior:discreteChoice:matsim}
-%
-As explained in Section~\ref{sec:inbrief},
-%
-%\benjamin{Some reference to the loop.}%
-%
-agents optimize their mobility behavior over several iterations by taking the behavior of other agents into account. Even if one assumes homogeneous preferences of individuals in the behavioral parameters of their utility functions, activity locations and activity patterns of agents typically differ. In consequence, the simulation deals with heterogeneous decision makers.
+%\subsection{Discrete Choice Theory and MATSim}
+%\label{ch:economicEval:describingBehavior:discreteChoice:matsim}
+%%
+%As explained in Section~\ref{sec:inbrief},
+%%
+%%\benjamin{Some reference to the loop.}%
+%%
+%agents optimize their mobility behavior over several iterations by taking the behavior of other agents into account. Even if one assumes homogeneous preferences of individuals in the behavioral parameters of their utility functions, activity locations and activity patterns of agents typically differ. In consequence, the simulation deals with heterogeneous decision makers.
 
-Given a valid choice set for all individuals, the \acrshort{matsim} choice model is in steady state equivalent to the standard \gls{mnl} model \citep{NagelFloetteroed2009IatbrResourceInBook}.
+%Given a valid choice set for all individuals, the \acrshort{matsim} choice model is in steady state equivalent to the standard \gls{mnl} model \citep{NagelFloetteroed2009IatbrResourceInBook}.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{Choice Set}
+%\label{sec:choice-set}
+%
+%\gunnar{$\rightarrow$ Das hier befindet sich jetzt schon im ``discrete choice''-Kapitel. $\rightarrow$}
+%
+%The choice set of agents can in principle be pre-computed and then be fed into the \acrshort{matsim} simulation. However, this would need to be done for every system state (\eg before and after a policy change).
+%%
+%Alternatively, \acrshort{matsim} can generate choice sets of agents within the iterative loop (Section~\ref{sec:inbrief})
+%%
+%%\benjamin{Some reference to the loop.}%
+%%
+%. At the time of writing, there exist three methodological issues with the latter approach:
+%%
+%\begin{enumerate}\styleEnumerate
+%\item \textbf{Choice set incomplete}: The maximum number of plans $J$ in the choice set of every agent is limited by memory constraints. That is, the choice set for the decision making is unlikely to be complete.
+%%
+%\item \textbf{Plans correlation from innovation}: Plans might be correlated. This is very likely if they are modified or replaced by best-response re-planning modules (\eg the route choice module), since they have a tendency to always generate the same answer. Yet also random mutations in general result in correlated plans, since the concept of a mutation in fact implies an only small change away from the parent.  This violates the required IIA (Independence from Irrelevant Alternatives) 
+%% _from_ !!
+%property of the choice set that is needed for an \gls{mnl} 
+%% _an_ eMeNel !!
+%model.\footnote{%
+%%
+%A possible approach to increase the diversity in route choice is investigated by \citet{NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}.
+%%
+%}
+%
+%\item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to keep similar, \ie  correlated, plans when the number of plans has grown beyond $J$.  The reason for this is that the current plans remover removes the plan with the lowest score, which typically also is the one most different from the other plans.  As a result, typically only very similar plans with very similar scores remain in the choice set.\footnote{%
+%%
+%A possible approach to maintain diversity in plans removal would be to give penalties to the scores of plans that are similar to other plans.  This penalty could be taken directly from approaches such as the path size logit \citep{DaganzoSheffi_TransScience_1977,FrejingerBierlaire_TransResB_2007}.  For early attempts within \acrshort{matsim} see \citet{Grether_PhDThesis_2014} (Chapter~6) and \cite{NeumannEtAlPassengerArrivalPatterns}.
+%%
+%}
+%%
+%\end{enumerate}
+%%
+%These three issues might lead to biased behavior, and also have consequences for economic evaluation. A discussion of these aspects, as well as a presentation of possible solutions will be given in the upcoming sections.
+%
+%\gunnar{$\leftarrow$ Das hier befindet sich jetzt schon im ``discrete choice''-Kapitel. $\leftarrow$}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Choice Set}
-\label{sec:choice-set}
-
-\gunnar{$\rightarrow$ Das hier befindet sich jetzt schon im ``discrete choice''-Kapitel. $\rightarrow$}
-
-The choice set of agents can in principle be pre-computed and then be fed into the \acrshort{matsim} simulation. However, this would need to be done for every system state (\eg before and after a policy change).
-%
-Alternatively, \acrshort{matsim} can generate choice sets of agents within the iterative loop (Section~\ref{sec:inbrief})
-%
-%\benjamin{Some reference to the loop.}%
-%
-. At the time of writing, there exist three methodological issues with the latter approach:
-%
-\begin{enumerate}\styleEnumerate
-\item \textbf{Choice set incomplete}: The maximum number of plans $J$ in the choice set of every agent is limited by memory constraints. That is, the choice set for the decision making is unlikely to be complete.
-%
-\item \textbf{Plans correlation from innovation}: Plans might be correlated. This is very likely if they are modified or replaced by best-response re-planning modules (\eg the route choice module), since they have a tendency to always generate the same answer. Yet also random mutations in general result in correlated plans, since the concept of a mutation in fact implies an only small change away from the parent.  This violates the required IIA (Independence from Irrelevant Alternatives) 
-% _from_ !!
-property of the choice set that is needed for an \gls{mnl} 
-% _an_ eMeNel !!
-model.\footnote{%
-%
-A possible approach to increase the diversity in route choice is investigated by \citet{NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}.
-%
-}
-
-\item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to keep similar, \ie  correlated, plans when the number of plans has grown beyond $J$.  The reason for this is that the current plans remover removes the plan with the lowest score, which typically also is the one most different from the other plans.  As a result, typically only very similar plans with very similar scores remain in the choice set.\footnote{%
-%
-A possible approach to maintain diversity in plans removal would be to give penalties to the scores of plans that are similar to other plans.  This penalty could be taken directly from approaches such as the path size logit \citep{DaganzoSheffi_TransScience_1977,FrejingerBierlaire_TransResB_2007}.  For early attempts within \acrshort{matsim} see \citet{Grether_PhDThesis_2014} (Chapter~6) and \cite{NeumannEtAlPassengerArrivalPatterns}.
-%
-}
-%
-\end{enumerate}
-%
-These three issues might lead to biased behavior, and also have consequences for economic evaluation. A discussion of these aspects, as well as a presentation of possible solutions will be given in the upcoming sections.
-
-\gunnar{$\leftarrow$ Das hier befindet sich jetzt schon im ``discrete choice''-Kapitel. $\leftarrow$}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Randomness and Self-Consistent State}
-\label{ch:economicEval:describingBehavior:discreteChoice:quenchedVsAnnealed}
-%
-\kai{Folgendes müsste eigentlich bereits weiter oben im Buch drin stehen.}
-%
-
-\gunnar{$\rightarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\rightarrow$}
-
-\acrshort{matsim}, as a simulation engine that uses random numbers, produces randomness.
+%\subsubsection{Randomness and Self-Consistent State}
+%\label{ch:economicEval:describingBehavior:discreteChoice:quenchedVsAnnealed}
 %%
-%% The process from one iteration to the next is Markovian.\footnote{%
+%\kai{Folgendes müsste eigentlich bereits weiter oben im Buch drin stehen.}
 %%
-%% Typically, an iteration only uses the events from the last iteration, and the plans. As long as the system does not keep an infinite memory, there is always a way to make the memory of the system part of its state.
+%
+%\gunnar{$\rightarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\rightarrow$}
+%
+%\acrshort{matsim}, as a simulation engine that uses random numbers, produces randomness.
+%%%
+%%% The process from one iteration to the next is Markovian.\footnote{%
+%%%
+%%% Typically, an iteration only uses the events from the last iteration, and the plans. As long as the system does not keep an infinite memory, there is always a way to make the memory of the system part of its state.
+%%%
+%%% }
 %%
+%A straightforward interpretation is obtained when one assumes that both, the choice set and the score $S_{n,i}$ of each plan, 
+%%% individual scores of person $j$ for plan $p$, $S_{j,p}$,
+%%
+%%% \benjamin{Chk indices!}
+%%
+%are fixed. Then in each iteration each agent makes a draw from its choice set according to its scores, based on the choice model(s) defined in the configuration file (see Section~\ref{sec:config}).
+%%\footnote{%
+%%
+%%\kai{Some pointer to the config file chapter.}
+%%
+%%}
+%%
+%That is, under these conditions \acrshort{matsim} becomes a Monte Carlo engine
+%%
+%(see Chapter~\ref{ch:montecarlo})
+%%\footnote{%
+%%
+%%\benjamin{Some pointer to the Monte Carlo chapter.}
+%%
+%%}
+%%
+%that samples from the choice sets and then computes a (stochastic) realization of the network loading based these choices.
+%
+%Under these conditions, a self-consistent solution is reached when each plan's score $S_{n,i}$ corresponds to the expectation value of that plan's performance under these conditions.
+%%
+%%% $E(U_{n,i}) = S_{n,i} + E(\eta_{n,i}) + \epsilon_{n,i}$, 
+%%% %
+%%% \benjamin{Is this correct? Would need to define $\eta$}
+%%
+%%given that all other plans of all other agents are treated the same way.
+%%
+%This is conceptually similar to the \gls{sue} behavior \citep{DaganzoSheffi_TransScience_1977}, but interprets the \gls{sue} as true repeated random draws instead of deterministic flow fractions \citep{NagelFloetteroed2009IatbrResourceInBook}.
+%
+%Such behavior can be approximated
+%%
+%%% \benjamin{How much of an approximation is that?}
+%%
+%in \acrshort{matsim} by
+%%
+%\begin{itemize}\styleItemize
+%\item setting the configuration option \verb$fractionOfIterationsToDisableInnovation$ below one,  meaning that for the remaining fraction of iterations innovation will be switched off, \ie the choice sets will remain fixed from then on;
+%
+%\item setting the configuration option \verb$fractionOfIterationsToStartScoreMSA$ below one, meaning that for the remaining fraction of iterations scores will be averaged according to the \gls{msa}.\footnote{%
+%%
+%An even better approach, potentially to be implemented and investigated in the future, would be to actively check for convergence and stop when it has been sufficiently achieved.
+%%
+%\benjamin{Some pointer to Section~\ref{sec:score-convergence} ??}
+%%
+%}
+%\end{itemize}
+%%
+%
+%For the remainder of this Chapter \ref{ch:economicEval}, it will be assumed that such a self-consistent solution has been found.
+%%% at some iteration the choice set was fixed, and the score has afterwards self-consistently converged in this way.
+%%% in the way that the expectation value of the choice behavior/network loading based on those scores replicates exactly those scores.
+%%
+%%% \benjamin{I find that hard to translate in the sense of ``how do I as a user know whether the above conditions are given for my simulation'' -- maybe add some more intuitive explanation?}
+%%% %
+%%% \benjamin{Especially, what is ``self-consistent convergation'', ``expectation value'', ``replicates those (which?) scores''?}
+%%% %
+%%% \kai{Habe jetzt einfach ``such a self-consistent solution has emerged'' geschrieben.  Klärt es das?  Ansonsten: Es ist die SUE-Definition; vielleicht kannst Du es besser ausdrücken?}
+%
+%%% A remaining problem is that some of the variance that in a \gls{RUM} is parameterized by the random component $\epsilon_i$ in \acrshort{matsim} is modelled explicitly.
+%%% explicitly considered in the traffic flow simulation/network loading.
+%%
+%%% \benjamin{Do we want to use traffic flow simulation or network loading?}
+%
+%A remaining issue then is that the randomness that is explicitly contained in MATSim needs to be consistent with the discrete choice model.\footnote{
+%%
+%\benjamin{Some pointer to Gunnar's chapter where it is discussed under what conditions $S_{n,i} = V_{n,i}$ or $S_{n,i} = U_{n,i}$ or something completely else.}
+%%
+%}
+%%
+%For example, the propensity to use public transit might depend on the distance to the next transit stop, or how well that stop connects to the destination to which the person is traveling.  \acrshort{matsim} will pick up such effects explicitly.  Only a choice model which considers the same attributes will be consistent; otherwise, some of the above effect will be considered as random from the point of view of the analyst and thus be moved into the $\varepsilon_i$, and subsequently into the scale parameter $\mu$.
+%%
+%%% \benjamin{Based on that: what do we recommend in the following section? Logsum, executed, or average? I read it as if we should recommend using the executed plan's score, but then we need to write it somewhere...}
+%%
+%% nope. if anything, then this points to logsum term.  But so far it only talks about self-constent solition. kai
+%%
+%%% This, in consequence, means that $\sigma$  in the \gls{mnl} model is greater than in \acrshort{matsim}, and the resulting $\beta_X$
+%%% %
+%%% \kai{index?}
+%%% %
+%%% from the estimation are smaller than what would be correct inside \acrshort{matsim}.
+%%
+%%given that these effects are already absorbed.
+%%
+%%% \benjamin{Removed the last part of the last sentence since in my opinion it confuses more than it helps. Also adjusted the text above. @Kai: can you check whether you are ok with that?}
+%%
+%%ok. kai, oct'14
+%
+%\gunnar{$\leftarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\leftarrow$}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{Quenched a.k.a. Frozen Randomness}
+%\label{sec:frozen-randomness}
+%%
+%%\kai{auch das jetzt folgende sollte schon woanders im Buch sein!} 
+%%\ah{Chapter~\ref{ch:destinationchoice}}.
+%%\ah{cleaned this section}
+%%
+%
+%\gunnar{$\rightarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\rightarrow$}
+%
+%% \gunnar{Wenn man es dort l\"asst, sollte zumindest der (terminologische) Zusammenhang zur Mainstream-Literatur
+%% sichergestellt werden. Es gab da mal eine Diskussion \"uber ``quenched/frozen randomness'' vs. ``random effect model'',
+%% die hatte irgendwie ein Ende gefunden, aber ich weiss nicht mehr, was der Konsens war.
+%% 
+%% Zudem frage ich mich, ob es hier auch einen Bezug zu ``Sobol''- oder ``Niederreiter''-Sequenzen gibt, 
+%% von welchen mir gesagt wurde, dass sie irgendwie random number sequences anhand eines niedrigdimensionalen 
+%% ``Startvektors'' initialisieren. Solche Sequenzen kommen offenbar bei der Sch\"atzung simulationsbasierter choice 
+%% models zum Einsatz kommen.
+%% 
+%% Ich habe mir das aber selber noch nicht angeschaut.
 %% }
 %
-A straightforward interpretation is obtained when one assumes that both, the choice set and the score $S_{n,i}$ of each plan, 
-%% individual scores of person $j$ for plan $p$, $S_{j,p}$,
+%The interpretation in Section~\ref{ch:economicEval:describingBehavior:discreteChoice:quenchedVsAnnealed} assumes that each \acrshort{matsim} agent performs repeated random draws according to its choice set and its choice model. 
+%%
+%In other words:
+%%
+%\begin{itemize}\styleItemize
+%\item It is assumed that the scores $S_{n,i}$ have converged and correspond to the systematic parts of utility $V_{n,i}$. In consequence, also the choice probabilities $P_{n,i}$ have converged.
+%%
+%\item However, making repeated random draws from these probabilities effectively \emph{parametrizes} the effect of randomly re-drawing the $\varepsilon_{n,i}$, and then taking the option $i$ where $U_{n,i} = V_{n,i} + \varepsilon_{n,i}$ is maximal. That is, the alternative with the highest utility might vary.
+%\end{itemize}
+%%
+%%% %
+%%% In other words, although the scores
+%%% %
+%%% \kai{$= V$}
+%%% %
+%%% themselves have converged, one can imagine that the $\varepsilon_i$ are randomly re-drawn every time the agent makes a new choice.
+%%% %
+%%% \benjamin{I would add: ``...because of the variation produced by the \acrshort{matsim} traffic flow simulation.''}
+%%% %
+%%% \benjamin{Wobei: das macht eigentlich keinen Sinn; aber inwiefern werden die epsilons denn re-drawn?}
+%%% %
 %
-%% \benjamin{Chk indices!}
+%Alternatively, the approach presented in Chapter~\ref{ch:destinationchoice} ``freezing'' the epsilons directly into the plans can be applied.  
+%%\kai{nicht komplett identisch mit Horni, aber ähnlich!!}  
+%In this interpretation, each plan $i$ obtains a fixed $\varepsilon_{n,i}$ at construction, which only changes when the plan changes. 
+%In consequence, once the choice set becomes fixed, also each plan's $\varepsilon_{n,i}$ becomes fixed, and the choice model should then deterministically select the plan with the highest score \emph{including the plan's $\varepsilon_{n,i}$}.
+%%
+%%% $\benjamin{I would add: ``That is, the score $S_{n,i}$ would be interpreted as $U_{n,i}$ from the estimated \gls{mnl} model.''}
+%That is, the score $S_{n,i}$ would be directly interpreted as the total utility $U_{n,i}$.
+%%
+%Such an approach can currently not be applied out-of-the-box for \acrshort{matsim} for other choice dimensions than destination choice (Chapter~\ref{ch:destinationchoice}).
+%To date, it needs to be programmed explicitly in \gls{java}, research to extend this to all choice dimensions is underway (Section~\ref{sec:future-frozen-randomness}). 
 %
-are fixed. Then in each iteration each agent makes a draw from its choice set according to its scores, based on the choice model(s) defined in the configuration file (see Section~\ref{sec:config}).
-%\footnote{%
+%%Such an approach seems to be quite commonly used for project evaluation with discrete choice models 
+%%\kai{look into the ahorni paper}.  
+%%The models do not compute these frozen $\varepsilon_i$ explicitly.  
+%%Yet, they are started both for the base case and the policy case with the same random seed, which means that effectively in each choice the random numbers are the same between base and policy case.  
+%%A different choice in the policy case can thus only occur when the systematic utilities change.
 %
-%\kai{Some pointer to the config file chapter.}
+%%\ah{Relying on random seeds as described above is for all but the simplest applications illusory. Literally, one additional draw heats up \ie destroys the the whole freeze. Removed this last sentences. ok?}
 %
-%}
+%%% As an approximation, one can assume that the $\varepsilon_i$ for plans with different routes, modes and times are zero.
+%%% %
+%%% %% \benjamin{I would add: ``That would imply that the variation produced by \acrshort{matsim} is assumed to be equal to the $\varepsilon_i$ in the estimated \gls{mnl} model, i.e.\ that the score $S_{n,i}$, again, can be interpreted as $U_{n,i}$ from the estimated model.''?}
+%%% %
+%%% Recall that for the present chapter we assume that all scores are converged, i.e.\ we are looking at their expectation values.  This is straightforward to configure in \acrshort{matsim} by using the \verb$BestScore$ module for plan selection, but it is unclear how to estimate the necessary utility function.
 %
-That is, under these conditions \acrshort{matsim} becomes a Monte Carlo engine
+%%% \kai{Benjamin, meine Intuition ist, dass das nicht anders geht: Wenn wir das als Option drinhaben wollen, dann muss dies irgendwo rein.  Es könnte höchstens unter ``outlook'', dann wäre also die logsum interpretation der derzeitige Weg, und dies hier wäre eine zukünftige Möglichkeit.  --  Vielleicht besser, aber jetzt habe ich es erstmal an dieser Stelle hier getippt.}
 %
-(see Chapter~\ref{ch:montecarlo})
-%\footnote{%
+%%% \benjamin{Finde ich ok. Können wir am Ende immer noch in den Outlook schieben.}
 %
-%\benjamin{Some pointer to the Monte Carlo chapter.}
-%
-%}
-%
-that samples from the choice sets and then computes a (stochastic) realization of the network loading based these choices.
-
-Under these conditions, a self-consistent solution is reached when each plan's score $S_{n,i}$ corresponds to the expectation value of that plan's performance under these conditions.
-%
-%% $E(U_{n,i}) = S_{n,i} + E(\eta_{n,i}) + \epsilon_{n,i}$, 
-%% %
-%% \benjamin{Is this correct? Would need to define $\eta$}
-%
-%given that all other plans of all other agents are treated the same way.
-%
-This is conceptually similar to the \gls{sue} behavior \citep{DaganzoSheffi_TransScience_1977}, but interprets the \gls{sue} as true repeated random draws instead of deterministic flow fractions \citep{NagelFloetteroed2009IatbrResourceInBook}.
-
-Such behavior can be approximated
-%
-%% \benjamin{How much of an approximation is that?}
-%
-in \acrshort{matsim} by
-%
-\begin{itemize}\styleItemize
-\item setting the configuration option \verb$fractionOfIterationsToDisableInnovation$ below one,  meaning that for the remaining fraction of iterations innovation will be switched off, \ie the choice sets will remain fixed from then on;
-
-\item setting the configuration option \verb$fractionOfIterationsToStartScoreMSA$ below one, meaning that for the remaining fraction of iterations scores will be averaged according to the \gls{msa}.\footnote{%
-%
-An even better approach, potentially to be implemented and investigated in the future, would be to actively check for convergence and stop when it has been sufficiently achieved.
-%
-\benjamin{Some pointer to Section~\ref{sec:score-convergence} ??}
-%
-}
-\end{itemize}
-%
-
-For the remainder of this Chapter \ref{ch:economicEval}, it will be assumed that such a self-consistent solution has been found.
-%% at some iteration the choice set was fixed, and the score has afterwards self-consistently converged in this way.
-%% in the way that the expectation value of the choice behavior/network loading based on those scores replicates exactly those scores.
-%
-%% \benjamin{I find that hard to translate in the sense of ``how do I as a user know whether the above conditions are given for my simulation'' -- maybe add some more intuitive explanation?}
-%% %
-%% \benjamin{Especially, what is ``self-consistent convergation'', ``expectation value'', ``replicates those (which?) scores''?}
-%% %
-%% \kai{Habe jetzt einfach ``such a self-consistent solution has emerged'' geschrieben.  Klärt es das?  Ansonsten: Es ist die SUE-Definition; vielleicht kannst Du es besser ausdrücken?}
-
-%% A remaining problem is that some of the variance that in a \gls{RUM} is parameterized by the random component $\epsilon_i$ in \acrshort{matsim} is modelled explicitly.
-%% explicitly considered in the traffic flow simulation/network loading.
-%
-%% \benjamin{Do we want to use traffic flow simulation or network loading?}
-
-A remaining issue then is that the randomness that is explicitly contained in MATSim needs to be consistent with the discrete choice model.\footnote{
-%
-\benjamin{Some pointer to Gunnar's chapter where it is discussed under what conditions $S_{n,i} = V_{n,i}$ or $S_{n,i} = U_{n,i}$ or something completely else.}
-%
-}
-%
-For example, the propensity to use public transit might depend on the distance to the next transit stop, or how well that stop connects to the destination to which the person is traveling.  \acrshort{matsim} will pick up such effects explicitly.  Only a choice model which considers the same attributes will be consistent; otherwise, some of the above effect will be considered as random from the point of view of the analyst and thus be moved into the $\varepsilon_i$, and subsequently into the scale parameter $\mu$.
-%
-%% \benjamin{Based on that: what do we recommend in the following section? Logsum, executed, or average? I read it as if we should recommend using the executed plan's score, but then we need to write it somewhere...}
-%
-% nope. if anything, then this points to logsum term.  But so far it only talks about self-constent solition. kai
-%
-%% This, in consequence, means that $\sigma$  in the \gls{mnl} model is greater than in \acrshort{matsim}, and the resulting $\beta_X$
-%% %
-%% \kai{index?}
-%% %
-%% from the estimation are smaller than what would be correct inside \acrshort{matsim}.
-%
-%given that these effects are already absorbed.
-%
-%% \benjamin{Removed the last part of the last sentence since in my opinion it confuses more than it helps. Also adjusted the text above. @Kai: can you check whether you are ok with that?}
-%
-%ok. kai, oct'14
-
-\gunnar{$\leftarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\leftarrow$}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Quenched a.k.a. Frozen Randomness}
-\label{sec:frozen-randomness}
-%
-%\kai{auch das jetzt folgende sollte schon woanders im Buch sein!} 
-%\ah{Chapter~\ref{ch:destinationchoice}}.
-%\ah{cleaned this section}
-%
-
-\gunnar{$\rightarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\rightarrow$}
-
-% \gunnar{Wenn man es dort l\"asst, sollte zumindest der (terminologische) Zusammenhang zur Mainstream-Literatur
-% sichergestellt werden. Es gab da mal eine Diskussion \"uber ``quenched/frozen randomness'' vs. ``random effect model'',
-% die hatte irgendwie ein Ende gefunden, aber ich weiss nicht mehr, was der Konsens war.
-% 
-% Zudem frage ich mich, ob es hier auch einen Bezug zu ``Sobol''- oder ``Niederreiter''-Sequenzen gibt, 
-% von welchen mir gesagt wurde, dass sie irgendwie random number sequences anhand eines niedrigdimensionalen 
-% ``Startvektors'' initialisieren. Solche Sequenzen kommen offenbar bei der Sch\"atzung simulationsbasierter choice 
-% models zum Einsatz kommen.
-% 
-% Ich habe mir das aber selber noch nicht angeschaut.
-% }
-
-The interpretation in Section~\ref{ch:economicEval:describingBehavior:discreteChoice:quenchedVsAnnealed} assumes that each \acrshort{matsim} agent performs repeated random draws according to its choice set and its choice model. 
-%
-In other words:
-%
-\begin{itemize}\styleItemize
-\item It is assumed that the scores $S_{n,i}$ have converged and correspond to the systematic parts of utility $V_{n,i}$. In consequence, also the choice probabilities $P_{n,i}$ have converged.
-%
-\item However, making repeated random draws from these probabilities effectively \emph{parametrizes} the effect of randomly re-drawing the $\varepsilon_{n,i}$, and then taking the option $i$ where $U_{n,i} = V_{n,i} + \varepsilon_{n,i}$ is maximal. That is, the alternative with the highest utility might vary.
-\end{itemize}
-%
-%% %
-%% In other words, although the scores
-%% %
-%% \kai{$= V$}
-%% %
-%% themselves have converged, one can imagine that the $\varepsilon_i$ are randomly re-drawn every time the agent makes a new choice.
-%% %
-%% \benjamin{I would add: ``...because of the variation produced by the \acrshort{matsim} traffic flow simulation.''}
-%% %
-%% \benjamin{Wobei: das macht eigentlich keinen Sinn; aber inwiefern werden die epsilons denn re-drawn?}
-%% %
-
-Alternatively, the approach presented in Chapter~\ref{ch:destinationchoice} ``freezing'' the epsilons directly into the plans can be applied.  
-%\kai{nicht komplett identisch mit Horni, aber ähnlich!!}  
-In this interpretation, each plan $i$ obtains a fixed $\varepsilon_{n,i}$ at construction, which only changes when the plan changes. 
-In consequence, once the choice set becomes fixed, also each plan's $\varepsilon_{n,i}$ becomes fixed, and the choice model should then deterministically select the plan with the highest score \emph{including the plan's $\varepsilon_{n,i}$}.
-%
-%% $\benjamin{I would add: ``That is, the score $S_{n,i}$ would be interpreted as $U_{n,i}$ from the estimated \gls{mnl} model.''}
-That is, the score $S_{n,i}$ would be directly interpreted as the total utility $U_{n,i}$.
-%
-Such an approach can currently not be applied out-of-the-box for \acrshort{matsim} for other choice dimensions than destination choice (Chapter~\ref{ch:destinationchoice}).
-To date, it needs to be programmed explicitly in \gls{java}, research to extend this to all choice dimensions is underway (Section~\ref{sec:future-frozen-randomness}). 
-
-%Such an approach seems to be quite commonly used for project evaluation with discrete choice models 
-%\kai{look into the ahorni paper}.  
-%The models do not compute these frozen $\varepsilon_i$ explicitly.  
-%Yet, they are started both for the base case and the policy case with the same random seed, which means that effectively in each choice the random numbers are the same between base and policy case.  
-%A different choice in the policy case can thus only occur when the systematic utilities change.
-
-%\ah{Relying on random seeds as described above is for all but the simplest applications illusory. Literally, one additional draw heats up \ie destroys the the whole freeze. Removed this last sentences. ok?}
-
-%% As an approximation, one can assume that the $\varepsilon_i$ for plans with different routes, modes and times are zero.
-%% %
-%% %% \benjamin{I would add: ``That would imply that the variation produced by \acrshort{matsim} is assumed to be equal to the $\varepsilon_i$ in the estimated \gls{mnl} model, i.e.\ that the score $S_{n,i}$, again, can be interpreted as $U_{n,i}$ from the estimated model.''?}
-%% %
-%% Recall that for the present chapter we assume that all scores are converged, i.e.\ we are looking at their expectation values.  This is straightforward to configure in \acrshort{matsim} by using the \verb$BestScore$ module for plan selection, but it is unclear how to estimate the necessary utility function.
-
-%% \kai{Benjamin, meine Intuition ist, dass das nicht anders geht: Wenn wir das als Option drinhaben wollen, dann muss dies irgendwo rein.  Es könnte höchstens unter ``outlook'', dann wäre also die logsum interpretation der derzeitige Weg, und dies hier wäre eine zukünftige Möglichkeit.  --  Vielleicht besser, aber jetzt habe ich es erstmal an dieser Stelle hier getippt.}
-
-%% \benjamin{Finde ich ok. Können wir am Ende immer noch in den Outlook schieben.}
-
-\gunnar{$\leftarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\leftarrow$}
+%\gunnar{$\leftarrow$ Das hier befindet sich jetzt schon \emph{zu grossen Teilen} im ``discrete choice''-Kapitel. $\leftarrow$}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\cleardoublepage
@@ -418,13 +448,16 @@ To date, it needs to be programmed explicitly in \gls{java}, research to extend 
 \label{ch:economicEval:valuingBehavior}
 Following \citet{deJongEtAl2007LogsumTRA}, a major advantage of the agent-based approach is that it allows for a seamless integration of (i) forecasting behavioral changes as a reaction to changes in the system, and (ii) the subsequent economic evaluation.
 %
-In this section, it is shown how estimated agent-specific preferences which determine behavior can directly be used for deriving individual \glspl{vtts}, and how they need to be modified for running a \gls{matsim} simulation in order to obtain individual utility differences resulting from a policy.
+In this section, it is shown how estimated agent-specific preferences which determine behavior can directly be used for deriving individual \glspl{vtts}, and how they need to be modified for running a \gls{matsim} simulation in order to obtain individual utility differences resulting from a policy change.
 %
 The subsequent Section~\ref{ch:economicEval:aggregatingValues} will then focus on how these individual utility changes can be used in order to derive some indicator of overall welfare change for the population under consideration.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Utility of Time}
 \label{sec:scor-funct-revisited}
+%
+\benjamin{Im Folgenden steht überall $U$; sollen wir das ändern zu $S$? Oder passt es hier eigentlich? Ich tendiere dazu es zu lassen...}
+%
 The \acrshort{matsim} scoring function of plan (= alternative) $i$ consisting of $q = 0..N-1$ activities and trips has been introduced in Chapter~\ref{ch:scoring} in the following form:\
 %% footnote{\label{footnote:income-effects}%
 %% %
@@ -480,7 +513,7 @@ L = \sum_q U_{act,q}(t_{dur,q}, ...) + \sum_q U_{trav,q}(t_{trav,q}, ...)
 \end{equation}
 where $\mu$ is the Lagrangian multiplier corresponding to the time constraint.\footnote{%
 %
-Not to be confused with the logit model scale parameter; we use $\mu$ here to be consistent with the time allocation literature. \kai{das steht weiter unten auch nochmal}
+Not to be confused with the scale parameter from discrete choice theory; here, in order to be consistent with time allocation theory, $\mu$ represents the marginal utility of time as a resource and corresponds to $\beta_{dur}$ in Chapter~\ref{ch:scoring}.
 %
 }
 
@@ -539,15 +572,7 @@ In consequence, the \textbf{marginal utility of time spent traveling} reads
 \label{eq:marg-UoT}
 \end{equation}
 %
-$\mu$ is the \textbf{marginal utility of time as a resource} -- the marginal utility generated by increasing $T$, \ie by making the day longer than 24\,hours.%
-%
-\footnote{
-%
-In Time Allocation Theory, $\mu$ is the common variable for the marginal utility of time as a resource and corresponds to $\beta_{dur}$ in Chapter~\ref{ch:scoring}.
-%
-}
-%
-The marginal utility of time spent traveling is thus determined by $\mu$, modified by ``any enjoyment or dislike of the travel itself'' \citep{Small2012ValuationOfTimeRevisited}.
+$\mu$ is the \textbf{marginal utility of time as a resource} -- the marginal utility generated by increasing $T$, \ie by making the day longer than 24\,hours. The marginal utility of time spent traveling is thus determined by $\mu$, modified by ``any enjoyment or dislike of the travel itself'' \citep{Small2012ValuationOfTimeRevisited}.
 
 In order to get a handle onto the \acrshort{matsim} utility function in Equation~(\ref{eq:scoring-fct-revisited}), $\mu$ and $U'_{trav,q}$ need to be obtained separately: $\mu$ in order to calibrate $U'_{act,q}$ as in Equation~(\ref{eq:acts}), and $U'_{trav,q}$ in order to calibrate the direct utility of time spent traveling, the ``offset'' to the marginal utility of time as a resource.
 %
@@ -559,7 +584,7 @@ This will be further discussed in Section~\ref{ch:economicEval:valuingBehavior:e
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Utility of Money}
 \label{ch:economicEval:valuingBehavior:uom}
-Time Allocation Theory \citep{DeSerpa1997economicsOfTime, Jara-DiazGuevara-2003} makes a similar argument for money, with a budget constraint similar to the time constraint.
+Time allocation theory \citep{DeSerpa1997economicsOfTime, Jara-DiazGuevara-2003} makes a similar argument for money, with a budget constraint similar to the time constraint.
 %
 In the same way as the time constraint leads to a marginal utility of time as a resource, the budget constraint leads to a marginal utility of money as a resource.
 
@@ -626,9 +651,15 @@ J. de Dios Ort\'uzar, personal communication.
 It is therefore often not possible to obtain the necessary parameter estimates from the literature. Where the raw data is available, the same model can be re-estimated with a uniform marginal utility of money across alternatives
 \citep[see, e.g.,][]{KickhoeferEtAl_Transportation_2011, TirachiniHensherRose_TransResB_2014}.
 
-Also, \cite{Small2012ValuationOfTimeRevisited} points out that the ``neutral'' marginal utility of money as a resource is difficult to estimate; for example, it is \emph{not} the marginal utility of income.  
-\gunnar{Put the following into ``resarch avenues"?} 
-\kai{My own intuition is that it is ok here, since (1) in research avenues we would need quite some text to set the context again, and (2) it is not so much a ``matsim'' research avenue but a choice modelling research avenue.  Benjamin, what do you think?} As an alternative research avenue, we can imagine that the monetary channels of a measure are included into the choice experiment.  For example, a travel time improvement in a value-of-time study could come together with a hypothetical income tax increase \emph{or} with a hypothetical toll.  A rudimentary version of this actually takes place in Switzerland, where large infrastructure investments are bundled with tax increases that pay for them before they are put to public vote \citep[see, e.g.,][]{BAV2013FinanzierungFABI}.
+Also, \cite{Small2012ValuationOfTimeRevisited} points out that the ``neutral'' marginal utility of money as a resource is difficult to estimate; for example, it is \emph{not} the marginal utility of income.
+%
+%\gunnar{Put the following into ``resarch avenues"?} 
+%%
+%\kai{My own intuition is that it is ok here, since (1) in research avenues we would need quite some text to set the context again, and (2) it is not so much a ``matsim'' research avenue but a choice modelling research avenue.  Benjamin, what do you think?}
+%%
+%\benjamin{Agreed with Kai. Too much text is needed to describe the problem. As long as others cannot estimate this properly, we cannot do anything here.}
+%
+As an alternative research avenue, we can imagine that the monetary channels of a measure are included into the choice experiment.  For example, a travel time improvement in a value-of-time study could come together with a hypothetical income tax increase \emph{or} with a hypothetical toll.  A rudimentary version of this actually takes place in Switzerland, where large infrastructure investments are bundled with tax increases that pay for them before they are put to public vote \citep[see, e.g.,][]{BAV2013FinanzierungFABI}.
 
 %% \kai{Man könnte hier einwerfen, dass man es sonst wie bei der Zeit machen sollte: Wähle einen Zahlungskanal für die ``marginal utility of money as a resource'', und gib' alle anderen relativ dazu an.  Auch hier: haben wir bisher nicht gemacht. }
 
@@ -691,12 +722,12 @@ Assume that an \gls{mnl} estimation of behavioral parameters from a mode choice 
 %
 \begin{equation}
 \begin{matrix}
-V_{car,q} & =
+U_{car,q} & =
 &   &
 &   & \hat{\beta}_{trav,car} \cdot t_{car,q}
 & + & \hat{\beta}_{m} \cdot  \Delta{m_{car,q}} \\
 %
-V_{pt,q} & = 
+U_{pt,q} & = 
 &   & \hat{\beta}_{0}
 & + & \hat{\beta}_{trav,pt} \cdot t_{pt,q}
 & + & \hat{\beta}_{m} \cdot  \Delta{m_{pt,q}}  \ , \\
@@ -798,7 +829,7 @@ We are not aware of a good way to perform this split; \citet{KickhoeferEtAl_Tran
 %% %
 %% \benjamin{However, the utility level is in both cases scaled by $\mu$, which we cannot obtain separately...}
 
-At the end of the simulation run, each agent $n$ has a number of plans $i=1..I$, each of them associated with a score $S_{n,i}$, computed according to Equation~(\ref{eq:scoring-fct-revisited}).
+At the end of the simulation run, each agent $n$ has a number of plans $i=1..J$, each of them associated with a score $S_{n,i}$, computed according to Equation~(\ref{eq:scoring-fct-revisited}).
 %
 %% \kai{Hier merkt man, dass Geld vermutl.\ doch besser in der direkten Nutzenfunktion auftachen würde.  Sh....}
 %
@@ -829,7 +860,7 @@ has been proposed for applied welfare analysis with Discrete Choice Models \cite
 Under the assumption of a 
   correctly specified model and choice set,
 %''}
-the logsum term represents the \gls{emu} for a user that has several options $i=1..I$ in her choice set, and the systematic utility of each option $i$ is $V_i$.
+the logsum term represents the \gls{emu} for a user that has several options $i=1..J$ in her choice set, and the systematic utility of each option $i$ is $V_i$.
 %
 It is the expectation value given that a random (Gumbel-distributed) $\varepsilon_i$ is added to each $V_i$, and that the individual chooses the alternative with the highest $U_i = V_i + \varepsilon_i$.\footnote{%
 %
@@ -906,25 +937,25 @@ An upper bound of this error
 can be approximated as follows.  Without loss of 
 generality, assume that $i=1$ is the plan with the largest systematic utility.  Then
 \[
-logsum_n = EMU_n = \ln \sum_{i=1}^{I} e^{V_{i}}
+logsum_n = EMU_n = \ln \sum_{i=1}^{J} e^{V_{i}}
 %
-\le \ln \sum_{i=1}^{I} e^{V_{1}}
+\le \ln \sum_{i=1}^{J} e^{V_{1}}
 %
-= \ln ( I \cdot e^{V_{1}} )
+= \ln ( J \cdot e^{V_{1}} )
 %
-= \ln I + \ln e^{V_{1}}
+= \ln J + \ln e^{V_{1}}
 %
-= V_{1} + \ln I \ .
+= V_{1} + \ln J \ .
 \]
 At the same time, obviously
 \[
-logsum_n = EMU_n = \ln \sum_{i=1}^{I} e^{V_i} \ge \ln e^{V_1} = V_1 \ .
+logsum_n = EMU_n = \ln \sum_{i=1}^{J} e^{V_i} \ge \ln e^{V_1} = V_1 \ .
 \]
 Overal,
 \[
-V_1 \le logsum_n \le V_1 + \ln I \ .
+V_1 \le logsum_n \le V_1 + \ln J \ .
 \]
-That is, for a choice set with $I$ alternatives, the true logsum value lies between the systematic utility of the best option, $V_1$ and $V_1 + \ln I$.
+That is, for a choice set with $I$ alternatives, the true logsum value lies between the systematic utility of the best option, $V_1$, and $V_1 + \ln J$.
 
 %% the logsum expression is at most $\ln I$ larger than the largest systematic utility of the choice set, which would be the result of the logsum operation if all plans besides the best one had very small scores.
 
@@ -991,7 +1022,7 @@ That is, for a choice set with $I$ alternatives, the true logsum value lies betw
 Using, for each agent, the logsum over the scores of all plans implies that all these plans are valid behavioral choices.  An alternative would be to simply use the score of the last executed plan.  The behavioral interpretation consistent with this procedure is that there is no additional relevant randomness beyond what \acrshort{matsim} generates intrinsically.  There has not yet been any systematic work in this direction in the \acrshort{matsim} context, but such an approach might be justified 
 %% As is well known, this leads to lower utilities than the logsum term, and this effect is stronger when the utilities of the different plans are very different.  It seems difficult to justify such an approach, but it becomes very attractive 
 in conjunction 
-with the idea to explicitly generate the missing $\varepsilon_{n,i}$ for each person-alternative-pair $n,i$, and then always select the best plan, as described in Section~\ref{sec:frozen-randomness}.
+with the idea to explicitly generate the missing $\varepsilon_{n,i}$ for each person-alternative-pair $n,i$, and then always select the best plan, as described in Section~\ref{sec:future-frozen-randomness}.
 
 %% Using the utilities from executed plans partly circumvents the problem of correlation between alternatives for evaluation, but has substantially less theoretical foundations.
 %% %
@@ -1022,7 +1053,7 @@ with the idea to explicitly generate the missing $\varepsilon_{n,i}$ for each pe
 In principle, it is also possible to use
 %
 \begin{equation}
-S_n = \frac{1}{I} \sum_{i=1}^I S_{n,i} \cdot P_{n,i} \ ,
+S_n = \frac{1}{J} \sum_{i=1}^J S_{n,i} \cdot P_{n,i} \ ,
 \label{eq:average-over-scores}
 \end{equation}
 %
@@ -1055,7 +1086,9 @@ Overall, there seem to be two consistent strategies to aggregate the various pla
 \item If the choice model is such that the plan with the highest score is selected, then using that score as the agent's utility $U_i$ is consistent with the choice model.
 
 \end{itemize}
-In both cases, the choice model needs to be consistent with the behavioral assumption about the agent, \ie in the first case it needs to be assumed that the model does not know the true agent choice beyond the choice probabilities, and the model system thus has to repeatedly sample from these probabilities.  In the second case it needs to be assumed that the randomness has already been ``frozen'' into the score computation described in Section~\ref{sec:frozen-randomness}, and the agent thus selects the plan with the highest score.
+In both cases, the choice model needs to be consistent with the behavioral assumption about the agent, \ie in the first case it needs to be assumed that the model does not know the true agent choice beyond the choice probabilities, and the model system thus has to repeatedly sample from these probabilities.  In the second case it needs to be assumed that the randomness has already been ``frozen'' into the score computation (see Section~\ref{sec:future-frozen-randomness}), and the agent thus selects the plan with the highest score.
+%
+\benjamin{Mir ist hier jetzt unklar, welche Rolle dann $\vec{\beta}^T \vec{\eta_{ni}}$ spielt...eine Lösung ist vermutlich: wir zwingen die Scores zum konvergieren (MSA), und der Rest ist frozen. Damit können wir einfach BestScore nehmen. Aber für logsum ist mir unklar wie das gehen soll...}
 
 %% To sum up, it can be stated that agent-specific preferences will determine mobility behavior in the simulation.
 %
@@ -1426,11 +1459,11 @@ That is, one hour of life time is valued equally across individuals.
 A correct scoring function is central to the correct functioning of \acrshort{matsim}.
 %% \gunnar{Why is ``correct'' in quotation marks?}
 %
-The mathematics and understanding of that scoring function need to be derived from Time Allocation Theory in economics.  In particular, any marginal utility of travel time needs to be split into the marginal utility of time as a resource ($\mu$ in the text above, and $\beta_{dur}$ in Section~\ref{sec:typicalParams}), and an additional direct marginal utility of time spent traveling ($U'_{trav,q}$ in the text above, and $\beta_{trav,mode,q}$ in Section~\ref{sec:typicalParams}).
+The mathematics and understanding of that scoring function need to be derived from time allocation theory in economics.  In particular, any marginal utility of travel time needs to be split into the marginal utility of time as a resource ($\mu$ in the text above, and $\beta_{dur}$ in Section~\ref{sec:typicalParams}), and an additional direct marginal utility of time spent traveling ($U'_{trav,q}$ in the text above, and $\beta_{trav,mode,q}$ in Section~\ref{sec:typicalParams}).
 
-Since most discrete choice models estimate the sum of these two, some way to split this sum up needs to be defined.  A somewhat ad-hoc way to achieve this is to find the mode with the largest ($=$ least negative) marginal utility of time, and use that value for the marginal utility of time as a resource.  That mode's direct marginal utility of time spent traveling is then zero, and all other modes' direct marginal utilities of time spent traveling are relative to that one.
+Since most discrete choice models estimate the sum of these two, some way to split this sum up needs to be defined.  A somewhat ad-hoc way to achieve this is to find the mode with the largest ($=$ least negative) marginal utility of time, and use that value for the marginal utility of time as a resource.  That reference mode's direct marginal utility of time spent traveling is then zero, and all other modes' direct marginal utilities of time spent traveling are relative to the one of the reference mode.
 
-If one is interested in monetization, \ie converting the utility values into monetary values, then in addition the marginal utility of money as a resource ($\lambda$ in the text above, and $\beta_m$ in Section~\ref{sec:typicalParams}), needs to be known. 
+If one is interested in monetization, \ie converting utility values into monetary terms, then in addition the marginal utility of money as a resource ($\lambda$ in the text above, and $\beta_m$ in Section~\ref{sec:typicalParams}), needs to be known. 
 
 Our current approach to obtain an approximation to $\lambda$ is to force all monetary preferences in the estimation of a choice model to a unique value.  If this is not possible, then one has to make a normative decision which monetary channel is considered most ``neutral'', \ie most similar to an ``unearned income'' channel.
 
