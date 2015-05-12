@@ -91,6 +91,7 @@ ENTRY
     chapter
     client
     comment
+    doi
     edition
     editor
     howpublished
@@ -257,6 +258,14 @@ FUNCTION {format.url}
     { "" }
     { "\urlprefix\url{" url * "}" * }
   if$
+}
+
+FUNCTION {output.doi}
+{ 
+    doi empty$
+        { skip$ }
+        { "\href{http://dx.doi.org/" doi * "}{doi:" * doi * "}" * output }
+    if$
 }
 
 INTEGERS { nameptr namesleft numnames }
@@ -886,6 +895,7 @@ FUNCTION {article}
     }
   if$
   format.issn output
+  output.doi
   new.sentence
   format.note output
   fin.entry
@@ -919,6 +929,7 @@ FUNCTION {book}
   if$
   format.date2 output
   format.isbn output
+  output.doi
   new.sentence
   format.note output
   fin.entry
@@ -935,6 +946,7 @@ FUNCTION {booklet}
   address output
   format.date2 output
   format.isbn output
+  output.doi
   new.sentence
   format.note output
   fin.entry
@@ -971,7 +983,8 @@ FUNCTION {inbook}
   format.edition output
   format.date2 output
   crossref missing$
-    { format.isbn output }
+    { format.isbn output
+    output.doi }
     'skip$
   if$
   new.sentence
@@ -1045,6 +1058,7 @@ FUNCTION {manual}
   format.edition output
   format.date2 output
   format.url output
+  output.doi
   new.sentence
   format.note output
   fin.entry
@@ -1061,6 +1075,7 @@ FUNCTION {mastersthesis}
   school "school" output.check
   address output
   format.date2 output
+  output.doi
   new.sentence
   format.note output
   fin.entry
@@ -1092,6 +1107,7 @@ FUNCTION {phdthesis}
   school "school" output.check
   address output
   format.date2 output
+  output.doi
   new.sentence
   format.note output
   fin.entry
@@ -1135,6 +1151,7 @@ FUNCTION {techreport}
   institution "institution" output.check
   address output
   format.date2 output
+  output.doi
   new.sentence
   format.note output
   fin.entry
@@ -1160,6 +1177,7 @@ FUNCTION {researchreport}
   institution "institution" output.check
   address output
   format.date2 output
+  output.doi
   new.sentence
   format.note output
   fin.entry
