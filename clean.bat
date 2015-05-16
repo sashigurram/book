@@ -18,3 +18,9 @@ rm *.ist
 rm *.acn
 rm *.acr
 rm *.alg
+
+cd using
+rm *.aux
+rm *.bbl
+rm *.blg
+
