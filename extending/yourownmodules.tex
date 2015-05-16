@@ -66,7 +66,9 @@ At runtime, the entire configuration is stored in an instance of \lstinline|Conf
 The author of an extension can subclass the \lstinline|ConfigGroup| class to provide named accessors for the parameters.
 An example is the following:
 \begin{lstlisting}
-MyExternalConfigGroup myConfig = ConfigUtils.addOrGetModule(controler.getConfig(), MyExternalConfigGroup.GROUP_NAME, MyExternalConfigGroup.class);
+MyExternalConfigGroup myConfig 
+       = ConfigUtils.addOrGetModule(controler.getConfig(), MyExternalConfigGroup.GROUP_NAME, 
+			      MyExternalConfigGroup.class);
 \end{lstlisting}
 
 \kai{Es gibt da auch noch ein loadConfig, was AUCH die config groups ``materialisiert''.  Hm.}
@@ -76,7 +78,6 @@ Furthermore, there is a utility class \lstinline|ReflectiveConfigGroup| which yo
 % =========================================================================================
 \subsection{ObjectAttributes and Customizable}
 \label{sec:objectAttributes-and-customizable}
-
 \gls{matsim} operates on data types such as links, nodes, persons, or vehicles. Many of these data types have attributes, such as free speed (for links) or coordinates (for nodes).  Rather often, one would like additional information for certain data types, such as ``slope'' for links, or ``age'' for persons.  In order to not modify the data types every time this becomes necessary, but still allow experimentation, a helper container called \lstinline{ObjectAttributes} is available.  It essentially attaches arbitrary additional information to objects \emph{that have an \gls{id}}, by a syntax of type
 \begin{lstlisting}
 attribs.putAttribute( id, attribName, attribValue ) ;  
@@ -97,7 +98,6 @@ Note that information contained in \lstinline{Customizable} is not considered st
 % =========================================================================================
 \subsection{ScenarioElement}
 \label{sec:scenario-extension-point}
-
 The object-oriented in-memory database which holds the \lstinline|Person| objects with their plan memories is accessible via the \lstinline|Population| interface. The \lstinline|Network| interface gives access to the traffic network graph, consisting of links and nodes. There is a \lstinline|TransitSchedule| interface which represents the public transit schedule. Your own modeling tasks may need an additional data container like these. We call them scenario elements. The freight carrier population of the freight \gls{extension} described in Section~\ref{sec:carriers} is a typical example. 
 
 \lstinline|Scenario| is the interface which ties all scenario elements together. You can add your own named scenario element to the \lstinline|Scenario| at startup, for example in a \lstinline|StartupListener|. All standard scenario elements are populated from \gls{xml} files at startup, but your own scenario elements could just as well be interfaces to an external relational database.
@@ -106,12 +106,47 @@ The object-oriented in-memory database which holds the \lstinline|Person| object
 \subsection{ControlerListener}
 \label{sec:controlerListener-extension-point}
 % \label{sec:controlerextension} \ah{double label working?}
-\lstinline|Controler| remains the main user-facing class of \gls{matsim}, but please do not subclass it. Rather, use its setter methods to plug in your own code. \lstinline|ControlerListeners| are called at the transitions of the \gls{matsim} loop (Figure~\ref{fig:matsimcycle}), in undefined order. Thus, \lstinline|AControlerListener| may only rely on the computation of \lstinline|BControlerListener| if \lstinline|BControlerListener| makes that computation in an earlier transition. For instance, if \lstinline|BControlerListener| is a \lstinline|StartupListener| and loads data into a \lstinline|Map| on start-up, \lstinline|AControlerListener| can be an \lstinline|IterationStartsListener| and use that \lstinline|Map|. But do not write two \lstinline|IterationStartsListeners|, where the first puts some data into a \lstinline|Map| and the second expects to find it there---they may be called in any order.
+\lstinline|Controler| remains the main user-facing class of \gls{matsim}, but please do not subclass it. 
+Rather, use its setter methods to plug in your own code. 
+
+\lstinline|ControlerListeners| are called at the transitions of the \gls{matsim} loop (Figure~\ref{fig:controlerevents}), where so-called \lstinline|ControlerEvents| are fed to the listeners. 
+
+Following \lstinline|ControlerListeners| are available:
+\lstinline|StartupListener|
+\lstinline|IterationStartsListener|
+\lstinline|BeforeMobsimListener|
+\lstinline|AfterMobsimListener|
+\lstinline|ScoringListener|
+\lstinline|IterationEndsListener|
+\lstinline|ReplanningListener|
+\lstinline|ShutdownListener|.
+
+A sample listener might look as follows.
+\begin{lstlisting}
+public class MyControlerListener implements StartupListener { 
+
+  @Override 
+  public void notifyStartup(StartupEvent event) { 
+    ...
+  }
+} 
+\end{lstlisting}
+
+\lstinline|ControlerListeners| are called in undefined order, meaning that \lstinline|AControlerListener| may only rely on the computation of \lstinline|BControlerListener| if \lstinline|BControlerListener| makes that computation in an earlier transition. For instance, if \lstinline|BControlerListener| is a \lstinline|StartupListener| and loads data into a \lstinline|Map| on start-up, \lstinline|AControlerListener| can be an \lstinline|IterationStartsListener| and use that \lstinline|Map|. But do not write two \lstinline|IterationStartsListeners|, where the first puts some data into a \lstinline|Map| and the second expects to find it there---they may be called in any order.
 
 \kai{Bild?!}
+\ah{Habe das noch ein wenig ergänzt, mit Hilfe von \url{http://www.matsim.org/node/602}. Please check.}
+% ------------
+\createfigure%
+{Controler events}%
+{Controler events}%
+{\label{fig:controlerevents}}%
+{\includegraphics[width=0.6\textwidth, angle=0]{extending/figures/controler_listeners.png}}%
+{}
+% ------------
 
 % =========================================================================================
-\subsection{Events}
+\subsection{Mobsim Events}
 \label{sec:events-extension-point}
 The \gls{mobsim} moves the agents around in the virtual world according to their plans and within the bounds of the simulated reality. 
 It documents their moves by producing a stream of \glspl{event}. 
@@ -127,6 +162,7 @@ Events are small pieces of information describing the action of an object at a s
 \end{itemize}
 %
 %\kai{Hier gibt es ein nettes Bild auf drupal; sollten wir noch hinzunehmen.}
+% ah{added}
 % ------------
 \createfigure%
 {Events}%
