@@ -32,15 +32,20 @@ Estimating benefits of a policy intervention relies on a sound descriptive model
 %
 %The following sections will therefore shortly present the concept of aggregated elasticities, followed by a presentation of Discrete Choice Theory and its relationship to the \acrshort{matsim} choice model.
 %
-As explained in Section~\ref{sec:inbrief}, agents in \gls{matsim} optimize their mobility behavior over several iterations by taking the behavior of other agents into account. Even if one assumes homogeneous preferences of individuals in the behavioral parameters of their utility functions (see Section~\ref{sec:typicalParams}), activity locations and activity patterns of agents typically differ. In consequence, the simulation deals with heterogeneous decision makers. It therefore seems reasonable to interpret the simulation from a discrete choice modeling perspective (see Chapter~\ref{ch:discretechoice}). Another attractive reason to follow this interpretation might be that there exist well-established approaches to estimate changes in user benefits and system welfare from discrete choice models.
+As explained in Section~\ref{sec:inbrief}, agents in \gls{matsim} optimize their mobility behavior over several iterations by taking the behavior of other agents into account. Even if one assumes homogeneous preferences of individuals in the behavioral parameters of their utility functions (see Section~\ref{sec:typicalParams}), activity locations and activity patterns of agents typically differ. In consequence, the simulation deals with heterogeneous decision makers. It therefore seems reasonable to interpret the simulation from a discrete choice modeling perspective (see Chapter~\ref{ch:discretechoice}). Another attractive reason to follow this interpretation 
+%might be 
+is that there exist well-established approaches to estimate changes in user benefits and system welfare from discrete choice models.
 
-As shown by \cite{NagelFloetteroed2009IatbrResourceInBook}, the \acrshort{matsim} choice model is equivalent to a standard \gls{mnl} model, given that valid choice sets have been found for all individuals, and that the score of each plan has converged to its expectation value (self-consistent state).
+As shown by \cite[][also see Chapter~\ref{ch:abta}]{NagelFloetteroed2009IatbrResourceInBook}, the \acrshort{matsim} choice model is equivalent to a standard \gls{mnl} model, given that valid choice sets have been found for all individuals, and that the score of each plan has converged to its expectation value (self-consistent state).
 %
-Unfortunately, the above conditions are not necessarily met by the current \acrshort{matsim} implementation, in particular when it is used to generate choice sets on-the-fly within the iterative loop (Section~\ref{sec:inbrief}).
-%
-\benjamin{Kai, pls check the above paragraph. Is the formulation correct?}
-%
-For these reasons, there exist three methodological issues at the time of writing:
+An approximation of this can be reached by switching innovation off (Section~\ref{sec:innovation-switchoff}) and forcing scores to convergence (Section~\ref{sec:score-msa}). 
+%% %
+%% Unfortunately, the above conditions are not necessarily met by the current \acrshort{matsim} implementation, in particular when it is used to generate choice sets on-the-fly within the iterative loop (Section~\ref{sec:inbrief}).
+%% %
+%% \benjamin{Kai, pls check the above paragraph. Is the formulation correct?}
+%% %
+%% For these reasons, there exist three methodological issues at the time of writing:
+Still, this leaves the following methodological issues:
 %
 \begin{enumerate}\styleEnumerate
 %
@@ -48,11 +53,17 @@ For these reasons, there exist three methodological issues at the time of writin
 %
 \item \textbf{Plans correlation from innovation}: Plans might be correlated. This is very likely if they are modified or replaced by best-response re-planning modules (\eg the route choice module), since they have a tendency to always generate the same answer. Yet also random mutations in general result in correlated plans, since the concept of a mutation in fact implies an only small change away from the parent.  This violates the required IIA (Independence from Irrelevant Alternatives) property of the choice set that is needed for an \gls{mnl} model.
 %
-\item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to keep similar, \ie  correlated, plans when the number of plans has grown beyond $J$.  The reason for this is that the current plans remover removes the plan with the lowest score, which typically also is the one most different from the other plans.  As a result, typically only very similar plans with very similar scores remain in the choice set.
+\item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to keep similar, \ie  correlated, plans when the number of plans has grown beyond $J$.  The reason for this is that the current default plans remover removes the plan with the lowest score, which typically also is the one most different from the other plans.  As a result, typically only very similar plans with very similar scores remain in the choice set.
 %
 \end{enumerate}
 %
-These three issues might lead to biased behavior, and would then also have consequences for economic evaluation. Several possible cures of these shortcomings have been discussed in Section~\ref{sec:Evolution-of-choice}. For the remainder of this chapter, it will therefore be assumed that the above issues are solved, and that a self-consistent solution has been found for the system states before and after the policy change.
+These three issues 
+%might
+may to biased behavior, which would then have 
+%would then also 
+consequences for economic evaluation.  Possible cures of these shortcomings are discussed 
+%in more detail 
+in Section~\ref{sec:Evolution-of-choice}, and again, from a different angle, in Section~\ref{sec:choicesets}. For the remainder of this chapter, it will therefore be assumed that the above issues are solved, and that a self-consistent solution has been found for the system states before and after the policy change.
 %
 Nonetheless, the following text will provide a short discussion of possible impacts of the above issues on policy appraisal results, wherever it seems to add to a better understanding.
 
@@ -457,7 +468,7 @@ The subsequent Section~\ref{ch:economicEval:aggregatingValues} will then focus o
 \label{sec:scor-funct-revisited}
 %
 \benjamin{Im Folgenden steht überall $U$; sollen wir das ändern zu $S$? Oder passt es hier eigentlich? Ich tendiere dazu es zu lassen...}
-\ah{M.E. ist an dieser Stelle $U$ nun hergeleitet ... anders als in Teil I und II.}
+\ah{M.E. ist an dieser Stelle $U$ nun hergeleitet ... anders als in Teil I und II.} \kai{Ist es dann $U$ oder $V$?  Also sind die epsilons schon drin (ah locachoice) oder nicht (bryan raney betaBrain)?  Würde m.E.\ dafür sprechen, hier lieber bei $S$ zu bleiben ...  Oder halt doch $U$, aber eine Fußnote dran.}
 %
 The \acrshort{matsim} scoring function of plan (= alternative) $i$ consisting of $q = 0..N-1$ activities and trips has been introduced in Chapter~\ref{ch:scoring} in the following form:\
 %% footnote{\label{footnote:income-effects}%
@@ -1503,7 +1514,7 @@ The responsibility of any remaining errors stays with the authors.
 % mode: latex
 % mode: reftex
 % mode: visual-line
-% TeX-master: "main"
+% TeX-master: "../main"
 % comment-padding: 1
 % fill-column: 9999
 % End: 

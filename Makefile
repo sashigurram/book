@@ -6,7 +6,7 @@ newpdf:
 	-xelatex  -interaction=nonstopmode ${NAME}
 	makeglossaries ${NAME}
 	makeindex ${NAME}
-	bibtex -min-crossrefs=99 ${NAME}
+	bibtex -min-crossrefs=999 ${NAME}
 	xelatex -interaction=nonstopmode ${NAME}
 	xelatex -interaction=nonstopmode ${NAME}
 
@@ -14,7 +14,7 @@ pdf:
 	-pdflatex  -interaction=nonstopmode ${NAME}
 	makeglossaries ${NAME}
 	makeindex ${NAME}
-	bibtex -min-crossrefs=99 ${NAME}
+	bibtex -min-crossrefs=999 ${NAME}
 	pdflatex -interaction=nonstopmode ${NAME}
 	pdflatex -interaction=nonstopmode ${NAME}
 
@@ -35,13 +35,13 @@ kai.aux:
 kaibib:
 	pdflatex kai
 	makeindex kai
-	bibtex kai
+	bibtex -min-crossrefs=999 kai
 	pdflatex kai
 	pdflatex kai
 
 gregor:
 	pdflatex gregor
-	bibtex gregor
+	bibtex -min-crossrefs=999 gregor
 	pdflatex gregor
 	pdflatex gregor
 
