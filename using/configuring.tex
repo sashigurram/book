@@ -60,8 +60,9 @@ Chapter~\ref{ch:extensionpoints}.
 % ===================================================================================
 \subsection{Events}
 \label{sec:using-events}
-
 Events are continuously generated, reporting on all activities in the \gls{mobsim}, as discussed in more detail in Section~\ref{sec:events-extension-point}. 
+
+Please note that, besides these \gls{mobsim} events, there is a less prominent type of events, namely \lstinline|ControlerEvents|, which are created by the \lstinline|Controler| to report on its current state. \lstinline|ControlerEvents| are also further explained in Section~\ref{sec:events-extension-point}. 
 %% The core module, not having its own \gls{configfile} section, also contains readers and writers.
 % 
 % I don't think that the above sentence is interesting at the "using" level. kai, mar'15
@@ -219,9 +220,13 @@ The \gls{configfile} section \lstinline|planCalcScore| specifies the parameters 
 \label{sec:strategymodules}
 %\kai{Habe ``strategy'' ans Ende gezogen, weil ein matsim run so auch tatsächlich losgeht: erst mobsim, dann scoring, dann replanning.  Gibt es Argumente für andere Reihenfolgen?} \ah{nein, super Punkt!}
 
-\subsection{Plans Generation and Removal (Choice Set Generation)}
-
-Replanning strategy modules are the basic innovation modules available in \gls{matsim}. We do not call them \emph{choice} modules, although they are involved in people's choice making. The choice process, however, is performed over the iterations with an \emph{implicit} choice set and is not based on explicit probability function drawing. Usually, innovation modules do not define their own utility function,  particularly for random mutation modules, where best-response modules, such as destination innovation, are closer to choice modeling standard procedure, but still not full-blown choice models. For a detailed discussion of \gls{matsim} in choice modeling context, see Chapter~\ref{ch:discretechoice}.
+Replanning strategies are the basic innovation modules available in \gls{matsim}. We do not call them \emph{choice} modules, although they are involved in people's choice making. The choice process is performed over the iterations with an \emph{implicit} choice set and is not based on explicit probability function drawing.  One can differentiate between modules that affect the set of plans that each agent holds, and others that only select between these plans.
+% (neuer Satz, eingefügt nach Lektorat. kai, may'15)
+%
+%% Usually, so-called innovative modules do not define their own utility function,  particularly for random mutation modules, while best-response modules, such as destination innovation, are closer to choice modeling standard procedure, but still not full-blown choice models. 
+% (habe ich mal rausgestrichen.  Es macht für mich irgendwie keinen Sinn, erst zu schreiben, dass innovative Module ``usually'' keine utl fct definieren (was ja auch nicht stimmt), nur um im zweiten Teil des Satzes dann ein solches zu nennen.  Und was davon näher an random utl modelling dran ist, ist irgendwie nochmal eine separate Frage. kai, may'15)
+For a detailed discussion of \gls{matsim} in choice modeling 
+context, see Chapter~\ref{ch:discretechoice}.
 
 All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
 %
@@ -283,7 +288,7 @@ In older versions of the \gls{configfile} you will find following deprecated con
 % brauchen wir m.E. nicht. kai, jan'15
 
 
-Please note that combining strategy modules that are \glspl{contribution}, like destination innovation and public transport, is complicated. Combine them with care and contact the mailing list if you are unsure.
+Please note that combining strategy modules that are \glspl{extension} (see Section~\ref{sec:levels-of-access}), like destination innovation together with public transport, is complicated. Combine them with care and contact the mailing list if you are unsure.
 
 %Combining different modules is not straightforward in MATSim. This important topic urgently requires future analysis. Here, to begin, the combination of strategy modules with public transport is presented in Table \ref{tab:combination}.
 %
@@ -318,6 +323,9 @@ Please note that combining strategy modules that are \glspl{contribution}, like 
 
 %\kai{Ich meine, dass es diese Transit Sonderformen gar nicht mehr gibt.  ????}
 %\ah{habs mal auskommentiert und die Warnung über Contrib-Kombinationen oben hingeschrieben.} 
+
+\subsection{Plans Generation and Removal (Choice Set Generation)}
+\label{sec:configuring-choice-set-generation}
 
 % ===================================================================================
 \subsubsection{Time Innovation}
@@ -707,6 +715,9 @@ The routing module, for example, needs travel time estimations for all network l
 \subsection{Link Stats}
 \label{sec:linkStats}
 The \lstinline|linkStats| \gls{configfile} section can specify the output interval of individual links' simulation statistics. It is configurable, if the simulated volumes are written per iteration or averaged over multiple iterations. As one of their many functions, link stats are used for comparison with count values, as introduced in Section~\ref{sec:extending-counts}. 
+
+% ##################################################################################################################
+\ifthenelse{\boolean{printBibPerChapter}}{\bibpc}{}
 
 % ##################################################################################################################
 % Local Variables:
