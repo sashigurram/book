@@ -61,13 +61,8 @@ wc:
 	wc ${NAME}.txt
 
 localbib:
-	- bibexport.sh -a -o 0/tub.bib ../../shared-svn/documents/inputs/bib/vsp ../../shared-svn/documents/inputs/bib/kai ../../shared-svn/documents/inputs/bib/ref
+	- ./bibexport.sh -a -o 0/tub.bib ../../shared-svn/documents/inputs/bib/vsp ../../shared-svn/documents/inputs/bib/kai ../../shared-svn/documents/inputs/bib/ref
 	../../shared-svn/documents/inputs/bib/repair_bib.rb 0/tub.bib
-
-bklocalbib:
-	- bibexport.sh -a -o 0/tub.bib ../../shared-svn/documents/inputs/bib/vsp ../../shared-svn/documents/inputs/bib/kai ../../shared-svn/documents/inputs/bib/ref
-	../../shared-svn/documents/inputs/bib/repair_bib.rb 0/tub.bib
-
 spin:
 	make pdf; while true; do inotifywait -r . $(shell find . -type l -xtype d -printf '%p/*\n') $(shell find . -type l -xtype f) -e CREATE,MODIFY,DELETE; make -j2 pdf; done
 
