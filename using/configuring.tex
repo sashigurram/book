@@ -473,7 +473,7 @@ The following sections describe current \gls{matsim} multi-modal capabilities. T
 
 % ..............................
 \paragraph{\enquote{Main Modes}}
-The above approach failed as soon as more than one vehicle type was involved, but recently, the ability to allow multiple modes on the same network was introduced.  
+The approach described so far fails as soon as more than one vehicle type was involved. Therefore, recently the ability to allow multiple modes on the same network was introduced.  
 It is defined by the \lstinline{qsim} config option of type
 \begin{xml}
 <module name="qsim">
@@ -481,11 +481,11 @@ It is defined by the \lstinline{qsim} config option of type
    [...]
 </module>
 \end{xml}
-This examines plan leg mode; if that leg mode corresponds to one of the listed main modes, it will generate a vehicle for that leg and make it enter the network.
+This examines the plan leg mode; if that leg mode corresponds to one of the listed main modes, it will generate a vehicle for that leg and make it enter the network.
 
 % ..............................
 \paragraph{PassingQ} 
-Once various mode vehicle types have different maximum speeds, the standard \gls{qsim} is no longer sufficient, since it uses \gls{fifo} as the queuing discipline, meaning that fast vehicles cannot pass slower vehicles. Here, the so-called \lstinline|Passing(Vehicle)Q| can be used instead.  It replaces the \gls{fifo} sorting criterion, (where vehicles are sorted by the sequence in which they arrive on the link) by a sorting employing the so-called earliest link exit time, computed from link enter time and freespeed travel time.  Now, using vehicle minimum and  link maximum speeds, freespeed travel time can be differentiated between vehicles, allowing fast vehicles to obtain an earlier link exit time, even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \citet{AgarwalEtcMixedTraffic}.
+Once various mode vehicle types have different maximum speeds, the standard \gls{qsim}, even with multiple main modes, is no longer sufficient, since it uses \gls{fifo} as the queuing discipline, meaning that fast vehicles cannot pass slower vehicles. Here, the so-called \lstinline|Passing(Vehicle)Q| can be used instead.  It replaces the \gls{fifo} sorting criterion -- where vehicles are sorted by the sequence in which they arrive on the link -- by a sorting employing the so-called earliest link exit time, computed from link enter time and freespeed travel time.  Now, using the minimum of vehicle and link maximum speeds, the freespeed travel time can be differentiated between vehicles, allowing fast vehicles to obtain an earlier link exit time, even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \citet{AgarwalEtcMixedTraffic}.
 
 This option can be enabled by using
 \begin{xml}
@@ -508,7 +508,7 @@ The option to simulate scenarios with
 %% \kai{Klingt komisch ohne das ``maximum'', habe es daher dringelassen.}
 mode-specific maximum speeds is supported by the possibility to define so-called ``mode vehicles'', \ie by specifying a typical vehicle for each mode.
 %
-With the two options \lstinline{PassingQ} and \lstinline{FIFO}, passing is implemented as all-or-none, \ie either every vehicle type can pass every other, or none can pass. More fine-grained passing rules are currently being researched.
+%% With the two options \lstinline{PassingQ} and \lstinline{FIFO}, passing is implemented as all-or-none, \ie either every vehicle type can pass every other, or none can pass. More fine-grained passing rules are currently being researched.
 %This is discussed \kai{where?}.
 %\footnote{%
 %  
@@ -521,8 +521,9 @@ With the two options \lstinline{PassingQ} and \lstinline{FIFO}, passing is imple
 %We will eventually make this available as a config option; at this time, we are still searching for a software design that makes the QSim both pluggable at multiple levels \emph{and} easy to maintain.
 %
 %}
-
-So as not to use the same pre-defined default vehicle type for each mode, it is necessary, at the moment, to write a script-in-\gls{java}; see  Section~\ref{sec:extending-vehicles} for a reference to the script and Section~\ref{sec:extending-qsim} for a general explanation of scripts-in-\gls{java}.\footnote{We will eventually make this available as a config option; at this time, we are still searching for a software design to make the \gls{qsim} both pluggable at multiple levels \emph{and} easy to maintain.}
+%
+%% So as not to use the same pre-defined default vehicle type for each mode, 
+For this functionality it is necessary, at the moment, to write a script-in-\gls{java}; see Section~\ref{sec:extending-vehicles} for a reference to the script and Section~\ref{sec:extending-qsim} for a general explanation of scripts-in-\gls{java}.\footnote{We will eventually make this available as a config option; at this time, we are still searching for a software design to make the \gls{qsim} both pluggable at multiple levels \emph{and} easy to maintain.}
 
 %% \ah{Should we say something about this? Is that correct?}
 %% \ah{Passing is all-or-none, \ie either every vehicle type can pass every other type or none can pass none. 
@@ -545,7 +546,7 @@ This is discussed \kai{where?}.
 %------------------------------------------------------------
 \subsubsection{So-Called Teleportation}
 \label{sec:teleportation-qsim}
-All \emph{not} modes registered with the \gls{qsim} as ``main modes'' will be teleported.  That is, the \gls{qsim} will, without problems, process legs such as
+All modes \emph{not} registered with the \gls{qsim} as ``main modes'' will be teleported.  That is, the \gls{qsim} will, without problems, process legs such as
 \begin{xml}
 <leg mode="pedelec" >
    <route type="generic" trav_time="00:14:44" distance="2374" />
@@ -564,7 +565,7 @@ The \gls{qsim} will generate a departure event (for events, see Section~\ref{sec
 
 %% \kai{Andreas, I added this section, please check}
 
-With ``driver'' modes, such as car, bicycle, or sometimes walk,  travelers are also drivers, \ie the entities making decisions about turns at intersections, as well as arrivals (or not) on links.
+With ``driver'' modes, such as car, bicycle, or also walk,  travelers are also drivers, \ie the entities making decisions about turns at intersections, as well as arrivals (or not) on links.
 %
 With ``passenger'' modes, such as public transit or taxi, this changes; for example, the traveler boards a bus, the bus moves around in the network; the only decision the traveler has to make if she or he wants to get off or not at the current stop.  The bus, in turn, is a normal participant in the corresponding traffic system, \ie buses and taxis operate on the normal road network and can be caught in the same congestion as cars and trucks.  
 %
@@ -585,13 +586,17 @@ It is possible to register a separate departure handler for each mode; see Secti
 
 \item The public transport extension moves all registered modes with specific public transit vehicles (see Chapter~\ref{ch:pt}).
 
-\item The dynamic transport systems contribution moves all registered modes with taxis (see Chapter~\pageref{ch:dts}).
+\item The dynamic transport systems contribution moves all registered modes \kai{??} with taxis (see Chapter~\pageref{ch:dts}).
 
 \end{itemize}
 
 % ===================================================================================
 \subsection{Routing Side}
-Route generatation is the next topic.
+\label{sec:using-routing-multimodal}
+
+The previous Section~\ref{sec:using-qsim-multimodal} has described how the \gls{qsim} handles various modes when they are requested by the plans.
+%
+Correspondingly, it now needs to be considered how multi-modal plans -- or more specifically multi-modal routes inside multi-modal legs -- are generated.
 %% Clearly, the user can write her, or his, own router - which can either be a full-blown network router (\cf Section~\ref{sec:router-extension-point}), or a heuristic that offers plausible travel times and travel distances.  It is, however, much easier to use the preconfigured options, as follows.
 
 %------------------------------------------------------------
