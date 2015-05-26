@@ -18,6 +18,7 @@ rm *.ist
 rm *.acn
 rm *.acr
 rm *.alg
+rm *.tdo
 
 cd using
 rm *.aux
