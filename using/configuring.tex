@@ -60,8 +60,9 @@ Chapter~\ref{ch:extensionpoints}.
 % ===================================================================================
 \subsection{Events}
 \label{sec:using-events}
+Events are continuously generated, reporting on all activities in the \gls{mobsim}, as discussed in more detail in Section~\ref{sec:events-extension-point}. 
 
-Events are continuously generated, reporting on all activities in the \gls{mobsim}, as discussed in Section~\ref{}. 
+Please note that, besides these \gls{mobsim} events, there is a less prominent type of events, namely \lstinline|ControlerEvents|, which are created by the \lstinline|Controler| to report on its current state. \lstinline|ControlerEvents| are also further explained in Section~\ref{sec:events-extension-point}. 
 %% The core module, not having its own \gls{configfile} section, also contains readers and writers.
 % 
 % I don't think that the above sentence is interesting at the "using" level. kai, mar'15
@@ -91,7 +92,7 @@ A good starting point is using the number of available cores.
 \label{sec:using-paralleleventhandling}
 
 The \gls{configfile} section \lstinline|parallelEventHandling| is used to define the number of threads used for event handling. 
-As described in \citet[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009}, the simulation can be substantially accelerated when using multiple threads for the events handling, which can be a bottleneck in \gls{matsim} simulation runs.
+As described in \citet[][]{WaraichEtAl_STRC_2009}, the simulation can be substantially accelerated when using multiple threads for the events handling, which can be a bottleneck in \gls{matsim} simulation runs.
 % Clearly, the number of threads should correspond with available processor cores.  \kai{Meine Erfahrung ist eine andere, und je nach Maschine kann man das manchmal überauslasten und manchmal sollte man es eher unterauslasten.}  
 %% In our experience, the optimal degree of capacity utilization (threads versus cores) is highly machine-dependent.
 %% As mentioned above, the \gls{mobsim} \gls{qsim} is running parallel by default.
@@ -156,9 +157,9 @@ In the \gls{configfile} section \lstinline|global|, the simulation's random seed
 An overview of \gls{matsim} mobility simulations is given in \citet[][]{Dobler_TechRep_IVT_2011}. %See also \citet[][]{Rieser_unpub_IVT_2011}.
 
 % ===================================================================================
-\subsection{\protect\gls{qsim}}
+\subsection{QSim}
 \label{sec:using-qsim}
-The queue-based and time-step based \gls{qsim} \citep[][]{Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is \gls{matsim}'s default \gls{mobsim}. 
+The queue-based and time-step based \gls{qsim} \citep[][]{Gawron_IJMPC_1998,SimonEtAl_IJMPC_1999,CetinBurriNagel2003queue,Dobler_TechRep_IVT_2011, Dobler_STRC_2010} is \gls{matsim}'s default \gls{mobsim}. 
 Its parameters are set in the \lstinline|qsim| \gls{configfile} section. Important parameters are:
 %% \begin{itemize} 
 %% \item
@@ -201,7 +202,7 @@ As shown in Section~\ref{sec:using-qsim-multimodal}, \gls{qsim} can handle \gls{
 % ===================================================================================
 \subsection{JDEQSim}
 \label{sec:using-jdeqsim}
-\gls{jdeqsim} \citep[][]{WaraichEtAl_TechRep_IVT_2009, WaraichEtAl_STRC_2009} was used for project \emph{KTI Frequencies} \citep[][]{BalmerEtAl_ResRep_datapuls_2010}. It is is a \gls{java} reimplementation of \gls{deqsim} \citep[][]{WaraichEtAl_STRC_2009, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009} and provides parallel event handling, but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) are supported,but traffic lights, public transport and within-day replanning are not.
+\gls{jdeqsim} \citep[][]{WaraichEtAl_STRC_2009} was used for project \emph{KTI Frequencies} \citep[][]{BalmerEtAl_ResRep_datapuls_2010}. It is is a \gls{java} reimplementation of \gls{deqsim} \citep[][]{WaraichEtAl_STRC_2009, CharyparEtAl_TRR_2007, CharyparEtAl_TRB_2009} and provides parallel event handling, but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) are supported,but traffic lights, public transport and within-day replanning are not.
 
 To run \gls{jdeqsim}, the parameter \lstinline|mobsim| of \lstinline|controler| \gls{configfile} section must be set to \lstinline|JDEQSim| and a \lstinline|jdeqsim| \gls{configfile} section must be provided. 
 
@@ -219,9 +220,13 @@ The \gls{configfile} section \lstinline|planCalcScore| specifies the parameters 
 \label{sec:strategymodules}
 %\kai{Habe ``strategy'' ans Ende gezogen, weil ein matsim run so auch tatsächlich losgeht: erst mobsim, dann scoring, dann replanning.  Gibt es Argumente für andere Reihenfolgen?} \ah{nein, super Punkt!}
 
-\subsection{Plans Generation and Removal (Choice Set Generation)}
-
-Replanning strategy modules are the basic innovation modules available in \gls{matsim}. We do not call them \emph{choice} modules, although they are involved in people's choice making. The choice process, however, is performed over the iterations with an \emph{implicit} choice set and is not based on explicit probability function drawing. Usually, innovation modules do not define their own utility function,  particularly for random mutation modules, where best response modules, such as destination innovation, are closer to choice modeling standard procedure, but still not full-blown choice models. For a detailed discussion of \gls{matsim} in choice modeling context, see Chapter~\ref{ch:discretechoice}.
+Replanning strategies are the basic innovation modules available in \gls{matsim}. We do not call them \emph{choice} modules, although they are involved in people's choice making. The choice process is performed over the iterations with an \emph{implicit} choice set and is not based on explicit probability function drawing.  One can differentiate between modules that affect the set of plans that each agent holds, and others that only select between these plans.
+% (neuer Satz, eingefügt nach Lektorat. kai, may'15)
+%
+%% Usually, so-called innovative modules do not define their own utility function,  particularly for random mutation modules, while best-response modules, such as destination innovation, are closer to choice modeling standard procedure, but still not full-blown choice models. 
+% (habe ich mal rausgestrichen.  Es macht für mich irgendwie keinen Sinn, erst zu schreiben, dass innovative Module ``usually'' keine utl fct definieren (was ja auch nicht stimmt), nur um im zweiten Teil des Satzes dann ein solches zu nennen.  Und was davon näher an random utl modelling dran ist, ist irgendwie nochmal eine separate Frage. kai, may'15)
+For a detailed discussion of \gls{matsim} in choice modeling 
+context, see Chapter~\ref{ch:discretechoice}.
 
 All strategy modules are called by configuring the strategy module in the configuration file as shown in the following example.
 %
@@ -283,7 +288,7 @@ In older versions of the \gls{configfile} you will find following deprecated con
 % brauchen wir m.E. nicht. kai, jan'15
 
 
-Please note that combining strategy modules that are \glspl{contribution}, like destination innovation and public transport, is complicated. Combine them with care and contact the mailing list if you are unsure.
+Please note that combining strategy modules that are \glspl{extension} (see Section~\ref{sec:levels-of-access}), like destination innovation together with public transport, is complicated. Combine them with care and contact the mailing list if you are unsure.
 
 %Combining different modules is not straightforward in MATSim. This important topic urgently requires future analysis. Here, to begin, the combination of strategy modules with public transport is presented in Table \ref{tab:combination}.
 %
@@ -319,6 +324,9 @@ Please note that combining strategy modules that are \glspl{contribution}, like 
 %\kai{Ich meine, dass es diese Transit Sonderformen gar nicht mehr gibt.  ????}
 %\ah{habs mal auskommentiert und die Warnung über Contrib-Kombinationen oben hingeschrieben.} 
 
+\subsection{Plans Generation and Removal (Choice Set Generation)}
+\label{sec:configuring-choice-set-generation}
+
 % ===================================================================================
 \subsubsection{Time Innovation}
 \label{sec:timechoice}
@@ -330,7 +338,7 @@ Time innovation is applied by defining its parameters in the \gls{configfile} se
 %
 plus its weight to the strategy modules.
 
-The module shifts activity end times randomly within a configurable range as described by \citet[][]{BalmerEtAl_Timmermans_2005, Raney_PhDThesis_2005, Balmer_unpub_VSP_2004, BalmerEtAl_unpub_EIRASS_2004, BalmerEtAl_unpub_STRC_2004}. %A best-reponse approach to time choice is applied by "Planomat" described in Section~\ref{sec:planomat}.
+The module shifts activity end times randomly within a configurable range as described by \citet[][]{BalmerRaneyEtAl2005act-times, Raney_PhDThesis_2005, Balmer_unpub_VSP_2004, BalmerEtAl_unpub_EIRASS_2004, BalmerEtAl_unpub_STRC_2004}. %A best-reponse approach to time choice is applied by "Planomat" described in Section~\ref{sec:planomat}.
 
 % ===================================================================================
 \subsubsection{Route Innovation}
@@ -343,7 +351,7 @@ Route innovation is applied by defining its parameters in the \gls{configfile} s
 \end{xml}
 %
 plus its weight to the strategy modules, and by specifying the routing algorithm in the \lstinline|controler| \gls{configfile} section (Section~\ref{sec:using-controler}).
-\gls{matsim} routing is described by \citet[]{LefebvreBalmer_STRC_2007, LefebvreBalmer_TechRep_IVT_2007}. 
+\gls{matsim} routing is described by \citet[]{LefebvreBalmer_unpub_STRC_2007}. 
 
 %The configuration necessary for public transport is shown in Chapter \ref{ch:pt}.  \kai{Da steht m.E.\ noch nichts in der Richtung.  Aber meiner Erinnerung nach ist auch gar keine Sonderkonfiguration mehr nötig.  Michael Z.?}
 %
@@ -369,10 +377,11 @@ plus its weight to the strategy modules. In the \gls{configfile} a section with 
 %
 \lstinline|ChangeLegMode| randomly picks one of a person's  plans and changes the mode of transport. By default, the supported modes are: driving a car and using public transport. Only one mode of transport per plan is supported.  When using different modes for sub-tours on a single day, the \lstinline|SubtourModeChoice| module is required. Optionally, car availability is respected. \lstinline|ChangeSingleLegMode| randomly picks one of a person's plans and changes one single leg's (picked randomly) mode of transport. In contrast to \lstinline|ChangeLegMode|, it allows for multiple modes in one plan. By default, t supported modes are: driving a car and using public transport. Also, this module can (optionally) respect car availability.
 
-Mode innovation is described by \citet[][]{RieserEtAl_TRR_2009, MeisterEtAl_WCTRS_2010, CiariEtAl_STRC_2008, CiariEtAl_STRC_2007}.
+Mode innovation is described by \citet[][]{RieserGretherNagel2008modeChoiceCalculations, MeisterEtAl_WCTRS_2010, CiariEtAl_STRC_2008, CiariEtAl_STRC_2007}.
 
 % ===================================================================================
 \subsubsection{Plans Removal}
+\label{sec:plans-removal}
 
 The maximum number of plans per agent is configured by the setting 
 \begin{xml}
@@ -427,6 +436,16 @@ Selectors work as follows:
 %
 Note that the \lstinline|BestScore| should be used with care; it tends to get stuck with sub-optimal plans. Plans badly rated due to a random fluctuation in one single iteration, \eg a rare traffic jam, will never be tested again. Thus, we recommend using this only in conjunction with \lstinline|SelectRandom|.
 
+\subsection{Innovation switch-off}
+\label{sec:innovation-switchoff}
+
+For theoretical (Section~\ref{sec:innovation}) reasons, it makes sense to eventually switch of the innovative modules, thus keeping the set of plans for each agent fixed from then on.  This behavior can be configured by
+\begin{xml}
+   <param name="fractionOfIterationsToDisableInnovation" value="..." />
+\end{xml}
+The default is 0.8, i.e.\ innovation is switched off after 80\% of the iterations.  It makes sense to use this together with score \gls{msa} (Section~\ref{sec:score-msa}).
+
+
 %##################################################################################################################
 \section{Other Modes Than Car}
 \label{sec:using-othermodesthancar}
@@ -454,7 +473,7 @@ The following sections describe current \gls{matsim} multi-modal capabilities. T
 
 % ..............................
 \paragraph{\enquote{Main Modes}}
-The above approach failed as soon as more than one vehicle type was involved, but recently, the ability to allow multiple modes on the same network was introduced.  
+The approach described so far fails as soon as more than one vehicle type is involved. Therefore, recently the ability to allow multiple modes on the same network was introduced.  
 It is defined by the \lstinline{qsim} config option of type
 \begin{xml}
 <module name="qsim">
@@ -462,11 +481,11 @@ It is defined by the \lstinline{qsim} config option of type
    [...]
 </module>
 \end{xml}
-This examines plan leg mode; if that leg mode corresponds to one of the listed main modes, it will generate a vehicle for that leg and make it enter the network.
+This examines the plan leg mode; if that leg mode corresponds to one of the listed main modes, it will generate a vehicle for that leg and make it enter the network.
 
 % ..............................
 \paragraph{PassingQ} 
-Once various mode vehicle types have different maximum speeds, the standard \gls{qsim} is no longer sufficient, since it uses \gls{fifo} as the queuing discipline, meaning that fast vehicles cannot pass slower vehicles. Here, the so-called \lstinline|Passing(Vehicle)Q| can be used instead.  It replaces the \gls{fifo} sorting criterion, (where vehicles are sorted by the sequence in which they arrive on the link) by a sorting employing the so-called earliest link exit time, computed from link enter time and freespeed travel time.  Now, using vehicle minimum and  link maximum speeds, freespeed travel time can be differentiated between vehicles, allowing fast vehicles to obtain an earlier link exit time, even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \citet{AgarwalEtcMixedTraffic}.
+Once various mode vehicle types have different maximum speeds, the standard \gls{qsim}, even with multiple main modes, is no longer sufficient, since it uses \gls{fifo} as the queuing discipline, meaning that fast vehicles cannot pass slower vehicles. Here, the so-called \lstinline|Passing(Vehicle)Q| can be used instead.  It replaces the \gls{fifo} sorting criterion -- where vehicles are sorted by the sequence in which they arrive on the link -- by a sorting employing the so-called earliest link exit time, computed from link enter time and freespeed travel time.  Now, using the minimum of vehicle and link maximum speeds, the freespeed travel time can be differentiated between vehicles, allowing fast vehicles to obtain an earlier link exit time, even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \citet{AgarwalEtcMixedTraffic}.
 
 This option can be enabled by using
 \begin{xml}
@@ -489,7 +508,7 @@ The option to simulate scenarios with
 %% \kai{Klingt komisch ohne das ``maximum'', habe es daher dringelassen.}
 mode-specific maximum speeds is supported by the possibility to define so-called ``mode vehicles'', \ie by specifying a typical vehicle for each mode.
 %
-With the two options \lstinline{PassingQ} and \lstinline{FIFO}, passing is implemented as all-or-none, \ie either every vehicle type can pass every other, or none can pass. More fine-grained passing rules are currently being researched.
+%% With the two options \lstinline{PassingQ} and \lstinline{FIFO}, passing is implemented as all-or-none, \ie either every vehicle type can pass every other, or none can pass. More fine-grained passing rules are currently being researched.
 %This is discussed \kai{where?}.
 %\footnote{%
 %  
@@ -502,8 +521,9 @@ With the two options \lstinline{PassingQ} and \lstinline{FIFO}, passing is imple
 %We will eventually make this available as a config option; at this time, we are still searching for a software design that makes the QSim both pluggable at multiple levels \emph{and} easy to maintain.
 %
 %}
-
-So as not to use the same pre-defined default vehicle type for each mode, it is necessary, at the moment, to write a script-in-\gls{java}; see  Section~\ref{sec:extending-vehicles} for a reference to the script and Section~\ref{sec:extending-qsim} for a general explanation of scripts-in-\gls{java}.\footnote{We will eventually make this available as a config option; at this time, we are still searching for a software design to make the \gls{qsim} both pluggable at multiple levels \emph{and} easy to maintain.}
+%
+%% So as not to use the same pre-defined default vehicle type for each mode, 
+For this functionality it is necessary, at the moment, to write a script-in-\gls{java}; see Section~\ref{sec:extending-vehicles} for a reference to the script and Section~\ref{sec:extending-qsim} for a general explanation of scripts-in-\gls{java}.\footnote{We will eventually make this available as a config option; at this time, we are still searching for a software design to make the \gls{qsim} both pluggable at multiple levels \emph{and} easy to maintain.}
 
 %% \ah{Should we say something about this? Is that correct?}
 %% \ah{Passing is all-or-none, \ie either every vehicle type can pass every other type or none can pass none. 
@@ -517,16 +537,16 @@ So as not to use the same pre-defined default vehicle type for each mode, it is 
 Routes, as described in Section~\ref{sec:lgstarted-population-file}, can have a planned vehicle \gls{id} as attribute (\lstinline|vehicleId|).  
 At the same time, all available vehicles need to be described by an additional file. 
 The \gls{qsim} will then attempt to use that specific vehicle, including its individual attributes such as maximum speed.  
-This is discussed \kai{where?}.
+This is discussed \kaitodo{where?} \ahtodo{where?}.
 
 %% It is possible to give each planned route a list of possible vehicle \glspl{id} to be used for this route.  
 %\ah{I think this is not easy to understand, but yes, the ref will probably clarify this}
 %\kai{Re-wrote it.}
 
 %------------------------------------------------------------
-\subsubsection{So-Called \Gls{teleportation}}
+\subsubsection{So-Called Teleportation}
 \label{sec:teleportation-qsim}
-All \emph{not} modes registered with the \gls{qsim} as ``main modes'' will be teleported.  That is, the \gls{qsim} will, without problems, process legs such as
+All modes \emph{not} registered with the \gls{qsim} as ``main modes'' will be teleported.  That is, the \gls{qsim} will, without problems, process legs such as
 \begin{xml}
 <leg mode="pedelec" >
    <route type="generic" trav_time="00:14:44" distance="2374" />
@@ -545,7 +565,7 @@ The \gls{qsim} will generate a departure event (for events, see Section~\ref{sec
 
 %% \kai{Andreas, I added this section, please check}
 
-With ``driver'' modes, such as car, bicycle, or sometimes walk,  travelers are also drivers, \ie the entities making decisions about turns at intersections, as well as arrivals (or not) on links.
+With ``driver'' modes, such as car, bicycle, or also walk,  travelers are also drivers, \ie the entities making decisions about turns at intersections, as well as arrivals (or not) on links.
 %
 With ``passenger'' modes, such as public transit or taxi, this changes; for example, the traveler boards a bus, the bus moves around in the network; the only decision the traveler has to make if she or he wants to get off or not at the current stop.  The bus, in turn, is a normal participant in the corresponding traffic system, \ie buses and taxis operate on the normal road network and can be caught in the same congestion as cars and trucks.  
 %
@@ -566,13 +586,18 @@ It is possible to register a separate departure handler for each mode; see Secti
 
 \item The public transport extension moves all registered modes with specific public transit vehicles (see Chapter~\ref{ch:pt}).
 
-\item The dynamic transport systems contribution moves all registered modes with taxis (see Chapter~\pageref{ch:dts}).
+\item The dynamic transport systems contribution moves all registered modes \kai{??} with taxis (see Chapter~\pageref{ch:dts}).
+\ah{Kam von, soweit ich sehe, von dir in Revision 1286 als ``The dynamic transport systems extension moves all modes that are registered with it with taxis. See Chapter~\pageref{ch:dts}.'' M.E. immernoch verständlich, auch wenn mir die PT-Geschichte vertrauter ist. Ist zwar im DTS-Kapitel nicht erwähnt, verschiedene Taxi-Modes sind aber denkbar (?), oder was meinst du?} \kaitodo{check}
 
 \end{itemize}
 
 % ===================================================================================
 \subsection{Routing Side}
-Route generatation is the next topic.
+\label{sec:using-routing-multimodal}
+
+The previous Section~\ref{sec:using-qsim-multimodal} has described how the \gls{qsim} handles various modes when they are requested by the plans.
+%
+Correspondingly, it now needs to be considered how non-car plans -- or more specifically non-car routes inside non-car legs -- are generated.
 %% Clearly, the user can write her, or his, own router - which can either be a full-blown network router (\cf Section~\ref{sec:router-extension-point}), or a heuristic that offers plausible travel times and travel distances.  It is, however, much easier to use the preconfigured options, as follows.
 
 %------------------------------------------------------------
@@ -696,6 +721,9 @@ The routing module, for example, needs travel time estimations for all network l
 \subsection{Link Stats}
 \label{sec:linkStats}
 The \lstinline|linkStats| \gls{configfile} section can specify the output interval of individual links' simulation statistics. It is configurable, if the simulated volumes are written per iteration or averaged over multiple iterations. As one of their many functions, link stats are used for comparison with count values, as introduced in Section~\ref{sec:extending-counts}. 
+
+% ##################################################################################################################
+\ifthenelse{\boolean{printBibPerChapter}}{\bibpc}{}
 
 % ##################################################################################################################
 % Local Variables:

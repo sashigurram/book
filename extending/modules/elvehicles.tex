@@ -8,11 +8,15 @@
 
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
-\createStandardInformationBasic{\url{http://matsim.org/javadoc} $\to$ transEnergySim}{No predefined invocation. A starting point is \lstinline|RunTransEnergySimExample| class.}{No typical \gls{matsim} config.}{\citet[][]{WaraichEtAl_TRR_2013, GalusEtAl_STRC_2009, WaraichEtAl_IATBR_2009, GalusEtAl_ITSG_2012, Waraich_PhDThesis_2014, AbedinWaraich_TechRep_IVT_2013, WaraichEtAl_TechRep_IVT_2013, GalusEtAl_ResRep_EWZ_2012, Waraich_unpub_EURO_2012, Waraich_unpub_MATSimUserMeeting_2012, WaraichEtAl_JanssensEtAl_2014, WaraichAxhausen_SDEWES_2013}}
+\createStandardInformationBasic%
+{\entryStd{transEnergySim}}%
+{\invokeNonstd{transEnergySim}{\lstinline|RunTransEnergySimExample| class}}%
+{\configNonstd}%
+{\citet[][]{WaraichEtAl_TRR_2013, GalusEtAl_STRC_2009, GalusEtAl_ITSG_2012, Waraich_PhDThesis_2014, GalusEtAl_ResRep_EWZ_2012, Waraich_unpub_EURO_2012, Waraich_unpub_MATSimUserMeeting_2012, WaraichEtAl_JanssensEtAl_2014, WaraichAxhausen_SDEWES_2013}}
 
 % ##################################################################################################################
 \section{Introduction}
-Research related to \gls{ev} modeling in \gls{matsim} started in 2008/2009, with an electricity grids project \citep[][]{WaraichEtAl_IATBR_2009, WaraichEtAl_TRR_2013}; it's goal was to uncover potential bottlenecks and/or constraint violations in Zurich city's lower voltage grid due to future \gls{ev} charging. A framework emerged from the research for \gls{ev} modeling, called \gls{tesf} \citep[][]{WaraichEtAl_JanssensEtAl_2014}. This resulted in various framework extensions and enabled simulation of various scenarios \citep[][]{WaraichEtAl_JanssensEtAl_2014, Waraich_PhDThesis_2014, AbedinWaraich_JSDEWES_2014, Schieffer_MastersThesis_2011, GalusAndersson_CIGRE_2011, GalusEtAl_ResRep_EWZ_2012, Bischoff2013MaTaxis, BischoffMaciejewskiEcabMielecMobilTUM}. This chapter provides advice on these research directions and serves as a starting point for modeling \glspl{ev} in \gls{matsim}.
+Research related to \gls{ev} modeling in \gls{matsim} started in 2008/2009, with an electricity grids project \citep[][]{WaraichEtAl_TRR_2013}; it's goal was to uncover potential bottlenecks and/or constraint violations in Zurich city's lower voltage grid due to future \gls{ev} charging. A framework emerged from the research for \gls{ev} modeling, called \gls{tesf} \citep[][]{WaraichEtAl_JanssensEtAl_2014}. This resulted in various framework extensions and enabled simulation of various scenarios \citep[][]{WaraichEtAl_JanssensEtAl_2014, Waraich_PhDThesis_2014, AbedinWaraich_JSDEWES_2014, Schieffer_MastersThesis_2011, GalusAndersson_CIGRE_2011, GalusEtAl_ResRep_EWZ_2012, Bischoff2013MaTaxis, BischoffMaciejewskiEcabMielecMobilTUM}. This chapter provides advice on these research directions and serves as a starting point for modeling \glspl{ev} in \gls{matsim}.
 
 % ##################################################################################################################
 \section{Models}
@@ -20,7 +24,7 @@ The main reason for modeling \glspl{ev} in \gls{tesf} was simple: it was essenti
 
 While the basic \gls{ev} modeling mechanisms were simple, there were many details to ponder when modeling scenarios. 
 The \gls{tesf} framework provided both interfaces and implementations to cope with more complex cases, \eg defining a vehicle that can charge without contact while driving,
-\karen{Is this last phrase correctly changed? The wording was confusing for me... Thanks!} \ah{I would say: yes}
+%\karen{Is this last phrase correctly changed? The wording was confusing for me... Thanks!} \ah{I would say: yes}
 for example, by using dynamic inductive charging. Furthermore, charging mechanisms themselves could also be quite complex. The following sections provided some details on this, as well as different models involved.
 
 % ==============================================================================================
@@ -38,7 +42,7 @@ Another fast route to a full battery was to replace/swap the used battery for a 
 When an \gls{ev} connected to any infrastructure for charging, a scheme was needed to define how the vehicle charging would operate; should the vehicle start charging immediately, or would charging depend on an agent's pricing preferences, which could vary with time and location? Negotiations between the vehicle computer and grid operator were also possible, which perhaps allowed for some electricity grid temporal flexibility, while fully charging a vehicle's battery before departure (sometimes referred to as ``smart charging''). Various charging schemes were part of the \gls{tesf} and were be used to model other more complex charging schemes; \gls{tesf}-simulated examples of various charging schemes can be found in \citet[][]{WaraichEtAl_TRR_2013}.
 
 % ==============================================================================================
-\subsection{\protect\gls{v2g}}
+\subsection{Vehicle-to-Grid}
 When studying electric vehicles, charging is not the only topic of interest; \gls{v2g} applications where electric vehicle batteries supply power and energy back to the grid \citep[][]{KemptonTomic_JPS_2005} were analyzed. While the integration of \gls{v2g} models for \gls{matsim} was limited at any given time, an application related to \gls{v2g} and intermittent energy generation at wind parks using \gls{matsim} can be found in \citet[][]{GalusAndersson_CIGRE_2011} and a preliminary attempt to integrate \gls{v2g} in \gls{tesf} was described in \citet[][]{WaraichEtAl_JanssensEtAl_2014, Schieffer_MastersThesis_2011}.
 
 % ==============================================================================================

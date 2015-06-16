@@ -8,7 +8,11 @@
 
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
-\createStandardInformationBasic{\url{http://matsim.org/javadoc} $\to$ core $\to$ signals}{The module is invoked by setting \lstinline|useSignalSystems| in the \lstinline|scenario| section of the config.}{Further parameters are set in the config module \lstinline|signalsystems|.}{\citet{GretherBischoffNagel2011CottbusSylviaEventAbstract,Grether2014PhD}}
+% ##################################################################################################################
+%%\section{Basic Information}
+%%\createStandardInformationBasic{\url{http://matsim.org/javadoc} $\to$ core $\to$ signals}{The module is invoked by setting \lstinline|useSignalSystems| in the \lstinline|scenario| section of the config.}{Further parameters are set in the config module \lstinline|signalsystems|.}{\citet{GretherBischoffNagel2011CottbusSylviaEventAbstract,Grether_PhDThesis_2014}}
+
+\createStandardInformation{signals}{\lstinline{RunSignalSystemsExample} class}{signalsystems}{\citet{GretherBischoffNagel2011CottbusSylviaEventAbstract,Grether_PhDThesis_2014}}
 
 % ##################################################################################################################
 \section{Motivation}
@@ -19,13 +23,13 @@ Even if traffic control improves the traffic conditions at a single junction, it
 \citet{Hu1997D2DFlowEvolutionReactiveSignalsDynasmart} argue that second order or network effects should be taken into account when effects of signal control strategies are tested. Network effects include drivers' reactions: not only route choice, but also scheduling. 
 Thus, traffic control, especially traffic-responsive signals, need certain constraints. Otherwise, traffic may become unstable: rapidly at two nearby junctions, or at the network level \citep{LaemmerHelbing2010SelfStabilizingSignalControlRealNet}. \gls{matsim} can capture most of these effects. This chapter reviews concepts, usage and restrictions of the traffic signal control extension for \gls{matsim}. 
 The chapter is particularly interesting for\gls{matsim} users, who plan to simulate traffic signals microscopically. 
-If one wishes to capture signalization effects on a rather coarse level, consider the approach presented in~\citet[pp.~139][]{Charypar2008PhD}, that can be realized with the time variant network feature of \gls{matsim} \citep{00LaemmelGretherNagel2009TimeDependentNetworks}. 
+If one wishes to capture signalization effects on a rather coarse level, consider the approach presented in~\citet[][pp.~139]{Charypar_PhDThesis_2008}, that can be realized with the time variant network feature of \gls{matsim} \citep{LaemmelGretherNagel2009TimeDependentNetworks}. 
 Before we go into detail on motivating traffic signals with \gls{matsim}, a case study is reviewed. 
 
 % ========================================================================================
 \subsection{Case Study}
 The Cottbus scenario presented in Chapter~\ref{ch:cottbus} is applied to illustrate the influence of traffic signal control. 
-This section summarizes results published in~\citet{GretherBischoffNagel2011CottbusSylviaEventAbstract,Grether2014PhD}. Readers interested in details are referred to these publications. 
+This section summarizes results published in~\citet{GretherBischoffNagel2011CottbusSylviaEventAbstract,Grether_PhDThesis_2014}. Readers interested in details are referred to these publications. 
 
 The runs sequence is performed with three different signal control strategies:
 in a first simulation sequence, all traffic signals are switched off. This can be used as a lower bound for results of signal control, since it assumes that vehicles are able to traverse a crossing without an accident, \ie they are able to drive ``through each other''. 
@@ -49,7 +53,7 @@ If vehicles are still approaching at the end of this reduced green time, it is e
 	{\includegraphics[width=0.48\linewidth]{extending/figures/signalslanes/average_travel_time_1220_1222_book.pdf}}
 	{\label{fig:unexpected_event}}
 }%
-{\citet{Grether2014PhD}}
+{\citet{Grether_PhDThesis_2014}}
 
 Simulation results for iteration~1\,000 of the Cottbus commuter scenario are depicted in Figure~\ref{fig:commuter_traffic}. The number of vehicles simultaneously on the road is plotted over the time-of-day. The results are quite similar for all signal control strategies; differences are small because of the lack of heavy congestion in the Cottbus scenario. 
 
@@ -57,7 +61,7 @@ A change of signal control has more effect if unexpected traffic occurs in the n
 
 Figure~\ref{fig:unexpected_event} plots the number of soccer fans on the x-axis, and the average travel time of all travelers on the y-axis. Without any additional vehicles, the traffic-actuated signal control leads to a gain of approximately 1\,minute per traveler. The more additional traffic approaches the stadium, the more the traffic-actuated control saves travel time. When 2\,000\,additional vehicles are on the road, travel time savings reach approximately 15\,minutes per traveler. 
 
-Summarizing: Slightly jammed commuter scenarios, where a change in traffic signal control leads to noticeably decreased overall travel time, have not yet been simulated with \gls{matsim}. Looking at different objectives with more fine-grained analysis tools can reveal network wide effects~\citep[\eg see the analysis using macroscopic fundamental diagrams][pp.114]{Grether2014PhD}, but this is work in progress. More heavily jammed scenarios can increase the overall traffic impact of a change in traffic signal control. Nevertheless, the case study shows significant effects of traffic-responsive signal control when something unexpected happens and travelers do not react.  
+Summarizing: Slightly jammed commuter scenarios, where a change in traffic signal control leads to noticeably decreased overall travel time, have not yet been simulated with \gls{matsim}. Looking at different objectives with more fine-grained analysis tools can reveal network wide effects~\citep[\eg see the analysis using macroscopic fundamental diagrams][pp.114]{Grether_PhDThesis_2014}, but this is work in progress. More heavily jammed scenarios can increase the overall traffic impact of a change in traffic signal control. Nevertheless, the case study shows significant effects of traffic-responsive signal control when something unexpected happens and travelers do not react.  
 
 % ========================================================================================
 \subsection{Overview MATSim \& Traffic Signals}
@@ -91,7 +95,7 @@ but it is not possible to react to current changes in equilibrium traffic flows.
 
 Traffic-responsive control reacts to current traffic patterns, adjusting traffic signal control parameters on the fly. 
 In principle, all available information on prevailing traffic patterns can be used. 
-The diversity of traffic-responsive control algorithms is wide; for a review, see~\citet[][]{Grether2014PhD}. 
+The diversity of traffic-responsive control algorithms is wide; for a review, see~\citet[][]{Grether_PhDThesis_2014}. 
 
 \gls{matsim}'s traffic signal module is designed to simulate every traffic signal control strategy. 
 The module provides a default implementation for fixed-time control. 
@@ -194,7 +198,7 @@ If there is only one lane towards the downstream link, the vehicle uses this lan
 If there is more than one lane leading to the next downstream link, the vehicle is placed on the lane currently containing the fewest other vehicles.
 Using lanes, specific turning moves can be forbidden because the shortest path algorithm underlying network graph is modified;  
 thus, turn restrictions are considered when the network graph is created.  
-The shortest path calculation captures the effects of lanes without further modification \citep[see][pp.~21]{Grether2014PhD}.  
+The shortest path calculation captures the effects of lanes without further modification \citep[see][pp.~21]{Grether_PhDThesis_2014}.  
 
 As well the differences mentioned above, lanes exhibit behavior similar or equal to links.  
 Vehicles entering or leaving lanes trigger events with the same structure and information as link enter and leave events.
@@ -222,7 +226,7 @@ The formulations do not capture the time horizon where these interactions take p
 Traffic signal interpretation within the \gls{matsim} iteration cycle depends strongly on signal control type and learning mechanism interpretation. 
 For fixed-time control, the fixed-point interpretation can be valid, at least if one does not anticipate  unexpected events on the demand side. 
 For traffic-actuated signal control strategies, no standard interpretation can be provided. 
-Readers seeking more detail are referred to~\citet[][pp.~75]{Grether2014PhD}.  
+Readers seeking more detail are referred to~\citet[][pp.~75]{Grether_PhDThesis_2014}.  
 We conclude with this advice; clearly document what and how was simulated and provide an interpretation that makes sense for each individual project.    
 
 % ##################################################################################################################

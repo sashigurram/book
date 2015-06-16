@@ -12,10 +12,16 @@
 %% - Paper rotation: - (protrait), landscape
 %% - Chapter start: openright, openany
 %% - Mark overfull boxes: draft, final
-\documentclass[a4paper,12pt,fleqn,titlepage,onecolumn,twoside,openany,final]{report}
+\documentclass[a4paper,11pt,fleqn,titlepage,onecolumn,twoside,openany,final]{report}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% borders, margrins and offset
 \usepackage[a4paper,left=1.0in,right=1.0in,top=0.5in,bottom=0.5in,includeheadfoot]{geometry}
+%%\openup-2pt
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[sf,bf]{titlesec}
+%%\usepackage[compact,sf,bf]{titlesec}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% providing if-then-else command:
 \usepackage{ifthen}
@@ -54,6 +60,8 @@
 %% paragraph settings:
 \setlength{\parindent}{0in}%
 \setlength{\parskip}{10pt}
+%%\setlength{\parindent}{.2in}%
+%%\setlength{\parskip}{0pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% caption settings:
 \usepackage[nooneline,format=hang]{caption}
@@ -71,8 +79,31 @@
 \setcounter{secnumdepth}{3}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% citation style:
-\usepackage[round]{natbib}
-\bibliographystyle{0/template_ivt-eng}%
+\usepackage[round,sectionbib]{natbib}
+\usepackage{chapterbib}
+
+\newcommand{\bibpc}{{
+\footnotesize
+\parskip0pt
+\setlength{\bibsep}{0.2em}
+\bibliographystyle{0/template_ivt-eng}
+\bibliography{0/added_bibs,0/ivt_bibs,0/tub,0/ref-gunnar,0/michalm_matsim_book,0/laemmel}
+\normalsize
+}
+}% bibliography per chapter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{ifthen}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{xargs}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
+\newcommandx{\kaitodo}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{kai: #2}}
+\newcommandx{\ahtodo}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{ah: #2}}
+\newcommandx{\bktodo}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{bk: #2}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Font:
 \usepackage{times}
@@ -104,8 +135,9 @@
 \usepackage{setspace}
 \onehalfspacing
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% letter spacing
+%% letter spacing [[?????]]
 \usepackage{soul}
+%%\usepackage{ulem}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% no indentation for formulas:
 \usepackage[fleqn]{amsmath}
@@ -135,7 +167,6 @@
 \usepackage{tabularx}
 \usepackage{multirow}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{hyphenat} % for \hyp support
 \usepackage{fixltx2e} % for \textsubscript{...}
 \usepackage{booktabs}	% for \toprule. \midrule, \bottomrule in tables
@@ -203,28 +234,55 @@
 \setlist{itemsep=4pt, topsep=0pt, parsep=0pt, partopsep=0pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BDI:
+\usepackage{tikz,pgf,pgfplots}
+\usetikzlibrary{arrows,decorations,backgrounds,matrix,automata,
+trees,shapes,shadows,plotmarks,calc,positioning,patterns,chains,fit}
+
+\usepackage{epsfig}
+\usepackage{pdfpages}
+\usepackage{tablefootnote}
+
+\newcounter{bean}
+
+\newenvironment{tightenumerate}{
+                \begin{list}{
+                  {\mbox {
+                      \arabic{bean}.\/}}}{\usecounter{bean}
+                      \setlength{\itemsep}{-1pt}\setlength{\topsep}{0pt}}}{
+                \end{list}}
+
+\newenvironment{tightitemize}{
+                \begin{list}{$\bullet$}{
+                    \setlength{\itemsep}{-1pt}}{\setlength{\topsep}{0pt}}}{
+                \end{list}}
+								
+\newcommand{\Omit}[1]{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% pretty printing:
 \usepackage{listings}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% XML code setup:
-\lstloadlanguages{XML}
-%%
-\lstset {
-  belowskip=-4pt,
-  showstringspaces=false,
-  basicstyle=\ttfamily\footnotesize,
-  lineskip=0pt,
-  breaklines=true,
-  breakatwhitespace=true,
-  breakindent=12pt,
-  fontadjust=true,
-  keywordstyle=\bfseries,
-  commentstyle=\bfseries,
-  stringstyle=\bfseries,
-  xleftmargin=0mm,
-  xrightmargin=0mm,
-  tabsize=2
-}
+% not used; use \begin{xml} instead. kai, apr'15
+%%\lstloadlanguages{XML}
+%%%%
+%%\lstset {
+%%  belowskip=-4pt,
+%%  showstringspaces=false,
+%%  basicstyle=\ttfamily\footnotesize,
+%%  lineskip=0pt,
+%%  breaklines=true,
+%%  breakatwhitespace=true,
+%%  breakindent=12pt,
+%%  fontadjust=true,
+%%  keywordstyle=\bfseries,
+%%  commentstyle=\bfseries,
+%%  stringstyle=\bfseries,
+%%  xleftmargin=0mm,
+%%  xrightmargin=0mm,
+%%  tabsize=2
+%%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% The following defines language specific words
@@ -367,7 +425,7 @@
 %%     {<source>or<>}
 \newcommand{\createxmlfigure}[5]{
   \begin{figure}
-    \caption[#1]{#2.} #3
+    \caption[#1]{\kai{if this is used, its formatting will be different from other xml. kai, apr'15}#2.} #3
     \vspace{0.5em}
     \hrule
     \lstset{language=XML}
@@ -451,19 +509,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\createStandardInformationBasic}[4]{{\lstset{basicstyle=\normalsize\tt}%
 %
-\textbf{Entry point to documentation:}
+\noindent\textbf{Entry point to documentation:}
 \\
 #1
 
-\textbf{Invoking the module:}
+\noindent\textbf{Invoking the module:}
 \\
 #2
 
-\textbf{Configuration:}
-\\
-#3
+%%\noindent\textbf{Configuration:}
+%%\\
+%%#3
 
-\textbf{Selected publications:}
+\noindent\textbf{Selected publications:}
 \\
 #4
 %
@@ -473,24 +531,36 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \ah{changed from extension to contribution, trying to be as specific is possible. This command so far is only used for contributions.}  
 
+\newcommand{\entryStd}[1]{\url{http://matsim.org/extensions} $\to$ #1}
+
+\newcommand{\invokeStd}[2]{\url{http://matsim.org/javadoc} $\to$ #1 $\to$ #2}
+
+\newcommand{\invokeNonstd}[2]{No predefined invocation.  Starting point(s) under \url{http://matsim.org/javadoc} $\to$ #1 $\to$ #2.}
+
+\newcommand{\configStd}[2]{\lstinline{#2} section(s) of the config file (only available when the #1 contribution is correctly loaded).}
+
+\newcommand{\configNonstd}{Currently no config section available.}
+
+\newcommand{\pubNone}{--}
+
 \newcommand{\createStandardInformation}[4]{{\lstset{basicstyle=\normalsize\tt}%
 %
 \section{Basic Information}
 \label{sec:#1-stdInfo}
 %
-\textbf{Entry point to documentation:}
+\noindent\textbf{Entry point to documentation:}
 \\
-\url{http://matsim.org/javadoc} $\to$ #1
+\entryStd{#1}
 
-\textbf{Invoking the module:}
+\noindent\textbf{Invoking the module:}
 \\
-\url{http://matsim.org/javadoc} $\to$ #1 $\to$ #2
+\invokeStd{#1}{#2}
 
-\textbf{Configuration:}
-\\
-\lstinline{#3} section(s) of the config file (only available when the #1 contribution is correctly loaded)
-
-\textbf{Selected publications:}
+%%\noindent\textbf{Configuration:}
+%%\\
+%%\configStd{#1}{#3}
+%
+\noindent\textbf{Selected publications:}
 \\
 #4
 %
@@ -505,8 +575,24 @@
 \definecolor{lightgray}{rgb}{0.83, 0.83, 0.83}
 \colorlet{shadecolor}{gray!20}
 
+% removed background color: backgroundcolor=\color{shadecolor}
+
 \usepackage{listings}
-\lstset{language=Java,belowskip=-4pt,basicstyle=\ttfamily\lst@ifdisplaystyle\footnotesize\fi,lineskip=-1pt,keywordstyle=\bfseries\color{blue},keywordstyle={[2]\lst@ifdisplaystyle\bfseries\color{magenta}\fi},commentstyle=\bfseries\color{red},stringstyle=\bfseries\color{ForestGreen},showstringspaces=false,frame=none, backgroundcolor=\color{shadecolor}, string=[b]",morekeywords={},morekeywords={[2]%
+\lstset{%
+%
+backgroundcolor=\color{shadecolor},
+%
+language=Java,%
+belowskip=-4pt,%
+basicstyle=\ttfamily\lst@ifdisplaystyle\footnotesize\fi,%
+lineskip=-1pt,%
+keywordstyle=\lst@ifdisplaystyle\bfseries\color{blue}\fi,%
+keywordstyle={[2]\lst@ifdisplaystyle\bfseries\color{magenta}\fi},%
+commentstyle=\bfseries\lst@ifdisplaystyle\color{red}\fi,%
+stringstyle=\bfseries\lst@ifdisplaystyle\color{ForestGreen}\fi,%
+showstringspaces=false,%
+frame=none,%
+string=[b]",morekeywords={},morekeywords={[2]%
 %
 Comparator,String,
 %
@@ -543,7 +629,13 @@ DynAgent,DynAgentLogic,RandomDynLeg,RandomDynActivity,DynActivity,DynLeg,DriverD
 
 %I don't know why one needs a negative belowskip to get the space symmetric to the aboveskip.  Maybe this happens as long as one has parskip > 0?? kai, jan'15
 
-\lstnewenvironment{xml}{\lstset{belowskip=-4pt,language=XML,basicstyle=\ttfamily\footnotesize,lineskip=-1pt,commentstyle=\bfseries\color{red},stringstyle=\bfseries\color{ForestGreen},showstringspaces=false,frame=none, backgroundcolor=\color{shadecolor}, string=[b]",morekeywords={[2]
+\makeatletter
+\lstnewenvironment{xml}{\lstset{%
+%
+backgroundcolor=\color{shadecolor},
+%
+%belowskip=-4pt,%
+language=XML,basicstyle=\ttfamily\footnotesize,lineskip=-1pt,commentstyle=\bfseries\lst@ifdisplaystyle\color{red}\fi,stringstyle=\bfseries\lst@ifdisplaystyle\color{ForestGreen}\fi,showstringspaces=false,frame=none, string=[b]",morekeywords={[2]
 %
 description,
 %
@@ -573,11 +665,11 @@ roadpricing,cost,
 %
 % the "alsoletter={=}" seems to prevent that something like length="sldkfj"
 % gets colored like an element
-
+\makeatother
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \hyphenation{MATSim} % Word split: unknown words for latex. show how to split them.
-\setcounter{tocdepth}{2}
+\setcounter{tocdepth}{1}
 
 \def\orange{\color{orange}}
 
@@ -597,10 +689,10 @@ roadpricing,cost,
 \newcommand{\dobi}[1]{{\color{blue} [\textbf{cd}: #1]}}
 \newcommand{\marcel}[1]{{\color{BrickRed} [\textbf{mr}: #1]}}
 \newcommand{\mm}[1]{\color{blue} [\textbf{mm}: #1] \color{black}}
-\newcommand{\mnote}[1]{\medskip\centerline{\textbf{\footnotesize\color{blue}\hfill #1}}\vspace{-.8em}}
+\newcommand{\mnote}[1]{\medskip\centerline{{\sf\footnotesize\color{blue}\hfill #1}}\vspace{-.8em}}
 
 \newcommand{\who}[1]{\color{red} \textit{[#1]} \color{black}}
-\newcommand{\todo}[1]{\color{ForestGreen} \textit{[TODO: #1]} \color{black}}
+%\newcommand{\todo}[1]{\color{ForestGreen} \textit{[TODO: #1]} \color{black}}
 \newcommand{\copied}[1]{\color{ForestGreen} \textit{[copied: #1]} \color{black}}
 
 \newcommand{\chkAtEnd}{{\color{gray} [check status before going to print]}}
@@ -617,7 +709,7 @@ roadpricing,cost,
 %\usepackage{pst-plot}
 \fi
 
-\newcommand{\MyEqRef}[1]{(\ref{#1})}
+\newcommand{\MyEqRef}[1]{Equation~(\ref{#1})}
 \newcommand{\note}[1]{\hl{[#1]}}
 \newcommand{\Note}[1]{\note{#1}}
 \renewcommand{\gunnar}[1]{\note{Gunnar: #1}}
@@ -646,11 +738,12 @@ roadpricing,cost,
 \makeatletter \renewcommand\thealgorithm{\thechapter.\arabic{algorithm}} \@addtoreset{algorithm}{chapter} \makeatother
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage[sf,bf]{titlesec}
+%%\usepackage{ulem}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\vec#1{\boldsymbol{#1}}
 \def\imp#1{\textbf{#1}}
+\def\eps{\varepsilon}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % end kai ----------------------------------------------------

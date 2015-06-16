@@ -163,32 +163,35 @@ meaning that the travel demand of iteration $k$ follows a probability
 distribution that is conditional on the information $Z^{k-1}$ that
 was available to the agents at the end of iteration $k-1$.
 
+%% \kai{@Gunnar: Wir haben $S$ für score im Buch.  Habe daher aus Deinem $S$ mal $C$ gemacht; das entspricht auch der Notation in der Lehrveranstaltung Verkehrstelematik ($C$ $=$ ``conditions'').}
+%% \gunnar{ok}
+
 Step~\ref{enu:All-travelers-execute} runs the (stochastic) mobility
 simulation that moves all agents jointly through the network. In symbols,
 this becomes
 \begin{equation}
-S^{k}\sim P(S\mid D^{k}),\label{eq:network-loading-model}
+C^{k}\sim P(S\mid D^{k}),\label{eq:network-loading-model}
 \end{equation}
 meaning that the network conditions of iteration $k$ follows a probability
 distribution that is conditional on the demand $D^{k}$. 
 
 Step~\ref{enu:All-travelers-observe} updates (possibly in a stochastic
 way) the information available to all agents using the new network
-conditions $S^{k}$. This is written as
+conditions $C^{k}$. This is written as
 \begin{equation}
-Z^{k}\sim P(Z\mid S^{k},Z^{k-1}).\label{eq:learning-model}
+Z^{k}\sim P(Z\mid C^{k},Z^{k-1}).\label{eq:learning-model}
 \end{equation}
 That is, the new information $Z^{k}$ is not only a transformation
-of the current network conditions $S^{k}$ but may also be based on
+of the current network conditions $C^{k}$ but may also be based on
 the previously available information $Z^{k-1}$.
 
-The conditional distributions \MyEqRef{eq:choice-model}-\MyEqRef{eq:learning-model}
+The conditional distributions \MyEqRef{eq:choice-model}--(\ref{eq:learning-model})
 are detailed elsewhere in this book: Chapter~\ref{ch:discretechoice} 
-describes the plan selection mechanisms leading to $P(D\mid S^{k-1})$,
+describes the plan selection mechanisms leading to $P(D\mid C^{k-1})$,
 Chapter~\ref{ch:kinematicwaves} explains the physical processes underlying
-$P(S\mid D^{k})$, and Chapter~\note{REF?} \ah{Interesting, but not treated explicitly anywhere. Different cases: Regular repl.: plan set is subject to slow diffusion. Within-day-repl: instantaneous update} specifies the information
-update logic behind $P(Z\mid S^{k})$. A greater level of detail is,
-however, not needed for the purposes of the present chapter.
+$P(S\mid D^{k})$, and Chapter~\ref{ch:scoring}
+%% \note{REF?} \ah{Interesting, but not treated explicitly anywhere. Different cases: Regular repl.: plan set is subject to slow diffusion. Within-day-repl: instantaneous update} 
+specifies at least some part of the information update logic behind $P(Z\mid C^{k})$. A greater level of detail is, however, not needed for the purposes of the present chapter.
 
 
 \subsection{\label{sub:Markov-chain-perspective}Markov Chain Perspective}
@@ -199,7 +202,7 @@ iteration to iteration; stochastic because it evaluates stochastic
 models. Further, one iteration of this process only requires information
 about the outcome of the previous iteration. This allows to express
 Algorithm~\ref{alg:Iterative-scheme-to} in terms of a {}``Markov
-chain''. \gunnar{Find textbook reference.}
+chain'' \citep{ross-2006}.
 
 In symbols, let $X^{k}$ be the stochastic state in which the Markov
 chain is during stage $k$, and let $P(X^{k}=x)$ be the probability
@@ -223,7 +226,7 @@ satisfies
 \Pi(x) & = & \sum_{y}\Pi(y)\cdot T_{y}^{x},\label{eq:mc-stationary}
 \end{eqnarray}
 which essentially results from removing the $k$-indices from \MyEqRef{eq:one-mc-transition}.
-Intuitively, removing the $k$-indices means that \MyEqRef{eq:mc-stationary}
+Intuitively, removing the stage-indices $k$ means that \MyEqRef{eq:mc-stationary}
 now applies, on the long term, for any stage $k$.
 
 Given that the long-term behavior of Algorithm~\ref{alg:Iterative-scheme-to}
@@ -241,7 +244,7 @@ $Z$. Of these, only the information $Z$ qualifies as a state variable:
 If one knows $Z^{k}$, it is possible to draw the next day's travel
 demand $D^{k+1}$ based on \MyEqRef{eq:choice-model}, to insert this
 demand into \MyEqRef{eq:network-loading-model} and obtain the network
-conditions $S^{k+1}$, and to finally use both $S^{k+1}$ and $Z^{k}$
+conditions $C^{k+1}$, and to finally use both $C^{k+1}$ and $Z^{k}$
 to obtain an updated $Z^{k+1}$ through \MyEqRef{eq:learning-model}.
 This last step is what disqualifies $D$ and $S$ as state variables
 because an evaluation of \MyEqRef{eq:learning-model} is not possible
@@ -252,7 +255,11 @@ express how the information $Z^{k}$ available to the population in
 iteration $k$ carries over to the information $Z^{k+1}$ that is
 available in iteration $k+1$. This relationship is given by
 \begin{eqnarray}
-T_{y}^{x} & = & \sum_{s}\sum_{d}P(Z^{k+1}=x\mid S^{k}=s,Z^{k}=y)P(S^{k}=s\mid D^{k}=d)P(D^{k}=d\mid Z^{k}=y).\label{eq:matsim-transition-distr}
+T_{y}^{x} & = & \sum_{s}\sum_{d}
+%
+P(Z^{k+1}\!=\!x\mid C^{k}\!=\!s,Z^{k}\!=\!y)
+\, P(C^{k}\!=\!s\mid D^{k}\!=\!d) 
+\, P(D^{k}\!=\!d\mid Z^{k}\!=\!y) .\label{eq:matsim-transition-distr}
 \end{eqnarray}
 Each argument of the double sum represents the probability of one
 particular sequence of given information $y$, resulting travel demand
@@ -316,65 +323,76 @@ from a single simulation run, meaning that it is not necessary to
 run replications.
 \label{it:self-averaging}
 \end{enumerate}
-MATSim in its {}``standard configuration'' is likely to be have
-these properties if the plan choice sets of all agents are a priori
-defined, meaning technically that all {}``plan innovation'' modules
-are switched off and that only {}``plan selection'' modules are
-used. This is only {}``likely'' because there notion of a {}``standard
+
+With respect to \gls{matsim}, the following holds: %\kai{@Gunnar: Das habe ich
+% aufgrund unsere Diskussionen neu versucht; schaust Du es bitte durch?  Danke.}
+\begin{itemize}
+
+\item Periodicity is already broken if there exists a nonzero probability of staying in
+the same state. This is possible in MATSim 
+%if agents have a finite memory
+because the following sequence of events may occur by chance:
+%% as often as the agent memory is long: 
+(i) no agent uses plan innovation,
+(ii) all agents select the same plan as in the previous iteration, 
+(iii) the mobility simulation creates identical congestion and travel time patterns 
+%% as in the previous iteration.
+such that $Z^k$ from \MyEqRef{eq:learning-model} remains the same as $Z^{k-1}$; practically, this means that all plan scores remain the same. 
+%% \kai{@Gunnar: Habe das mal umgeschrieben, weil in der praktischen Implementierung die Agenten kein Memory haben; sie merken sich nur den geglätteten Score.}  
+%% \gunnar{ok}
+
+The above is a rather formal argument; more intuitively, the stochasticity in \gls{matsim} means that even if the system returns multiple times exactly to a state where it has been before, it is improbable that it does so with the same number of steps. 
+%% \kai{@Gunnar: pls chk the above.}
+%% \gunnar{ok}
+
+%% \gunnar{Kai, Du hattest Folgendes geschrieben: ``Periodicity is easily broken by stochasticity.  
+%% Given the many sources of stochasticity in MATSim, it is improbable that deterministic cycles exist.''
+%% Ich finde das problematisch, weil MCs ``by design'' stochastisch sind; periodicity und stochasticity
+%% schliessen einander nicht aus.} \kai{Vielleicht einfach so: das Diagramm 9.3(links) kommt in matsim sozusagen nicht vor.}
+
+%% \kai{Mir würde es plausibel erscheinen, wenn wir das auf einen bestimmten Zustand beziehen.  Wenn wir davon ausgehen, dass Innovation ausgeschaltet ist, dann fällt (i) weg.  Danach bleibt dann die Frage, was ein ``state'' ist; wenn dies der Vektor der gewählten Pläne ist, dann reicht (ii) bereits aus für ``staying in same state''.  Wenn die ``plan scores'' zu ``state'' dazu gehören, dann brauchen wir auch noch, dass die scores bereits konvergiert sind.}
+
+\item With plan innovation (see Sections~\ref{sec:strategymodules}, \ref{sec:innovation-switchoff} and~\ref{sec:innovation}) switched on, the system is in general not irreducible:
+%% The MATSim property that causes problems when it comes to irreducibility are the changes to the set of possible plans per agent: 
+Every time a new plan is added somewhere, the previous subspace of the state space where the plan was not available \emph{cannot} be reached any more until that plan is removed; similarly, every time a plan is removed, the previous subspace of the state space where the plan was available cannot be reached any more until the plan is re-created again. (Chapter~\ref{ch:discretechoice} discusses this in greater detail and also suggests a cure to this problem.)
+
+Even if plans creation and removal could be modelled such that irreducibility was guaranteed, the dynamics of this process would, due to the size of the state space, be slow.
+
+ %% that it would be impractial to sample over the resulting iterations. Thus, although the above item~\ref{it:self-averaging} would be formally correct, one would never have enough iterations to put it to practical use.  \gunnar{Sind wir da sicher? Wenn wir uns nur f\"ur niedrigdimensionale projections interessieren, dann mag es durchaus sein, dass sich diese projections hinreichend schnell durchmischen. Ich bin zumindest nicht daf\"ur, die M\"oglichkeit von vorneherein auszuschliessen.}
+
+
+\item With plan innovation switched off, 
+MATSim in its {}``standard configuration'' is likely to 
+% have
+%% these properties if the plan choice sets of all agents are a priori
+%% defined, meaning technically that all {}``plan innovation'' modules
+%% are switched off and that only {}``plan selection'' modules are
+%% used. 
+be irreducible.  This is only {}``likely'' because the notion of a {}``standard
 configuration'' itself is not rigorously specified here. The arguments
 behind this follow \citet{cascetta-1989}, who presents a related
 result for a much simpler, trip-based traffic simulation that only
 allows for route choice. Observing that travel plans are, technically,
 paths in a rather complicated decision network then allows to carry
 this result over to MATSim. See also \citet{NagelEtc2000tristan-succ} and \citep{floetteroed-2010e}.
-Intuitively:
-%  \kai{gunnar, pls chk next paragraphs} 
-\begin{itemize}
 
-\item 
+%% \kai{@Gunnar: Du erwähnst in Deiner Email etwas von ``finite score memories''.  Kann leider nicht sagen, wie sich das überträgt: matsim in std config hat eigentlich gar kein memory.  Von vorherigen Iterationen übrig bleiben nur die scores, die evtl.\ auch noch gemittelt sind.  Es kann allerdings sein, dass es sehr lange her ist, dass ein Plan zum letzten Mal angefasst wurde, und der Score daher sehr alt ist.
 
-Periodicy is broken if there exists a nonzero probability of staying in
-the same state. This is possible in MATSim if agents have a finite memory
-because the following sequence of events may occur by chance as often as the 
-agent memory is long: 
-(i) no agent uses a plan mutator, 
-(ii) all agents select the same plan as in the previous iteration, 
-(iii) the mobility simulation creates identical congestion and travel time patterns as in the previous iteration.
+%% Normalerweise ist es damit erledigt, denn das mit dem ``finite memory'' hat, so wie ich es kenne, eigentlich nur etwas mit dem ``finite state space'' zu tun.
 
-\gunnar{Kai, Du hattest Folgendes geschrieben: ``Periodicity is easily broken by stochasticity.  
-Given the many sources of stochasticity in MATSim, it is improbable that deterministic cycles exist.''
-Ich finde das problematisch, weil MCs ``by design'' stochastisch sind; periodicity und stochasticity
-schliessen einander nicht aus.}
+%% Außerdem hat (normalerweise) jeder Plan in jeder Iteration eine non-zero proba, gewählt zu werden, m.E.\ eine weitere Versicherung gegen ``Probleme''.
+%% }
 
-\item 
+%% \gunnar{ok. Das ist jetzt ja auch so vorsichtig formuliert, dass es eigentlich gar nicht falsch sein kann.}
 
-\gunnar{Kai, Du hattest Folgendes geschrieben:
-``The reducible state of Figure (\ldots) 
-%Figure~\ref{fig:Example-of-(ir)reducibility}~left 
-will eventually become irreducible when the system moves from high traffic 
-to gridlock, since then it cannot go back.  One can therefore argue that 
-reducibility is related to transients, and the problem is that one does 
-not know when the transients are over.'' 
-Das verstehe ich nicht. (Ir)reducibility ist eine Eigenschaft der MC an sich.
-Eventuell meinst Du, dass die transients bestimmen, in welchem 
-``irreducible set'' die MC landet, und dass es mehrere solcher sets geben
-mag?}
+\item In the particular case of the scores being additionally forced to their 
+expected values (Section~\ref{sec:score-msa}), the system eventually draws
+agent behavior from fixed choice distributions and hence varies independently
+from one iteration to the next.
 
-The MATSim property that causes problems when it comes to irreducibility 
-are the changes to the set of possible plans per agent: 
-Every time a new plan is added somewhere, the previous subspace of the state space where the plan 
-was not available \emph{cannot} be reached any more until that plan is removed; similarly, every time 
-a plan is removed, the previous subspace of the state space where the plan was available cannot be 
-reached any more until the plan is re-created again. (Chapter~\ref{ch:discretechoice}
-discusses this in greater detail and also suggests a cure to this problem.)
-
-Even if plans creation and removal could be modelled such that irreducibility was guaranteed, 
-the dynamics of this process would, due to the size of the state space, be so slow that it would be 
-impractial to sample over the resulting iterations. Thus, although the above item~\ref{it:self-averaging} 
-would be formally correct, one would never have enough iterations to put it to practical use.
-\gunnar{Sind wir da sicher? Wenn wir uns nur f\"ur niedrigdimensionale projections interessieren,
-dann mag es durchaus sein, dass sich diese projections hinreichend schnell durchmischen. Ich bin
-zumindest nicht daf\"ur, die M\"oglichkeit von vorneherein auszuschliessen.}
+In the case the config option \lstinline|ChangeExpBeta| is used, some
+correlation is maintained between the choices in subsequent iterations, 
+even though the long-term choice distributions remain unchanged.
 
 \end{itemize}
 

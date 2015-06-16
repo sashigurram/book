@@ -13,20 +13,20 @@
 \section{Basic Information}
 \label{sec:withinDay-stdInfo}
 % ============================================================================================
-\subsection{Implementation Alternative 1:}
+\subsection{Implementation Alternative 1}
 \label{sec:withinDay1-stdInfo}
 
 \createStandardInformationBasic{%
 %
-\url{http://matsim.org/javadoc} $\to$ core $\to$ \lstinline{org.matsim.withinday} package
+\entryStd{withinday}
 %
 }{%
 %
-\url{http://matsim.org/javadoc} $\to$ core $\to$ \lstinline{RunWithinDayExample} class 
+\invokeStd{tutorial}{\lstinline{RunWithinDayExample} class}
 %
 }{%
 %
-no configuration from config file possible
+\configNonstd
 %
 }{
 %
@@ -35,12 +35,13 @@ See Section~\ref{sec:impl-plan-based}.
 }
 
 % ============================================================================================
-\subsection{Implementation Alternative 2:}
+\subsection{Implementation Alternative 2}
 \label{sec:withinDay2-stdInfo}
 
 \createStandardInformationBasic{%
 %
-\url{http://matsim.org/javadoc} $\to$ core $\to$ \lstinline{DriverAgent} class, \lstinline{MobsimAgent} class
+%% \url{http://matsim.org/javadoc} $\to$ core $\to$ \lstinline{DriverAgent} class, \lstinline{MobsimAgent} class
+\entryStd{withinday}
 %
 }{%
 %
@@ -52,7 +53,7 @@ no configuration from config file possible
 %
 }{%
 %
-See Chapter~\ref{sec:dynAgent}.
+See Section~\ref{sec:impl-repl-the-ag}.
 %
 }
 
@@ -216,7 +217,7 @@ The implementation is realized as so-called \lstinline{MobsimEngine} which can b
 %
 %\mnote{register identifiers with replanners, replanners with the within-day engine}
 
-Figure~\ref{fig:labelWithinDayEngine} shows the structure of the \lstinline{WithinDayEngine}. Multiple \lstinline{Replanners} can be registered to the engine. Each \lstinline{Replanner} represents a unique replanning strategy like re-routing or time mutation and uses a set of \lstinline{Identifiers} that communicate with agents and select those who are given the opportunity to adapt their plans. An \lstinline{Identifier} can be seen as an information-distributing unit, like a radio station or a policeman. Therefore, not every \emph{Identifier} communicates with all agents. For example, agents at home will probably listen to the radio, but agents walking in the park will not. Each \lstinline{Identifier} returns a list of agents to its superior \lstinline{Replanner}, which then adapts those agents' plans.
+Figure~\ref{fig:labelWithinDayEngine} shows the structure of the \lstinline{WithinDayEngine}. Multiple \lstinline{Replanners} can be registered to the engine. Each \lstinline{Replanner} represents a unique replanning strategy like re-routing or time mutation and uses a set of \lstinline{AgentSelectors} that communicate with agents and select those who are given the opportunity to adapt their plans. An \lstinline{AgentSelector} can be seen as an information-distributing unit, like a radio station or a policeman. Therefore, not every \emph{AgentSelector} communicates with all agents. For example, agents at home will probably listen to the radio, but agents walking in the park will not. Each \lstinline{AgentSelector} returns a list of agents to its superior \lstinline{Replanner}, which then adapts those agents' plans.
 
 %---------------------------------------------------------------------
 \createfigure%
@@ -229,16 +230,16 @@ Figure~\ref{fig:labelWithinDayEngine} shows the structure of the \lstinline{With
 %
 %\mnote{more about itentifiers and replanners}
 
-Responsibilities are divided between \lstinline{Replanners} and \lstinline{Identifiers}. The first ones are responsible for adapting the agents' plans, but they should not check whether an agent should be replanned or not. If, for example, a \lstinline{Replanner} updates an agent's route, it has to be ensured by the \lstinline{Identifiers} that only agents who are currently performing a leg are replanned. In turn, \lstinline{Identifiers} should select agents who have to be replanned but should not change their plans. As a result of this division, the often time-consuming replanning of the agents' plans can be performed using parallel threads, which leads to an almost linear speed-up. In general, simulation results do not depend on the order in which agents are replanned. \emph{Replanners} which use random numbers are a special case. 
+Responsibilities are divided between \lstinline{Replanners} and \lstinline{AgentSelectors}. The first ones are responsible for adapting the agents' plans, but they should not check whether an agent should be replanned or not. If, for example, a \lstinline{Replanner} updates an agent's route, it has to be ensured by the \lstinline{AgentSelectors} that only agents who are currently performing a leg are replanned. In turn, \lstinline{AgentSelectors} should select agents who have to be replanned but should not change their plans. As a result of this division, the often time-consuming replanning of the agents' plans can be performed using parallel threads, which leads to an almost linear speed-up. In general, simulation results do not depend on the order in which agents are replanned. \emph{Replanners} which use random numbers are a special case. 
 %They have to ensure that 
 In the present implementation, their \emph{random number generator} is re-initialized for every replanned agent, using a deterministic value (\eg a combination of the agent's \lstinline|ID| and the current time step). On one hand, this ensures that an agent's decisions can be reproduced even when the global sequence of random numbers changes. On the other hand, the simulation outcomes do not change if the number of threads used for the replanning is changed.
 % \kai{Christoph, ist es das?  ``have to'' (wie Du es vorher hattest), erscheint mir auf jeden Fall zu stark.  Oder hat es etwas mit multi-threading zu tun?}
 %
 %\mnote{identifiers run sequentially}
 
-Running the \lstinline{Identifier(s)} to select those agents who have to adapt their plans is performed sequentially. On one hand, an \lstinline{Identifier}'s runtime is typically very short and therefore no significant performance losses are expected. On the other hand, 
+Running the \lstinline{AgentSelector(s)} to select those agents who have to adapt their plans is performed sequentially. On one hand, an \lstinline{AgentSelector}'s runtime is typically very short and therefore no significant performance losses are expected. On the other hand, 
 %it is a robust design which 
-this makes the design robust so it cannot produce race conditions which could occur if multiple instances of an \lstinline{Identifier} run concurrently. An example would be an \lstinline{Identifier}, which selects agents on household level, \ie if a member of a household is identified, also all other members are added to the list of agents who have to be replanned. In an approach with parallel running instances of an \lstinline{Identifier}, an instance could identify member ``A'' of a household while concurrently another instance could identify member ``B'' of the same household. As a result, the household's members would be duplicated in the list of agents to be replanned---once added by each \lstinline{Identifier} instance.
+this makes the design robust so it cannot produce race conditions which could occur if multiple instances of an \lstinline{AgentSelector} run concurrently. An example would be an \lstinline{AgentSelector}, which selects agents on household level, \ie if a member of a household is identified, also all other members are added to the list of agents who have to be replanned. In an approach with parallel running instances of an \lstinline{AgentSelector}, an instance could identify member ``A'' of a household while concurrently another instance could identify member ``B'' of the same household. As a result, the household's members would be duplicated in the list of agents to be replanned---once added by each \lstinline{AgentSelector} instance.
 %
 %\mnote{different basic replanners for current/future trips/acts}
 
@@ -254,7 +255,7 @@ For complex plan adaptations, those basic \lstinline{Replanners} can be combined
 %
 %\mnote{different basic identifiers}
 
-Additionally, four basic \lstinline{Identifiers} have been implemented so far. They identify agents, which are...
+Additionally, four basic \lstinline{AgentSelectors} have been implemented so far. They identify agents, which are...
 \begin{itemize}\styleItemize
     \item Performing an activity.
     \item Performing an activity which will end in the current time step.
@@ -264,11 +265,11 @@ Additionally, four basic \lstinline{Identifiers} have been implemented so far. T
 %
 %\mnote{AgentFilters (e.g., for spatial areas)}
 
-Often, identifiers have to handle only a subset of the population, \eg only male agents, or agents currently traveling in a car. To prevent that the same functionality having to be implemented multiple times, so-called \lstinline{AgentFilters} are introduced. Their task is to remove agents not meeting the filter criteria from an agent set. Using \lstinline{AgentFilters} not only avoids duplicated code, but can also reduce computation effort: for example, two \lstinline{Identifiers} which should identify only agents currently traveling in a certain part of the network. Without \lstinline{AgentFilters}, each of them would have to track all traveling agents and their current positions. When this functionality is moved to an \lstinline{AgentFilter}, the two \lstinline{Identifiers} can share a single instance of that filter.
+Often, only a subset of the population, \eg only male agents, or agents currently traveling in a car, needs to be identified. To prevent that the same functionality having to be implemented multiple times, so-called \lstinline{AgentFilters} are introduced. Their task is to remove agents not meeting the filter criteria from an agent set. Using \lstinline{AgentFilters} not only avoids duplicated code, but can also reduce computation effort: for example, two \lstinline{AgentSelectors} which should identify only agents currently traveling in a certain part of the network. Without \lstinline{AgentFilters}, each of them would have to track all traveling agents and their current positions. When this functionality is moved to an \lstinline{AgentFilter}, the two \lstinline{AgentSelectors} can share a single instance of that filter.
 %
 %\mnote{filters: simple and re-usable; identifiers: complex and include decision-making}
 
-Basically, simple and re-usable functionality should be implemented as \lstinline{AgentFilters}, while more complex and/or decision-making functionality should be part of an \lstinline{Identifier}. Again, an example: \eg a scenario modeling the search for a parking space: a filter can be utilized to take only agents currently traveling by car into account. The \lstinline{Identifier} solves the more complex tasks, such as deciding when the agent starts its search, or selecting the searching strategy to be applied.
+Basically, simple and re-usable functionality should be implemented as \lstinline{AgentFilters}, while more complex and/or decision-making functionality should be part of an \lstinline{AgentSelector}. Again, an example: \eg a scenario modeling the search for a parking space: a filter can be utilized to take only agents currently traveling by car into account. The \lstinline{AgentSelector} solves the more complex tasks, such as deciding when the agent starts its search, or selecting the searching strategy to be applied.
 %
 %\mnote{basic AgentFilters}
 
@@ -281,7 +282,7 @@ Three basic \lstinline{AgentFilters} have been implemented so far. They filter a
 %
 %\mnote{observers}
 
-In addition to the logic identifying agents and adapting their plans, another important within-day replanning framework component is code that continuously collects information and provides it to the \lstinline{Identifiers}. These decide,based on that data, whether agents are replanned or not. In a time step-based approach---as realized by the \gls{qsim}---collecting, analyzing and aggregating data, as well as providing it, can be easily realized. Figure~\ref{fig:labelQSimTimeStep} shows the structure of a \gls{qsim}'s time step. Each time step is separated into three phases:
+In addition to the logic identifying agents and adapting their plans, another important within-day replanning framework component is code that continuously collects information and provides it to the \lstinline{AgentSelectors}. These decide,based on that data, whether agents are replanned or not. In a time step-based approach---as realized by the \gls{qsim}---collecting, analyzing and aggregating data, as well as providing it, can be easily realized. Figure~\ref{fig:labelQSimTimeStep} shows the structure of a \gls{qsim}'s time step. Each time step is separated into three phases:
 
 \textbf{Phase~1:} 
 \begin{lstlisting} 
@@ -311,10 +312,10 @@ A class can collect data such as link travel times during phase~2.
 phase. Then, the collected data can be analyzed and aggregated in phase~3. 
 %\lstinline{after time step}
 %phase. 
-In the next time step, the \lstinline{WithinDayEngine}'s \lstinline{Identifiers} can use that data for their decisions. The \lstinline{WithinDayEngine} is always the first \lstinline{MobsimEngine} executing its \lstinline{doSimStep} method, ensuring that no agent has changed its status since phase~3 
+In the next time step, the \lstinline{WithinDayEngine}'s \lstinline{AgentSelectors} can use that data for their decisions. The \lstinline{WithinDayEngine} is always the first \lstinline{MobsimEngine} executing its \lstinline{doSimStep} method, ensuring that no agent has changed its status since phase~3 
 %\lstinline{after time step} 
 %phase 
-of the previous time step. As a result, the \lstinline{Identifiers} make their decisions on %actual 
+of the previous time step. As a result, the \lstinline{AgentSelectors} make their decisions on %actual 
 current data.
 
 %---------------------------------------------------------------------

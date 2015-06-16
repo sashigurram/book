@@ -44,11 +44,11 @@ An agent's plans in a given iteration may be considered the agent's \imp{choice 
 %
 Choice is typically based on the score; higher score plans are more likely to be selected.  
 %
-This is discussed in more detail in Chapter~\ref{ch:abta} and~\ref{ch:discretechoice}.  For the time being, note that the three steps of replanning must cooperate for the approach to work; the plans removal step should remove ``bad'' plans and the innovation step should generate ``good'' plans; in both cases, ``good'' means `` able to obtain a high score in the mobsim/scoring''.  Fortunately, due to its evolutionary concept, the approach is fairly robust; the innovation step does not always have to generate good solutions; it is sufficient if \emph{some} of the solutions are good and lead to a high score.
+This is discussed in more detail in Chapter~\ref{ch:abta} and~\ref{ch:discretechoice}.  For the time being, note that the three steps of replanning must cooperate for the approach to work; the plans removal step should remove ``bad'' plans and the innovation step should generate ``good'' plans; in both cases, ``good'' means ``able to obtain a high score in the mobsim/scoring''.  Fortunately, due to its evolutionary concept, the approach is fairly robust; the innovation step does not always have to generate good solutions; it is sufficient if \emph{some} of the solutions are good and lead to a high score.
 
 However, it is clear that scoring is a central element of \gls{matsim}.  Only solutions obtaining a high score will be selected by the agent and survive the plans removal step.  Thus, the scoring function needs to be ``correct'' for a given scenario, meaning, more or less, that plans ``performing well'' obtain a higher score than plans that do ``not perform well''.  Whether a performance is good or not, is, in the end, decided by travelers living in a region---some may prefer a congested car trip to a destination, others may prefer a crowded, but affordable, trip by public transit, while others may prefer using the bicycle, even in bad weather.
 
-The typical way to bridge this gap is to use econometric \imp{\gls{utility}} functions; for example, from random utility models \citep[e.g.][]{BenAkivaLerman_1985,Train_2003}, for the score.  However, in \gls{ai}, utility may also be used in a more general way: for example, the \gls{score}, that each individual agent (or the system as a whole), wants to, or should, optimize \citep{RusselNorvig2010ArtificialIntelligence}.  For these reasons, the terms ``\gls{score}'' and ``\gls{utility}'' are mostly interchangeable in the \gls{matsim} context.  Since we will need the concept of a marginal utility sometimes, this chapter will mostly speak of 'utility'; it is a bit unusual to talk about 'marginal score'.
+The typical way to bridge this gap is to use econometric \imp{\gls{utility}} functions; for example, from random utility models \citep[e.g.][]{BenAkivaLerman_1985,Train_2003}, for the score.  However, in \gls{ai}, utility may also be used in a more general way: for example, the \gls{score}, that each individual agent (or the system as a whole), wants to, or should, optimize \citep{RusselNorvig2010ArtificialIntelligence}.  For these reasons, the terms ``\gls{score}'' and ``\gls{utility}'' are mostly interchangeable in the \gls{matsim} context.  Since we will need the concept of a marginal utility, this chapter will mostly speak of 'utility', since it is a bit unusual to talk about 'marginal score'.
 
 The user can configure numerous parameters to calibrate the
 %choice behavior.
@@ -241,7 +241,7 @@ The config syntax (config version v2) approximately is
    [...]    
 </module>
 \end{xml}
-\kai{check possible re-name of monetaryDistanceCostRate}
+\kaitodo{check possible re-name of monetaryDistanceCostRate}
 
 %% \benjamin{Irgendwo müsste dann definiert werden, was ``direct'' vs ``indirect'' ist; M.E. einfach ``without'' vs ``with'' (time) costraints.}
 %% %
@@ -315,7 +315,7 @@ The marginal utility of travel time savings, $mUTTS$, can then be defined as the
   %
 } To differentiate $\beta_{trav}$ from the indirect effect, it is sometimes called \textbf{direct marginal utility} of time spent traveling.
 
-\kai{chk if default betaTrav was changed to zero when going to print} \kai{Siehe \url{https://matsim.atlassian.net/browse/MATSIM-335}}
+\kaitodo{chk if default betaTrav was changed to zero when going to print} \kai{Siehe \url{https://matsim.atlassian.net/browse/MATSIM-335}}
 
 The marginal utility of travel time savings
 %at the typical duration
@@ -337,11 +337,11 @@ This is important for calibration of the utility function.
 
 \paragraph{Arriving Early}
 
-In the same way as the marginal utility of travel time savings is not only given by $- \beta_{trav}$, but instead by $- \beta_{trav} + \beta_{dur}$, the marginal utility of waiting time savings is given by 
+In the same way as the marginal utility of travel time savings is not only given by $- \beta_{trav}$, but instead by $- \beta_{trav} + \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}}$, the marginal utility of waiting time savings is given by 
 $
-mUWTS = - \beta_{wait} + \beta_{dur}: 
+mUWTS = - \beta_{wait} + \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}}: 
 $
-Even when the direct marginal utility of waiting, $\beta_{wait}$, equals zero, then ``doing nothing'' still eats into the overall time budget and thus incurs the same opportunity cost of time as traveling does.  
+Even when the direct marginal utility of waiting, $\beta_{wait}$, equals zero, then ``doing nothing'' still eats into the overall time budget and thus incurs the same opportunity cost of time as traveling does.
 %
 Intuitively, one can imagine that one must leave the previous activity earlier to have a longer waiting time, thus reducing the score of the previous activity.
 
@@ -356,8 +356,8 @@ Arriving late incurs a marginal utility of $\beta_{late}$, typically negative.  
 As a result, the Vickrey parameters of $\alpha$ (marginal penalty for arriving early), $\beta$ (penalty for traveling) and $\gamma$ (marginal penalty for arriving late) \citep[as defined by][]{ArnottEtcBottleneck-inelastic} are consistent with the following equations:
 \begin{equation}
 \begin{array}{ccrc}
--\beta_{wait} + \beta_{dur} & = & \alpha & \\
--\beta_{trav} + \beta_{dur} & = & \beta & \\
+-\beta_{wait} + \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} & = & \alpha & \\
+-\beta_{trav} + \beta_{dur} \cdot \frac{t_{typ,q}}{t_{dur,q}} & = & \beta & \\
 - \beta_{late} & = & \gamma & . \\
 \end{array}
 \end{equation}
@@ -387,9 +387,10 @@ This section summarizes the current implementation of the default \gls{matsim} s
 \label{sec:zero-util-durat}
 
 The duration when an activity's utility is exactly zero is computed by the (somewhat cryptic) expression
-\[
+\begin{equation}
 t_{0,q} := t_{typ,q} \cdot \exp\left( - \frac{10}{(t_{typ,q}/1\,h) \cdot prio} \right) \ ,
-\]
+\label{eq:zero-utility-duration}  
+\end{equation}
 where $prio$ is a configurable parameter. This was originally designed so that all activities with the same $prio$ obtain, at their typical duration, the same utility value of $10 \cdot \beta_{dur}$, with the idea that this makes them equally likely to be dropped in a time shortage situation \citep{CharyparNagel2005ga4acts}. Clearly, this does not work as intended, since, as a result, activities accumulating this utility value over a short duration win; thus, without additional constraint the ``home'' activity gets dropped first, which is clearly not plausible. See Section~\ref{sec:future-of-scoring-function} for a discussion of alternatives. In the meantime, the recommendations are:
 \begin{itemize}\styleItemize
 \item Do not set the \lstinline$priority$ value in the config away from its default value.
@@ -435,6 +436,40 @@ For an adaptive \gls{algorithm}, a penalty like this needs to be defined so that
 
 Clearly, the wrap-around approach fails if the first and last activity are not the same.  The present code does not look at locations, but gives a warning and problematic results if they are different types.
 
+\subsection{Score Averaging}
+\label{sec:score-averaging}
+
+The score $S$ that is computed according to the rules given in this chapter is not assigned directly to the plan, rather, it is exponentially smoothed according to
+\begin{equation}
+S^k = \alpha \, S + (1-\alpha) \, S^{k-1} \ ,  
+\label{eq:score-averaging}
+\end{equation}
+where $S^k$ is the new memorized score, $S^{k-1}$ is the previously memorized score, $S$ is the score obtained from the plan's execution in the \gls{mobsim}, and $\alpha$ is a ``learning'' or ``blending'' parameter.  The default value of $\alpha$ is one; it can be configured by the line
+\begin{xml}
+   <param name="learningRate" value="..." />
+\end{xml}
+in the config file.
+
+Non-executed plans just keep their score.
+
+\subsection{Forcing Scores to Convergence}
+\label{sec:score-msa}
+
+For many situations, both practical and theoretical (see Section~\ref{sec:score-convergence}), it is desirable that each plan's score converges to its expectation value.  Equation (\ref{eq:score-averaging}) will not achieve that; it just dampens the fluctuations.  A well known approach to force convergence to the expectation value is the \acrfull{msa}: \kaitodo{chk equation}
+\begin{equation}
+S^m = \frac{1}{m} \, S + \frac{m-1}{m} \, S^{m-1} \ .
+\label{eq:score-msa}
+\end{equation}
+This resembles Equation~(\ref{eq:score-averaging}), with two important differences: (1) The fixed blending parameter $\alpha$ is now replaced by a variable $1/m$, and (2) $m$ is not the iteration number but counts how often a plan was executed and thus scored.  This is necessary in \gls{matsim} since a plan is not executed and scored in every iteration.
+
+This behavior can be switched on by the config option
+\begin{xml}
+   <param name="fractionOfIterationsToStartScoreMSA" value="..." />
+\end{xml}
+The default value is 0.8, meaning that \gls{msa} score averaging starts after 80\% of the iterations.  This is plausibly used together with innovation switch off (Section~\ref{sec:innovation-switchoff}), meaning that \gls{msa} operates on a fixed set of plans.
+
+
+
 % ##################################################################################################################
 \section{Typical Scoring Function Parameters and Their Calibration}
 \label{sec:typicalParams}
@@ -459,6 +494,7 @@ The \gls{matsim} default values for release 7 will be
   \end{array}
 \label{eq:std-params}
 \end{equation}
+\kaitodo{check $\beta_{trav, mode(q)}$}
 They are very loosely based on the Vickrey bottleneck model \citep[e.g.][]{ArnottEtcBottleneck-inelastic}; one additional insight: in many of the systems we model, traveling does not seem to be less convenient than ``doing nothing''.  Thus, the \emph{direct} marginal utility of traveling, $\beta_{trav}$, is close to zero and sometimes even positive \citep[see, e.g.,][]{RedmondMokhtarian_Transportation_2001,PawlakEtAl_ICMC_2011} .
 
 %% \kai{there is at least one paper by handy and/or mokhtarian, but i can't find it in the bibtex}.
@@ -545,7 +581,7 @@ If you do not have a mode choice logit model, set to $+6.0$.  (This is the defau
 
 This is normally a positive value (since performing an activity for more time normally increases utility).
 
-\item Set $\beta_{tt,car} \equiv$ \verb$marginalUtilityOfTraveling...$ to $0.0$. (For release\,0.7.0, this is the default. \kai{chk})
+\item Set $\beta_{tt,car} \equiv$ \verb$marginalUtilityOfTraveling...$ to $0.0$. (For release\,0.7.0, this is the default. \kaitodo{chk})
 
 \emph{It is important to understand this:}  Even if this value is set to zero, traveling by car will be implicitly punished by the so-called opportunity cost of time; if you are traveling by car, you cannot perform an activity; thus, you are (marginally and approximately) losing $\betaperf$.  See Section~\ref{sec:opport-cost-of-time}.
 
@@ -592,7 +628,7 @@ Important applications for large scenarios are described in Chapter~\ref{ch:scen
 
 Special utility functions have been developed for car sharing (see Chapter~\ref{ch:carsharing}), social contacts and joint trips (see Chapter~\ref{ch:jointtrips}), parking (see Chapter~\ref{ch:parking}), road pricing (see Chapter~\ref{ch:roadpricing}) and destination innovation (see Chapter~\ref{ch:destinationchoice}), also describing facility loading scoring and inclusion of random error terms. 
  
-Future topics, available on an experimental basis, are: a full-blown utility function estimation (Section~\ref{sec:estimation}), inclusion of agent-specific preferences (Section~\ref{sec:agent-specific-prefs}) and application of alternative utility function forms (Section~\ref{sec:alternative-functions}).
+Future topics, available on an experimental basis, are: a full-blown utility function estimation (Section~\ref{sec:estimation}), inclusion of agent-specific preferences (Section~\ref{sec:agent-specific-prefs}) and application of alternative utility function forms (Section~\ref{sec:future-of-scoring-function}).
 
 % ##################################################################################################################
 %\section{Discussion}
@@ -808,6 +844,8 @@ Future topics, available on an experimental basis, are: a full-blown utility fun
 %\paragraph{Agent-Specific Preferences:}
 %In project Surprice \citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014}, agent-specific travel preferences and individual income-dependent marginal utilities of money are incorporated. It is simulated with a 1\% multi-modal Zürich scenario, the preference values however, are assigned randomly.
 
+% ##################################################################################################################
+\ifthenelse{\boolean{printBibPerChapter}}{\bibpc}{}
 
 % ##################################################################################################################
 % Local Variables:

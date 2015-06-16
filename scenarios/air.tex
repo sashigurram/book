@@ -1,15 +1,18 @@
-\chapter{Air- and Rail-Transport}
+\chapter{European Air- and Rail-Transport}
 \label{ch:air}
 % ##################################################################################################################
 
 \hfill \textbf{Author:} Dominik Grether
 
-\begin{center} \includegraphics[width=0.6\textwidth, angle=0]{extending/figures/air/air_network_europe_osm} \end{center}
+%\begin{center} \includegraphics[width=0.6\textwidth, angle=0]{scenarios/figures/air_network_europe_osm} \end{center}
 
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
-\createStandardInformationBasic{\lstinline|playground.fuerbas.air| package}{No standard invocation.}{No standard config.}{\citet{GretherFuerbasNagel2013FlightTechnologyPROCEDIA,Grether2014PhD}}
-\joschka{Kai: Hier wäre m.E. gar nichts Standard - vielleicht nehmen wir den obigen Eintrag einfach komplett raus und lassen nur die Referenz auf die Publikation?}
+%\kai{Shouldn't this go to ``scenarios''?} \ah{yep. done}
+
+%\createStandardInformationBasic{\lstinline|playground.fuerbas.air| package}{No standard invocation.}{No standard config.}{\citet{GretherFuerbasNagel2013FlightTechnologyPROCEDIA,Grether_PhDThesis_2014}}
+%\joschka{Kai: Hier wäre m.E. gar nichts Standard - vielleicht nehmen wir den obigen Eintrag einfach komplett raus und lassen nur die Referenz auf die Publikation?}
+
 % ##################################################################################################################
 This chapter discusses simulation of air- and rail-transport technology and passengers using \gls{matsim}. 
 There is no great difference in overall travel times between middle-range rail and air transportation. 
@@ -29,7 +32,7 @@ The modeling of technology and demand is sketched in Section~\ref{sec:air_rail_s
 On the basis of simulation results for a pure air transport model, rail transport is added and effects of mode choice are presented (Section~\ref{sec:air_rail_results}). 
 Section~\ref{sec:air_rail_discussion} then interprets simulation results and highlights some modeling aspects requiring further study. 
 The choice set generation and plans removal algorithm of \gls{matsim} is discussed in detail; that is also the subject of Section~\ref{sec:future-of-scoring-function}. 
-Modeling, results, and studies of this chapter present the highlights of \citet[][Chapter~6, pp.~119]{Grether2014PhD}, in more detail.   
+Modeling, results, and studies of this chapter present the highlights of \citet[][Chapter~6, pp.~119]{Grether_PhDThesis_2014}, in more detail.   
 
 % ##################################################################################################################
 \section{Air Transport Scenario}
@@ -72,8 +75,8 @@ Modeling, results, and studies of this chapter present the highlights of \citet[
 {Layout of the air network}%
 {Layout of airports in the air transport network: In- and outbound runways are modeled by separate links connected by taxiways and a link representing the apron. There the transit stop facility is attached}%
 {\label{fig:air_airport}}%
-{\includegraphics[width=0.8\textwidth]{extending/figures/air/sf_flight_model_airport.pdf}}%
-{\citet{GretherFuerbasNagelFlightTechnology}}
+{\includegraphics[width=0.8\textwidth]{scenarios/figures/sf_flight_model_airport.pdf}}%
+{\citet{GretherFuerbasNagel2013FlightTechnologyPROCEDIA}}
 % ------------
 %
 %\createtable%
@@ -96,14 +99,14 @@ Modeling, results, and studies of this chapter present the highlights of \citet[
 {Network layout}%
 {Layout of airways in the air transport network: each airport pair is directly connected by two airway links, one for each flight and direction}%
 {\label{fig:air_network_model}}
-{\includegraphics[width=0.8\textwidth]{extending/figures/air/sf_airport_network_no_slide.pdf}}%
-{\citet{GretherFuerbasNagelFlightTechnology}}
+{\includegraphics[width=0.8\textwidth]{scenarios/figures/sf_airport_network_no_slide.pdf}}%
+{\citet{GretherFuerbasNagel2013FlightTechnologyPROCEDIA}}
 % ------------
 
 %\mnote{OAG}
-The air traffic technology model uses data provided by OAG \ah{glossary} Aviation.%
+The air traffic technology model uses data provided by \gls{oag} Aviation.%
 \footnote{\url{www.oagaviation.com}, last access 08.08.2012}
-Relevant data for schedule and network generation is taken from the September 2009 OAG \ah{glossary} data, using all flights departing on a Tuesday, taking each specific flight number into account only once.
+Relevant data for schedule and network generation is taken from the September 2009 \gls{oag} data, using all flights departing on a Tuesday, taking each specific flight number into account only once.
 This may not always result in complete flight cycles, \eg when the outbound and inbound flight operate on different days of the week. 
 Compared to using all flights of an entire week, the network may be incomplete, as certain destinations are only served on specific days.
 
@@ -112,7 +115,7 @@ The air network modeling aims at a simulation with \gls{matsim}.
 The network consists of airports, each showing an identical layout and point-to-point connections in between. 
 Every runway is solely used either for inbound or outbound flights, with taxiways connecting the runways to the apron. The latter accommodates a transit stop, \ie the terminal, where flight movements originate and terminate (Figure~\ref{fig:air_airport}). 
 Each airport pair is directly connected by airway links, one for each flight and direction of travel (Figure~\ref{fig:air_network_model}). 
-Maximum speed on any of these links is calculated based on distance and flight duration provided by OAG \ah{glossary}. 
+Maximum speed on any of these links is calculated based on distance and flight duration provided by \gls{oag}. 
 Times for taxi, take-off, and landing are also taken into account, \ie flight duration is reduced by the time needed from push-back to airborne before the maximum speed for an airway link is calculated.
 Each flight has an individual link that could be interpreted as route, each possessing individual characteristics. 
 Figure~\ref{fig:matsim_air_network_eu} shows parts of the network for European air traffic.
@@ -122,13 +125,13 @@ Figure~\ref{fig:matsim_air_network_eu} shows parts of the network for European a
 {European air network}%
 {European air network with country borders in the background (country borders~\textcopyright~\url{openstreetmap.org})}%
 {\label{fig:matsim_air_network_eu}}%
-{\includegraphics[width=0.99\textwidth, angle=0]{extending/figures/air/air_network_europe_osm.png}}%
-{\citet{GretherFuerbasNagelFlightTechnology}}
+{\includegraphics[width=0.99\textwidth, angle=0]{scenarios/figures/air_network_europe_osm.png}}%
+{\citet{GretherFuerbasNagel2013FlightTechnologyPROCEDIA}}
 
 % ------------
 
 %\mnote{Flight Schedule}
-Flight schedules are taken from the OAG data and translated to a \gls{matsim} transit schedule containing information about each line, route, and departure. 
+Flight schedules are taken from the \gls{oag} data and translated to a \gls{matsim} transit schedule containing information about each line, route, and departure. 
 For each airline offering a connection between two airports, a transit line is generated. 
 A transit route, which represents the route on the air traffic network, is created for each flight offered by this airline. 
 %The route contains the links belonging to the airport representation plus the specific link for this flight connecting the airports' out- and inbound runway. 
@@ -136,8 +139,8 @@ Mutual interferences of aircrafts en-route are not included in the studies prese
 %Tab.~\ref{tab:number_of_flights} lists the number of (not included) airports, direct origin-destination (O-D) connections and flight movements for three different area pairs.
 
 %\mnote{Vehicles}
-To represent individual aircraft in the simulation, transit vehicles are created on the basis of OAG data. 
-IATA aircraft codes, operating airlines, and seating capacities are reflected in the respective aircraft representation for every flight. 
+To represent individual aircraft in the simulation, transit vehicles are created on the basis of \gls{oag} data. 
+\gls{iata} aircraft codes, operating airlines, and seating capacities are reflected in the respective aircraft representation for every flight. 
 Information about boarding times, \ie passenger flow per door over time, is not available, but could be set for each aircraft type. 
 One aircraft per flight is generated, thus delays resulting from a delayed incoming aircraft are not modeled.
 Accordingly, no aircraft rotations and vehicle trip chains are implemented at this time. 
@@ -148,13 +151,13 @@ The maximum velocity of each aircraft is set to twice sonic speed, since speed l
 %\mnote{Passengers, Synthetic Population}
 As soon as the technology side of air transport is modeled, passenger demand simulation can begin. 
 The passenger demand for trips in Germany created and used for the results of this section is based on \gls{od} data of DESTATIS.% 
-\footnote{\url{destatis.de}, Fachserie~8 Reihe~6, last access 10.09.2012}.
+\footnote{Deutsches Statistisches Bundesamt, \url{destatis.de}, Fachserie~8 Reihe~6, last access 10.09.2012}.
 % 
 For each \gls{od} pair and trip a virtual person is created.
 Each virtual person performs two activities, one at the origin and the other at the destination airport. 
 Both activities are of same type, thus time spent performing both activities is accumulated before it is evaluated by the utility function according to Section~\ref{sec:charyparnagel}. %equation (\ref{eq:utility_v_perf}). 
 A typical duration, $t_{typ,q}$, of 21\,hours is set for this activity type. 
-The time virtual persons arrive at the origin airport and start waiting for a connection is drawn randomly from a uniform distribution in 04\,am to 6\,pm, UTC. 
+The time virtual persons arrive at the origin airport and start waiting for a connection is drawn randomly from a uniform distribution in 04\,am to 6\,pm, \gls{utc}. 
 This reflects estimated typical opening hours of European airports.
 No other time constraints are set, thus the only incentive for virtual persons is to reduce overall travel time and maximize time spent at the activity. 
 A flight leg is scheduled between the two activities, connecting origin and destination.
@@ -191,7 +194,7 @@ For another 100\,iterations only the \gls{mnl} is used by  passengers to select 
 {Passengers in aircraft and available seats over time in Germany}%
 {Passengers in aircraft and available seats over time in Germany: At any time, there are more seats than passengers. Air transport-only scenario based on O-D data for Germany, iteration~600}%
 {\label{fig:2009_passengers_seats}}%
-{\includegraphics[width=0.99\textwidth, angle=0]{./extending/figures/air/in_vehicle_histogram_flight_1876_it_600.pdf}}%
+{\includegraphics[width=0.99\textwidth, angle=0]{./scenarios/figures/in_vehicle_histogram_flight_1876_it_600.pdf}}%
 {}
 
 % ------------
@@ -250,8 +253,8 @@ The implemented algorithm is also an open issue; if the number of plans per trav
 {Passengers waiting for a flight, traveling by plane, or by alternative mode over time of day. 
 Air transport and alternative mode scenario for Germany, iteration~600. Results with random selector for plan removal}%
 {\label{fig:2009_leg_histogram_modes_psl}}%
-{\includegraphics[width=0.99\textwidth, angle=0]{./extending/figures/air/leg_histogram_improved_flight_train_en_route_1893_1897_it_600.pdf}}%
-{\citet{Grether2014PhD}}
+{\includegraphics[width=0.99\textwidth, angle=0]{./scenarios/figures/leg_histogram_improved_flight_train_en_route_1893_1897_it_600.pdf}}%
+{\citet{Grether_PhDThesis_2014}}
 
 % ------------
 %

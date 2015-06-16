@@ -2,7 +2,7 @@
 \label{ch:researchavenues}
 % ##################################################################################################################
 
-\hfill \textbf{Authors:} Kai Nagel, Kay W.\ Axhausen, Benjamin Kickhöfer, (Gunnar Flötteröd), Andreas Horni
+\hfill \textbf{Authors:} Kai Nagel, Kay W.\ Axhausen, Benjamin Kickhöfer, Andreas Horni
 
 \begin{center} \includegraphics[width=0.4\textwidth, angle=0]{figures/stable-activity-allocations} \end{center}
 
@@ -13,6 +13,8 @@ This chapter wants to highlight some of them for further discussion and maybe ac
 
 % ##################################################################################################################
 \section{MATSim and Agents}
+\label{sec:matsim-and-agents}
+
 %% , and Travel Behavior Research}
 
 % Q-learning: learn utility for each state-action pair
@@ -52,6 +54,7 @@ This chapter wants to highlight some of them for further discussion and maybe ac
 % 20.6 Learning an action-value function (Q values, Q-learning)
 
 \subsection{Complex Adaptive Systems}
+\label{sec:complex-adaptive-systems}
 
 The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the field of \acrfullpl{cas} \citep[e.g.][]{AxelrodBook,Holland_1992,HraberJonesForrestEcho,PalmerEtAl_PhysicaD_1994}. 
 %% %\kwaah{Has this been spelled out somewhere ?} \ah{yes, gls()}
@@ -70,6 +73,7 @@ That approach in turn builds on work by \cite{PalmerEtAl_PhysicaD_1994}, who sim
 \citet{HraberJonesForrestEcho} simulate an artificial ecosystem, where the individual agent strategies are based on so-called genes, which are adapted over the rounds/iterations by a genetic algorithms \citep{Goldberg_1989}.
 
 \subsection{Artificial Intelligence}
+\label{sec:artif-intell}
 
 The focus of \gls{cas} is on many agents, agent interaction, and emergence. \Acrfull{ai} in contrast concentrates on single agents. In \gls{ai} terms, the original \gls{matsim} agents (those that do day-to-day learning) are very simple 
 %active 
@@ -111,11 +115,14 @@ See Chapters~\ref{ch:withinday} and~\ref{ch:dts} as well as Section~\ref{sec:res
 % ##################################################################################################################
 \section{Within-Day Replanning and the User Equilibrium}
 \label{sec:researchavenues-withinday}
+
+\mnote{definition}
+
 Within-day replanning, \ie the ability of the agents to respond to the immediate context is the standard mode of operation for simulation models. 
 %
 In the transport domain, note the traffic flow models as an example, where aspects such as acceleration/braking or lane changing are (obviously) computed reactively while the simulation is running, and not before the simulation starts \citep[e.g.][]{Wiedemann_PhDThesis_1974}.
 %
-Many traveller-oriented or agent-based models of travel demand adopt the same approach (ORIENT \citep[][]{Sparmann_TechRep_1980}, ORIENT/RV \citep{AxhausenHerz_JTE_1989}, MobiTOPP \citep[][]{SchnittgerZumkeller_ETC_2004}).
+Many traveller-oriented or agent-based models of travel demand adopt the same approach, \cf ORIENT \citep[][]{Sparmann_TechRep_1980}, ORIENT/RV \citep{AxhausenHerz_JTE_1989}, MobiTOPP \citep[][]{SchnittgerZumkeller_ETC_2004}.
 %
 For many aspects of \acrfull{its} systems, within-day replanning is indispensable \citep[e.g.][]{hall-1993,EmmerinkEtAl_TransResC_1995,Dobler_PhDThesis_2013}.
 %
@@ -123,11 +130,13 @@ For many aspects of \acrfull{its} systems, within-day replanning is indispensabl
 %% \kwaah{do we have more?})
 None of these systems aim for equilibrium in the sense adopted by \gls{matsim} carried forward from \gls{transims} and ultimately inherited from static assignment.
 
+\mnote{equilibrium with conditional strategies not same as equilibrium with fixed plans}
+
 One may argue that, if supplied with a learning approach, these within-day models should approach equilibrium after many iterations, as the agents with a suitable memory structure would avoid plans which make them worse off. 
 %
 This memory, which would need to be agent-specific and covering the very large set of choice options, makes the approach costly to implement.
 %
-Importantly, the solutions may be different: When faced with a stochastic environment, an agent that is able to react within-day can be better off than an agent that follows a pre-computed plan. \kai{!!!}
+Importantly, the solutions may be different: When faced with a stochastic environment, an agent that is able to react within-day can be better off than an agent that follows a pre-computed plan. This is important: Finding a plan with the highest expected score is not the same as finding a conditional strategy with the highest expected score.  
 
 Still, there are context where this immediate response ability can be used within \gls{matsim} to explore the choice set more effectively, especially if the choice alternatives are limited in number and in geographic reach. 
 \citet[][]{WaraichEtAl_TechRep_IVT_2013_2}
@@ -147,6 +156,7 @@ He also documents that his approach finds a set of executed plans which is close
 While the benefits of an equilibrium solution in comparison with an approximation have been extensively discussed for aggregate assignment models, for \gls{matsim} the issue is if these fast approximation could be used to speed up the overall equilibrium search; similar in spirit to start a Frank-Wolfe search based on four or five incremental network loadings of the network.
 \kai{citation?} 
 \kwaah{Kai: would a reference to VISUM be good enough ? }
+\ahtodo{find ref}
 While aggregate assignment has possibilities to identify the routes chosen as belonging to the equilibrium, in the agent-based context research is needed to a) see, if the approach is indeed faster and b) if the resulting set of plans is unbiased by the fast initialization. 
 
 %\vfill\eject
@@ -154,28 +164,44 @@ While aggregate assignment has possibilities to identify the routes chosen as be
 \section{Choice Set Generation}
 \label{sec:choicesets}
 
-As described at several places in this book (e.g.\ Sections
-\ref{sec:plans-gener-remov}, 
+As described at several places in this book (e.g.\ Sections/Chapters
+\ref{sec:goodbadplans},
+\ref{sec:configuring-choice-set-generation}, 
 \ref{sec:Evolution-of-choice},
-\ref{sec:choice-set}), the \gls{matsim} iterative process in its standard version modifies each agent's choice set ($=$ each agent's set of plans) over the iterations.  
+\ref{ch:destinationchoice},
+\ref{ch:abta}
+\ref{ch:discretechoice}), the \gls{matsim} iterative process in its standard version modifies each agent's choice set ($=$ each agent's set of plans) over the iterations.  
 %
 Clearly, an agent can only select a plan that is generated by this process.  Thus, the definition of the search space is important.
 
-\subsection{The statistical weight of each plan}
+\subsection{The Statistical Weight of Each Plan}
+\label{sec:stat-weight-of-plan}
 
-Econometric research \citep[e.g.][Chapter 8 and 9]{BenAkivaLerman_1985} points out that it is not sufficient if certain alternatives are eventually discovered by the search process; rather, it is important that they are generated with statistical weights that are consistent with the choice model.
+Econometric research \citep[e.g.][Chapter 8 and 9]{BenAkivaLerman_1985} points out that it is not sufficient if certain alternatives are eventually discovered by the search process; rather, it is important that they are generated with %statistical weights 
+probabilities that are consistent with the choice model.
 %
-This, however, is somewhat at odds with the \acrfull{cas} approach, where solutions are generated somewhat arbitrarily.  For example, \citet{ArthurBar} ``create[s] `an alphabet soup' of predictors'' that are ``randomly ladle[d] out''. \kwaah{He uses strategies not choices, which may be are the same in his simple application, but in the parking context just define a choice set. }  
+This, however, is at odds with the \acrfull{cas} approach, where solutions are generated rather arbitrarily.  For example, \citet{ArthurBar} ``create[s] `an alphabet soup' of predictors'' that are ``randomly ladle[d] out''.\footnote{%
+%
+%% \kwaah{He uses strategies not choices, which may be are the same in his simple application, but in the parking context just define a choice set. }  
+%
+To be precise, Arthur uses strategies that eventually \emph{generate} choices.
+%
+}
 That is, research is needed to clarify under which conditions the statistical properties of the choice set need to be tightly consistent with the choice model, and when not.
 
-Having said that, in the \gls{matsim} context it turns out to be important to not only look at plans generation/innovation (\eg Sections~\ref{sec:timechoice}--\ref{sec:modechoice}), but also at plans removal.  The default \gls{matsim} approach is to remove the plan with the worst score.  This is, however, problematic both from a \gls{cas} and an econometric perspective.  
+% \gunnar{The ``weights'' discussed in the Ben-Akiva book unbias the parameter estimation of the model.
+% There also exist ``weights'' in the simulation (model evaluation) context that correct away the effect
+% of a ``proposal function'' that produces, for instance, plan innovation. These are related but
+% different things.} \kai{@Gunnar: Habe jetzt oben im Text mal ``generated with statistical weights'' ersetzt durch ``generated with probabilities''.  Mir geht es eigentlich nur darum, zu sagen, dass CAS bei der Erzeugung der Strategien gar nicht über Gewichte nachdenkt, während die Ökonometriker sagen, dass genau dies gar nicht geht.  Wenn es Dir wichtig genug erscheint, baust Du dann bitte einen Satz oder wenigstens eine Referenz zum zweiten Fall ein?  Danke.}
+
+%Having said that, 
+As a result, in the \gls{matsim} context it turns out to be important to not only look at plans generation/innovation (\eg Sections~\ref{sec:timechoice}--\ref{sec:modechoice}), but also at plans removal.  The default \gls{matsim} approach is to remove the plan with the worst score.  This is, however, problematic both from a \gls{cas} and an econometric perspective.  
 %
 From a \gls{cas} perspective, such an approach simply does not generate enough diversity, since similar scores rather often mean similar plans, and so the approach has a tendency to remove the most different plan, typically leading to a set of plans that are all quite similar.
 %
 From an econometric/discrete choice perspective (\cf Section~\ref{sec:Evolution-of-choice}), the combination of plans generation and plans removal needs to ensure that each plan's probability to be in the choice set corresponds to its weight that was used in the estimation of the choice model.
 
-Section~\ref{sec:Evolution-of-choice} discusses a version of the plans generation/removal process, but makes rather strong assumptions on the capability to compute best response plans.  The following thoughts are a bit less formal and more general.
-
+Section~\ref{sec:Evolution-of-choice} discusses a version of the plans generation/removal process, but makes rather strong assumptions on the capability to compute best-response plans.  Here, let us instead consider a heuristic argument.
 Assume that plans $i$ for a person $n$ are created with a certain probability $p^{create}_{n,i}$; the person index $n$ will be dropped in the following.  Also assume that plans are removed with probability $p^{remove}_{i}$.  The master equation for the probability $q_{i}$ of plan $i$ to be contained in the choice set becomes in leading order\footnote{%
 %
 In higher order, one would have to correct for the possibility that a plan may appear more than once in the set of plans.
@@ -204,7 +230,11 @@ That is, quite obviously, if one wants to control the statistical distribution $
 %% That is, a fully random plans generation together with an inverse logit plans removal probability leads to a logit probability for each plan to be in the \gls{matsim} set of plans.  If one wanted to model a logit choice for each alternative of the full choice set, then one could use the above process in conjunction with a \emph{totally random choice} (!) between the alternatives that are already in the \gls{matsim} plans set generated by the above approach.
 
 %Now 
-\gls{matsim} can be imagined to typically use a plans generation model of type $p^{create}_i \sim \exp( \beta^{create}\, S_i )$, with relative large $\beta^{create}$, corresponding to an approximative best response model.
+\gls{matsim} can be imagined to typically use a plans generation model of type $p^{create}_i \sim \exp( \beta^{create}\, S_i )$, with relative large $\beta^{create}$, corresponding to an approximative best-response model.\footnote{%
+%
+The operator $\sim$ means ``proportional to in leading order''.  It neglects, for example, the effect of the denominator in a logit model.
+%
+}
 %
 At the same time, the removal of the worst plan corresponds to $p^{remove}_i \sim \exp( - \beta^{remove} \, S_i)$ with a very large $\beta^{remove}$.  Overall, thus
 \[
@@ -217,18 +247,38 @@ p_i \sim \exp( \beta^{choice} \, S_i) \cdot q_i
 \sim \exp( (\beta^{choice} + \beta^{create}+ \beta^{remove}) \, S_i ) \ .
 \label{eq:6}
 \end{equation}
-From this, it becomes clear that \gls{matsim} in its current form, even when used with \lstinline{ChangeExpBeta} or \lstinline{SelectExpBeta} instead of \lstinline{SelectBest} for choice, strongly over-weights plans with high scores.  \emph{It is also clear that it is important to include plans removal into all considerations,} since otherwise the very large $\beta^{remove}$ in Equation~(\ref{eq:6}) will still dominate the statistical distribution.
+Let us stress again that this is not an exact statistical analysis of the \gls{matsim} dynamics, but instead an illustrative approximation to gain some insight.
+%
+From this illustrative approximation, it becomes clear that \gls{matsim} in its current form, because of the strong additional effects of plans generation, expressed through $\beta^{create}$, and plans removal, expressed through $\beta^{remove}$, 
+%% , even when used with \lstinline{ChangeExpBeta} or \lstinline{SelectExpBeta} instead of \lstinline{SelectBest} for choice, 
+strongly over-weighs plans with high scores.  \emph{It 
+  is also clear that it is important to include plans removal into all considerations,} since otherwise the very large $\beta^{remove}$ in Equation~(\ref{eq:6}), coming from always removing the worst plan, will dominate the statistical distribution.
+
+%% \gunnar{It seems as if the logit-innovation assumption is rather arbitrary for all but the best-response case,
+%% and even in that case it is not clear how to select the various parameters $p^{remove}_{i}$, $p^{create}_{i}$,
+%% $\beta^{create}$, $\beta^{remove}$. I fully agree that it is useful to express the problem like this in order to
+%% somehow structure it at all, but it should perhaps be made a bit more clear that this formalism is not operational.}
+%\kai{Have modified the text a bit, hope that that addressed it.}
+
+%% \gunnar{%
+%% Another thing is that I remember to have played around with this approach as a ``motivating introduction'' in the
+%% ``discrete choice'' chapter, but there I ultimately discarded it -- the reason was, if I remember well, that one cannot
+%% simply remove the normalization of the choice probabilities (note that the ``$\sim$'' in the above equations does not mean 
+%% ``proportional'' because the choice probabilities are constrained to the interval $[0, 1]$), and if one keeps these
+%% normalizations then all (possible) elements in the choice set become coupled and the nice simplicity disappears.}
+%\kai{Ja ja, die schlampigen Physiker ...  Hab' mal noch eine Fußnote eingefügt.}
 
 % =======================================================================================
 \subsection{Heterogeneity in Plans Removal}
+\label{sec:heterogeneity-in-plans-removal}
 
-Clearly, not removing the worst plan but removing according to some logit model with a smaller $\beta^{remove}$ would already improve the situation.  In addition, in order to increase diversity and at the same time to correct for correlations between alternatives, one could use an (inverse) path-size logit \citep[e.g.][]{FrejingerBierlaire2007PathSizeLogit,Prato2009ChoiceModellingSurvey} model, \ie
+Clearly, not removing the worst plan but removing according to some logit model with a smaller $\beta^{remove}$ would improve the situation.  In addition, in order to increase diversity and at the same time to correct for correlations between alternatives, one could use an (inverse) path-size logit \citep[e.g.][]{FrejingerBierlaire_TransResB_2007,Prato2009ChoiceModellingSurvey,Schuessler_PhDThesis_2010} model, \ie
 \[
 p^{remove}_i \sim \exp( - \beta^{remove} \, S_i + \alpha \, PS_i ) \, 
 \]
 where $PS_i$ would be an index of similarity of plan $i$ to all other plans in the plans set.  As a result, plans with high similarity to other plans in the set of plans would have a higher chance to be removed.  The last plan of such similar plans would no longer be similar to any other plan, thus $PS_i$ would be small, thus that plan would be less likely to be removed.
 
-Such an approach is experimentally available as \lstinline{PathSizeLogitSelectorForRemoval}.  It possesses an ad-hoc similarity computation of one plan to all other plans in the set of plans \citep[][]{Grether2014PhD}. Further investigations with this approach should be performed.
+Such an approach is experimentally available as \lstinline{PathSizeLogitSelectorForRemoval}.  It possesses an ad-hoc similarity computation of one plan to all other plans in the set of plans \citep[][]{Grether_PhDThesis_2014}. Further investigations with this approach should be performed.
 
 
 
@@ -249,29 +299,53 @@ Such an approach is experimentally available as \lstinline{PathSizeLogitSelector
 
 % =======================================================================================
 \subsection{Heterogeneity in Plans Generation}
+\label{sec:heterogeneity-in-plans-generation}
+
 %% This requires (i) the generation of more heterogeneous plans \citep[see, e.g.,][for such attempts in the \acrshort{pt} and in the car mode, respectively]{Moyo2013PhD, NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}; and (ii) the implementation of a \gls{pathsizelogitmodel} in the plans removal process \citep[see, e.g.,][]{Grether2014PhD}.
 %% %
 
-No extended research has been undertaken so far to see, if \gls{matsim} could adopt the strategy of 
+No extended research has been undertaken so far to see if \gls{matsim} could adopt the strategy of 
 %% \glspl{ga}, which 
 % Gibt es dafür eine Referenz?  Meiner Erinnerung nach gibt es diesen Ansatz auch ganz außerhalb von GA, so etwas wie ``hillclimbing combined with random re-start''.  kai, mar'15
 regularly introducing new random 
 starting solutions to avoid local minima. 
 The challenge is that the generation of such random plans would result in most cases in nonsensical plans, which would need to be removed through computationally expensive iterations. 
-See \citet[][]{Feil_PhDThesis_2010} for the difficulties in constructing optimal alternative plans in terms of number and sequence of activities. 
-One possibility is to allocate a small set of randomly chosen alternative day plans at the beginning and to measure their similarity throughout the simulation and to reduce the chances of their removal depending on their lack of similarity with the other plans. 
+See \citet[][]{Feil_PhDThesis_2010} for the difficulties in constructing optimal alternative plans in terms of the number and sequence of activities. 
+One possibility is to allocate a small set of randomly chosen alternative day plans at the beginning and to measure their similarity throughout the simulation and to reduce the chances of their removal depending on their lack of similarity with the other plans. %% (also \cf Section~\ref{sec:heterogeneity-in-plans-removal}). 
 Furthermore, there is no research which has studied a replanning technique involving the switching of the activity order of the day plan, which again would produce more dissimilar plans than currently possible. 
 
-\cite{MoyoNagelptNetCalibration} and \cite{NagelKickhoeferJoubertHeterogeneousVoTs} report computational experiments where a randomized Pareto router is used to generate a different route every time it is called.  The Pareto router randomly draws a trade-off between different contributions of the utility function, such as fare/toll, travel time, access/egress time, and then computes an optimal route based on the resulting generalized cost.  It is shown that the randomized approach considerably reduces the requirement of the router to be consistent with the scoring function.  In some sense, the randomized Pareto router generates a collection of possible routing solutions, and each agent then can select the one that suits its own trade-off between monetary budget and time pressure best.  Heterogeneity is generated by each synthetic traveller having a different trade-off.
+\cite{MoyoNagelptNetCalibration} and \cite{NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA} report computational experiments where a randomized Pareto router is used to generate a different route every time it is called.  The Pareto router randomly draws a trade-off between different contributions of the utility function, such as fare/toll, travel time, access/egress time, and then computes an optimal route based on the resulting generalized cost.  It is shown that the randomized approach considerably reduces the requirement of the router to be consistent with the scoring function.  In some sense, the randomized Pareto router generates a collection of possible routing solutions, and each agent then can select the one that suits its own trade-off between monetary budget and time pressure best.  Heterogeneity is generated by each synthetic traveller having a different trade-off.
 
-Also the approach of \cite[][, also see Chapter~\ref{ch:destinationchoice} of this book]{Horni_PhDThesis_forth} can be seen in this sense: Attaching random error term to each location-person-pair means that even two persons at exactly the same home location with exactly the same activity pattern will select different locations for their activities.  So far, this describes heterogeneity between persons.  However, the approach also generates more heterogeneity per person, since the destinations that will be attractive to each synthetic person will be spatially more spread out than otherwise.
+Also the approach of \citet[][also see Chapter~\ref{ch:destinationchoice} of this book]{Horni_PhDThesis_2013} can be seen in this sense: Attaching a random error term to each location-person-pair means that even two persons at exactly the same home location with exactly the same activity pattern will select different locations for their activities.  So far, this describes heterogeneity between persons.  However, the approach also generates more heterogeneity per person, since the destinations that will be attractive to each synthetic person will be spatially more spread out than otherwise.
 
 % =======================================================================================
 \subsection{Using the Logsum for Economic Evaluation}
+\label{sec:using-logsum-4-eval}
+
 As discussed in Section~\ref{ch:economicEval:valuingBehavior:output2Eval}, using the \gls{logsum} over all plan scores of an agent is attractive both for theoretical and for operational reasons.  Clearly, the statistics of this in the \gls{matsim} context needs to be better understood.
 %\kwaah{ 
-Especially the choice set for which the log sum term is calculated given the discussion above about plan addition and removal. Approaches in which a set of plans is kept constant for a final set of iterations might be needed \citep[][]{DeJongEtAl_ResRep_AVV_2005}.
+%\st{Especially the choice set for which the log sum term is calculated given the discussion above about plan addition and removal. Approaches in which a set of plans is kept constant for a final set of iterations might be needed}%
+%%\citep[][]{DeJongEtAl_ResRep_AVV_2005}
+%.
 %}
+
+% Kai, ich habe die untenstehende Diskussion rausgenommen, weil sie wohl nicht besonders zielführend ist.
+% Ich kann aber gerne nochmal ``offline'' erklären, was hier gemeint war.
+%
+% \gunnar{Es gibt hier zwei kontr\"are Sichtweisen. Oekonometriker wie Fosgerau, Karlstr\"om, Bierlaire argumentieren
+% gegen jedwede Form von ``ad hoc'' choice set generation und gehen im Modell vom ``universal choice set'' aus. 
+% Dass hieraus dann gezogen wird, muss laut denen wieder weg-korrigiert werden. Ich neige dazu, dass solange
+% richtig zu finden, wie es kein vern\"unftiges und kalibrierbares Modell gibt, das die Formierung eines choice
+% sets beschreibt. Auf der anderen Seite gibt es dann noch z.B. Prato, welcher (wenn ich mich richtig erinnere) 
+% versucht, diese Formierung irgendwie zu modellieren, das Ergebnis aber nicht rigoros validieren kann, weil
+% choice sets latent sind. Obenstehend findet sich nun die Anwendung eines konkreten choice models zum Zwecke 
+% der choice set generation; das wird dann Prato, nicht aber besagte Oekonometriker erfreuen.}
+% 
+% \kai{@Gunnar: Hm.  Wenn das so ist, dann ist mir nicht klar, wie die ``Ökonometriker'' mit so etwas wie location choice umgehen.  Das ``universal choice set'' muss sich dann zwangsläufig auf die gesamte betrachtete Region beziehen, und wenn ich diese z.B.\ vergrößere, muss ich das Modell neu schätzen.  Es ist aber irgendwie idiotisch, dass ich ``school choice in Berlin'' neu schätzen muss, wenn wir, sagen wir, ein Berlin-Brandenburg-Modell um Sachsen erweitern wollen.  Insofern wäre es einfacher, wenn die ``probability to include into choice set'' schnell genug abfallen würde.  In der Physik läuft so etwas unter kurz- vs.\ langreichweitige Wechselwirklung.}
+
+%\kai{@Kay: Habe jetzt, als Vorschlag, Deine beiden Sätze wieder herausgestrichen, dann sagt es einfach nur ``needs to be better understood''.  Ansonsten bekommen wir m.E.\ nämlich mindestens folgende Probleme: (1) de Jong bezieht sich m.E.\ auch auf das ``universal choice set'' und insofern auf etwas anderes als das, war wir tun.  (2) ``set of plans is kept constant for a final set of iterations'' machen wir bereits seit einigen Jahren; würde ungern jetzt so tun, als ob wir das noch einführen müssen.}
+%\ah{ok}
+
 
 %\kai{Wollen wir hier wirklich mehr schreiben?  Wenn, dann sollte es ein ``research program'' sein.}
 %\kwaah{noch mehr?}
@@ -296,6 +370,8 @@ Especially the choice set for which the log sum term is calculated given the dis
 
 % =======================================================================================
 \subsection{Deliberate Search Strategies}
+\label{sec:delib-search-strat}
+
 %\kwaah{
 The question of the need for a meta-search for strategies, as sketched by \citet[][]{ArthurBar} remains an open question. 
 In the \gls{matsim} context all decisions, which are based on explicit search for alternatives, can be studied to see, how far apart the choice set generation strategies of discrete choice modeling, which draw (stratified) (randomly) from the universal choice sets, are from explicit construction strategies. 
@@ -320,7 +396,9 @@ This overlaps strongly with the question of the choice of the number and sequenc
 % ##################################################################################################################
 \subsection{Transients Versus the Notion of \enquote{Learning}}
 \label{sec:transients-vs-learning}
-\ah{check if this and earlier ones are actually SUBsections}
+%\ah{check if this and earlier ones are actually SUBsections}
+%\kai{Ja das habe ich mich auch gefragt.  Inhaltlich ist es unter ``choice set generation'' m.E.\ durchaus richtig, aber ich stutze auch immer.  Vielleicht auch die Frage, ob wir so unbalancierte section-Längen haben wollen.}
+% \ah{ok. let us keep it.}
 
 As in many other simulations of similar kind, the interpretation of the relaxation procedure (iterations) of \gls{matsim} is unclear. 
 %
@@ -336,10 +414,10 @@ requires clarification on \gls{matsim} interpretation.
 
 %\vfill\eject
 % ##################################################################################################################
-\section{Scoring/Utility Function}
+\section{Scoring/Utility Function and Choice}
 \label{sec:future-of-scoring-function}
 
-\subsection{Discussion of the present mathematical form}
+\subsection{Discussion of the Present Mathematical Form of the Scoring Function}
 \label{sec:discussion-present-math-form}
 
 The current logarithmic \gls{matsim} activity scoring function,
@@ -348,11 +426,11 @@ S_{act,q} = \beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{dur,q}/t_{0,q})
 \]
 (\cf Equation~(\ref{eq:matsimUTFact}), with $t_{0,q}$ as defined by Equation~(\ref{eq:zero-utility-duration})), is not suitable for modeling activity
 %sequence choice 
-addition and dropping (\citet[][p.127f]{Feil_PhDThesis_2010}, \citet[][]{MATSim_Userguide_2015}).
+addition and dropping \citep[][p.127f]{Feil_PhDThesis_2010}. %% \citet[][]{MATSim_Userguide_2015}). \kai{chk 2nd citations; tendency to remove this from the user guide}
 %
-As already stated in Section~\ref{sec:scoring-current}, the problem is that 
+As already stated in Section~\ref{sec:zero-util-durat}, the problem is that 
 %in the standard formulation, 
-at the typical duration all activities generate the same score, independent of their actual duration.  In consequence, it makes sense to first drop the longest activity, since that generates the least amount of utility per time unit. This is typically the home or the work activity, and dropping this first clearly is non-sensical.
+at the typical duration all activities generate the same score, independent of their actual duration.  In consequence, it makes sense to first drop the longest activity, since that generates the least amount of utility \emph{per time unit}. This is typically the home or the work activity, and dropping this first clearly is non-sensical.
 
 The property that all activities have the same utility at their typical duration is obtained by computing the value of the parameter $t_{0,q}$ from the condition\footnote{%
 %
@@ -370,18 +448,29 @@ and therefore
 t_{0,q} = t_{typ,q} \cdot \exp\left( - \frac{const}{t_{typ,q}} \right)
 \label{eq:8}
 \end{equation}
-(\cf Equation (\ref{eq:zero-utility-duration}) with $10h \to const$ and $prio \to 1$). In order to make all activities equally important, Equation~(\ref{eq:7}) could be replaced by the requirement that all activities at their typical durations yield a score proportional to their typical duration, i.e.\
+(\cf Equation (\ref{eq:zero-utility-duration}) with $10h \to const$ and $prio \to 1$). 
+
+\subsection{Utility at Typical Duration Proportional to Typical Duration}
+
+As an alternative, Equation~(\ref{eq:7}) could be replaced by the requirement that all activities at their typical durations yield a score proportional to their typical duration, i.e.\
 \begin{equation}
 const \cdot \beta_{dur} \cdot t_{typ,q} \stackrel!= S_{act,q} \Big|_{t_{dur,q} = t_{typ,q}}
 =
-\beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{typ,q}/t'_{0,q}) \ , 
+\beta_{dur} \cdot t_{typ,q} \cdot \ln(t_{typ,q}/\tilde t_{0,q}) \ , 
 \end{equation}
 leading to
 \begin{equation}
-t'_{0,q} = t_{typ,q} \cdot \exp( - const ) \ .
+\tilde t_{0,q} = t_{typ,q} \cdot \exp( - const ) \ .
 \label{eq:9}
 \end{equation}
-That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{matsim} scoring function would make, in leading order, all activities equally likely to drop.
+That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{matsim} scoring function would make, in leading order, all activities equally likely to drop.  Starting with \gls{matsim} release 0.7.0, there will be a config switch 
+\begin{lstlisting}{xml}
+<param name="typicalDurationScoreComputation" value="..." />
+\end{lstlisting}
+where \lstinline{uniform} will mean the old behavior and \lstinline{relative} the behavior suggested in this section.  The consequences of this still need to be investigated.
+
+
+
 %% \footnote{%
 %
 %% According to Equation~(\ref{eq:acts}), to be optimal all $t_{dur,q}$ have to be selected such that all first derivatives $S'_{act,q} = \beta_{dur} \cdot t_{typ,q} / t_{dur,q}$ are the same, and in consequence for optimal time allocation $t_{dur,p}/t_{dur,q} = t_{typ,p}/t_{typ,q}$.  That is, $t_{0,q}$ does not play a role, and both with Equation~(\ref{eq:8}) and with Equation~(\ref{eq:9}) 
@@ -389,9 +478,9 @@ That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{ma
 %% %
 %% }
 
-This, however, is still not flexible enough.  According to Equation~(\ref{eq:optimal-time-allocation}), in the absence of additional effects such as constraints the ratio between activity durations always remains the same.  Thus, for example, if a $home:work:shop = 12h : 8h : 2h$ allocation (with the remaining time for travel) comes under pressure, 
-%for example by inserting another activity, 
-then all activities are shortened proportionally, for example to $11h : 7h20min : 1h50min$.  This may, however, not always be behaviorally plausible; for example, it may be the case that persons attempt to maintain their regular working time and rather shorten elsewhere.
+%% This, however, is still not flexible enough.  According to Equation~(\ref{eq:optimal-time-allocation}), in the absence of additional effects such as constraints the ratio between activity durations always remains the same.  Thus, for example, if a $home:work:shop = 12h : 8h : 2h$ allocation (with the remaining time for travel) comes under pressure, 
+%% %for example by inserting another activity, 
+%% then all activities are shortened proportionally, for example to $11h : 7h20min : 1h50min$.  This may, however, not always be behaviorally plausible; for example, it may be the case that persons attempt to maintain their regular working time and rather shorten elsewhere.
 
  
 %% Because of its negative second derivative, \ie its concavity, the log form favors very short activities, which means that the schedule is ever filled-up with short activities, where the usually long home activities are replaced first.%
@@ -407,126 +496,147 @@ then all activities are shortened proportionally, for example to $11h : 7h20min 
 %% \ah{curvature param?}
 
 % =========================================================================================
-\subsection{Alternative Functional Forms of the Utility Function}
-\label{sec:alternative-functions}
+%% \subsection{Alternative Functional Forms of the Utility Function}
+%% \label{sec:alternative-functions}
 
-\paragraph{S-shaped function}
+\subsection{S-Shaped Function}
+\label{sec:s-shaped}
 A new S-shaped function, proposed by \citet[][]{Joh_PhDThesis_2004}, was tested by \citet[][p.129ff]{Feil_PhDThesis_2010}. 
-Establishing a positive second derivative near point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. 
-\kai{Ah, jetzt verstehe ich das endlich.  Ja, das ist mathematisch richtig; vollständig konkave (und immer positive) Nutzenfunktionen führen dazu, dass Verbraucher von \emph{jedem} Gut einen kleinen Teil haben wollen. Es gibt also nicht so etwas wie eine minimale Stückelung. -- Bei matsim taucht das Problem aber gar nicht auf, weil (1) unsere utl-fct bei kurzen Dauern ja nicht gegen Null strebt, sondern ohnehin schon negativ ist, und (2) der negative Nutzen der Anreise ohnehin diese Stückelung erzwingt.  In gewissem Sinne war unsere alte Version (vor der Einführung der linearen Verlängerung, siehe Section~\ref{sec:negative-durations}) dann eine stückweise lineare Approximation der Joh-Funktion.}
+%% Establishing a positive second derivative near the point of origin, by using an S-shaped utility function, is a natural idea to work against this degenerated mechanism of adding more and more and ever shorter activities. 
+It starts horizontally at zero duration, bends upwards with a positive second derivative, and then changes curvature to the normal negative second derivative only at longer durations.  
+%
+The function was motivated by the observation that utility functions with infinite (\ie diverging) first derivative at duration zero lead to ``doing a little bit of everything''.  This is also known from regular consumer theory with activities replaced by goods.  The S-shaped function avoids that problem, instead implying that activities below a certain duration should rather be dropped completely.
+%
+%\kai{@Andreas: Habe jetzt mal versucht, das so aufzuschreiben, dass es mir plausibel erscheint.  Ist das konsistent mit dem, was Du verstanden hast?}
+%\ah{Ja. Danke!}
+
+%% \kai{Ah, jetzt verstehe ich das endlich.  Ja, das ist mathematisch richtig; vollständig konkave (und immer positive) Nutzenfunktionen führen dazu, dass Verbraucher von \emph{jedem} Gut einen kleinen Teil haben wollen. Es gibt also nicht so etwas wie eine minimale Stückelung. -- Bei matsim taucht das Problem aber gar nicht auf, weil (1) unsere utl-fct bei kurzen Dauern ja nicht gegen Null strebt, sondern ohnehin schon negativ ist, und (2) der negative Nutzen der Anreise ohnehin diese Stückelung erzwingt.  In gewissem Sinne war unsere alte Version (vor der Einführung der linearen Verlängerung, siehe Section~\ref{sec:negative-durations}) dann eine stückweise lineare Approximation der Joh-Funktion.}
 Estimates of the new function based on the Swiss microcensus were provided. 
-This estimation, however, was difficult due to its non-linearities and the difficulty in generating sufficiently large choice sets. 
+This estimation, however, was difficult.  The difficulties were attributed to the non-linearities of the function, and to the difficulty in generating sufficiently large choice sets. 
 In addition many daily activities and their durations are not chosen freely by the individual. 
-Without information about such constraints and social interactions the imposition of a utility maximizing framework is problematic. 
-We and the literature have accepted this approach so far, but when we are addressing activity generation it might need to be rethought. 
-Looking at the nested-logit-based activity based model literature it is obvious, that the generation and sequencing facets are mostly driven by the socio-economics of the travelers and the role of the logsum term summarizing the transport aspects is minor suffered inherent stability issues. 
-Further tests with larger choice sets did not result in satisfactory results and further work has been stopped. 
-Still, as induced and suppressed demand are urgent policy issues this stream of work would need to be taken up again. 
+%% Without information about such constraints and social interactions the imposition of a utility maximizing framework is problematic. 
+%% \kai{From Email: ``Feil had problems to estimate the parameters that determine the convex part of the curve.  For future estimation efforts, it may pay off to also investigate how many activities in reality have durations in the convex part of the curve.  If that number is small, then estimation of parameters of that part of the curve may be generically difficult.''}
+In consequence, it is currently \emph{not} recommended to replace the \gls{matsim} default scoring function by the approach by Joh/Feil.
 
-\kai{From Email: ``Feil had problems to estimate the parameters that determine the convex part of the curve.  For future estimation efforts, it may pay off to also investigate how many activities in reality have durations in the convex part of the curve.  If that number is small, then estimation of parameters of that part of the curve may be generically difficult.''}
+%\kai{@Andreas: @kwa: Habe das jetzt rabiat zusammengestrichen.  Hoffe, dass das ok ist.}
+%\ah{Ja. etwas schade um deine Bilder, aber vielleicht in der nächsten Edition.}
 
-There are also technical issues with Joh's S-shaped formulation. % as detailed below in Section~\ref{sec:stabilityissues}. 
-Away from the upper part of the curve, where it starts to become similar to a logarithmic curve, it grows very rapidly. 
-In estimation this implies dramatic changes over short parameter spans. 
-This makes finding an optimum difficult numerically. 
+%% We and the literature have accepted this approach so far, but when we are addressing activity generation it might need to be rethought. 
+%% Looking at the nested-logit-based activity based model literature it is obvious that the generation and sequencing facets are mostly driven by the socio-economics of the travelers.  In contrast, the role of the logsum term summarizing the transport aspects is minor suffered inherent stability issues. \kai{@Andreas: Verstehe ich nicht.  ``leading to inherent stability issues''?  }
+%% Further tests with larger choice sets did not result in satisfactory results and further work has been stopped. 
+%% Still, as induced and suppressed demand are urgent policy issues this stream of work would need to be taken up again. 
 
-\kai{@Andreas: Ich würde härter argumentieren, dass eine activity allocation mit durations, die im konvexen Teil der Nutzenfunktion sitzen, nicht stabil sind.  (Das ist auch der Grund, warum im Bereich der consumer theory alle Nutzen- oder Produktionsfunktionen konkav sind ... z.B.\ Cobb-Douglas.)  Nimm Fig.~\ref{fig:unstable-activity-allocation}.  Erste Aktivität immer bei $t1$.
-\\
-\textbf{Fall 1, zweite Aktivität bei t2:}  Wenn nun, durch zufälliges Wackeln, t1 etwas länger wird und t2 etwas kürzer, dann hat act1 nun eine höhere Steigung als act2, und wird daher zulasten von act2 immer länger werden, bis act2 bei duration$=$0 ist. -- Also: Mehr als eine Aktivität im konvexen Bereich ist nicht möglich.
-\\
-\textbf{Fall 2, zweite Aktivität bei t2':}  Jetzt geht das Argument immer noch, wenn die Krümmung im konvexten Teil stärker ist als im konkaven.  Wenn dann t1 etwas kleiner wird, zugunsten von t2', dann hat anschließend act1 eine kleinere Steigung als act2.  Somit wird es also noch kürzer werden, zugunsten von act2, bis act1 verschwindet. -- Also: Selbst genau eine Aktivität im konvexen Bereich ist unwahrscheinlich.
-\\
-Das wesentliche Problem damit ist m.E.\ folgendes: Selbst wenn diese Form der Nutzenfunktion der Realität entsprechen sollte, kann man sie nicht schätzen, weil es keine Aktivitäten gibt, deren Dauern sich im konvexen Teil befinden. Und dies entspricht m.E.\ auch genau Feil, der die Parameter in diesem Teil nicht schätzen konnte. -- Vielleicht sollte ich mal anfangen, über solche Dinge Paper zu schreiben.
-\\
-(Obiges stand hier schonmal, siehe unten, ging dann aber irgendwie verloren.)
-}
 
-\createfigure[h]{%
-Unstable activity allocations%
-}{%
-Unstable activity allocations%
-}{%
-\label{fig:unstable-activity-allocation}
-}{%
-\includegraphics[width=0.8\hsize,trim=2cm 4cm 7cm 1cm,clip]{figures/stable-activity-allocations}
-}{}
+%% There are also technical issues with Joh's S-shaped formulation. % as detailed below in Section~\ref{sec:stabilityissues}. 
+%% Away from the upper part of the curve, where it starts to become similar to a logarithmic curve, it grows very rapidly. 
+%% In estimation this implies dramatic changes over short parameter spans. 
+%% This makes finding an optimum difficult numerically. 
 
-Additionally, the problem of the complete diminishing of those activities with longer typical durations, such as home activities, remains the same, when the number and types of activities is flexible.\kai{@Andreas: Naja, das hängt ja eigentlich, wie oben, an der ``utility per typical duration'' und wäre entsprechend einstellbar.  Hat Feil aber wohl nicht gemacht.}
+%% \kai{@Andreas: Ich würde härter argumentieren, dass eine activity allocation mit durations, die im konvexen Teil der Nutzenfunktion sitzen, nicht stabil sind.  (Das ist auch der Grund, warum im Bereich der consumer theory alle Nutzen- oder Produktionsfunktionen konkav sind ... z.B.\ Cobb-Douglas.)  Nimm Fig.~\ref{fig:unstable-activity-allocation}.  Erste Aktivität immer bei $t1$.
+%% \\
+%% \textbf{Fall 1, zweite Aktivität bei t2:}  Wenn nun, durch zufälliges Wackeln, t1 etwas länger wird und t2 etwas kürzer, dann hat act1 nun eine höhere Steigung als act2, und wird daher zulasten von act2 immer länger werden, bis act2 bei duration$=$0 ist. -- Also: Mehr als eine Aktivität im konvexen Bereich ist nicht möglich.
+%% \\
+%% \textbf{Fall 2, zweite Aktivität bei t2':}  Jetzt geht das Argument immer noch, wenn die Krümmung im konvexten Teil stärker ist als im konkaven.  Wenn dann t1 etwas kleiner wird, zugunsten von t2', dann hat anschließend act1 eine kleinere Steigung als act2.  Somit wird es also noch kürzer werden, zugunsten von act2, bis act1 verschwindet. -- Also: Selbst genau eine Aktivität im konvexen Bereich ist unwahrscheinlich.
+%% \\
+%% Das wesentliche Problem damit ist m.E.\ folgendes: Selbst wenn diese Form der Nutzenfunktion der Realität entsprechen sollte, kann man sie nicht schätzen, weil es keine Aktivitäten gibt, deren Dauern sich im konvexen Teil befinden. Und dies entspricht m.E.\ auch genau Feil, der die Parameter in diesem Teil nicht schätzen konnte. -- Vielleicht sollte ich mal anfangen, über solche Dinge Paper zu schreiben.
+%% \\
+%% (Obiges stand hier schonmal, siehe unten, ging dann aber irgendwie verloren.)
+%% }
 
-It might be worth to take another approach based on the observation of \citet[][]{SchlichEtAl_TransportRev_2004} and others, which is that activity, location and mode together form packages that are rarely changed. 
-One could think of the optimization task as a knapsack problem, where the traveler creates a Gestalt \kai{Kann man das sagen?  Im Bereich der Philosophie ok, aber im Engineering?} of the interactions to satisfy his commitments and his desires. 
-\gls{tasha} is a model that takes a similar stance. 
+%% \createfigure[h]{%
+%% Unstable activity allocations%
+%% }{%
+%% Unstable activity allocations%
+%% }{%
+%% \label{fig:unstable-activity-allocation}
+%% }{%
+%% \includegraphics[width=0.8\hsize,trim=2cm 4cm 7cm 1cm,clip]{figures/stable-activity-allocations}
+%% }{}
 
-% ---------------------------
-\ah{see also: Vaibhav Srivastavaa, Francesco Bullob, Knapsack Problems with Sigmoid Utilities: Approximation Algorithms via Hybrid Optimization, Section~3
-}
+%% Additionally, the problem of the complete diminishing of those activities with longer typical durations, such as home activities, remains the same, when the number and types of activities is flexible.\kai{@Andreas: Naja, das hängt ja eigentlich, wie oben, an der ``utility per typical duration'' und wäre entsprechend einstellbar.  Hat Feil aber wohl nicht gemacht.}
 
-\createfigure%
-{\ah{temporary (for me to get a picture of what is happening): ``surviving'' convex acts}}%
-{\ah{temporary (for me to get a picture of what is happening): ``surviving'' convex acts}}%
-{\label{fig:zhnetwork}}%
-{%
-  \createsubfigure%
-  {Case~2 as in Figure~\ref{fig:unstable-activity-allocation}}%
-  {\includegraphics[width=0.8\textwidth,angle=0]{figures/tmp_case2}}%
-  {\label{fig:tmp_case2}}%
-  {}%
-  \createsubfigure%
-  {Case~3 (sigmoid?)}%
-	{\includegraphics[width=0.8\textwidth,angle=0]{figures/tmp_case3}}%
-  {\label{fig:tmp_case3}}%
-  {}%
-}%
-{}
+%% It might be worth to take another approach based on the observation of \citet[][]{SchlichEtAl_TransportRev_2004} and others, which is that activity, location and mode together form packages that are rarely changed. 
+%% One could think of the optimization task as a knapsack problem, where the traveler creates a Gestalt \kai{Kann man das sagen?  Im Bereich der Philosophie ok, aber im Engineering?} of the interactions to satisfy his commitments and his desires. 
+%% \gls{tasha} is a model that takes a similar stance. 
 
-% ---------------------------
-\paragraph{Polynomial of Second Degree}
+%% \gunnar{? Als ``reality check'' sollte man sich vielleicht fragen, ob Eric Miller hier nicken w\"urde..}
 
-It was explained above (Section~\ref{sec:discussion-present-math-form}) that a problem with the present functional form, $\beta_{perf} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$, is that activity durations shrink proportionally when a person gets under time pressure, and sometimes this may not be plausible, for example when attempting to maintain 8~hours of work per day.  The mathematical problem behind this is that the curvature of the scoring function at the typical duration cannot be separately controlled for the different activity types.  This becomes clear when taking derivatives:
-\[\begin{matrix}
-S'_{act,q} & = & \beta_{perf} \cdot t_{typ,q} / t_{dur,q}
-\qquad
-& \hbox{ and thus } &
-\quad
-S'_{act,q} \Big|_{t_{dur,q} = t_{typ,q}} & = & \beta_{perf}
-\\
-S''_{act,q} & = & - \beta_{perf} \cdot t_{typ,q} / t_{dur,q}^{-2}
-\qquad
-& \hbox{ and thus } &
-\quad
-S''_{act,q} \Big|_{t_{dur,q} = t_{typ,q}} & = & - \beta_{perf} / t_{typ,q} \ .
-\\
-\end{matrix}\]
-That is, since $t_{typ,q}$ needs to be used to define the duration where the scoring function has slope $\beta_{perf}$, there is no parameter left to set the second derivative and thus the curvature of each activity type separately.  In consequence, the current form of the \gls{matsim} scoring function allows no control over how flexible an activity is.
+%% % ---------------------------
+%% \ah{see also: Vaibhav Srivastavaa, Francesco Bullob, Knapsack Problems with Sigmoid Utilities: Approximation Algorithms via Hybrid Optimization, Section~3
+%% }
 
-The above indicates that one may want to control for height, slope, and curvature at the typical duration.  This implies that one might want to try a polynomial of second degree, i.e., $S_{act,q} = A \, t_{dur,q}^2 + B \, t_{dur,q} + C$, with the following conditions:
-\[\begin{matrix}
-S_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & const \cdot t_{typ,q} \\
-S'_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & \beta_{perf} \\
-S''_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & \gamma \\
-\end{matrix}\]
-Solving leads to
-\[
-S_{act,q} = \frac{1}{2} \, \gamma \, t_{dur,q}^2
-%
-+ \Big(- \gamma \, t_{typ,q} + \beta_{perf} \Big) \, t_{dur,q}
-%
-+ \Big( \frac{1}{2} \, \gamma \, t_{typ,q}^2 - \beta_{perf} \, t_{typ,q} + const \cdot t_{typ,q} \Big) \ ,
-\]
-which is, in fact, more expressive than it looks at first glance:
-\begin{itemize}
+%% \createfigure%
+%% {\ah{temporary (for me to get a picture of what is happening): ``surviving'' convex acts}}%
+%% {\ah{temporary (for me to get a picture of what is happening): ``surviving'' convex acts}}%
+%% {\label{fig:zhnetwork}}%
+%% {%
+%%   \createsubfigure%
+%%   {Case~2 as in Figure~\ref{fig:unstable-activity-allocation}}%
+%%   {\includegraphics[width=0.8\textwidth,angle=0]{figures/tmp_case2}}%
+%%   {\label{fig:tmp_case2}}%
+%%   {}%
+%%   \createsubfigure%
+%%   {Case~3 (sigmoid?)}%
+%% 	{\includegraphics[width=0.8\textwidth,angle=0]{figures/tmp_case3}}%
+%%   {\label{fig:tmp_case3}}%
+%%   {}%
+%% }%
+%% {}
 
-\item $\frac{1}{2} \, \gamma$ in the quadratic term is just there to generate the requested second derivative.
+%% % ---------------------------
+%% \paragraph{Polynomial of Second Degree}
 
-\item $\beta_{perf}$ in the linear term is there to generate the requested slope at $t_{typ,q}$; $- \gamma \, t_{typ,q}$ is there to compensate the contribution of the quadratic term at the same point.
+%% It was explained above (Section~\ref{sec:discussion-present-math-form}) that a problem with the present functional form, $\beta_{perf} \cdot t_{typ,q} \cdot \ln( t_{dur,q} / t_{0,q} )$, is that activity durations shrink proportionally when a person gets under time pressure, and sometimes this may not be plausible, for example when attempting to maintain 8~hours of work per day.  The mathematical problem behind this is that the curvature of the scoring function at the typical duration cannot be separately controlled for the different activity types.  This becomes clear when taking derivatives:
+%% \[\begin{matrix}
+%% S'_{act,q} & = & \beta_{perf} \cdot t_{typ,q} / t_{dur,q}
+%% \qquad
+%% & \hbox{ and thus } &
+%% \quad
+%% S'_{act,q} \Big|_{t_{dur,q} = t_{typ,q}} & = & \beta_{perf}
+%% \\
+%% S''_{act,q} & = & - \beta_{perf} \cdot t_{typ,q} / t_{dur,q}^{-2}
+%% \qquad
+%% & \hbox{ and thus } &
+%% \quad
+%% S''_{act,q} \Big|_{t_{dur,q} = t_{typ,q}} & = & - \beta_{perf} / t_{typ,q} \ .
+%% \\
+%% \end{matrix}\]
+%% That is, since $t_{typ,q}$ needs to be used to define the duration where the scoring function has slope $\beta_{perf}$, there is no parameter left to set the second derivative and thus the curvature of each activity type separately.  In consequence, the current form of the \gls{matsim} scoring function allows no control over how flexible an activity is.
 
-\item Similarly, $\frac{1}{2} \, \gamma \, t_{typ,q}^2 - \beta_{perf} \, t_{typ,q}$ in the constant term are there to compensate for the higher order contributions at $t_{typ,q}$; once that compensation has taken place, $const \cdot t_{typ,q}$ is the term that determines the ``height'' of the scoring function at $t_{dur,q} = t_{typ,q}$.
+%% The above indicates that one may want to control for height, slope, and curvature at the typical duration.  This implies that one might want to try a polynomial of second degree, i.e., $S_{act,q} = A \, t_{dur,q}^2 + B \, t_{dur,q} + C$, with the following conditions:
+%% \[\begin{matrix}
+%% S_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & const \cdot t_{typ,q} \\
+%% S'_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & \beta_{perf} \\
+%% S''_{act,q} \Big|_{t_{dur,q}=t_{typ,q}} & \stackrel!= & \gamma \\
+%% \end{matrix}\]
+%% Solving leads to
+%% \[
+%% S_{act,q} = \frac{1}{2} \, \gamma \, t_{dur,q}^2
+%% %
+%% + \Big(- \gamma \, t_{typ,q} + \beta_{perf} \Big) \, t_{dur,q}
+%% %
+%% + \Big( \frac{1}{2} \, \gamma \, t_{typ,q}^2 - \beta_{perf} \, t_{typ,q} + const \cdot t_{typ,q} \Big) \ ,
+%% \]
+%% which is, in fact, more expressive than it looks at first glance:
+%% \begin{itemize}
 
-\end{itemize}
-An additional advantage of the 2nd degree polynomial would be that a separate linear extension for negative durations (\cf Section~\ref{sec:negative-durations}) would no longer be necessary. 
-%
-Overall, it seems that such a scoring function should be investigated for \gls{matsim}.
+%% \item $\frac{1}{2} \, \gamma$ in the quadratic term is just there to generate the requested second derivative.
 
+%% \item $\beta_{perf}$ in the linear term is there to generate the requested slope at $t_{typ,q}$; $- \gamma \, t_{typ,q}$ is there to compensate the contribution of the quadratic term at the same point.
+
+%% \item Similarly, $\frac{1}{2} \, \gamma \, t_{typ,q}^2 - \beta_{perf} \, t_{typ,q}$ in the constant term are there to compensate for the higher order contributions at $t_{typ,q}$; once that compensation has taken place, $const \cdot t_{typ,q}$ is the term that determines the ``height'' of the scoring function at $t_{dur,q} = t_{typ,q}$.
+
+%% \end{itemize}
+%% An additional advantage of the 2nd degree polynomial would be that a separate linear extension for negative durations (\cf Section~\ref{sec:negative-durations}) would no longer be necessary. 
+%% %
+%% Overall, it seems that such a scoring function should be investigated for \gls{matsim}.
+
+%\gunnar{Warum nicht die regelbasierten Systeme 
+%von Miller oder Arentze laufen lassen und dann eine utility-function suchen, welche die simulierten Pr\"aferenzen 
+%reproduziert? Da kann man dann ja beliebig viele Daten erzeugen und vielleicht sogar nicht-parametrische 
+%utility-Funktionen plotten.} 
+%\kai{@Gunnar: Ja, warum nicht? Willst Du es als research avenue aufschreiben?}
+%\ah{Offenbar nicht. Vielleicht in der nächsten Edition.}
 
 % ---------------------------------------------------------------------------------------------------------
 %\subsubsection{Stability Issues With the S-Shaped Function}
@@ -642,11 +752,15 @@ Overall, it seems that such a scoring function should be investigated for \gls{m
 
 %\kai{Wir können aber auch unter research avenues durchaus so etwas wie "alternative functional forms of the utl function" als Überschrift nehmen, und dann kurz erklären, dass Feil es mit der Joh-Fkt probiert hat, aber mit einem Teil der Parameter Schätzprobleme hatte.  M.E. sollte nur das mit dem S nicht in der Überschrift stehen.}
 
+% diminishing returns ... negative 2nd derivative
+
+% prudence ... positive 3rd derivative --> 2nd derivative goes up (but has to stay below zero because of point above)
+
 % =========================================================================================
 \subsection{Heterogeneity of Alternatives and Challenges of Estimation}
 \label{sec:estimation}
 
-It is common to differentiate between types of alternatives in the average; \eg trips by different modes or with different purposes are commonly assigned different values of time.
+It is common to differentiate between types of alternatives in the average; for example, trips by different modes or with different purposes are commonly assigned different values of time.
 %
 However, there are also large deviations from those averages between travelers.
 %
@@ -656,7 +770,11 @@ However, some of this apparent randomness may, in fact, be causal.
 %
 For example, higher values of time for commuting than for leisure may be caused by the more crowded daily schedule on working days.  Similarly, the strength of a preference for public transit may be caused by the walking distance to that transit stop that serves the desired destination.
 
-Simulation systems such as \gls{matsim} should be able to explicitly integrate such heterogeneity of the alternatives.  Besides the aspects discussed in Section~\ref{sec:alternative-functions}, it is desirable to know how the following aspects influence the scoring function:
+Simulation systems such as \gls{matsim} should be able to explicitly integrate such heterogeneity of the alternatives.  
+Besides the aspects discussed in 
+%Section~\ref{sec:alternative-functions}, 
+Section~\ref{sec:future-of-scoring-function},
+it is desirable to know how the following aspects influence the scoring function:
 \begin{itemize}
 
 \item Access/egress times to/from public transit.
@@ -676,19 +794,25 @@ Clearly, this list is not complete.
 
 For most of these aspects, initial studies within the \gls{matsim} context are available, see, e.g.\ 
 %
-\citet{MoyoNagelptLineCalibration,MoyoNagelptNetCalibration} for access/egress times and transfers to \acrfull{pt}
+\citet{MoyoNagelptLineCalibration,MoyoNagelptNetCalibration} for access/egress times and transfers to \acrfull{pt}, 
 %
-\citet{BoumanEtc2013Crowdedness} \kai{some Singapore ref?} for crowdedness,
+\citet{BoumanEtc2013Crowdedness},
+%% \kai{some Singapore ref?} 
+%% \kai{Hallo Alex, Könntet Ihr uns bitte eine Referenz aus Eurer Arbeitsgruppe für die Untersuchung von pt crowdedness im Kontext des folgenden Satzes empfehlen: [...]}
+\citet[][]{SunEtAl_TechRep_IVT_2014}
+% \ah{I guess ...}
+or \citet{erath_using_smartcard_data}
+for crowdedness,
 %
 \cite{WaraichEtAl_STRC_2013} for parking search,
 %
-or \cite{KickhoeferEtAl_Transportation_2011} for income.
+or \cite{KickhoeferEtAl2011PolicyEvaluationIncome} for income.
 %
 In some cases, it is even possible to configure these elements through the standard config file, completely without \gls{java} programming.
 %
 It is also quite clear that these issues were addressed outside the \gls{matsim} context.
 %
-A challenge, however, is that it is normally not possible to just collect results from different studies, for the following reasons:
+A challenge, however, is that it is normally not possible to just collect and combine results from different studies, for the following reasons:
 \begin{itemize}
 
 \item It is not correct to take an estimated utility function and then change the list of attributes.  
@@ -713,19 +837,32 @@ For the same reasons, it is not possible to combine functions that were independ
 \]
 for mode choice, and
 \[
-... + \beta_r \, \rho + \beta'_{m} \, cost + ...
+... + \beta_r \, \rho + \tilde\beta_{m} \, cost + ...
 \]
 for parking, where $t_{trav}$ is the travel time, $\rho$ is the crowdedness of a parking lot, and $cost$ is in all cases the monetary cost, \eg for gas, \gls{pt} fare, or parking.  Even then it is not possible to say
 \[
 ... + \beta_{t} \, t_{trav} + \beta_{m} \, cost 
 %
-+ \beta_r \, \frac{\beta_m}{\beta'_m} \, \rho + ... \ ,
++ \beta_r \, \frac{\beta_m}{\tilde\beta_m} \, \rho + ... \ ,
 \]
-since that confuses the scale parameters of the two separate estimations.\footnote{%
+since that confuses the scale parameters of the two separate estimations.% 
+%\gunnar{b' war im eco-Kapitel die Zeitableitung von b.}
+\footnote{%
 %
 Although, realistically, combining separate estimations via their conversion in monetary terms may be the best one can do in many situations.
 %
 } If only travel time is available as common attribute, the situation gets worse, since the valuation of time in \gls{matsim} is non-linear, and thus operating points for linearization need to be defined, or found by iterative procedures~\citep[][p.75ff]{Horni_PhDThesis_2013}.
+
+As a long-term perspective, one could also imagine to estimate the choice models directly inside \gls{matsim}, possibly taking hints from \acrshort{urbansim} (\acrlong{urbansim}) which has such an approach at its core.  An early step in this direction within \gls{matsim}, using \acrshort{cadyts} (\acrlong{cadyts}; Chapter~\ref{ch:cadyts}), is described by \citet{FloetteroedChenNagel2012ChoiceModelRefinement}.
+
+% \gunnar{Im Prinzip kann man inzwischen alles sch\"atzen, was man auch simulieren kann. Techniken wie Indirect Inference
+% machen das m\"oglich. Das Problem sind ``nur noch'' die weiterhin exzessiven Rechenzeiten. Eine langfristige Perspektive
+% ist daher, die choice models in der Simulation zu belassen, wenn man sie sch\"atzt, insbesondere also auch die Attribute
+% der Alternativen endogen zu simulieren. Damit hat man dann auch ``automatisch'' Konsistenz zwischen dem, was man sch\"atzt
+% und dem, was man simuliert. Ich meine mich zu erinnern, dass das GUI von Urbansim auf der gleichen \"Uberlegung aufbaut,
+% indem es Sch\"atzung und Vorhersage in einen Arbeitsablauf integriert.}
+% 
+% \kai{@gunnar: habe mal zwei Sätze in diese Richtung geschrieben.  Ok mit dem Floetteroed et al paper?}
 
 
 
@@ -825,7 +962,7 @@ Although, realistically, combining separate estimations via their conversion in 
 \gls{matsim} scenarios so far consider a relatively small set of agent attributes, essentially because of missing suitable data to derive detailed attributes for large populations \citep[][]{MuellerFloetteroed_unpub_hEART_2014}. 
 Some studies, however, used larger sets of attributes. 
 \citet{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome} estimated individual income-contingent utility functions. 
-\citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014} incorporated agent-specific travel preferences and individual income-dependent marginal utilities of money; the preference values however, were assigned randomly. 
+\citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014} incorporated agent-specific travel preferences and individual income-dependent marginal utilities of money; the preference values, however, were assigned randomly. 
 As natural consideration of agent-specific preferences is one of the corner-stones of agent-based \glspl{microsimulation}, future work should exploit this avenue. 
 
 %\benjamin{Das haben wir auch gemacht -- vielleicht sogar noch ein bisschen genauer (mit HH-Einkommen und Lorenzkurve). Siehe \cite{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome}. Da das früher war, vielleicht hier reinnehmen?} \ah{done}
@@ -842,6 +979,45 @@ This
 %implementation 
 could incorporate a mechanism to generate the error terms with the correct correlation structures. 
 
+%\gunnar{Siehe diesbez\"ugliche Kommentare im eco-Kapitel.}
+
+More formally: 
+%
+The current \gls{matsim} choice process can be interpreted as maximizing, for each agent $n$, 
+\[
+U_{ni} = V_{ni} + \tilde V_{ni} + \vec{\beta}^T \vec{\eta_{ni}} + \tilde \eps_{ni} \ ,
+\]
+where 
+%
+$V_{ni}$ is the systematic utility of alternative $i$, 
+%
+$\tilde V_{ni}$ is a random but fixed (frozen) addition, 
+%
+$\vec{\beta}^T \vec{\eta_{ni}}$ describes randomness inserted by the network loading model (see Equations~(\ref{eq:score}) and~(\ref{eq:mixture-of-logit})), and $\tilde \eps_{ni}$ is remaining (unexplained) noise.
+%
+Two challenges are:
+\begin{itemize}
+
+\item $\tilde V_{ni}$ denotes aspects that are often assumed as random in choice models, but are fixed in typical \gls{matsim} runs.  An example is the walking distance to the next \gls{pt} stop, which may have to be assumed as random in an estimation context based on travel analysis zones, but which is fixed in the context of a \gls{matsim} run.
+
+$\to$ To be consistent, a choice model and a \gls{matsim} implementation that are used together should use exactly the same disaggregated attributes.
+
+\item In most \gls{matsim} runs, the $\tilde\eps_{ni}$ are either assumed as zero (\lstinline{BestScore}), or are parameterized by the \gls{matsim} choice model (\lstinline{ChangeExpBeta} or \lstinline{SelectExpBeta}), which can be interpreted as that the $\tilde\epsilon_{ni}$ are re-drawn from the distribution every time a choice is made.  This leads, for example, to purely random ``logit'' switchers between a base and a policy case \citep[e.g.][]{GretherEtAl2010TrbIncomeInTRR}.
+
+Moreover, the default plans removal (Sections \ref{sec:plans-removal} and \ref{sec:heterogeneity-in-plans-removal}) has a tendency to remove all alternatives except for the best, effectively setting the $\tilde\eps_{ni}$ to zero for \emph{all} typical \gls{matsim} configurations when run for sufficiently many iterations.
+
+This is acceptable in situations where most of the noise can be assumed to be in the $\tilde V_{ni}$ and/or the $\vec{\beta}^T \vec{\eta_{ni}}$; this may be the case for the choice dimensions of route, mode, and time.  It is clearly wrong for locations, where $\tilde\eps_{ni}$ subsumes preferences that are specific to each person--alternative--pair and that often cannot be included into the $\tilde V_{ni}$.  For example, a person may have a strong preference for ``swimming'' in a situation where the data only knows about ``leisure'' facilities.  In this situation, a possible approach is to generate random but ``frozen'' $\tilde\eps_{ni}$, as described in Chapter~\ref{ch:destinationchoice}.
+
+$\to$ One should thus evaluate in how far and how a similar approach should be introduced for choice dimensions beyond destination choice.
+
+\end{itemize}
+
+%\kai{@Benjamin: @Andreas: Neu geschrieben Ende April als Reaktion auf die Tatsache, dass wir es im ``understnanding matsim'' nicht eingefangen kriegen.  To be checked.}
+%%
+%\benjamin{Ich finde den Text hier sehr gut, und finde auch keine Fehler o.ä.}
+%\ah{Danke. nur Syntax-Korrektur}
+
+
 %\vfill\eject
 % ##################################################################################################################
 \section{Double-Queue Mobsim}
@@ -849,7 +1025,7 @@ could incorporate a mechanism to generate the error terms with the correct corre
 The standard \gls{matsim} \gls{mobsim} \gls{qsim} implements a single-queue model as described in Chapter~\ref{ch:kinematicwaves}. The associated \gls{fd} (flow vs. density) is horizontal for medium densities, and falls to zero very steeply at very high densities. This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards traveling speed of $L/1\,s$ ($L$ is the length of respective link) rather than the conventional approx.\ 15\,kilometers per hour \citep[see also][]{CharyparEtAl_TRB_2009}. 
 %\kwaah{Adding references to Charypar's work on the topic}
 
-The \gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) and the deprecated \gls{deqsim} (Section~\ref{sec:deqsim}) implement a double-queue model with backward traveling gaps. Currently, implementation work and tests are performed to include this also in \gls{qsim}; performance problems with the inclusion of a large number of ``holes'' is the remaining issue to be solved. \kai{chk before going to print; it may be ok now thanks to Amit}
+The \gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) and the deprecated \gls{deqsim} (Section~\ref{sec:deqsim}) implement a double-queue model with backward traveling gaps. Currently, implementation work and tests are performed to include this also in \gls{qsim}; performance problems with the inclusion of a large number of ``holes'' is the remaining issue to be solved. \kaitodo{chk before going to print; it may be ok now thanks to Amit}
 
 %\kai{Siehe auch Material in basicprocedure.tex}
 %
@@ -889,10 +1065,18 @@ The \gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) and the deprecated \gls{deqs
 %\ah{not at the core of MATSim, maybe in a next edition}
 
 % ##################################################################################################################
+\section{Choice Dimensions, in Particular Expenditure Division}
+\label{sec:ra-choice-dimensions}
+As shown in Section~\ref{sec:zhgroup_matsim}, and pictured in Figure~\ref{fig:dimensions}, the Zürich group targets at a fuller scheduling model. Besides the standard choice dimensions printed in red in cited figure a bunch of choices is subject to ongoing research. In particular, ``expenditure division'', is untocuhed not only in \gls{matsim} but in transport planning in general as it has focused on single-travelers or household-based groups at most. 
+The field's understanding of both the patterns of expenditure and of the styles of allocation inside a household are poor, which is no surprise as the relevant questions are missing in its surveys. 
+First tests for the necessary survey works are currently on-going. 
+It is expected that this will lead to a better understanding of activity participation and of the values of time travelers bring to their decisions.   
+
+% ##################################################################################################################
 \section{Considering Social Contacts}
 Apparently, social contacts, within households and within extended social networks have a substantial influence on travel decisions, in particular for social activities in leisure time \citep[][]{KowaldEtAl_unpub_STRC_2009}.
 An early social networks study in context but not based on \gls{matsim} is \citet[][]{MarchalNagel_TRR_2005}.
-Further work based on or, again, in context of \gls{matsim} was undertaken by \citet[][]{Hackney_PhDThesis_2009, IllenbergerEtAl_TechRep_VSP_2010, KowaldEtAl_unpub_STRC_2009, KowaldEtAl_ASNA_2009}.
+Further work based on or, again, in context of \gls{matsim} was undertaken by \citet[][]{Hackney_PhDThesis_2009, Illenberger2012PhD, IllenbergerEtAl_TechRep_VSP_2010, KowaldEtAl_unpub_STRC_2009, KowaldEtAl_ASNA_2009}.
 Most recent work on joint trips is reported in Chapter~\ref{ch:jointtrips}. 
 Despite this range of valuable work, future work is required on this topic in particular for leisure destination choice \citep[][]{Horni_PhDThesis_2013}.
 
@@ -1002,6 +1186,10 @@ Despite this range of valuable work, future work is required on this topic in pa
 %{} 
 %
 %\vfill\eject
+
+% ##################################################################################################################
+\ifthenelse{\boolean{printBibPerChapter}}{\bibpc}{}
+
 % ##################################################################################################################
 % Local Variables:
 % mode: latex

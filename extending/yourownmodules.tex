@@ -41,103 +41,6 @@ This section describes what could be called the \gls{spi} of \gls{matsim}.
 Historically, the main entry-point for writing a \gls{matsim} \gls{extension} has been to literally extend (in the \gls{java} sense) the \lstinline|Controler| class. Essentially, one would override the methods calling the \gls{mobsim}, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. This is now discouraged. While this pattern worked when a each member of the team was working on extending the \gls{matsim} core by a different aspect, it fails when it comes to integrating those aspects to a single product: There is nothing one can do with a \lstinline|PublicTransportControler|, an \lstinline|EmissionsControler|, a \lstinline|RoadPricingControler| and an \lstinline|OTFVisControler|, if one wants to combine them to visualize the emissions of buses on toll roads.
 
 % =========================================================================================
-\subsection{Initial Demand Generation}
-\label{sec:extending-initial-demand}
-\ah{this section newly added ...}
-Section~\ref{sec:buildingbasicscenario} introduced the elements required for a basic \gls{matsim} scenario. Part~IV will show, how initial demand was generated on a practical level---\eg data used---for different scenarios. This section presents \gls{matsim}'s technical tools for initial demand generation. 
-
-Entry point are following parsimonious example scripts, which can be adapted to generate the initial demand for a specific geographical region. The scripts can be found in package \lstinline|tutorial.programming.example08DemandGeneration|:
-\begin{lstlisting}
-class RunPNetworkGenerator
-\end{lstlisting} 
-generating a \gls{matsim} network derived from \gls{osm}, and
-\begin{lstlisting}
-class RunPOnePersonPopulationGenerator, 
-class RunPPopulationGenerator
-\end{lstlisting}
-generating a one agent and a 20\,agents population, respectively, and writing them to files, and, 
-\begin{lstlisting}
-class RunZPopulationGenerator
-\end{lstlisting} 
-generating a sample population from a census file and writing it to a file.
-
-These ``scripts'' build on utility classes such as \lstinline|class PopulationUtils| providing factory functionality by public and static methods to create and manipulate elements of the module containing respective utility class. \lstinline|PopulationUtils| for example has a \lstinline|createPopulation(...)| method.
-
-Utility classes are usually named \lstinline|*Utils|. 
-Following utils exist
-\lstinline|ConfigUtils|,
-\lstinline|NetworkUtils|,
-\lstinline|PopulationUtils|,
-\lstinline|ScenarioUtils|,
-\lstinline|ControlerUtils|,
-\lstinline|FacilitiesUtils|,
-\lstinline|VehicleUtils|,
-%
-\lstinline|EventsUtils|,
-\lstinline|CharyparNagelScoringUtils|,
-\lstinline|LanesUtils|,
-\lstinline|QSimUtils|,
-%
-\lstinline|SignalUtils|,
-\lstinline|TripStructureUtils|,
-(\lstinline|ObjectAttributesUtils|), and
-(\lstinline|VectorUtils|).
-Furthermore, there are geometry factories contained in package \lstinline|geometry|, such as \lstinline|TransformationFactory|.
-
-% ----------------------------------------------------------------
-%\subsubsection{Utils}
-%\ah{
-%This is maybe better somewhere in Chapter~\ref{ch:extensionpoints}.
-%They are not really extension points but something similar helpful for scripting.
-%}
-%%
-%\kai{I would (strongly) vote for Chapter~\ref{ch:extensionpoints}.  ``writing scripts in java'' is a forward reference, and details should go to where it points to.  It is indeed not an ``extension point'', but something like an ``extension programming survival tool''.}
-
-%\ah{moved this up}
-
-% ----------------------------------------------------------------
-
-%\kai{
-%Hallo Andreas,
- %
- %Haben wir irgendwo im Buch etwas über ``initial input generation'' (also network.xml und plans.xml)?
- %
- %Ich finde etwas in 2.2, aber das war es dann auch.
- %
- %Irgendwie finde ich aber doch, dass wir wenigstens minimale Hinweise auf
- %
- %RunPNetworkGenerator
- %RunPOnePersonPopulationGenerator
- %
- %geben sollten.
- %
- %M.E. sind das auch ``scripts-in-java'', und damit auch Kap.32.
- %
- %Das wäre dann m.E. noch vor 32.2.1, also neu
- %
- %32.2.1 initial demand generation
- %
- %32.2.2 config group
- %
- %Oder?
- %
- %VG Kai
-%}
-%
-%\ah{Stimmt. Ich hatte früher auch mal Kirills Popgen auf dem Schirm, dann aber Initial Demand Generation irgendwie etwas verdrängt, weil es inhaltlich durch die Szenarien abgedeckt ist. Technisch aber natürlich nicht, werde mich die nächsten Tage daran versuchen.
-%}
-%
-%\kai{
-%Danke.  M.E. kann das eher kurz sein, mit Verweis auf die Beispiele.
-%
-%Ist aber der Ort, wo (m.E.) die Factories erklärt werden müssen.
-%
-%VG
-%
-%Kai
-%}
-
-% =========================================================================================
 \subsection{Config Group}
 \label{sec:config}
 The configuration of a \gls{matsimrun} is a grouped list of key-value pairs, stored in \gls{xml} format in the \gls{configfile} (see Section~\ref{sec:config}).
@@ -163,17 +66,18 @@ At runtime, the entire configuration is stored in an instance of \lstinline|Conf
 The author of an extension can subclass the \lstinline|ConfigGroup| class to provide named accessors for the parameters.
 An example is the following:
 \begin{lstlisting}
-MyExternalConfigGroup myConfig = ConfigUtils.addOrGetModule(controler.getConfig(), MyExternalConfigGroup.GROUP_NAME, MyExternalConfigGroup.class);
+MyExternalConfigGroup myConfig 
+       = ConfigUtils.addOrGetModule(controler.getConfig(), MyExternalConfigGroup.GROUP_NAME, 
+			      MyExternalConfigGroup.class);
 \end{lstlisting}
 
-\kai{Es gibt da auch noch ein loadConfig, was AUCH die config groups ``materialisiert''.  Hm.}
+\kaitodo{Es gibt da auch noch ein loadConfig, was AUCH die config groups ``materialisiert''.  Hm.}
 
-Furthermore, there is a utility class \lstinline|ReflectiveConfigGroup| which you can use if you want to define the mapping of named parameters to accessors using \gls{java} annotations.  \kai{See ... for an example.}
+Furthermore, there is a utility class \lstinline|ReflectiveConfigGroup| which you can use if you want to define the mapping of named parameters to accessors using \gls{java} annotations.  \kaitodo{See ... for an example.}
 
 % =========================================================================================
 \subsection{ObjectAttributes and Customizable}
 \label{sec:objectAttributes-and-customizable}
-
 \gls{matsim} operates on data types such as links, nodes, persons, or vehicles. Many of these data types have attributes, such as free speed (for links) or coordinates (for nodes).  Rather often, one would like additional information for certain data types, such as ``slope'' for links, or ``age'' for persons.  In order to not modify the data types every time this becomes necessary, but still allow experimentation, a helper container called \lstinline{ObjectAttributes} is available.  It essentially attaches arbitrary additional information to objects \emph{that have an \gls{id}}, by a syntax of type
 \begin{lstlisting}
 attribs.putAttribute( id, attribName, attribValue ) ;  
@@ -194,23 +98,61 @@ Note that information contained in \lstinline{Customizable} is not considered st
 % =========================================================================================
 \subsection{ScenarioElement}
 \label{sec:scenario-extension-point}
-
 The object-oriented in-memory database which holds the \lstinline|Person| objects with their plan memories is accessible via the \lstinline|Population| interface. The \lstinline|Network| interface gives access to the traffic network graph, consisting of links and nodes. There is a \lstinline|TransitSchedule| interface which represents the public transit schedule. Your own modeling tasks may need an additional data container like these. We call them scenario elements. The freight carrier population of the freight \gls{extension} described in Section~\ref{sec:carriers} is a typical example. 
 
 \lstinline|Scenario| is the interface which ties all scenario elements together. You can add your own named scenario element to the \lstinline|Scenario| at startup, for example in a \lstinline|StartupListener|. All standard scenario elements are populated from \gls{xml} files at startup, but your own scenario elements could just as well be interfaces to an external relational database.
 
 % =========================================================================================
-\subsection{ControlerListener}
+\subsection{ControlerListener: Handling Controler Events}
 \label{sec:controlerListener-extension-point}
 % \label{sec:controlerextension} \ah{double label working?}
-\lstinline|Controler| remains the main user-facing class of \gls{matsim}, but please do not subclass it. Rather, use its setter methods to plug in your own code. \lstinline|ControlerListeners| are called at the transitions of the \gls{matsim} loop (Figure~\ref{fig:matsimcycle}), in undefined order. Thus, \lstinline|AControlerListener| may only rely on the computation of \lstinline|BControlerListener| if \lstinline|BControlerListener| makes that computation in an earlier transition. For instance, if \lstinline|BControlerListener| is a \lstinline|StartupListener| and loads data into a \lstinline|Map| on start-up, \lstinline|AControlerListener| can be an \lstinline|IterationStartsListener| and use that \lstinline|Map|. But do not write two \lstinline|IterationStartsListeners|, where the first puts some data into a \lstinline|Map| and the second expects to find it there---they may be called in any order.
+\lstinline|Controler| remains the main user-facing class of \gls{matsim}, but please do not subclass it. 
+Rather, use its setter methods to plug in your own code. 
+
+\lstinline|ControlerListeners| are called at the transitions of the \gls{matsim} loop (Figure~\ref{fig:controlerevents}), where so-called \lstinline|ControlerEvent|s are fed to the listeners. 
+% ------------
+\createfigure%
+{Controler events}%
+{Controler events}%
+{\label{fig:controlerevents}}%
+{\includegraphics[width=0.99\textwidth, angle=0]{extending/figures/controler_listeners.png}}%
+{}
+% ------------
+
+Following \lstinline|ControlerListeners| are available:
+\lstinline|StartupListener|
+\lstinline|IterationStartsListener|
+\lstinline|BeforeMobsimListener|
+\lstinline|AfterMobsimListener|
+\lstinline|ScoringListener|
+\lstinline|IterationEndsListener|
+\lstinline|ReplanningListener|
+\lstinline|ShutdownListener|.
+
+A sample listener might look as follows.
+\begin{lstlisting}
+public class MyControlerListener implements StartupListener { 
+
+  @Override 
+  public void notifyStartup(StartupEvent event) { 
+    ...
+  }
+} 
+\end{lstlisting}
+
+\lstinline|ControlerListeners| are called in undefined order, meaning that \lstinline|AControlerListener| may only rely on the computation of \lstinline|BControlerListener| if \lstinline|BControlerListener| makes that computation in an earlier transition. For instance, if \lstinline|BControlerListener| is a \lstinline|StartupListener| and loads data into a \lstinline|Map| on start-up, \lstinline|AControlerListener| can be an \lstinline|IterationStartsListener| and use that \lstinline|Map|. But do not write two \lstinline|IterationStartsListeners|, where the first puts some data into a \lstinline|Map| and the second expects to find it there---they may be called in any order.
 
 \kai{Bild?!}
+\ah{Habe das noch ein wenig ergänzt, mit Hilfe von \url{http://www.matsim.org/node/602}. Please check.}
+\kaitodo{check}
+
 
 % =========================================================================================
-\subsection{Events}
+\subsection{Mobsim Events}
 \label{sec:events-extension-point}
-The \gls{mobsim} moves the agents around in the virtual world according to their plans and within the bounds of the simulated reality. It documents their moves by producing a stream of \glspl{event}. Events are small pieces of information describing the action of an object at a specific time. Examples of such events are:
+The \gls{mobsim} moves the agents around in the virtual world according to their plans and within the bounds of the simulated reality. 
+It documents their moves by producing a stream of \glspl{event}. 
+Events are small pieces of information describing the action of an object at a specific time. Examples of such events are (see also Figure~\ref{fig:events-overview}):
 \begin{itemize}\styleItemize
 \item An agent finishes an activity
 \item An agent starts a trip
@@ -221,7 +163,16 @@ The \gls{mobsim} moves the agents around in the virtual world according to their
 \item An agent starts an activity
 \end{itemize}
 %
-\kai{Hier gibt es ein nettes Bild auf drupal; sollten wir noch hinzunehmen.}
+%\kai{Hier gibt es ein nettes Bild auf drupal; sollten wir noch hinzunehmen.}
+% ah{added}
+% ------------
+\createfigure%
+{Mobsim events}%
+{Mobsim events}%
+{\label{fig:events-overview}}%
+{\includegraphics[width=0.6\textwidth, angle=0]{extending/figures/Events.png}}%
+{}
+% ------------
 %
 Each event has a timestamp, a type, and additional attributes required to describe the action like a vehicle id, a link id, an activity type or other data. In theory, it should be possible to replay the \gls{mobsim} just by the information stored in the events. While a \gls{plan} describes an agent's intention, the stream of events describes how the simulated day actually was.
 
@@ -230,7 +181,7 @@ As the events are so basic, the number of events generated by a \gls{mobsim} can
 The scoring of the executed plans makes use of events to find out how much time agents spent at activities or for traveling. Some \gls{replanning} modules might make use of \glspl{event} as well: The router for example can use the information contained in events to figure out what links are jammed at certain times and route agents around that jam when creating new plans.
 
 % -----------------------------------------------------------------------------
-\subsubsection{Handling Events}
+\subsubsection{Handling Mobsim Events}
 \gls{matsim} extensions can watch the \gls{mobsim} by interpreting the stream of \glspl{event}. This is done by implementing the \lstinline|EventHandler| interface and registering the implementation with the framework. The lifecycle of an \lstinline|EventHandler| can be chosen by the developer. Normally, an \lstinline|EventHandler| lives as long as the simulation run.
 It is notified before the beginning of each new iteration so that its state can be reset to listen to a new iteration. This pattern can be used to collect information over all iterations. But if the purpose of an \lstinline|EventHandler| is to make a calculation based on one single iteration, it may be more natural to create a new \lstinline|EventHandler| instance for each iteration, query it for its result and discard it after the iteration finishes. This can be done in a \lstinline|ControlerListener|.
 
