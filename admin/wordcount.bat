@@ -1,0 +1,1 @@
+python wordcount.py ../main.tex
