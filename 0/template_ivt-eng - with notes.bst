@@ -101,6 +101,7 @@ ENTRY
     journal
     key
     month
+    %note
     number
     organization
     pages
@@ -403,6 +404,25 @@ FUNCTION {format.issn}
     { "" }
     {
       "ISSN " issn * }
+  if$
+}
+
+FUNCTION {format.note}
+{
+ note empty$
+    { "" }
+    { note #1 #1 substring$
+      duplicate$ "{" =
+        'skip$
+        { output.state mid.sentence =
+          { "l" }
+          { "u" }
+        if$
+        change.case$
+        }
+      if$
+      note #2 global.max$ substring$ *
+    }
   if$
 }
 
@@ -877,6 +897,7 @@ FUNCTION {article}
   format.issn output
   output.doi
   new.sentence
+  %format.note output
   fin.entry
 }
 
@@ -910,6 +931,7 @@ FUNCTION {book}
   format.isbn output
   output.doi
   new.sentence
+  %format.note output
   fin.entry
 }
 
@@ -926,6 +948,7 @@ FUNCTION {booklet}
   format.isbn output
   output.doi
   new.sentence
+  %format.note output
   fin.entry
 }
 
@@ -965,6 +988,7 @@ FUNCTION {inbook}
     'skip$
   if$
   new.sentence
+  %format.note output
   fin.entry
 }
 
@@ -990,6 +1014,7 @@ FUNCTION {incollection}
     }
   if$
   new.sentence
+  %format.note output
   fin.entry
 }
 
@@ -1015,6 +1040,7 @@ FUNCTION {inproceedings}
     }
   if$
   new.sentence
+  %format.note output
   fin.entry
 }
 
@@ -1051,6 +1077,7 @@ FUNCTION {mastersthesis}
   format.date2 output
   output.doi
   new.sentence
+  format.note output
   fin.entry
 }
 
@@ -1065,6 +1092,7 @@ FUNCTION {misc}
   format.date2 output
   format.url output
   new.sentence
+  %format.note output
   fin.entry
 }
 
@@ -1081,6 +1109,7 @@ FUNCTION {phdthesis}
   format.date2 output
   output.doi
   new.sentence
+  %format.note output
   fin.entry
 }
 
@@ -1103,6 +1132,7 @@ FUNCTION {proceedings}
   format.isbn output
   format.issn output
   new.sentence
+  %format.note output
   fin.entry
 }
 
@@ -1123,6 +1153,7 @@ FUNCTION {techreport}
   format.date2 output
   output.doi
   new.sentence
+  format.note output
   fin.entry
 }
 
@@ -1148,6 +1179,7 @@ FUNCTION {researchreport}
   format.date2 output
   output.doi
   new.sentence
+  %format.note output
   fin.entry
 }
 
@@ -1158,6 +1190,7 @@ FUNCTION {unpublished}
   format.date "year" output.check
   date.block
   format.title "title" output.check
+  %format.note "note" output.check
   new.sentence
   fin.entry
 }
