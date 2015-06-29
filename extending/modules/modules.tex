@@ -427,7 +427,7 @@ There are also switches of type
 <param name="useHouseholds" value="..."/>
 \end{xml} in the \lstinline|scenario| module of the \gls{configfile}.  
 These are deprecated and will eventually go away.  
-Until then, it may be that they have to be set correctly for the code to function. \chkAtEnd
+Until then, it may be that they have to be set correctly for the code to function. \atend{chk}
 
 From a programming perspective, arbitrary additional containers can be plugged into the global \lstinline|scenario| container.  
 See Section \ref{sec:scenario-extension-point} for more details.
@@ -611,7 +611,27 @@ Households are another optional element of \gls{matsim}. To load households into
 %% \subsection{Data containers belonging both to demand and to supply}
 \subsection{Vehicles}
 \label{sec:extending-vehicles}
-Vehicles are an optional element of \gls{matsim}. To load vehicles into a scenario, the \lstinline|useVehicles|\kaitodo{chk} parameter in the \lstinline|scenario| \gls{configfile} section must be set to true. Furthermore the \gls{configfile} must contain a section \lstinline|vehicles|. This section should specify the paths to a file containing vehicles (parameter \lstinline|vehiclesFile|). 
+
+Vehicles are an optional element of \gls{matsim}. To load vehicles into a scenario, a config section
+\begin{xml}
+<module name="vehicles" >
+   <param name="vehiclesFile" value="/path/to/vehicles.xml.gz" />
+</module>
+\end{xml}
+needs to be added.\footnote{%
+%
+There used to be an additional ``useVehicles'' config switch.  In release 0.7.0, that switch will be gone.
+%
+}
+%% the \lstinline|useVehicles|\kaitodo{chk the useXxx switches} parameter in the \lstinline|scenario| \gls{configfile} section must be set to true. Furthermore the \gls{configfile} must contain a section \lstinline|vehicles|. This section should specify the paths to a file containing vehicles (parameter \lstinline|vehiclesFile|). 
+
+Just loading the vehicles does not use them; that needs to be configured separately.  For this, it 
+
+In addition, the qsim needs to be configured with 
+\begin{xml}
+   <param name="vehiclesSource" value="fromVehiclesFile" />
+\end{xml}
+(starting with release 0.7.0).  This means that \kaitodo{???}
 
 %\ah{Amit: ``At the moment, different vehicleTypes and vehicles are not added using 'VehiclesFile' instead they are added to scenario directly.''
 %---
@@ -621,7 +641,7 @@ Vehicles are an optional element of \gls{matsim}. To load vehicles into a scenar
 %\kai{I THINK that I refactored the code ... but cannot remember this with certainty over the vacation.  Wenn Amits Bemerkung älter ist, dann stimmt sie nicht mehr.}
 %\ah{Aussage von Amit war vorher, in Mailkonversation über multi-modale QSim.}
 
-Furthermore, there exists the possibility to use \lstinline|VehicleUtils| for specifying mode vehicles according to the example syntax in \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ core (see also Section~\ref{sec:using-qsim-multimodal}). 
+As an alternative, there exists the possibility to use \lstinline|VehicleUtils| for specifying mode vehicles according to the example syntax in \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ core (see also Section~\ref{sec:using-qsim-multimodal}). 
 
 %\citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households. \ah{Füllsatz}
 
@@ -680,17 +700,19 @@ The controler module, can be extended by \lstinline|ControlerEvents| and \lstinl
 The simulation is able to handle time-variant networks \citep{LaemmelGretherNagel2009TimeDependentNetworks}, within-day replanning \citep[][]{Dobler_TechRep_IVT_2009}, and traffic lights \citep[][]{Neumann_MastersThesis_2008,GretherNeumannNagel2011TrafficLightsMatsim,GretherNeumannNagel2012SignalsQueueModel}).
 
 Section~\ref{sec:using-othermodesthancar} details the necessary steps to simulate a multi-modal scenario; Section~\ref{sec:using-qsim-multimodal} therein focuses on \gls{qsim}. 
-In addition to that, arbitrary vehicles can be included as follows. 
-Assigning vehicles of a specific type to agents is done
-\begin{itemize}\styleItemize 
-\item by specifying a vehicles input file
-\begin{xml}
-<param name="vehiclesFile" value="..." />
-\end{xml}
-or
-\item by creating mode vehicles as shown above. 
-\end{itemize}
+%% In addition to that, arbitrary vehicles can be included as follows. 
+%% Assigning vehicles of a specific type to agents is done
+%% \begin{itemize}\styleItemize 
+%% \item by specifying a vehicles input file
+%% \begin{xml}
+%% <param name="vehiclesFile" value="..." />
+%% \end{xml}
+%% or
+%% \item by creating mode vehicles as shown above. 
+%% \end{itemize}
 %\kai{Das stimmt so nicht.  Man kann \emph{entweder} die vehicles Datei verwenden.  \emph{Oder} man definiert die mode vehicles.  Revise.} \ah{danke}
+%
+%see earlier. kai, jun'15
 
 Simulation experiments for \gls{qsim}'s relatively new \gls{multimodal} feature, applying multiple mode vehicles, have been performed for the Patna scenario as reported in Chapter~\ref{ch:patna}.
 
