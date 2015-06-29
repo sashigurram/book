@@ -222,7 +222,7 @@ The arguably most intuitive mathematical formulation of this problem is
 in terms of a fixed point: Find a demand pattern that generates network 
 conditions that in turn cause the same demand pattern to re-appear. This 
 formulation is operationally important because it motivates a straightforward 
-way of calculating an equilbrium by alternately evaluating the demand 
+way of calculating an equilibrium by alternately evaluating the demand 
 model and the supply model. If these iterations stabilize then a fixed 
 point is attained that solves the traffic assignment problem.
 
@@ -253,12 +253,12 @@ choice dimensions will turn out to be a natural generalization of the route assi
 
 Consider a network of nodes and links, where some or all of the nodes are demand origins, 
 denoted by $o$, and/or demand destinations, denoted by $d$. 
-The constant demand $q^{od}$ in origin/destination (OD) relation $od$ splits up among a set of routes $K^{od}$. 
+The constant demand $q^{od}$ in a \gls{od} relation $od$ splits up among a set of routes $K^{od}$. 
 Denote the flow on route $k\in K^{od}$ by $r^{od}_k$, where $\sum_{k\in K^{od}} r^{od}_k = q^{od}$.
 
-Most route assignment models either specify a User (Nash, Wardrop) equilibrium (UE) 
-or a stochastic user equilbrium (SUE).  
-A UE postulates that $r^{od}_k$ is zero for every route $k$ of non-minimal cost \citep{Wardrop_PICE_1952}:
+Most route assignment models either specify a \gls{ue} (Nash, Wardrop) 
+or a \gls{sue}.  
+A \gls{ue} postulates that $r^{od}_k$ is zero for every route $k$ of non-minimal cost \citep{Wardrop_PICE_1952}:
 \begin{eqnarray}
 c(k)=\min_{s\in K^{od}}c(s) & \Rightarrow & r^{od}_{k}\geq0\\
 c(k)>\min_{s\in K^{od}}c(s) & \Rightarrow & r^{od}_{k}=0
@@ -266,7 +266,7 @@ c(k)>\min_{s\in K^{od}}c(s) & \Rightarrow & r^{od}_{k}=0
 where $c(k)$ is the cost (typically delay) on route $k$.
  
 An alternative, often-used approach is to distribute the demand onto
-the routes such that a SUE is
+the routes such that a \gls{sue} is
 achieved where users have different perceptions of route cost and
 every user takes the route of \emph{perceived} minimal cost \citep{DaganzoSheffi_TransScience_1977}.
 Mathematically, this means that the route flows fulfill some distribution
@@ -289,7 +289,7 @@ which typically involves the following steps \citep{Sheffi_1985}:
 \begin{enumerate}
 
 \item \textbf{Initial conditions:} Compute some initial routes
-  (\eg best path on empty network for every OD pair).
+  (\eg best path on empty network for every \gls{od} pair).
 
 \item \textbf{Iterations:} Repeat the following many times.
 
@@ -321,9 +321,9 @@ enumeration of all possible routes is computationally infeasible.
 \textbf{Choice:} Usually, demand is shifted among the routes in a way
 that improves consistency with the route choice model, assuming
 in the simplest case
-constant network delays: In a UE, the flow on the currently best routes
+constant network delays: In a \gls{ue}, the flow on the currently best routes
 is increased at the cost of the other route flows (``best reply'' or ``best response''
-choice), whereas for a SUE the flows are shifted towards the desired
+choice), whereas for a \gls{sue} the flows are shifted towards the desired
 route choice distribution \citep[often a version of multinomial logit,
   e.g.,][]{dial-1971, cascetta-1996, ben-akiva-1999}. For
 stability reasons, this shift is typically realized in some gradual
@@ -337,12 +337,12 @@ In the best reply situation, the fixed point implies that no shift
 between routes takes place, \ie what comes out as the best reply to
 the previous iteration is either the same or at least of the same
 performance as what was used in the previous iteration.
-Since in this situation no OD pair can unilaterally improve
+Since in this situation no \gls{od} pair can unilaterally improve
 by switching routes, this means that the system is at a Nash
 equilbrium \citep[e.g.,][]{HofbSigmBook}.
-In the SUE situation, the fixed point means that a route flow pattern 
+In the \gls{sue} situation, the fixed point means that a route flow pattern 
 $\{r^{od}_k\}$ is found that leads to exactly those network conditions the
-travelers (the OD flows) perceived when choosing their routes,
+travelers (the \gls{od} flows) perceived when choosing their routes,
 giving nobody an incentive to re-route.
 
 Behavioral dimensions beyond route choice that can be captured by a
@@ -373,7 +373,7 @@ The structure of the algorithm does not change. The individual steps now look as
 \begin{enumerate}
 
 \item \textbf{Initial conditions:} Compute some initial routing (\eg best path on empty network
-  for every OD pair and departure time).
+  for every \gls{od} pair and departure time).
 
 \item \textbf{Iterations:} Repeat the following many times.
 
@@ -398,9 +398,9 @@ The structure of the algorithm does not change. The individual steps now look as
 Once more, \emph{if} the new routes are best replies (\ie best paths
 based on the last iteration), \emph{if} demand is shifted towards
 these new routes, and \emph{if} these iterations reach a fixed point,
-then this is a dynamic UE since the best reply dynamics means that no
-traveler (no OD flow) can unilaterally deviate to a better route.  The
-SUE interpretation carries over in a similar way.
+then this is a dynamic \gls{ue} since the best reply dynamics means that no
+traveler (no \gls{od} flow) can unilaterally deviate to a better route.  The
+\gls{sue} interpretation carries over in a similar way.
 
 Destination choice and elasticity in the demand apply naturally to 
 the dynamic case as well. Beyond this, the dynamic setting also enables 
@@ -416,14 +416,14 @@ time-expanded version of the original network \citep{vanderzijpp-2001}.
 Both in the static and in the dynamic case, it is possible to
 re-interpret the algorithm in terms of individual travelers.  
 %
-In the static case, for every OD pair one needs to
+In the static case, for every \gls{od} pair one needs to
 assume a steady ($=$ constant) flow of travelers that enter the
-network at the origin at a constant rate, corresponding to that OD flow.
+network at the origin at a constant rate, corresponding to that \gls{od} flow.
 A solution to the static assignment problem corresponds to the
 distribution of the different travelers onto possibly different paths.
 
 In the dynamic case, one needs to generate the appropriate number of
-travelers for every OD pair and every time slot, and distribute them
+travelers for every \gls{od} pair and every time slot, and distribute them
 across the time slot.  From then on, the triple (origin, destination,
 departure time) is fixed for every simulated traveler, and its goal is
 to find an appropriate path.  
@@ -443,7 +443,7 @@ difficult to model in terms of continous flows
 \citep[e.g.,][]{floetteroed-2011a} but are relatively straightforward 
 to simulate at the level of individual vehicles
 \citep[][]{aimsun-www,paramics-www,transmodeler-www,vissim-www}. 
-Disaggregating an OD matrix into individual trip-makers allows to 
+Disaggregating an \gls{od} matrix into individual trip-makers allows to 
 assign one vehicle to every trip-maker in the microscopic traffic flow 
 simulation.
 
@@ -478,12 +478,12 @@ destination.
 
 For a finite population of heterogeneous travelers, every single
 traveler constitutes an integer commodity, and the \textbf{choice}
-step hence needs to be changed from "gradually shift the route flows
-towards something that is consistent with the behavioral model" into
+step hence needs to be changed from ``gradually shift the route flows
+towards something that is consistent with the behavioral model'' into
 ``for a \emph{fraction} of travelers, assign a \emph{single}
 behaviorally plausible route to each of these travelers''. The gradual shift that
 helps to stabilize the iterations in the continuous assignment carries
-over here to an equally stabilizing "inert shift" in that not all travelers
+over here to an equally stabilizing ``inert shift'' in that not all travelers
 change their routes at once. This is a consistent reformulation: If
 one reduces the traveler size to $\varepsilon \rightarrow 0$ and
 increases the number of travelers by a factor of $1/\varepsilon$,
@@ -525,9 +525,9 @@ has been said before:
 
 \end{algorithm}
 
-The notions of UE and SUE carry over to the disaggregate case if the notion of an OD pair (or a commodity) is replaced by that of an individual \textbf{particle} ($=$ microscopic traveler).
+The notions of \gls{ue} and \gls{sue} carry over to the disaggregate case if the notion of an \gls{od} pair (or a commodity) is replaced by that of an individual \textbf{particle} ($=$ microscopic traveler).
 
-A \textbf{particle UE} may be defined as a system state where no
+A \textbf{particle \gls{ue}} may be defined as a system state where no
 particle can unilaterally improve itself. 
 %
 This definition is consistent with definitions in game theory, which
@@ -536,7 +536,7 @@ normally start from the discrete problem.
 It should be noted, however, that this makes the problem
 combinatorial, which means that even a problem that had a unique
 solution in its continuous version may have a large number of
-solutions in its discrete version.  That is, the particle UE is
+solutions in its discrete version.  That is, the particle \gls{ue} is
 deliberately not searching for, say, an integer approximation of the
 continuous solution.
 %
@@ -579,7 +579,7 @@ some expectation value.
 %  Zustandsraum liegen koennen als die kontinuierlichen NEs.  Wie dann
 %  schreiben?  Oder einfach ganz weglassen? Kai}
 
-For a \textbf{particle SUE}, the continuous limit assumption of the
+For a \textbf{particle \gls{sue}}, the continuous limit assumption of the
 macroscopic model is discarded in that the choice fractions 
 $P^{od}_k(c(x(\{r^{od}_k\})))$ in (\ref{stoch-equil})
 are now interpreted as individual-level choice probabilities
@@ -594,11 +594,11 @@ the cost structure based on which the individual choices are made
 becomes probabilistic as well
 \citep[][]{balijepalli-2007, cascetta-1991, cascetta-1989}.
 
-A particle SUE is defined as a system state where travelers draw routes from a
+A particle \gls{sue} is defined as a system state where travelers draw routes from a
 stationary choice distribution such that the resulting distribution of
 traffic conditions re-generates that choice distribution.
 
-An operational specification of a particle SUE results if one
+An operational specification of a particle \gls{sue} results if one
 assumes that travelers filter out the random fluctuations in what
 they observe and base their decisions only on the average route
 costs:
@@ -645,7 +645,7 @@ but also their variability due to the individual-level
 route sampling.
 Alternatively, one could use the particles merely as a 
 discretization scheme of continuous
-OD flows and distribute them as closely as possible to the
+\gls{od} flows and distribute them as closely as possible to the
 macroscopic average flow rates \citep[e.g.,][]{zhang-2008}.
 The latter approach, however, does not lend itself to
 the subsequently developed behavioral model type.
@@ -679,7 +679,7 @@ one obtains one corresponding vector of network costs.
 With stochastic network loading, given the same input, one obtains a
 \emph{distribution} of vectors of network costs.
 
-The macroscopic SUE approach of Section \ref{static-macro-assignment}
+The macroscopic \gls{sue} approach of Section~\ref{static-macro-assignment}
 assumes a distribution of choices but
 converts choice probabilities into choice fractions before starting
 the network loading.  That is, one effectively does 
@@ -689,7 +689,7 @@ $\text{E}\{ \text{NetworkLoading}( \text{Choices} ) \}$;
 in fact, with a non-linear network loading, even when it is deterministic,
 % it is to be expected that 
 the two are different \citep{cascetta-1989}. Any Monte Carlo simulation of
-the particle SUE makes this problem explicit: If, at the choice level,
+the particle \gls{sue} makes this problem explicit: If, at the choice level,
 one generates draws from the choice distribution, it effectively makes
 sense to \emph{first} perform the network loading and \emph{then} do
 the averaging, rather than the other way around.
@@ -739,7 +739,7 @@ some average.
 Given the above behavioral interpretation, it is now straightforward
 to extend the assignment loop to other choice dimensions.  For
 example, the ``best reply'' can include optimal departure times
-\citep[e.g.][]{METROPOLIS,EttemaEtcRoutes-timesIatbr03} or optimal mode
+\citep[e.g.,][]{METROPOLIS,EttemaEtcRoutes-timesIatbr03} or optimal mode
 choice.  This becomes easiest to interpret (and, in our view, most
 powerful in practice) if one moves from the concept of ``trips'' to
 daily plans.
@@ -786,29 +786,29 @@ a route-based and a plan-based model.
 The notion of a particle (S)UE can now be naturally extended to agents 
 that execute complete plans.
 
-An \textbf{agent-based UE} implies individual travelers
+An \textbf{agent-based \gls{ue}} implies individual travelers
 (Section~\ref{sec:indiv-trav}), additional choice dimensions
 (Section~\ref{sec:extend-route-assignm}), and possibly stochastic network
 loading (Section~\ref{sec:stoch-netw-load}).  Corresponding to the
-particle UE, it is defined as a system state where no agent can
+particle \gls{ue}, it is defined as a system state where no agent can
 unilaterally improve its plan.
 
-An \textbf{agent-based SUE} implies individual travelers
+An \textbf{agent-based \gls{sue}} implies individual travelers
 (Section~\ref{sec:indiv-trav}), additional choice dimensions
 (Section~\ref{sec:extend-route-assignm}), and normally stochastic network
 loading (Section~\ref{sec:stoch-netw-load}).  Corresponding to the
-particle SUE, it is defined as a system state where agents draw from a
+particle \gls{sue}, it is defined as a system state where agents draw from a
 stationary choice distribution such that the resulting distribution of
 traffic conditions re-generates that choice distribution.
 %\yyyy{This formulation should appear in the particle SUE section. Gunnar}
 
-If the iterations aim at an agent-based UE, then choice set generation
+If the iterations aim at an agent-based \gls{ue}, then choice set generation
 and choice should implement a ``best reply'' logic in that in some
 sense optimal plans are calculated and assigned to the agents. This
 alone is by no means an easy task.  
 
 The disaggregate counterpiece of a
-SUE implies that every agent considers a whole choice set of (possibly
+\gls{sue} implies that every agent considers a whole choice set of (possibly
 suboptimal) plans and selects one of these plans probabilistically,
 which can lead to huge data structures.
 %Section~\ref{sec:agent-based-simul} gives examples of how to deal with
@@ -869,7 +869,7 @@ of much of this material are implemented within \gls{matsim}.
 \subsection{Agent-Based UE; One Plan per Traveler}
 \label{sec:agent-based-ue}
 
-The simulation of an agent-based UE is possible by the following 
+The simulation of an agent-based \gls{ue} is possible by the following 
 implementation of the behavioral elements.
 
 %\begin{itemize}
@@ -899,10 +899,10 @@ implementation of the behavioral elements.
 The choice set generation implements a ``best reply'' dynamic.
 %\todoNextRevision{transims?} 
 This now requires to identify an optimal all-day plan for given network conditions. 
-While the calculation of time-dependent shortest paths for UE route assignment is 
+While the calculation of time-dependent shortest paths for \gls{ue} route assignment is 
 computationally manageable, the identification of optimal plans is far more difficult 
 \citep[][]{recker-2001}. 
-This constitutes an important technical motivation to switch to an agent-based SUE, 
+This constitutes an important technical motivation to switch to an agent-based \gls{sue}, 
 where optimality is not required (see below).
 
 Even in the manageable cases of, \eg shortest paths, 
@@ -918,13 +918,13 @@ loading instead of relying on the prediction of the best reply
 computation, and an agent sticks with a new plan only if it
 \emph{performs} better than its previous plan
 \citep{RaneyNagel2004agdb}.  However, in order to keep the run times
-maneagable, in computational practice multiple agents need to make
+manageable, in computational practice multiple agents need to make
 such trial-and-error moves simultaneously.  This is, therefore, not an
 exact best reply algorithm.
 
 For the choice, a useful approach is to make the switching probability from
 the current to the best reply solution proportional to the
-expected improvement, i.e.
+expected improvement, \ie
 \[
 P(\text{old} \to \text{best}) = \min[ 1, \mu \cdot (S_{best} - S_{old}) ]
 \]
@@ -955,7 +955,7 @@ Note how
 the decreasing switching \emph{fraction} of the continuous case is
 replaced by a decreasing switching \emph{probability} (leading to a switching \emph{rate}).
 
-Clearly, any fixed point of such iterations is a UE since at the
+Clearly, any fixed point of such iterations is a \gls{ue} since at the
 fixed point no switching takes place, meaning that the best reply plan
 has the same score as the already existing plan.  
 %
@@ -993,8 +993,8 @@ be minimized
 \citep{LuMahmassaniZhou2009GapDue,zhang-2008}.
 However, we are not aware of any operational gap function that applies to all-day plans.
 
-The major criticism of the agent-based UE is its lack of behavioral realism.
-In a UE, every agent is assumed to react with a best response 
+The major criticism of the agent-based \gls{ue} is its lack of behavioral realism.
+In a \gls{ue}, every agent is assumed to react with a best response 
 according to a model of its objectives, which implies 
 that real travelers are able to compute best responses
 %%\todoKai{Gunnar, bist Du zuversichtlich, dass
@@ -1011,9 +1011,9 @@ is reasonable to assume that (i) the behavioral objective is
 imperfectly modeled and that (ii) explorative travel behavior leads
 to more or less random variations in what real travelers do.
 While (ii) explicitly introduces stochasticity, (i) calls for it as a
-representation of the imprecisions in the behavioral model.
+representation of the imprecision in the behavioral model.
 
-These considerations do not only lead naturally to the agent-based SUE;
+These considerations do not only lead naturally to the agent-based \gls{sue};
 they also motivate an additional behavioral component that captures
 the explorative learning of real travelers. Similarly to the symmetry
 between day-to-day replanning and the iterative solution of the traffic assignment
@@ -1160,7 +1160,7 @@ follows:
 \item \textbf{Scoring:} Evaluate every candidate solution's ``score''
   or ``fitness''.
 
-\item \textbf{Selection:} Decrease the occurences of ``bad''
+\item \textbf{Selection:} Decrease the occurrences of ``bad''
   solutions.  There are many ways how this can be done.
 
 \item \textbf{Construction of new solutions:} Construct new solutions
@@ -1173,7 +1173,7 @@ follows:
 \end{algorithm}
 
 Regarding the construction of new solutions, two operators are often
-used in genetic algorithms: \textbf{Mutation} -- which takes a
+used in genetic algorithms: \textbf{Mutation}---which takes a
 candidate solution and performs small modifications to it; and
 \textbf{crossover}---which takes \emph{two} candidate solutions and
 constructs a new one from those.  Since mutation takes one existing
@@ -1270,9 +1270,9 @@ follows \citep[see, e.g.,][for similar
 % 
 % % ----------
 
-Note that this approach is really quite congruent with the SUE
+Note that this approach is really quite congruent with the \gls{sue}
 approach: Every person has a collection of plans, which may be
-interpreted as the choice set.  As in SUE, the choice set may be
+interpreted as the choice set.  As in \gls{sue}, the choice set may be
 generated while the iterations run or before the iterations start.
 Every person selects between the plans, where one can attach to
 every plan a score-based probability to be selected, 
@@ -1319,7 +1319,7 @@ this approach.
 %\textbf{Selection/Choice:} 
 A possible choice algorithm is the following: For persons with
 unscored plans, select an unscored plan.  For all other persons,
-select between existing plans with some SUE model, \eg a logit
+select between existing plans with some \gls{sue} model, \eg a logit
 model, \ie
 \begin{equation}
 P(i) = \frac{e^{\mu S_i}}{\sum_j e^{\mu S_j}} \
@@ -1495,7 +1495,7 @@ might be possible that a particular iteration displays ``network
 breakdown'' \citep{RieserNagel2008NetworkBreakdown}.  Converged scores
 would not trigger a next-day reaction to that breakdown.  In practice,
 this can be achieved by averaging the scores over many iterations,
-which bears some similarity with ficticious play 
+which bears some similarity with fictitious play 
 \citep{monderer-1996, garcia-2000}.
 Once more, \gls{msa} is an option (Section~\ref{sec:score-msa}), with the same advantages and
 disadvantages as discussed before (Section~\ref{sec:agent-based-ue}). 
@@ -1655,8 +1655,8 @@ In order to address the combinatorial explosion of the commodities
 caused by the expansion of the choice dimensions, it is suggested to
 move to individual particles.  This allows an interpretation of the
 solution procedure as behavioral day-to-day learning, but maintains a
-connection to the SUE definition by interpreting the synthetic
-travellers' behavior as random draws from individual choice sets.  
+connection to the \gls{sue} definition by interpreting the synthetic
+travelers' behavior as random draws from individual choice sets.  
 % In
 % that latter interpretation, the iterative solution procedure becomes a
 % Monte Carlo simulation that samples from the population's choice
@@ -1666,7 +1666,7 @@ A major part of this chapter discusses simulation/computer implementation issues
 From the definition given above, progress can be made by using methods
 from machine learning and co-evolutionary search algorithms.  
 %
-The SUE problem of random selection between different alternatives can
+The \gls{sue} problem of random selection between different alternatives can
 be cast as a so-called population-based optimization algorithm where
 every synthetic traveler randomly selects between the different
 members of the population of possible solutions.
@@ -1694,7 +1694,7 @@ Overall, this chapter has worked out the structural similarity between the
 %% \gunnar{Wasn't there somewhere on the web site a tutorial on 
 %% ``running MATSim as a standard DTA''? That would fit well in here, I think.} \kai{ok.  Not much of a tutorial, but at least an example plans file and some text with it.  Will do when I get around.}  \kai{See below.}
 %
-It is, in fact, possible to run \gls{matsim} in \gls{dta} mode, by converting each trip into a dummy person, with dummy activities at the beginning and end of the trip.  The class \lstinline{RunExample5Trips} (see \url{http://matsim.org/javadoc} $\to$ core) runs an example; the class itself points to a configuration file, which in turn points to \lstinline{examples/equil/plans100trips.xml}.  A dummy person that denotes a trip from link 1 to link 20, departing at 06:00, is coded as\\
+It is, in fact, possible to run \gls{matsim} in \gls{dta} mode, by converting each trip into a dummy person, with dummy activities at the beginning and end of the trip.  The class \lstinline{RunExample5Trips} (see \url{http://matsim.org/javadoc} $\to$ core) runs an example; the class itself points to a configuration file, which in turn points to \lstinline{examples/equil/plans100trips.xml}.  A dummy person that denotes a trip from link 1 to link 20, departing at 6\,am, is coded as\\
 \usebox{\tripAsPlan}.
 }
 The presentation has focused on the algorithmic issue of how to find solutions 
