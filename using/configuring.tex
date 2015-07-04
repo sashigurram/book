@@ -178,13 +178,13 @@ Importantly, the \lstinline{qsim} parameters
 need to be set accordingly when running sample scenarios. For example, for a 10\,\% sample, these factors need to be 0.1. The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows adaptation of these parameters with the command \lstinline|Tools...Create Sample Population|.
 %
 %% \item
-The link dynamics, either \gls{fifo} or passing can be specified by the parameter 
-\begin{xml}
-   <param name="linkDynamics" value="..." />
-\end{xml}
-%
+%% The link dynamics, either \gls{fifo} or passing can be specified by the parameter 
+%% \begin{xml}
+%%    <param name="linkDynamics" value="..." />
+%% \end{xml}
+
 %\item
-Currently \gls{qsim} is implemented as a single-queue simulation queue (see Chapter~\ref{ch:kinematicwaves}), \ie back-propagating gaps as discussed in Section~\ref{sec:trafficflowmodel} are only available experimentally; 
+Currently \gls{qsim} is implemented as a single-queue simulation queue (see Chapter~\ref{ch:kinematicwaves}). Back-propagating gaps as discussed in Section~\ref{sec:trafficflowmodel} are only available experimentally; 
 they will be added soon (see Section~\ref{sec:researchavenues-double-queue-mobsim}) and will then be configurable with the parameter
 \begin{xml}
    <param name="trafficDynamics" value="..." />
@@ -192,8 +192,14 @@ they will be added soon (see Section~\ref{sec:researchavenues-double-queue-mobsi
 %% \kai{Das gibt es immer noch nicht wirklich.  Habe jetzt Amit rekrutiert, damit er mir da hoffentlich hilft.}
 %% \ah{ok. angepasst}
 %% \end{itemize}
-%
+
 As shown in Section~\ref{sec:using-qsim-multimodal}, \gls{qsim} can handle \gls{multimodal} scenarios. %% \kai{chk}
+
+A somewhat ancient configuration parameter is the so-called stuck time.  It determines after how many seconds of non-movement a vehicle is moved across an intersection despite violating the storage constraint of the destination link.
+%
+This parameter was introduced to resolve grid-locks, i.e.\ geometrical arrangements where no vehicle can move any more.  With the \gls{qsim} model, it is possible to add vehicles beyond the storage constraint to an overcrowded link.  This corresponds to maintaining a minimal flow even under very congested conditions.
+%
+The default value of this parameter is set to 10, i.e.\ non-moving vehicles are moved forward after 10~simulation time steps of non-movement.  This may seem as a rather short time, but systematic investigations (unfortunately never published) have shown that the simulations become, in the comparison to traffic counts data, less realistic when this parameter is increased.  
 
 %% \ah{explizit hinzufügen ist jetzt nicht mehr nötig, weil default, oder?}
 %% To invoke \gls{qsim}, the parameter \lstinline|mobsim| of \lstinline|controler| \gls{configfile} section must be set to \lstinline|qsim| and a \lstinline|qsim| \gls{configfile} section must be provided.
@@ -483,7 +489,7 @@ It is defined by the \lstinline{qsim} config option of type
 \end{xml}
 This examines the plan leg mode; if that leg mode corresponds to one of the listed main modes, it will generate a vehicle for that leg and make it enter the network.
 
-It is currently not possible to generate different vehicle types from the config alone; one either needs to provide a vehicles file (Section~\ref{sec:extending-vehicles}), or write a script-in-\gls{java} to generate the vehicle fleet.  
+It is currently not possible to generate different vehicle types from the config alone; one either needs to provide a vehicles file (see Sections~\ref{sec:extending-vehicles} and~\ref{sec:vehicles-in-qsim}), or write a script-in-\gls{java} to generate the vehicle fleet (again see Section~\ref{sec:vehicles-in-qsim}).  
 
 
 %------------------------------------------------------------
