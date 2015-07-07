@@ -8,7 +8,7 @@
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
 % ##################################################################################################################
-This chapter explains how to set up and run \gls{matsim} and describes the requirements for building a basic \gls{scenario}. This book attempts to be as stable and timely as possible, meaning that the \gls{matsim} user guide \citep[][]{MATSim_Userguide_2015} should also be consulted when doing an actual installation. Frequently changed, detailed information like download paths, or version-dependent configurations, are omitted here--as far as possible-- and left to the user guide. 
+This chapter explains how to set up and run \gls{matsim} and describes the requirements for building a basic \gls{scenario}. This book attempts to be as stable and timely as possible, meaning that the \gls{matsim} user guide \citep[][]{MATSim_Userguide_2015} should also be consulted when doing an actual installation. Frequently changed, detailed information like download paths, or version-dependent configurations, are omitted here---as far as possible---and left to the user guide. 
 
 Getting the source code into different computing environments and extending \gls{matsim} through the \gls{api} is described in the book's second part, Chapter~\ref{ch:extensionpoints}.
 
@@ -52,10 +52,10 @@ This feature will appear in the releases, starting with version~0.7.
 {}
 % ----------
 
-For the release~0.6, \gls{matsim} does not provide a \gls{gui}; thus, you must be able to handle and access a command line tool.\footnote{%
-%
-\parskip0.3\baselineskip
-\parindent0pt
+%For the release~0.6, \gls{matsim} does not provide a \gls{gui}; thus, you must be able to handle and access a command line tool.\footnote{%
+%%
+%\parskip0.3\baselineskip
+%\parindent0pt
 %
 In \gls{linux} or \gls{mac} OS X, this is typically a Terminal application; in \gls{windows}, the Power Shell or Command Prompt.
 %
@@ -63,14 +63,20 @@ On the command prompt type the following command in one line, but substitute the
 %% \lstinline|java -Xmx512m -cp /path/to/matsim.jar org.matsim.run.Controler /path/to/config.xml|
 
 On Linux or Mac OS X, something like:
-\lstinline|java -Xmx512m -cp /path/to/matsim.jar org.matsim.run.Controler /path/to/config.xml|
+\begin{lstlisting}
+java -Xmx512m -cp /path/to/matsim.jar org.matsim.run.Controler /path/to/config.xml
+\end{lstlisting}
 
 %% On Mac OS X: 
 %% \lstinline|java -Xmx512m -cp /path/to/matsim.jar org.matsim.run.Controler /path/to/config.xml|
 
 On Windows, an example command could be: 
-\lstinline{java -Xmx512m -cp C:}$\backslash$\lstinline{MATSim}$\backslash$\lstinline{matsim.jar org.matsim.run.Controler C:}$\backslash$\lstinline{MATSim}$\backslash$\lstinline{input}$\backslash$\lstinline{config.xml}
+\begin{lstlisting}
+java -Xmx512m -cp C:$\backslash$MATSim$\backslash$matsim.jar org.matsim.run.Controler
+   C:$\backslash$MATSim$\backslash$input$\backslash$config.xml
+\end{lstlisting}
 % problems with the combination of lstinline, backslash, and footnote. :-(  kai, jan'15
+%\ah{... and linebreaks ... and \begin{lstlisting}}
 
 Such a command consists of multiple parts:
 \begin{itemize}\styleItemize
@@ -80,7 +86,7 @@ Such a command consists of multiple parts:
 \item \lstinline|org.matsim.run.Controler| specifies which class (think of an ``entry point'') should be run. In most cases, the default \gls{matsim} \lstinline|Controler| is the class you will need to run simulations.
 \item \lstinline|/path/to/config.xml| tells \gls{matsim} which \gls{configfile} is to be used. 
 \end{itemize}
-}
+%}
 
 % ================================================================================================
 \subsection{Configuring \protect\gls{matsim}}
@@ -223,13 +229,10 @@ Each element has an identifier \lstinline|id|. Nodes are described by an \lstinl
     \item the flow \lstinline|capacity| of the link, \ie number of vehicles that traverse the link, typically in vehicles per hour.
     \item the \lstinline|freespeed| is the maximum speed that vehicles are allowed to travel along the link, typically in meters per second.
     \item the number of lanes (\lstinline|permlanes|) available in the direction specified by the 'from' and 'to' nodes.
-    \item the list of \lstinline|modes| allowed on the link. This is a comma-separated list, \eg 
-		\begin{xml}
-			modes="car, bike, taxi".
-		\end{xml}
+    \item the list of \lstinline|modes| allowed on the link. This is a comma-separated list, \eg \lstinline|modes="car, bike, taxi"|.
 \end{itemize}
 %Note that
-All links are uni-directional. If a road can be traveled in both directions, two links must be defined with alternating \lstinline|to| and \lstinline|from| attributes (see links with id 2 and 3 in the listing above). Then, the network can be seen as a directed graph. 
+All links are uni-directional. If a road can be traveled in both directions, two links must be defined with alternating \lstinline|to| and \lstinline|from| attributes (see links with id~2 and 3 in the listing above). Then, the network can be seen as a directed graph. 
 
 % -----------------------------------------------------------------------
 \subsubsection{\lstinline|population.xml|}
@@ -406,18 +409,17 @@ researched (see Section~\ref{sec:choicesets}).
 %
 \begin{xml}
 <module name="strategy">
-	<param name="maxAgentPlanMemorySize" value="5" /> <!-- 0 means unlimited -->
-	
-	<parameterset type="strategysettings" >
-		<param name="strategyName" value="SelectExpBeta" />
-		<param name="weight" value="0.9" />
-	</parameterset>
-	
-	<parameterset type="strategysettings" >
-		<param name="strategyName" value="ReRoute" />
-		<param name="weight" value="0.1" />
-	</parameterset>
-	
+   <param name="maxAgentPlanMemorySize" value="5" /> <!-- 0 means unlimited -->
+
+   <parameterset type="strategysettings" >
+      <param name="strategyName" value="SelectExpBeta" />
+      <param name="weight" value="0.9" />
+   </parameterset>
+
+   <parameterset type="strategysettings" >
+      <param name="strategyName" value="ReRoute" />
+      <param name="weight" value="0.1" />
+   </parameterset>
 </module>
 \end{xml}
 
@@ -446,9 +448,9 @@ The section \lstinline|planCalcScore| defines parameters used for scoring, expla
 The scenario is run for 10\,iterations, writes the output files to \lstinline|./output/equil| (Section~\ref{sec:outputdata}) and uses \gls{qsim} as the \gls{mobsim} (more on \glspl{mobsim} in Section~\ref{sec:trafficflowmodel}, \ref{sec:using-mobsims} and \ref{sec:extending-mobsims}).
 \begin{xml}
 <module name="controler">
-	<param name="outputDirectory" value="./output/equil" />
-	<param name="lastIteration" value="10" />
-	<param name="mobsim" value="qsim" />	
+   <param name="outputDirectory" value="./output/equil" />
+   <param name="lastIteration" value="10" />
+   <param name="mobsim" value="qsim" />	
 </module>
 \end{xml}
 
@@ -503,7 +505,7 @@ For some operations, \gls{matsim} must know the coordinate system where your dat
 The coordinate system used by your data can be specified in the \gls{configfile}:
 \begin{xml}
 <module name="global"> 
-  <param name="coordinateSystem" value="EPSG:32608" /> 
+   <param name="coordinateSystem" value="EPSG:32608" /> 
 </module>
 \end{xml}
 This allows \gls{matsim} to work with your coordinates and convert them whenever needed. 

@@ -145,17 +145,17 @@ Other agents might want to share their cars, so an actual meeting must be confir
 \subsection{General Thoughts}
 Within-day or en-route replanning means that travelers replan during the day or while they are on their route. This means that the simulation needs to find some way to influence the agent while the \gls{mobsim} (network loading) is running. For the \gls{matsim} main network loading module, the so-called \gls{qsim}, this could be achieved by inserting an agent-loop, as follows:
 \begin{lstlisting}
-   void doSimStep() {
-      for ( each agent ) {   // <-- agent loop
-         agent.doSimStep() ;
-      }
-      for ( each link ) {
-         link.doSimStep() ;
-      }
-      for ( each node ) {
-         node.doSimStep() ;
-      }
-   }  
+ void doSimStep() {
+		for ( each agent ) {   // <-- agent loop
+			 agent.doSimStep() ;
+		}
+		for ( each link ) {
+			 link.doSimStep() ;
+		}
+		for ( each node ) {
+			 node.doSimStep() ;
+		}
+ }  
 \end{lstlisting}
 In this loop, each agent has the chance to deliberate in every time step. Clearly, the agent can decide that he/she has nothing to deliberate and return immediately.
 
@@ -552,11 +552,11 @@ For working code, see \url{http://matsim.org/javadoc} $\to$ core $\to$ \lstinlin
 \subsubsection{Using Framework Methods}
 \gls{matsim} uses a wide range of methods to plan the day of a simulated traveler. These can be passed into the guidance module, for example
 \begin{lstlisting}
-   Controler ctrl = new Controler(...) ;
-   ...
-   TripRouter router = ctrl.getTripRouterFactory().instantiateAndConfigureTripRouter() ;
-   MyGuidance guidance = new MyGuidance( router ) ;
-   ...
+Controler ctrl = new Controler(...) ;
+...
+TripRouter router = ctrl.getTripRouterFactory().instantiateAndConfigureTripRouter() ;
+MyGuidance guidance = new MyGuidance( router ) ;
+...
 \end{lstlisting}
 The guidance object can still be passed to the agent as it was before; it can now compute and then return, at each intersection, to make the best turn toward a destination.
 
