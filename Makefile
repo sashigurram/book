@@ -32,7 +32,7 @@ kai.aux: localbib
 #	pdflatex -interaction=nonstopmode kai
 
 
-kaibib:
+kaibib: kai.aux
 	pdflatex kai
 	makeindex kai
 	bibtex -min-crossrefs=999 kai

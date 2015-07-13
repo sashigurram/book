@@ -43,10 +43,10 @@ P_{n}(i\mid \mathcal{U}_n) & = & \sum_{C_{n}\subset \mathcal{U}_n}P_{n}(i\mid C_
 which means the following. Selecting a plan requires a plan choice
 set. The term $P_{n}(C_{n}\mid \mathcal{U}_n)$ represents the probability that
 this concrete choice set is $C_{n}$, which must be a subset of $\mathcal{U}_n$.
-Technically, the plan \emph{innovation} modules draw from this distribution.
+Technically, the \gls{matsim} plan \emph{innovation} modules draw from this distribution.
 The term $P_{n}(i\mid C_{n})$ represents the probability that agent
 $n$ selects plan $i$ given that its concrete choice set is $C_{n}$.
-Technically, the plan \emph{selection} modules draw from this distribution.
+Technically, the \gls{matsim} plan \emph{selection} modules draw from this distribution.
 The product of these terms hence represents the probability that both
 the choice set $C_{n}$ is available and that plan $i$ is chosen out
 of that set. The probability of selecting plan $i$ independently
@@ -79,7 +79,7 @@ It is set to one in the remainder of this section.
 \subsection{Case 1: Score is or Converges Towards a Deterministic Value}
 \label{sec:score-is-converged}
 
-Only if the score
+If the score
 of a plan was a deterministic number representing an expected value, 
 then Equation~(\ref{eq:ExpBetaPlanSelector}) would constitute a plain \gls{mnl} choice model with $\mu$ taking the role
 of a scale parameter \citep[see, e.g.,][p.45]{Train_2003}. 
@@ -207,7 +207,9 @@ be given.
 
 However, another perspective on this problem is possible, continuing
 the arguments of Chapter~\ref{ch:montecarlo}. It is argued there that one can consider
-the sole purpose of \gls{matsim}'s iterative mechanism to attain a realistic
+the 
+%sole 
+purpose of \gls{matsim}'s iterative mechanism to attain a realistic
 stationary distribution. If so, then the sole purpose of the simulated
 $\boldsymbol{\eta}_n$s is to yield a realistic stationary choice distribution. To
 illustrate this perspective, consider the following moving-average score
@@ -454,7 +456,7 @@ alternatives is impeded by correspondingly low utility values. In this setting, 
 constitute \emph{sampling techniques} that serve the \emph{computational} purpose of reducing the universal choice
 set to a small, representative subset.
 
-However, one still faces the problem from above that the concrete sampling protocol has a concrete effect on the simulated behavior. The cure when \emph{estimating} choice models is to correct for the sampling based on known sampling probabilities \citep[e.g.][Chapter 9]{ben-akiva-1985}, even though these probabilities can be rather difficult to obtain \citep{floetteroed-2012b, frejinger-2009}. The problem appears to be even less explored when it comes to \emph{simulation}. 
+However, one still faces the problem from above that the concrete sampling protocol has a concrete effect on the simulated behavior. The cure when \emph{estimating} choice models is to correct for the sampling based on known sampling probabilities \citep[e.g.][Chapter 9]{BenAkivaLerman_1985}, even though these probabilities can be rather difficult to obtain \citep{floetteroed-2012b, frejinger-2009}. The problem appears to be even less explored when it comes to \emph{simulation}. 
 
 \gls{matsim}'s currently implemented mutation and innovation procedures
 constitute concrete, yet heuristic, approaches to the choice set generation
@@ -471,7 +473,7 @@ Possible biases induced by these procedures can, however, be rather difficult to
 %
 In particular, it is observed that the current \gls{matsim} implementation might under certain conditions yield incomplete choice sets and correlated alternatives (also see Chapter~\ref{ch:economicEval}).
 %
-In order to mitigate the effect of strong correlations between alternatives within the choice set, so-called diversity increasing re-planning modules have been tested \citep[see, e.g.,][]{NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}. In the same context, \cite{Grether_PhDThesis_2014} (Chapter~6) and \cite{NeumannEtAlPassengerArrivalPatterns} have tested path size logit approaches \citep[see, e.g.,][]{DaganzoSheffi_TransScience_1977,FrejingerBierlaire_TransResB_2007} in order to maintain diversity in the choice set by penalizing similar alternatives.
+In order to mitigate the effect of strong correlations between alternatives within the choice set, so-called diversity increasing re-planning modules have been tested \citep[see, e.g.,][]{NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}. In the same context, \citet[][Chapter~6]{Grether_PhDThesis_2014} and \cite{NeumannEtAlPassengerArrivalPatterns} have tested path size logit approaches \citep[see, e.g.,][]{DaganzoSheffi_TransScience_1977,FrejingerBierlaire_TransResB_2007} in order to maintain diversity in the choice set by penalizing similar alternatives.
 %
 Still, these approaches are---as of now---ad-hoc solutions with little theoretical foundations in the simulation context.
 
@@ -489,8 +491,12 @@ mindset than to deliver a complete solution recipe.
 %% \benjamin{Es gibt jetzt nunmehr nur diese eine Unterüberschrift...ich finde das unüblich. Vielleicht noch eine weitere oben einziehen?}
 
 \gls{matsim} performs in every iteration the following operations for each
-agent: (1) update of the choice set and (2) choice of a plan from
-the updated choice set, using the model in Equation~(\ref{eq:ExpBetaPlanSelector}).
+agent: (1) update of the choice set 
+%and 
+or (2) choice of a plan from
+the 
+%updated 
+choice set, using the model in Equation~(\ref{eq:ExpBetaPlanSelector}).
 To make the simulated long-term (stationary) plan choice independent
 of the plan choice set generation, one may require the following stationary
 choice distribution:
@@ -503,9 +509,8 @@ meaning that plans are selected from the universal choice set.
 Denoting further by $P(C_{n}\rightarrow C_{n}')$ the probability
 that plan mutation/innovation turns the choice set $C_{n}$ into $C_{n}'$,
 it is possible to enforce the long-term choice distribution \MyEqRef{eq:global-choice-model}
-through an application of the \gls{mh} algorithm \citep{hastings-1970}.
-(See also \citet{floetteroed-2012b} for a related approach to a similar
-problem.) 
+through an application of the \gls{mh} algorithm \citep[][see also \citet{floetteroed-2012b} for a related approach to a similar
+problem]{hastings-1970}.
 
 The \gls{mh} algorithm specifies the transition distribution
 of a Markov chain such that a desired stationary distribution of that
@@ -515,11 +520,9 @@ hence be inserted into the \gls{matsim} iterations. A simplification made in
 the following is that the choice distribution of agent $n$ is considered
 independent of all other agents.
 
-To make this concrete, the state space of the algorithm is defined as the tuple
-$(C_{n},\, i\in C_{n})$ consisting of choice set and resulting choice.
-During each (\gls{matsim}) iteration, one first draws a new choice set $C_{n}'$,
-then draws a new choice $i'\in C_{n}'$ according to the usual model (\ref{eq:ExpBetaPlanSelector}), 
-and finally accepts the new state $(C_{n}',\, i')$ with probability
+To make this concrete, let us define the state space of the algorithm 
+%is defined 
+as the tuple $(C_{n},\, i\in C_{n})$ consisting of choice set and resulting choice.  During each (\gls{matsim}) iteration, one first draws a new choice set $C_{n}'$, then draws a new choice $i'\in C_{n}'$ according to the usual model (\ref{eq:ExpBetaPlanSelector}), and finally accepts the new state $(C_{n}',\, i')$ with probability
 \begin{eqnarray}
 \phi[(C_{n},\, i),(C_{n}',\, i')] 
 & = & 
@@ -533,8 +536,17 @@ and finally accepts the new state $(C_{n}',\, i')$ with probability
 \label{eq:accept-proba-1}
 \end{eqnarray}
 and rejects it otherwise (meaning that the original choice set $C_{n}$
-and choice $i\in C_{n}$ are maintained).
-Technically, the first fraction introduces a preference for states
+and choice $i\in C_{n}$ are maintained).\footnote{%
+%
+The acceptance probability $\phi(X \to X')$ in MH sampling is calculated as
+\[
+\min\left(\frac{w(X') \cdot p_{propose}(X' \to X)}{w(X) \cdot p_{propose}(X \to X')},1\right) \ ,
+\]
+where $p_{propose}(. \to .)$ is the probability that a certain transition is proposed, and $w(X)$, $w(X')$ are the relative weights of the respective states.  It is important to note that $w$ does not have to be normalized; it is sufficient if $w(X)/w(X') = p(X)/p(X')$.  $P(C \to C') \, P(i'|C')$ is the probability that the choice set transitions from $C$ to $C'$, multiplied with the probability that $i'$ is selected from that choice set.
+%
+}
+%Technically, 
+Intuitively, the first fraction introduces a preference for states
 that comprise a more probable choice, and the second
 fraction corrects for the way in which transitions between states are
 proposed.
@@ -569,7 +581,7 @@ replaces exactly one uniformly selected plan $i_{\text{out}}$,
 which implies that the choice set size $J$ is constant, 
 and excluding for simplicity the case that the best response innovation
 reconstructs exactly the removed plan,
-one obtains
+from this one obtains
 \begin{eqnarray}
 P(C_{n}\rightarrow C_{n}') & = & \frac{1}{J}\cdot\frac{e^{\mu_{\text{inno}}S_{ni_{\text{in}}}}}{\sum_{j\in \mathcal{U}_n}e^{\mu_{\text{inno}}S_{nj}}}\\
 P(C_{n}'\rightarrow C_{n}) & = & \frac{1}{J}\cdot\frac{e^{\mu_{\text{inno}}S_{ni_{\text{out}}}}}{\sum_{j\in \mathcal{U}_n}e^{\mu_{\text{inno}}S_{nj}}}.
@@ -612,7 +624,7 @@ a different, randomly selected stationary iteration.
 %
 %\benjamin{One or more different randomly selected iterations?}
 
-This allows to select plans according to (\ref{eq:global-choice-model})
+This would allow to select plans according to (\ref{eq:global-choice-model})
 from an unconstrained choice set even though one enumerates only a
 small subset of the full choice set, which is updated through a computationally
 efficient best-response mechanism.
