@@ -382,10 +382,9 @@ necessary for such an endeavor are in principle available
 
 \subsection{\label{sub:expected-maximum-utility}Expected maximum utility}
 
-The expected maximum utility of the model \MyEqRef{eq:mixture-of-logit} is of
-interest in the microeconomic interpretation of MATSim outputs, cf.
-Chapter~\ref{ch:economicEval}. A recipe for the computation of this quantity
-is subsequently described. 
+The expected maximum utility of \MyEqRef{eq:mixture-of-logit} is of
+interest in the microeconomic interpretation of MATSim outputs. 
+A recipe for its computation is subsequently described. 
 
 Let
 \begin{eqnarray}
@@ -393,53 +392,58 @@ U_{i} & = & V_{i}+\eta_{i}+\varepsilon_{i}\label{eq:full-random-utility-without-
 \end{eqnarray}
 using the shortcuts $V_{i}=\boldsymbol{\beta}^{T}\text{E}\{\mathbf{x}_{ni}\}$,
 $\eta_{i}=\boldsymbol{\beta}^{T}\boldsymbol{\eta}_{ni}$, letting
-$\varepsilon_{i}$ be the Gumbel error term assumed by the multinomial
-logit choice model, and dropping the $n$ index for brevity. Note
-that
+$\varepsilon_{i}$ be the Gumbel error assumed by the multinomial
+logit model, and dropping the $n$ index for brevity. Following this
+notation, \MyEqRef{eq:score} is rewritten as
 \begin{eqnarray}
-S_{i} & = & V_{i}+\eta_{i}.\label{eq:score}
+S_{i} & = & V_{i}+\eta_{i}.\label{eq:score-shorthand}
 \end{eqnarray}
 
-If one could assume that the choice of plan $i$ led to the same utility
-payoff as taken into account by the agent when making the choice,
-one could express the expected maximum utility as follows:
+It is necessary to distinguish between the score of a plan at the time
+it is selected and its updated score after it has been executed.
+To start out, it is assumed that these two values are the same (meaning,
+clearly unrealistically, that scores do not change from one iteration to the
+next.) The expected maximum utility of a plan $i$ could then be 
+expressed as follows:
 \begin{eqnarray}
-\text{E}\{\max_{i}U_{i}\} & = & \text{E}\{\max_{i}V_{i}+\varepsilon_{i}+\eta_{i}\}\\
- & = & \text{E}_{\eta}\{\text{E}_{\varepsilon}\{\max_{i}V_{i}+\varepsilon_{i}+\eta_{i}\mid\eta\}\}\\
- & = & \text{E}_{\eta}\left\{ \ln\sum_{i}e^{V_{i}+\eta_{i}}\right\} .
+\text{E}\left\{\max_{i\in C_n}U_{i}\right\} & = &
+\text{E}\left\{\max_{i\in C_n}V_{i}+\varepsilon_{i}+\eta_{i}\right\}\\
+ & = & \text{E}_{\eta}\left\{\text{E}_{\varepsilon}\left\{\max_{i\in
+ C_n}V_{i}+\varepsilon_{i}+\eta_{i}\mid\eta\right\}\right\}\\
+ & = & \text{E}_{\eta}\left\{ \ln\sum_{i\in C_n}e^{V_{i}+\eta_{i}}\right\} .
 \end{eqnarray}
-where the law of total expectation was used and $\text{E}_{\varepsilon}$
-and $\text{E}_{\eta}$ represent the expectations with respect to
-$\varepsilon$ and $\eta$, respectively. The argument of the remaining
+where the law of total expectation is used and $\text{E}_{\varepsilon}$
+and $\text{E}_{\eta}$ represent expectations with respect to
+$\varepsilon$ and $\eta$, respectively. 
+The argument of the remaining
 expectation is the expected maximum utility of a multinomial logit
 choice model given the systematic utilities $V_{i}+\eta_{i}$. This
 expression can be numerically approximated by averaging over many
 realizations of $\eta$ (i.e. over simulation iterations):
 \begin{eqnarray}
-\text{E}_{\eta}\left\{ \ln\sum_{i}e^{V_{i}+\eta_{i}}\right\}  & \approx & 
-\frac{1}{R}\sum_{r=1}^{R}\ln\sum_{i}e^{V_{i}+\eta_{i}^{r}}\label{eq:wartezimmer}
+\text{E}_{\eta}\left\{ \ln\sum_{i\in C_n}e^{V_{i}+\eta_{i}}\right\}  & \approx & 
+\frac{1}{R}\sum_{r=1}^{R}\ln\sum_{i\in
+C_n}e^{V_{i}+\eta_{i}^{r}}\label{eq:wartezimmer}
 \end{eqnarray}
 where $\eta(r)$ is the realization of $\eta$ in iteration $r$.
-Note that this expression holds no matter what the functional form
+This expression holds no matter what the functional form
 of the mobsim-generated mixture distribution is.
 
-Now one needs to account for the fact that agents evaluate past $\eta$
-values when making a choice that leads to a future utility payoff.
-The iterative process nature of the MATSim assignment logic needs
-to be taken into account. This can be achieved by writing
+Now one needs to account for the fact that agents evaluate past scores
+when making a choice that leads to a future score payoff.
+Recalling that this score variability is represented by the $\eta$ variables 
+in \MyEqRef{eq:mixture-of-logit},
 \begin{eqnarray}
 \eta_{i}^{r} & = & \eta_{i}^{r-1}+\gamma_{i}^{r}\label{eq:score-random-walk}
 \end{eqnarray}
-with $\gamma$ being a random variable that captures the
-variability of $\eta$ from iteration to iteration. This means that
-the $\eta_{i}^{r}$ experienced in iteration $r$ differs by $\gamma_{i}^{r}$
-from the $\eta_{i}^{r-1}$ value that was assumed by the agent when
-having chosen plan $i$. 
+is written with $\gamma$ being a random variable that captures the
+variability of $\eta$ from one iteration to the next.
 
-In order to end up at the expected experienced maximum utility, one
-hence needs to add (an estimator of) the expectation of $\gamma_{i(r)}^{r}$
-to \MyEqRef{eq:wartezimmer}, with $i(r)$ being the chosen alternative. 
-Using \MyEqRef{eq:score-random-walk} and \MyEqRef{eq:score},
+In order to express the expected maximum \emph{experienced}
+utility, one hence needs to add (an estimator of) the expectation of $\gamma_{i(r)}^{r}$
+to \MyEqRef{eq:wartezimmer}, with $i(r)$ being the alternative chosen in
+iteration $r$.
+Using \MyEqRef{eq:score-random-walk} and \MyEqRef{eq:score-shorthand},
 one obtains
 \begin{eqnarray}
 \gamma_{i(r)}^{r} & = & \eta_{i(r)}^{r}-\eta_{i(r)}^{r-1}\\
@@ -452,14 +456,21 @@ The expectation of this quantity can again be approximated by averaging,
 resulting in the following estimator of the expected maximum experienced
 utility:
 \begin{eqnarray}
+\text{E}\left\{\max_{i\in C_n} U_i^\text{experienced} \right\}
+& \approx &
 \frac{1}{R}\sum_{r=1}^{R}\ln\sum_{i}e^{S_i^{r-1}}
 +
 \frac{1}{R}\sum_{r=1}^{R}\left(S_{i(r)}^{r}-S_{i(r)}^{r-1}\right).\label{eq:wartezimmer-corrected}
-& &
 \end{eqnarray}
+The second sum of this expression estimates a ``cost of uncertainty'': the
+less predictable the network conditions (and hence the future score of the
+selected plan), the worse is an agent off on average. The usefulness of this
+expression depends of course on the simulation's ability to create realistic
+network condition variability, for instance along the lines of the last
+paragraphs of Section~\ref{sec:more-general-choice}.
 
-The microeconomic relevance of being able to compute this quantity is 
-elaborated on in Chapter~\ref{ch:economicEval}.
+A further microeconomic interpretation of this quantity is postponed to
+Chapter~\ref{ch:economicEval}.
 
 % ##################################################################################################################
 \section{Evolution of Choice Sets in a Simulated
