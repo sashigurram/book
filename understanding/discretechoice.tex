@@ -401,10 +401,10 @@ S_{i} & = & V_{i}+\eta_{i}.\label{eq:score-shorthand}
 
 It is necessary to distinguish between the score of a plan at the time
 it is selected and its updated score after it has been executed.
-To start out, it is assumed that these two values are the same (meaning,
-clearly unrealistically, that scores do not change from one iteration to the
-next.) The expected maximum utility of \MyEqRef{eq:mixture-of-logit} could then be 
-expressed as follows:
+To start out, it is assumed that the agent receives an expected maximum 
+utility that depends on the scores at the time of plan selection,
+not after plan execution. The expected maximum utility of
+\MyEqRef{eq:mixture-of-logit} could then be expressed as follows:
 \begin{eqnarray}
 \text{E}\left\{\max_{i\in C_n}U_{i}\right\} & = &
 \text{E}\left\{\max_{i\in C_n}V_{i}+\varepsilon_{i}+\eta_{i}\right\}\\
@@ -458,9 +458,10 @@ utility:
 \begin{eqnarray}
 \text{E}\left\{\max_{i\in C_n} U_i^\text{experienced} \right\}
 & \approx &
-\frac{1}{R}\sum_{r=1}^{R}\ln\sum_{i}e^{S_i^{r-1}}
+\frac{1}{R}\sum_{r=1}^{R}\ln\sum_{i\in C_n}e^{S_i^{r-1}}
 +
-\frac{1}{R}\sum_{r=1}^{R}\left(S_{i(r)}^{r}-S_{i(r)}^{r-1}\right).\label{eq:wartezimmer-corrected}
+\frac{1}{R}\sum_{r=1}^{R}\left(S_{i(r)}^{r}-S_{i(r)}^{r-1}\right).
+\label{eq:wartezimmer-corrected}
 \end{eqnarray}
 The second sum of this expression estimates a ``cost of uncertainty'': the
 less predictable the network conditions (and hence the future score of the
