@@ -429,47 +429,44 @@ where $\eta^r$ is the realization of $\eta$ in iteration $r$.
 This expression holds no matter what the functional form
 of the mobsim-generated mixture distribution is.
 
-Now one needs to account for the fact that agents evaluate past scores
-when making a choice that leads to a future score payoff.
-Recalling that this score variability is represented by the $\eta$ variables 
+Now one needs to account for the fact that agents can only evaluate 
+\emph{past} information when making a choice leads to a \emph{future} 
+score payoff.
+Recalling that score variability is represented by the $\eta$ variables 
 in \MyEqRef{eq:mixture-of-logit},
 \begin{eqnarray}
-\eta_{i}^{r} & = & \eta_{i}^{r-1}+\gamma_{i}^{r}\label{eq:score-random-walk}
+\eta_{i} & = & \hat{\eta}_{i} +\gamma_{i}\label{eq:score-random-walk}
 \end{eqnarray}
-is written with $\gamma$ being a random variable that captures the
-variability of $\eta$ from one iteration to the next.
-
-\gunnar{Need to improve notation: The above implies right now that an agent
-only uses $\eta_{i}^{r-1}$ as a predictor of $\eta_{i}^{r}$. To avoid speculation about
-the learning mechanism (which indeed is nothing to make concrete here), one
-should use something like $\hat{\eta}_{i}^{r}=\varphi(\text{``past
-observations''})$. -- Anyway, as long as one can observe both predictor and
-future realization in the simulation, the computational recipe can still be applied.}
+is written with $\eta_{i}$ contributing to the actually received score
+\MyEqRef{eq:score-shorthand}, $\hat{\eta}_{i}$ being agent's estimate
+thereof, and $\gamma$ being a random variable capturing the
+difference between the two. 
 
 In order to express the expected maximum \emph{experienced}
-utility, one hence needs to add (an estimator of) the expectation of $\gamma_{i(r)}^{r}$
-to \MyEqRef{eq:wartezimmer}, with $i(r)$ being the alternative chosen in
-iteration $r$.
+utility, one hence needs to add (an estimator of) the expectation of $\gamma$
+to \MyEqRef{eq:wartezimmer}.
 Using \MyEqRef{eq:score-random-walk} and \MyEqRef{eq:score-shorthand},
 one obtains
 \begin{eqnarray}
-\gamma_{i(r)}^{r} & = & \eta_{i(r)}^{r}-\eta_{i(r)}^{r-1}\\
- & = & (V_{i(r)}+\eta_{i(r)}^{r})-(V_{i(r)}+\eta_{i(r)}^{r-1})\\
- & = & S_{i(r)}^{r}-S_{i(r)}^{r-1}.
+\gamma & = & \eta_{i} - \hat{\eta}_{i}\\
+& = & (\eta_{i} + V_i) - (\hat{\eta}_{i} + V_i)\\
+ & = & S_i - \hat{S}_i
 \end{eqnarray}
-This is the experienced score of the chosen alternative minus its
-score from the previous iteration, on which the choice was based.
+where $\hat{S}_i$ can be interpreted as the agent's prediction of
+the selected alternative $i$'s score.
 The expectation of this quantity can again be approximated by averaging,
 resulting in the following estimator of the expected maximum experienced
-utility:
+utility, with $i(r)$ indicating the alternative that was selected in
+iteration $r$:
 \begin{eqnarray}
 \text{E}\left\{\max_{i\in C_n} U_i^\text{experienced} \right\}
 & \approx &
-\frac{1}{R}\sum_{r=1}^{R}\ln\sum_{i\in C_n}e^{S_i^{r-1}}
+\frac{1}{R}\sum_{r=1}^{R}\ln\sum_{i\in C_n}e^{\hat{S}_i^{r}}
 +
-\frac{1}{R}\sum_{r=1}^{R}\left(S_{i(r)}^{r}-S_{i(r)}^{r-1}\right).
+\frac{1}{R}\sum_{r=1}^{R}\left(S_{i(r)}^{r}-\hat{S}_{i(r)}^{r}\right).
 \label{eq:wartezimmer-corrected}
 \end{eqnarray}
+%
 The second sum of this expression estimates a ``cost of uncertainty'': the
 less predictable the network conditions (and hence the future score of the
 selected plan), the worse is an agent off on average. The usefulness of this
