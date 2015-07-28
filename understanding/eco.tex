@@ -26,9 +26,10 @@ As will be shown in the next sections, these steps are neither completely indepe
 \section{Revisiting MATSim's Behavioral Simulation}
 \label{ch:economicEval:describingBehavior}
 %
-\kaitodo{
-\benjamin{Kai, ich habe diese section eigentlich komplett neu geschrieben, vor dem Hintergrund des discrete choice chapters. Dadurch ist das meiste rausgeflogen. Ich wäre über ein kurzes Gegenlesen deinerseits sehr froh.}
-}
+%% \kaitodo{
+%% \benjamin{Kai, ich habe diese section eigentlich komplett neu geschrieben, vor dem Hintergrund des discrete choice chapters. Dadurch ist das meiste rausgeflogen. Ich wäre über ein kurzes Gegenlesen deinerseits sehr froh.}
+%% }
+% Alles ok.  Vielen Dank. Kai
 %
 Estimating benefits of a policy intervention relies on a sound descriptive model that is capable to predict the resulting behavioral changes of individuals.
 %
@@ -38,9 +39,9 @@ As explained in Section~\ref{sec:inbrief}, agents in \gls{matsim} optimize their
 %might be 
 is that there exist well-established approaches to estimate changes in user benefits and system welfare from discrete choice models.
 
-As shown by \cite[][also see Chapter~\ref{ch:abta}]{NagelFloetteroed2009IatbrResourceInBook}, the \acrshort{matsim} choice model is equivalent to a standard \gls{mnl} model, given that valid choice sets have been found for all individuals, and that the score of each plan has converged to its expectation value (self-consistent state).
+As shown by \citet[][also see Chapter~\ref{ch:abta} and Section~\ref{sec:score-is-converged}]{NagelFloetteroed2009IatbrResourceInBook}, the \acrshort{matsim} choice model is equivalent to a standard \gls{mnl} model, given that valid choice sets have been found for all individuals, and that the score of each plan has converged to its expectation value (self-consistent state).
 %
-An approximation of this can be reached by switching innovation off (Section~\ref{sec:innovation-switchoff}) and forcing scores to convergence (Section~\ref{sec:score-msa}). 
+An approximation of this can be reached by switching innovation off (Section~\ref{sec:innovation-switchoff}) and forcing scores to convergence (Section~\ref{sec:score-msa}, also see Section~\ref{sec:score-is-converged}). 
 %% %
 %% Unfortunately, the above conditions are not necessarily met by the current \acrshort{matsim} implementation, in particular when it is used to generate choice sets on-the-fly within the iterative loop (Section~\ref{sec:inbrief}).
 %% %
@@ -53,7 +54,7 @@ Still, this leaves the following methodological issues:
 %
 \item \textbf{Choice set incomplete}: The maximum number of plans $J$ in the choice set of every agent is limited by memory constraints. That is, the choice set for the decision making is unlikely to be complete.
 %
-\item \textbf{Plans correlation from innovation}: Plans might be correlated. This is very likely if they are modified or replaced by best-response re-planning modules (\eg the route choice module), since they have a tendency to always generate the same answer. Yet also random mutations in general result in correlated plans, since the concept of a mutation in fact implies an only small change away from the parent.  This violates the required IIA (Independence from Irrelevant Alternatives) property of the choice set that is needed for an \gls{mnl} model.
+\item \textbf{Plans correlation from innovation}: Plans might be correlated. This is very likely if they are modified or replaced by best-response re-planning modules (\eg the route choice module), since they have a tendency to always generate the same answer. Yet also random mutations in general result in correlated plans, since the concept of a mutation in fact implies only a small change away from the parent.  This violates the required IIA (Independence from Irrelevant Alternatives) property of the choice set that is needed for an \gls{mnl} model.
 %
 \item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to keep similar, \ie  correlated, plans when the number of plans has grown beyond $J$.  The reason for this is that the current default plans remover removes the plan with the lowest score, which typically also is the one most different from the other plans.  As a result, typically only very similar plans with very similar scores remain in the choice set.
 %
@@ -61,7 +62,7 @@ Still, this leaves the following methodological issues:
 %
 These three issues 
 %might
-may to biased behavior, which would then have 
+may lead to biased behavior, which would then have 
 %would then also 
 consequences for economic evaluation.  Possible cures of these shortcomings are discussed 
 %in more detail 
@@ -495,7 +496,7 @@ U = \sum_q U_{act,q}(t_{dur,q}, ...) + \sum_q U_{trav,q}(t_{trav,q}, ...)
 where monetary payments (\eg tolls) are included into $U_{trav,q}$ and the index $i$ was dropped for notational convenience.\footnote{%
 %
 Strictly speaking, at this point of the development it would make more sense to stick with the scores $S$ that \gls{matsim} generates.  Section~\ref{ch:economicEval:valuingBehavior:output2Eval} discusses the relation between \gls{matsim} scores $S$, systematic utility $V$ and total utility $U$ in more detail.
-However, since the following text uses terms such as ``marginal utility of time'' or ``marginal utility of money'', the equations are also noted using $U$ instead of $S$. 
+However, since the following text uses terms such as ``marginal utility of time'' or ``marginal utility of money'', also the equations are noted using $U$ instead of $S$. 
 %
 }
 
@@ -1097,105 +1098,18 @@ Alternatively, one could simply use the highest score that the agent has in its 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{More Complicated Variants}
+\label{sec:more-compl-variants}
 
-Section~\ref{sec:more-general-choice} discusses that choices might be made according to a mixture-of-logit model.  In that variant, $\epsilon_{ni}$ remains fixed per agent $n$ and alternative $i$, but other attributes such as the network conditions vary from one iteration to the next.  
+Section~\ref{sec:more-general-choice} discusses that \gls{matsim}'s typical choice model might be described by a mixture-of-logit model.  In that model,  $\epsilon_{ni}$ remains fixed per agent $n$ and alternative $i$, but other attributes such as the network conditions vary from one iteration to the next.  
 %
 In Equation~(\ref{eq:mixture-of-logit}), $\vec\eta_{ni}$ denotes the random but simulation-generated deviations from the average conditions; let us add an index $k$ for the iteration number, i.e.\ write $\vec\eta_{ni}^k$.  That is, it is postulated that a real person would know both $\epsilon_{ni}$ and $\vec\eta_{ni}^k$, but the simulation only knows the latter (through the \gls{matsim} score).  
 %
 Equation~(\ref{eq:mixture-of-logit}) then just describes the resulting choice distribution from what \gls{matsim} often does, i.e.\ apply a logit model to scores that are not averaged.
 
-It is, however, clear that this will not result in optimal average agent behavior -- the agent may be pushed towards some choice by a random fluctuation of the $\vec\eta_{ni}^k$, but obtaining a much lower score from that choice in the average.  Overall, the agent would be better off by first averaging the score of each alternative over many iterations, and then base her choice on those scores.  This, however, goes back to the converged scores of Section~\ref{sec:score-is-converged}.
+It is, however, clear that this will not result in optimal \emph{average} agent behavior -- the agent may be pushed towards some choice by a random fluctuation of the $\vec\eta_{ni}^k$, but obtaining a much lower score from that choice in the average.  Overall, the agent would be better off by first averaging the score of each alternative over many iterations, and then base her choice on those scores.  This goes back to the converged scores of Section~\ref{sec:score-is-converged}.
 
-Note, however, that this becomes rather involved: We postulate that the agent sees the full \gls{matsim} score, plus some private $\epsilon$s; that she optimizes based on the sum; that the \gls{matsim} model, however, does not know the $\epsilon$s and thus sample from the logit model; but that the economic utility has to include the effect of the $\epsilon$s although we do not know them, as in Section~\ref{ch:economicEval:valuingBehavior:output2Eval:logsum}.  Overall, thus, assigning utility values to such behavior as described by Equation~(\ref{eq:mixture-of-logit}) needs a better understanding of the underlying behavioral rationality.  Section~\ref{sec:future-frozen-randomness} discusses this a bit further.
+Calculating benefits from a mixture-of-logit interpretation becomes rather involved: We postulate that the agent sees the full \gls{matsim} score, plus some private $\epsilon$s; that she optimizes based on the sum of these two; that the \gls{matsim} simulation, however, does not know the $\epsilon$s and thus has to sample from the logit model; but that the economic utility has to include the effect of the $\epsilon$s although we do not know them, as in Section~\ref{ch:economicEval:valuingBehavior:output2Eval:logsum}.  Overall, thus, assigning utility values to such behavior as described by Equation~(\ref{eq:mixture-of-logit}) needs a better understanding of the underlying behavioral rationality.  Section~\ref{sec:future-frozen-randomness} discusses this a bit further.
 
-
-\bktodo{Benjamin, could you please read this section to be informed about its existence?  Thanks ... Kai}
-
-%% \paragraph{Recalling Standard Logit for Comparison}
-
-%% Selecting $j$ such that
-%% \[
-%% U_i = V_i + \epsilon_i
-%% \]
-%% is maximized leads to utility
-%% \[
-%% U_j = V_j + \epsilon_j \ .
-%% \]
-
-%% Since we do not know the $\epsilon$s, we assume that they are Gumbel-distributed, from there get
-%% \begin{equation}
-%% p(i) \sim e^{V_i}
-%% \label{eq:11}
-%% \end{equation}
-%% and
-%% \[
-%% E(U) = logsum = \log \sum_i e^{V_i} \ .
-%% \]
-
-\paragraph{Mixture of Logit}
-
-Now we have
-\begin{equation}
-U^k_i = \vec\beta^T  E\{\vec x_i\} + \vec\beta^T  \vec\eta^k_i + \epsilon_i \ ,
-\label{eq:12}
-\end{equation}
-where $k$ is the iteration number, and $\vec x$ does not have an iteration index since we only want the expectation value.
-\begin{itemize}
-
-\item
-The agent will make her decision according to a realization (generated by mobsim et al) of $\vec\beta^T \vec\eta_i^k$.  If we assume that this is Gumbel-distributed, we get
-\[
-p(i) \sim e^{\vec\beta^T  E\{\vec x_i\} + \epsilon_i} 
-\]
-(analogous to Eq.~(\ref{eq:11})).
-
-\item
-Assume that the choice is $j$.  When the agent \emph{applies} this choice, she will get
-\[
-U_j^{k+1} = \vec\beta^T E\{ \vec x_j \} + \vec\beta^T \vec\eta_j^{k+1} + \epsilon_j \ ,
-\]
-where importantly the $\vec\eta$ is not the same as the one on which the choice was based.
-
-\item The expectation value \emph{of this choice $j$} is
-\[
-E(U_j^{k+1}) = E(U_j) = \vec\beta^T E\{ \vec x_j \} + \epsilon_j \ ,
-\]
-which does not depend on $k$.
-
-\item
-Therefore, the overall expectation value for the agent, who knows her $\epsilon_i$s, is
-\[
-\sum_i p(i) \, E(U_i) 
-%
-= \sum_i p(i) \, (\vec\beta^T E\{ \vec x_i \} + \epsilon_i)
-\]
-
-\end{itemize}
-Note that this is less than $\max_i \vec\beta^T E\{ \vec x_i \} + \epsilon_i$.  So the agent would be better off NOT deciding according to Equation~(\ref{eq:12}), but according to the expectation value.  Since our agent can approximate that by averaging, we could (once more) just do it exactly like that.  Then, the agent would receive that maximum, and as long as we don't know the $\epsilon$s, the expected utility would be the logsum term.
-
-\paragraph{Gunnar}
-
-For simplification now write
-\[
-U_i = V_i + \eta_i + \epsilon_i \ ,
-\]
-where, to remember, $\epsilon$ is random but fixed while $\eta$ varies from one draw to the next.
-
-Quite plausibly, if the agent makes a decision based on maximizing $V + \eta + \epsilon$ rather than $V + \epsilon$, then the expected utility is
-\[
-\ln \sum_i \exp( V_i + \eta_i ) \ .
-\]
-
-However, the utility returned by option $i$ after the draw is not $\eta_i$, but $\eta'_i \equiv \eta_i + \gamma$.  We can measure $\gamma$ one way or the other by
-\[
-\gamma = \eta'_i - \eta_i = [V'_i + \eta'_i] - [V_i + \eta_i] = S'_i - S_i
-\]
-between iterations.
-
-
-
-
-\todokai{expected utility of mixture-of-logit unclear}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
