@@ -78,7 +78,7 @@ In order to use the core only, one needs to do the following (see Section~\ref{s
 \url{http://matsim.org/downloads}.
 \item Obtain a network file and an initial plans file.  Small versions can be typed by hand; larger versions should be generated automatically by some computational method.
 \item Write or edit a \gls{configfile}.
-\item Click on the \gls{matsim} jar file\footnote{This works since winter 2014/15 and should be in the 0.7.0~release.} and follow the instructions. 
+\item Click on the \gls{matsim} jar file\footnote{This works since winter 2014/15 and should be in the 0.7.x~release.} and follow the instructions. 
 \end{itemize}
 We think that the \gls{matsim} core is already quite powerful; for example, the synthetic persons already follow full daily plans with a full daily scoring function, and in consequence opening times for activity types, departure time choice, and schedule delay can be investigated. 
 % Also, schedule-based public transit assignment is contained in the core. \ah{not according to current def of core}
@@ -519,14 +519,14 @@ A powerful extension of a standard population can be achieved by specifying furt
 %
 % not sure what this means. Maybe it is meant in relation to strategies but this would have to be stated more precisely IMO. kai, jul'15
 
-See \javadoc\ $\to$ main distribution $\to$ \lstinline{RunSubpopulationsExample} class for an example.  That example looks like coding in \gls{java} is necessary, but this is really not the case; \gls{java} is just used to generate the populations, which could as well be done by other means.
+See \javadoc\ $\to$ main distribution $\to$ \lstinline{RunSubpopulationsExample} class for an example.  That example looks like coding in \gls{java} is necessary, but this is really not the case; \gls{java} is just used to generate the subpopulations, which could as well be done by other means.
 
 % Code: \lstinline|org.matsim.core.population|
 
 % ===================================================================================
 \subsection{Counts}
 \label{sec:extending-counts}
-By providing a counts input file and configuring the \lstinline|counts| \gls{configfile} section \gls{matsim} plots link volume comparisons between hourly simulated and counted values for motorized individual traffic \citep{Horni_unpub_IVT_2007}. 
+By providing a counts input file and configuring the \lstinline|counts| \gls{configfile} section, \gls{matsim} plots link volume comparisons between hourly simulated and counted values for motorized individual traffic \citep{Horni_unpub_IVT_2007}. 
 
 Simulating sample populations requires to scale the simulated volumes by the \lstinline|countsScaleFactor| parameter, \eg for a 10\,\% population this parameter needs to be set to~10.
 
@@ -589,7 +589,7 @@ As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario
 % ===================================================================================
 \subsection{Facilities}
 \label{sec:extending-facilities}
-Facilities are an optional element of \gls{matsim}, some \glspl{module}, such as the destination innovation module (Chapter~\ref{ch:destinationchoice}), use it, however.
+Facilities are an optional element of \gls{matsim}; some \glspl{module}, such as the destination innovation module (Chapter~\ref{ch:destinationchoice}), depend on it, however.
 If \gls{matsim} \glspl{facility} are used, the agents perform their activities in a specific \gls{facility} attached to a network link. 
 
 Facilities are included in the scenario by defining the \lstinline|facilities| \gls{configfile} section and providing a facilities file, approximately looking as follows.
@@ -606,8 +606,8 @@ Facilities are included in the scenario by defining the \lstinline|facilities| \
 </facilities>
 \end{xml}
 %
-Besides activities, that can be done in the facility, further location attributes, such as open times, can be specified. 
-A working example facilities file can be found in the \gls{matsim} directory tree in the \lstinline{examples/siouxfalls-2014} directory.
+Besides the activities that can be done in the facility, further location attributes, such as opening times, can be specified. 
+A working facilities example file can be found in the \gls{matsim} directory tree in the \lstinline{examples/siouxfalls-2014} directory.
 
 Facilities are mostly used in the \gls{matsim} Zürich group, in particular in the Zürich scenario, where facilities are derived from the Federal Enterprise Census~2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information and using NOGA-classification. Detailed technical description of facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008, Meister_unpub_IVT_2007}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
 
@@ -620,7 +620,15 @@ Facilities are mostly used in the \gls{matsim} Zürich group, in particular in t
 % ===================================================================================
 \subsection{Households}
 \label{sec:extending-households}
-Households are another optional element of \gls{matsim}. To load households into a scenario, the \lstinline|useHouseholds| parameter in the \lstinline|scenario| \gls{configfile} section must be set to true. Furthermore the \gls{configfile} must contain a section \lstinline|households|. This section should specify the paths to a file containing households (parameter \lstinline|inputFile|) and a file containing further household attributes (parameter \lstinline|inputHouseholdAttributesFile|).
+Households are another optional element of \gls{matsim}. To load households into a scenario, the %% \lstinline|useHouseholds| parameter in the \lstinline|scenario| \gls{configfile} section must be set to true. Furthermore the 
+\gls{configfile} must 
+contain a section \lstinline|households|. This section should specify the paths to a file containing households (parameter \lstinline|inputFile|) and a file containing further household attributes (parameter \lstinline|inputHouseholdAttributesFile|).\footnote{%
+%
+There used to be an additional ``useHouseholds'' config switch.  In relase 0.7.x, that switch will be gone.
+%
+}
+
+Loading the households file does not mean that it is used anywhere in the code; such functionalities needs to be switched on separately.  Currently, no such functionality can be switched on from the \gls{configfile} alone.
 
 % \ah{households file listing?} \ah{maybe next revision}
 
@@ -639,7 +647,7 @@ Vehicles are an optional element of \gls{matsim}. To load vehicles into a scenar
 \end{xml}
 needs to be added.\footnote{%
 %
-There used to be an additional ``useVehicles'' config switch.  In release 0.7.0, that switch will be gone.
+There used to be an additional ``useVehicles'' config switch.  In release 0.7.x, that switch will be gone.
 %
 }
 %% the \lstinline|useVehicles|\kaitodo{chk the useXxx switches} parameter in the \lstinline|scenario| \gls{configfile} section must be set to true. Furthermore the \gls{configfile} must contain a section \lstinline|vehicles|. This section should specify the paths to a file containing vehicles (parameter \lstinline|vehiclesFile|). 
@@ -705,7 +713,7 @@ The controler module, can be extended by \lstinline|ControlerEvents| and \lstinl
 \subsubsection{Vehicle Types and Vehicles}
 \label{sec:vehicles-in-qsim}
 
-For a variety of reasons---e.g.\ vehicle-specific emissions calculations (Chapter~\ref{ch:emissions}), or vehicle-specific maximum speeds (see below)---it becomes necessary to assign different vehicle types to different persons, modes, or trips.
+For a variety of reasons---e.g.\ vehicle-specific emissions calculations (Chapter~\ref{ch:emissions}), or vehicle-specific maximum speeds (see below)---it may become necessary to assign different vehicle types to different persons, modes, or trips.
 %
 The arguably most ``honest'' approach to vehicles in terms of micro-simulation is to generate a synthetic fleet of vehicles.  Each leg would then have to know which vehicle it wants to use.  This is indeed possible with the planned vehicle \gls{id} that \Gls{matsim} route objects can store.  This functionality is switched on by first loading an additional vehicles file (see Sec.~\ref{sec:extending-vehicles}), and then configuring the \gls{qsim} as
 \begin{xml}
@@ -719,7 +727,7 @@ The arguably most ``honest'' approach to vehicles in terms of micro-simulation i
 
 \paragraph{A Fallback for Routes that do not Contain Vehicle \glspl{id}}
 
-In the above approach, vehicular routes need to provide vehicle \glspl{id}, otherwise the \gls{qsim} will throw an exception.  Since algorithms to compute and maintain vehicle \glspl{id} during replanning are currently not well developed within \gls{matsim}, an alternative is to assume that persons use a vehicles with the same \gls{id} as the person.  This is switched on by
+In the above approach, vehicular routes need to provide vehicle \glspl{id}, otherwise the \gls{qsim} will throw an exception.  Since algorithms to compute and maintain vehicle \glspl{id} during replanning are currently not well developed within \gls{matsim}, an alternative is to assume that persons use a vehicle with the same \gls{id} as the person.  This is switched on by
 \begin{xml}
 <module name="qsim">
    <param name="usePersonIdForMissingVehicleId" value="true" />
@@ -732,7 +740,7 @@ With this configuration, it will still search for the vehicle \gls{id} in the ro
 
 \paragraph{Alternative Vehicles Sources}
 
-A default vehicles source is
+A default vehicles source is defined by
 \begin{xml}
 <module name="qsim">
    <param name="vehiclesSource" value="defaultVehicle" />
@@ -761,7 +769,7 @@ Vehicles need to be available where they are needed.  It is, for example, not po
    [...]
 </module>
 \end{xml}
-This means that if a necessary vehicle is not available at the location where it is needed by the traveler, the \gls{qsim} throws an exception and aborts.  The idea here is that the synthetic travellers should have within-day replanning strategies (see Sec.~\ref{ch:withinday}) to cope with unexpectedly unavailable vehicles, and any attempt to use an unavailable vehicle points to an error in the behavioral logic of the driver.
+This means that if a necessary vehicle is not available at the location where it is needed by the traveler, the \gls{qsim} throws an exception and aborts.  The idea here is that such synthetic travellers should have within-day replanning strategies (see Sec.~\ref{ch:withinday}) to cope with unexpectedly unavailable vehicles, and any attempt to use an unavailable vehicle points to an error in the behavioral logic of the driver.
 
 In many standard situations, the above behavior will be too strict.  For example, a vehicle may be shared between family members, but one member will be late in returning a vehicle.  For such situations, 
 \begin{xml}
@@ -842,7 +850,7 @@ Both with vehicle behavior of type \lstinline{exception} and of type \lstinline{
 % ..............................
 \paragraph{PassingQ} 
 
-Once various mode vehicle types have different maximum speeds, the standard \gls{qsim}, even with multiple main modes, is no longer sufficient, since it uses \gls{fifo} as the queuing discipline, meaning that fast vehicles cannot pass slower vehicles. Here, the so-called \lstinline|Passing(Vehicle)Q| can be used instead.  It replaces the \gls{fifo} sorting criterion -- where vehicles are sorted by the sequence in which they arrive on the link -- by a sorting employing the so-called earliest link exit time, computed from link enter time and freespeed travel time.  Now, using the minimum of vehicle and link maximum speeds, the freespeed travel time can be differentiated between vehicles, allowing fast vehicles to obtain an earlier link exit time, even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \citet{AgarwalEtcMixedTraffic}.
+Once various vehicle have different maximum speeds, the standard \gls{qsim}, even with multiple main modes, is no longer sufficient, since it uses \gls{fifo} as the queuing discipline, meaning that fast vehicles cannot pass slower vehicles. Here, the so-called \lstinline|Passing(Vehicle)Q| can be used instead.  It replaces the \gls{fifo} sorting criterion -- where vehicles are sorted by the sequence in which they arrive on the link -- by a sorting employing the so-called earliest link exit time, computed from link enter time and freespeed travel time.  Now, using the minimum of vehicle and link maximum speeds, the freespeed travel time can be differentiated between vehicles, allowing fast vehicles to obtain an earlier link exit time, even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \citet{AgarwalEtcMixedTraffic}.
 
 This option can be enabled by using
 \begin{xml}
@@ -857,10 +865,10 @@ in the \lstinline{qsim} section of the \gls{configfile}.
 \subsubsection{Other}
 
 The simulation is able to handle time-variant networks \citep{LaemmelGretherNagel2009TimeDependentNetworks}, within-day replanning \citep[][see Chapter~\ref{ch:withinday}]{Dobler_TechRep_IVT_2009}, and traffic lights \citep[][see Chapter~\ref{ch:signalslanes}]{Neumann_MastersThesis_2008,GretherNeumannNagel2011TrafficLightsMatsim,GretherNeumannNagel2012SignalsQueueModel}).
-
+%
 %% Section~\ref{sec:using-othermodesthancar} details the necessary steps to simulate a multi-modal scenario; Section~\ref{sec:using-qsim-multimodal} therein focuses on \gls{qsim}. 
-
-An earlier \gls{multimodal} approach targeted at overcoming the \gls{teleportation} estimates of non-motorized modes, particularly focused on pedestrians, is presented in Chapter~\ref{ch:multimodalsim}.
+%
+An earlier \gls{multimodal} approach, targeted at overcoming the \gls{teleportation} estimates of non-motorized modes, and particularly focused on pedestrians, is presented in Chapter~\ref{ch:multimodalsim}.
 
 % --------------------------------------
 %\subsubsection{Multi-Modal Simulation With QSim}
