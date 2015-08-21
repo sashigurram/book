@@ -207,25 +207,25 @@ The following material is an abridged and edited version of \citet{NagelFloetter
 %\section{Equilibrium models and day-to-day replanning}
 %\label{sec:equil-models-day}
 
-The traffic assignment problem, no matter if macroscopic or
+The traffic assignment problem, whether macroscopic or
 microscopic, static or dynamic, trip-based or agent-based, is to
-identify a situation in which travel demand and travel supply (network
-conditions) are consistent with each other. The travel demand results
-from a demand model that reacts to the conditions in the network, and
-the network conditions are the output of a supply model
-(network loading model) that takes travel demand as its input. That
-is, a solution of the traffic assignment problem describes an 
+identify a situation where travel demand and travel supply (network
+conditions) are consistent with each other. Travel demand results
+from a demand model that reacts to conditions in the network; these 
+ are the output of a supply model
+(network loading model) using travel demand as its input. 
+Solution of the traffic assignment problem describes an 
 equilibrium between travel demand and travel supply.
 
-The arguably most intuitive mathematical formulation of this problem is 
-in terms of a fixed point: Find a demand pattern that generates network 
-conditions that in turn cause the same demand pattern to re-appear. This 
-formulation is operationally important because it motivates a straightforward 
+Possibly, the most intuitive mathematical formulation of this problem is 
+defined by a fixed point: find a demand pattern generating network 
+conditions that, in turn, cause the same demand pattern to re-appear. This 
+formulation is operationally important because it encourages a straightforward 
 way of calculating an equilibrium by alternately evaluating the demand 
-model and the supply model. If these iterations stabilize then a fixed 
+model and the supply model. If these iterations stabilize, a fixed 
 point is attained that solves the traffic assignment problem.
 
-The remainder of this chapter casts \gls{matsim} into this \gls{dta} framework.
+The remainder of this chapter places \gls{matsim} into this \gls{dta} framework.
 Section~\ref{sec:agent-based-DTA-from-routes-to-agents} starts out from the
 static and macroscopic route flow assignment and incrementally enriches this 
 formulation into a dynamic and fully disaggregate agent-based assignment problem.
@@ -237,12 +237,12 @@ the presentation.
 
 \section{\label{sec:agent-based-DTA-from-routes-to-agents}From Route Swapping to Agent Plan Choice}
 
-In the following, an increasingly comprehensive specification of the traffic 
-assignment problem is given that starts from the classical static user 
-equilibrium model and ends with a fully dynamic model that captures 
+The following details an increasingly comprehensive specification of the traffic 
+assignment problem, starting from the classical static user 
+equilibrium model and ending with a fully dynamic model that captures 
 arbitrary travel demand dimensions at the individual level. Computationally, 
 the iterative fixed point solution procedure is carried throughout the 
-entire development. Not by chance, this solution method also has a behavioral 
+entire development. Deliberately, this solution method also has a behavioral 
 interpretation as a model of day-to-day replanning; see also Chapter~\ref{sec:transients-vs-learning}.
 
 We start by considering route assignment only. The generalization towards further 
@@ -250,12 +250,12 @@ choice dimensions will turn out to be a natural generalization of the route assi
 
 \subsection{\label{static-macro-assignment}Static Traffic Assignment}
 
-Consider a network of nodes and links, where some or all of the nodes are demand origins, 
+Consider a network of nodes and links, where some, or all, of the nodes are demand origins, 
 denoted by $o$, and/or demand destinations, denoted by $d$. 
 The constant demand $q^{od}$ in a \gls{od} relation $od$ splits up among a set of routes $K^{od}$. 
 Denote the flow on route $k\in K^{od}$ by $r^{od}_k$, where $\sum_{k\in K^{od}} r^{od}_k = q^{od}$.
 
-Most route assignment models either specify a \gls{ue} (Nash, Wardrop) 
+Most route assignment models either specify a \gls{ue} (Nash, Wardrop) ,
 or a \gls{sue}.  
 A \gls{ue} postulates that $r^{od}_k$ is zero for every route $k$ of non-minimal cost \citep{Wardrop_PICE_1952}:
 \begin{eqnarray}
@@ -264,9 +264,9 @@ c(k)>\min_{s\in K^{od}}c(s) & \Rightarrow & r^{od}_{k}=0
 \end{eqnarray}
 where $c(k)$ is the cost (typically delay) on route $k$.
  
-An alternative, often-used approach is to distribute the demand onto
+An alternative, frequently-used approach is to distribute the demand onto
 the routes such that a \gls{sue} is
-achieved where users have different perceptions of route cost and
+achieved, where users have different perceptions of route cost and
 every user takes the route of \emph{perceived} minimal cost \citep{DaganzoSheffi_TransScience_1977}.
 Mathematically, this means that the route flows fulfill some distribution
 \begin{equation}
@@ -275,7 +275,7 @@ r^{od}_k = P^{od}_k(c(x(\{r^{od}_k\}))) \cdot q^{od}
 \end{equation}
 where the route splits $P^{od}_k$ are a function of the network costs
 $c(x)$, which depend on the network conditions $x$,
-which in turn depend on all route flows $\{r^{od}_k\}$.
+which, in turn, depend on all route flows $\{r^{od}_k\}$.
 
 In either case, the model needs to be solved iteratively, 
 which typically involves the following steps \citep{Sheffi_1985}:
@@ -309,45 +309,44 @@ which typically involves the following steps \citep{Sheffi_1985}:
 
 \end{algorithm}
 
-Considering the network loading to be more on the ``physical'' side of the system, 
+Defining the network loading as more on the ``physical'' side of the system, 
 the behaviorally relevant steps are choice set generation and choice \citep{bowman-1998}.
 
 \textbf{Choice set generation:} Often, the new routes are best paths
 based on the last iteration (``best reply'' or ``best response'' choice set generation).
 The routes are generated within the iterations because an a priori
-enumeration of all possible routes is computationally infeasible.
+enumeration of all possible routes is computationally unfeasible.
 
-\textbf{Choice:} Usually, demand is shifted among the routes in a way
-that improves consistency with the route choice model, assuming
-in the simplest case
-constant network delays: In a \gls{ue}, the flow on the currently best routes
+\textbf{Choice:} Usually, demand is shifted among the routes 
+to improve consistency with the route choice model, assuming---in the simplest case---
+constant network delays: in a \gls{ue}, the flow on the current best routes
 is increased at the cost of the other route flows (``best reply'' or ``best response''
-choice), whereas for a \gls{sue} the flows are shifted towards the desired
+choice), whereas for a \gls{sue},  flows are shifted towards the desired
 route choice distribution \citep[often a version of multinomial logit,
   e.g.,][]{dial-1971, cascetta-1996, ben-akiva-1999}. For
-stability reasons, this shift is typically realized in some gradual
-way that dampens the dynamics of the iterations. See below for more
+stability reasons, this shift is typically realized in a gradual
+way that dampens iteration dynamics. See below for more
 discussion on convergence issues. 
 
 The \textbf{iterations} are repeated until some stopping criterion is
-fulfilled that indicates that a fixed point is attained.
+fulfilled, indicating that a fixed point is attained.
 %Optimally, the iterations reach a fixed point. 
 In the best reply situation, the fixed point implies that no shift
 between routes takes place, \ie what comes out as the best reply to
-the previous iteration is either the same or at least of the same
-performance as what was used in the previous iteration.
-Since in this situation no \gls{od} pair can unilaterally improve
-by switching routes, this means that the system is at a Nash
+the previous iteration is either the same, or at least of the same
+performance, as what was used in the previous iteration.
+Since, in this situation, no \gls{od} pair can unilaterally improve
+by switching routes, the system is at a Nash
 equilbrium \citep[e.g.,][]{HofbSigmBook}.
 In the \gls{sue} situation, the fixed point means that a route flow pattern 
 $\{r^{od}_k\}$ is found that leads to exactly those network conditions the
 travelers (the \gls{od} flows) perceived when choosing their routes,
-giving nobody an incentive to re-route.
-
-Behavioral dimensions beyond route choice that can be captured by a
-static model are destination choice and elasticity in the
-demand. However, no technical generality is lost when discussing only
-route choice because both additional choice dimensions can be
+giving no incentive to re-route.
+Destination choice and elasticity in the demand are behavioral dimensions
+beyond route choice that can be captured by a
+static model.
+However, no technical generality is lost when discussing only
+route choice; both additional choice dimensions can be
 rephrased as generalized routing problems on an extended network
 \citep[``supernetwork''; see, e.g.,][]{Sheffi_1985,NagurneyEtcSupernetworks}. 
 %% \todoKai{Ich meine mich
@@ -357,13 +356,13 @@ rephrased as generalized routing problems on an extended network
 
 \subsection{Dynamic Traffic Assignment}
 
-As is well known, the above also works for \emph{dynamic} traffic
-assignment \citep[DTA; see][]{peeta-2001}, where both the demand and the 
-network conditions are now time-dependent and the time-dependent travel 
-times in the network now define a physically meaningful progression of 
+The process above also works for \emph{dynamic} traffic
+assignment \citep[DTA; see][]{peeta-2001}, where both demand and
+network conditions are time-dependent and the time-dependent travel 
+times in the network define a physically meaningful progression of 
 a demand unit through the network. 
 
-The structure of the algorithm does not change. The individual steps now look as follows:
+The algorithm structure does not change. The individual steps now look as follows:
 \begin{algorithm}[H]
 \label{dynamic-macro-routes}
 
@@ -380,7 +379,7 @@ The structure of the algorithm does not change. The individual steps now look as
 
 \item \textbf{Network loading:} Load all demand items on the network
   according to their departure times, let them follow their
-  routes, and obtain network delays (congestion).
+  routes and obtain network delays (congestion).
 
 \item \textbf{Choice set generation:} Compute new routes based on the
   network delays.
@@ -396,15 +395,15 @@ The structure of the algorithm does not change. The individual steps now look as
 
 Once more, \emph{if} the new routes are best replies (\ie best paths
 based on the last iteration), \emph{if} demand is shifted towards
-these new routes, and \emph{if} these iterations reach a fixed point,
-then this is a dynamic \gls{ue} since the best reply dynamics means that no
+these new routes and \emph{if} these iterations reach a fixed point;
+this is then a dynamic \gls{ue}, since best reply dynamics mean that no
 traveler (no \gls{od} flow) can unilaterally deviate to a better route.  The
 \gls{sue} interpretation carries over in a similar way.
 
-Destination choice and elasticity in the demand apply naturally to 
+Destination choice and elasticity in demand apply naturally to 
 the dynamic case as well. Beyond this, the dynamic setting also enables 
 the modeling of departure time choice. Again, the sole consideration 
-of route choice does at least technically not constitute a limitation 
+of route choice does, at least technically, not constitute a limitation, 
 because departure time choice can be translated into route choice in a 
 time-expanded version of the original network \citep{vanderzijpp-2001}.
 
@@ -412,25 +411,25 @@ time-expanded version of the original network \citep{vanderzijpp-2001}.
 \subsection{Individual Travelers}
 \label{sec:indiv-trav}
 
-Both in the static and in the dynamic case, it is possible to
+In both the static and dynamic case, it is possible to
 re-interpret the algorithm in terms of individual travelers.  
 %
-In the static case, for every \gls{od} pair one needs to
-assume a steady ($=$ constant) flow of travelers that enter the
+In the static case, for every \gls{od} pair, one needs to
+assume a steady ($=$ constant) flow of travelers entering the
 network at the origin at a constant rate, corresponding to that \gls{od} flow.
 A solution to the static assignment problem corresponds to the
-distribution of the different travelers onto possibly different paths.
+distribution of different travelers onto possibly different paths.
 
 In the dynamic case, one needs to generate the appropriate number of
-travelers for every \gls{od} pair and every time slot, and distribute them
+travelers for every \gls{od} pair and every time slot and distribute them
 across the time slot.  From then on, the triple (origin, destination,
-departure time) is fixed for every simulated traveler, and its goal is
+departure time) is fixed for every simulated traveler; its goal is
 to find an appropriate path.  
 %
 %%\yyyy{"The variable $r_k^n$ will denote the route if the $n$th traveller uses the $k$th route." -- I moved this where it is used first (subsection on particle SUE). Gunnar}
 %ok. kai
 %
-Arguably, in the dynamic case this re-interpretation is behaviorally
+Arguably, in the dynamic case, this re-interpretation is behaviorally
 more plausible.
 
 In a trip-based context, there are two major motivations to go from 
@@ -438,16 +437,16 @@ continuous flows to individual travelers:
 \begin{itemize}
 
 \item Traffic flow dynamics in complex network infrastructures are 
-difficult to model in terms of continous flows 
-\citep[e.g.,][]{floetteroed-2011a} but are relatively straightforward 
-to simulate at the level of individual vehicles
+difficult to model as continous flows 
+\citep[e.g.,][]{floetteroed-2011a}, but are relatively straightforward 
+to simulate at the individual vehicle level 
 \citep[][]{aimsun-www,paramics-www,transmodeler-www,vissim-www,DynusT-nat,zhou-2014}. 
-Disaggregating an \gls{od} matrix into individual trip-makers allows to 
-assign one vehicle to every trip-maker in the microscopic traffic flow 
+Disaggregating an \gls{od} matrix into individual trip-makers allows  
+assignment of one vehicle to every trip-maker in the microscopic traffic flow 
 simulation.
 
 \item It is computationally inefficient to capture demand heterogeneity 
-through a large number of commodity flows, whereas the sampling of 
+through a large number of commodity flows, but the sampling of 
 trip-makers with different characteristics is fairly straightforward. 
 For example, every vehicle can be given an individual route to its individual 
 destination.
@@ -475,24 +474,24 @@ destination.
 %
 %Habe den Eindruck, dass obiger Absatz nicht mehr nötig ist.  25oct09, kai
 
-For a finite population of heterogeneous travelers, every single
-traveler constitutes an integer commodity, and the \textbf{choice}
-step hence needs to be changed from ``gradually shift the route flows
-towards something that is consistent with the behavioral model'' into
+For a finite population of heterogeneous travelers, each
+traveler constitutes an integer commodity and the \textbf{choice}
+step thus must be changed from ``gradually shift the route flows
+towards something consistent with the behavioral model'' into
 ``for a \emph{fraction} of travelers, assign a \emph{single}
 behaviorally plausible route to each of these travelers''. The gradual shift that
-helps to stabilize the iterations in the continuous assignment carries
-over here to an equally stabilizing ``inert shift'' in that not all travelers
-change their routes at once. This is a consistent reformulation: If
-one reduces the traveler size to $\varepsilon \rightarrow 0$ and
+helps stabilize iterations in the continuous assignment carries
+over here to an equally stabilizing ``inert shift''; not all travelers
+change their routes at once. This is a consistent reformulation; if
+one reduces the traveler number to $\varepsilon \rightarrow 0$ and
 increases the number of travelers by a factor of $1/\varepsilon$,
 a 10\,\% chance of
 changing routes in the disaggregate case carries over to shifting 10\,\%
 of all flows to new routes in the aggregate case (``\textbf{continuous
 limit}'').
 
-Apart from this, the iterations do not look much different from what
-has been said before:
+Apart from this, the iterations do not look much different from 
+those previously:
 
 \begin{algorithm}[H]
 \label{dynamic-micro-routes}
@@ -510,13 +509,13 @@ has been said before:
 
 \item \textbf{Network loading:} Load all travelers on the network
   according to their departure times, let them follow their
-  routes, and obtain network delays (congestion).
+  routes and obtain network delays (congestion).
 
 \item \textbf{Choice set generation:} Compute new routes based on the
   network delays.
 
 \item \textbf{Choice:} Assign every traveler to a route 
-  (which can be the previously chosen one) based on the network delays.
+  (which can be the previously chosen one) based on network delays.
 
 \end{enumerate} % \item \textbf{Iterations:} Goto 2.
 
@@ -524,9 +523,9 @@ has been said before:
 
 \end{algorithm}
 
-The notions of \gls{ue} and \gls{sue} carry over to the disaggregate case if the notion of an \gls{od} pair (or a commodity) is replaced by that of an individual \textbf{particle} ($=$ microscopic traveler).
+ \gls{ue} and \gls{sue} notions carry over to the disaggregate case if the notion of an \gls{od} pair (or a commodity) is replaced by  an individual \textbf{particle} ($=$ microscopic traveler).
 
-A \textbf{particle \gls{ue}} may be defined as a system state where no
+A \textbf{particle \gls{ue}} may be defined as a system state, where no
 particle can unilaterally improve itself. 
 %
 This definition is consistent with definitions in game theory, which
@@ -558,11 +557,11 @@ See \url{http://en.wikipedia.org/wiki/Linear_programming_relaxation}.
 %% \kai{Meiner Erinnerung nach stammt der NP-hard-Satz ursprünglich von mir.  Du hattest dann wohl nach einer Quelle gesucht und dabei die wikipedia-Aussage gefunden. -- Beim genauen Lesen ist das aber eigentlich kein Widerspruch: linear programming in real variables is non-exponential; wenn die Lösungen nur noch integer sein dürfen, wird es NP-hard. -- Also fehlt nach wie vor nur noch die Referenz.  Gunnar, wenn Du soweit einverstanden bist, dann schreib' bitte kurz ``ok''; vielleicht finden wir dann noch eine Referenz.}
 %% \gunnar{OK. Karmarkar scheint hier die Schl\"usselreferenz zu sein:}
 
-As is well known, there may be situations where mixed strategy
-equilibria exist; these are equilibria where the participants draw
+It is common knowledge that situations may occur where mixed strategy
+equilibria exist; these are equilibria, where participants draw
 between different fixed strategies randomly.  This implies that the
 opponents need to interpret the outcome of the game probabilistically:
-Even if they themselves play fixed strategies, they need to maximize
+even if they themselves play fixed strategies, they need to maximize
 some expectation value.
 
 %Note that there may be
@@ -588,18 +587,17 @@ that indicates if traveler $n$ takes route $k$ or not.
 %
 This implies that the individual-level route flows $r^{n}_k$ 
 %that define these probabilities 
-are now random 0/1 variables, and consequently
-the cost structure based on which the individual choices are made
-becomes probabilistic as well
+are now random 0/1 variables; consequently,
+the cost structure---based on individual choices made---becomes probabilistic as well
 \citep[][]{balijepalli-2007, cascetta-1991, cascetta-1989}.
 
 A particle \gls{sue} is defined as a system state where travelers draw routes from a
-stationary choice distribution such that the resulting distribution of
+stationary choice distribution; the resulting distribution of
 traffic conditions re-generates that choice distribution.
 
-An operational specification of a particle \gls{sue} results if one
-assumes that travelers filter out the random fluctuations in what
-they observe and base their decisions only on the average route
+An operational particle specification \gls{sue} results if one
+assumes that travelers filter out the random fluctuations from what
+they observe and base their decisions only on average route
 costs:
 \begin{equation}
 \label{eq:sue-with-expectation}
@@ -608,9 +606,9 @@ P_n(k) = P_n\left( k \mid \text{E} \{ c( x( \{r^{n}_k\}) ) \} \right)
 where $P_n(k)$ now is the probability that trip-maker $n$
 selects route $k$ and $\text{E}\{\cdot\}$ denotes the expectation.
 %
-This approach is of some generality in that it can be shown that the
-choice distributions based on expected network conditions coincide up
-to first order with the stationary choice distributions based on
+This approach incorporates some generality; it can be shown that 
+choice distributions based on expected network conditions coincide, up
+to first order, with the stationary choice distributions based on
 fluctuating network conditions \citep[][]{floetteroed-2010e}.
 
 %For a \textbf{particle SUE}, there are two aspects:
@@ -639,8 +637,8 @@ fluctuating network conditions \citep[][]{floetteroed-2010e}.
 %where $x(.)$ is the network loading.
 
 The resulting route flows $r_k^{n}$
-represent not only the mean network conditions
-but also their variability due to the individual-level
+represent not only mean network conditions,
+but also their variability, due to individual-level
 route sampling.
 Alternatively, one could use the particles merely as a 
 discretization scheme of continuous
@@ -657,7 +655,7 @@ the subsequently developed behavioral model type.
 
 No new behavioral dimensions are added when going from commodity
 flows to particles. However, the microscopic approach allows
-to simulate greater behavioral variability within the given
+simulation of greater behavioral variability within the given
 choice dimensions because it circumvents the computational
 difficulties of tracking a large number of commodity flows.  This will
 be discussed in more detail in Section~\ref{sec:extend-route-assignm}.
@@ -679,44 +677,44 @@ With stochastic network loading, given the same input, one obtains a
 \emph{distribution} of vectors of network costs.
 
 The macroscopic \gls{sue} approach of Section~\ref{static-macro-assignment}
-assumes a distribution of choices but
+assumes a distribution of choices, but
 converts choice probabilities into choice fractions before starting
-the network loading.  That is, one effectively does 
+the network loading.  That is, one effectively performs 
 $\text{NetworkLoading}( \text{E}\{ \text{Choices} \})$.  
-It is, however, by no means clear that this is the same as 
+It is, however, not clear that this is the same as 
 $\text{E}\{ \text{NetworkLoading}( \text{Choices} ) \}$; 
 in fact, with a non-linear network loading, even when it is deterministic,
 % it is to be expected that 
 the two are different \citep{cascetta-1989}. Any Monte Carlo simulation of
 the particle \gls{sue} makes this problem explicit: If, at the choice level,
-one generates draws from the choice distribution, it effectively makes
+one generates draws from the choice distribution, it makes
 sense to \emph{first} perform the network loading and \emph{then} do
 the averaging, rather than the other way around.
 This is especially true if day-to-day replanning is modeled where
-the draws from the choice distribution have a
+draws from the choice distribution have a
 behavioral interpretation as the actual choices of the trip makers
-in a given day (but see also Chapter~\ref{sec:transients-vs-learning}).
+on a given day (but see also Chapter~\ref{sec:transients-vs-learning}).
 %\yyyy{Streng genommen brauchen wir hierfuer die definition von day-to-day replanning,
 %allerdings finde ich es recht selbsterklaerend wie es jetzt ist. Gunnar}
 %This is especially
 %true if one assumes that the draws from the choice distribution have a
 %behavioral interpretation.
 
-This, however, makes the output from the network loading effectively
-stochastic since the input to the network loading is stochastic.  In
+This, however, makes output from the network loading effectively
+stochastic, since the input to the network loading is stochastic.  In
 consequence, any behavioral model that uses the traffic conditions as
 input needs to deal with the issue that these inputs are stochastic.
-\emph{For that reason, using a stochastic instead of a deterministic network
-loading makes little difference.}  Being able to
-make the network loading stochastic makes the implementation of
-certain network loading models simpler.  
+\emph{Thus, using a stochastic, instead of a deterministic, network
+loading makes little difference.}  
+Making network loading stochastic simplifies the implementation of
+certain network loading models.  
 %\todoKai{Implementation of what models becomes easier?}
 In particular, randomness is a method to
 resolve fractional behavior in a model with discrete particles.
 
-With stochastic network loading, additional aspects
-of the iterative dynamics need to be defined.  For example, a ``best
-reply'' could be against the last stochastic realization or against
+With stochastic network loading, additional iterative dynamics aspects
+need to be defined.  For example, a ``best
+reply'' could be against the last stochastic realization, or against
 some average.
 
 %%\todoKai{Diesen Absatz verstehe ich nicht. "It makes sense to.." ..for
@@ -738,9 +736,9 @@ some average.
 Given the above behavioral interpretation, it is now straightforward
 to extend the assignment loop to other choice dimensions.  For
 example, the ``best reply'' can include optimal departure times
-\citep[e.g.,][]{METROPOLIS,EttemaEtcRoutes-timesIatbr03} or optimal mode
+\citep[e.g.,][]{METROPOLIS,EttemaEtcRoutes-timesIatbr03}, or optimal mode
 choice.  This becomes easiest to interpret (and, in our view, most
-powerful in practice) if one moves from the concept of ``trips'' to
+powerful in practice), if one moves from the concept of ``trips'' to
 daily plans.
 % One way to denote daily plans is using an
 % XML notation \citep[][]{xml-www}:
@@ -758,20 +756,20 @@ daily plans.
 for an
 example. However, different from \gls{dta}, all activities are chained together.
 
-This widens the behavioral modeling scope dramatically in that all
+This widens the behavioral modeling scope dramatically; all
 choice dimensions of a daily travel plan can now be jointly
-equilibrated. This increases the number of degrees of freedom that
-need to be modeled, but it also brings a set of natural constraints
+equilibrated. This increases the degrees of freedom that
+need to be modeled, but also carries a set of natural constraints
 along, which again reduce the solution space. Most notably, the
-destination of one trip must be the origin of the subsequent trip of
-an individual, and an agent (synthetic traveler) must arrive before it departs.
+destination of one trip must be the origin of an individual's subsequent trip 
+and an agent (synthetic traveler) must arrive before it departs.
 Also, constraints such as H\"agerstrand's space-time prisms
 \citep{Haegerstrand1970WhatAboutPeople} are
-automatically enforced when the agents eventually need
+automatically enforced when the agents need
 to return to their starting locations.
 %\todoKai{Cite space-time prisms if applicable.}
 
-There is not much of a conceptual difference between the network loading of
+There is so significant conceptual difference between the network loading of
 a route-based and a plan-based model.
 %\yyyy{simulation == network loading? Dann wuerde ich hier net.loading schreiben. Gunnar}
 %%Mathematically, this may be seen
@@ -787,24 +785,24 @@ that execute complete plans.
 
 An \textbf{agent-based \gls{ue}} implies individual travelers
 (Section~\ref{sec:indiv-trav}), additional choice dimensions
-(Section~\ref{sec:extend-route-assignm}), and possibly stochastic network
+(Section~\ref{sec:extend-route-assignm}) and possible stochastic network
 loading (Section~\ref{sec:stoch-netw-load}).  Corresponding to the
 particle \gls{ue}, it is defined as a system state where no agent can
 unilaterally improve its plan.
 
 An \textbf{agent-based \gls{sue}} implies individual travelers
 (Section~\ref{sec:indiv-trav}), additional choice dimensions
-(Section~\ref{sec:extend-route-assignm}), and normally stochastic network
+(Section~\ref{sec:extend-route-assignm}), and, normally, stochastic network
 loading (Section~\ref{sec:stoch-netw-load}).  Corresponding to the
 particle \gls{sue}, it is defined as a system state where agents draw from a
-stationary choice distribution such that the resulting distribution of
+stationary choice distribution; the resulting distribution of
 traffic conditions re-generates that choice distribution.
 %\yyyy{This formulation should appear in the particle SUE section. Gunnar}
 
-If the iterations aim at an agent-based \gls{ue}, then choice set generation
-and choice should implement a ``best reply'' logic in that in some
-sense optimal plans are calculated and assigned to the agents. This
-alone is by no means an easy task.  
+If  iterations aim at an agent-based \gls{ue}, then choice set generation
+and choice should implement a ``best reply'' logic; some
+'optimal' plans are calculated and assigned to the agents. This
+is emphatically not an easy task.  
 
 The disaggregate counterpiece of a
 \gls{sue} implies that every agent considers a whole choice set of (possibly
@@ -838,27 +836,27 @@ for arbitrary behavioral dimensions.
 
 The conceptual validity of the agent-based traffic assignment model is fairly intuitive. 
 However, since it comes with a substantial computational burden of solving the model, 
-it brings along entirely new challenges on the simulation side.
+it presents entirely new challenges on the simulation side.
 
-On the demand side, there is in particular the combinatorial number of choice alternatives that 
-needs to be accounted for. For example, random utility models rely on an a-priori enumeration 
-of a choice set that is representative for the options every single traveler considers when 
-making a choice \citep[][]{BenAkivaLerman_1985}. This choice set is huge in the case of an agent-based 
+On the demand side, there is, in particular, the combinatorial number of choice alternatives that 
+must be considered. For example, random utility models rely on an a-priori enumeration 
+of a choice set that represents options each traveler considers when 
+making a choice \citep[][]{BenAkivaLerman_1985}. This choice set is huge in an agent-based 
 simulation \citep[][]{bowman-1998}. While there are sampling-based approaches to the modeling 
 of large choice sets that aim at reducing this computational burden, they have not yet been 
 carried over to the modeling of all-day-plan choices \citep[][]{BenAkivaLerman_1985, FrejingerEtAl_TransResB_2009, 
 floetteroed-2012b}.
 See also Chapter~\ref{ch:discretechoice}.
 
-As long as household interactions are not accounted for, the demand modeling problem can be 
-decomposed by agent once the network conditions are given, which is of great computational advantage. 
-The supply model, on the other hand, deals with congestion, which is by definition a result of the 
-physical interactions of all travelers. Modeling large urban areas requires to deal with millions of travelers, 
-and an operational supply simulation must hence be able to load all of these travelers with 
-reasonable computation time on the network. 
+As long as household interactions are not included, the demand modeling problem can be 
+deconstructed by agents once network conditions are given---a great computational advantage. 
+The supply model, on the other hand, deals with congestion, which is, by definition, a result of all travelers' 
+physical interactions. Modeling large urban areas requires dealing with millions of travelers 
+and an operational supply simulation must be able to load all of these travelers on the network in 
+reasonable computation time . 
 % This \emph{is} now possible if one carefully balances the model resolution against computational considerations.
 
-The following sections describe how these problems can be resolved. Concrete instances
+The following sections describe solutions for these problems. Concrete examples
 of much of this material are implemented within \gls{matsim}.
 % The presentation draws heavily from the design of the \gls{matsim}
 % simulation system \citep{RaneyNagel2006traf-framework, matsim}, in which most of the the outlined 
@@ -868,7 +866,7 @@ of much of this material are implemented within \gls{matsim}.
 \subsection{Agent-Based UE; One Plan per Traveler}
 \label{sec:agent-based-ue}
 
-The simulation of an agent-based \gls{ue} is possible by the following 
+The simulation of an agent-based \gls{ue} is possible through the following 
 implementation of the behavioral elements.
 
 %\begin{itemize}
@@ -887,7 +885,7 @@ implementation of the behavioral elements.
 
 \textbf{Choice set generation:} For every agent,
   generate what would have been best in the previous iteration.
-  This does not only concern the route,
+  This does not concern just the route,
   but all considered choice dimensions, \eg departure times and/or
   mode choice. 
 %% \todoNextRevision{transims?}
@@ -897,32 +895,32 @@ implementation of the behavioral elements.
 
 The choice set generation implements a ``best reply'' dynamic.
 %\todoNextRevision{transims?} 
-This now requires to identify an optimal all-day plan for given network conditions. 
+This now requires identification of an optimal all-day plan for given network conditions. 
 While the calculation of time-dependent shortest paths for \gls{ue} route assignment is 
-computationally manageable, the identification of optimal plans is far more difficult 
+computationally manageable, identification of optimal plans is far more difficult 
 \citep[][]{recker-2001}. 
-This constitutes an important technical motivation to switch to an agent-based \gls{sue}, 
+This is an important technical motivation to switch to an agent-based \gls{sue}, 
 where optimality is not required (see below).
 
 Even in the manageable cases of, \eg shortest paths, 
 %in computational practice 
 any best reply computation is an approximation.  
 %For example,
-Time-dependent routing algorithms need to know every link's travel
+Time-dependent routing algorithms require knowledge of every link's travel
 time as a function of the link entrance time.  In computational
-practice, this information exists only in some average and
-interpolated way.  For that reason, such computations become more
-robust if the performance of plans is directly taken from the network
-loading instead of relying on the prediction of the best reply
-computation, and an agent sticks with a new plan only if it
-\emph{performs} better than its previous plan
-\citep{RaneyNagel2004agdb}.  However, in order to keep the run times
-manageable, in computational practice multiple agents need to make
+practice, this information exists only in an average, 
+interpolated way. Thus, such computations become more
+robust if plan performance is directly taken directly from the network
+loading, instead of relying on the best reply computation prediction;  
+an agent sticks with a new plan only if it
+\emph{performs} better than the previous plan
+\citep{RaneyNagel2004agdb}.  However, to keep run times
+manageable in computational practice, multiple agents must make
 such trial-and-error moves simultaneously.  This is, therefore, not an
 exact best reply algorithm.
 
 For the choice, a useful approach is to make the switching probability from
-the current to the best reply solution proportional to the
+current to best reply solution proportional to the
 expected improvement, \ie
 \[
 P(\text{old} \to \text{best}) = \min[ 1, \mu \cdot (S_{best} - S_{old}) ]
@@ -933,14 +931,13 @@ P(\text{old} \to \text{best}) = \min[ 1, \mu \cdot (S_{best} - S_{old}) ]
 where $S_\text{best}$ and $S_\text{old}$ are the (expected) scores of the best reply
 and the old plan, respectively, and the $\min$ takes care of the fact that a probability should not be larger than one. %% \kai{@Gunnar: Habe jetzt die proportionale Form direkt genommen; sehe im Moment nicht, was wir gewinnen, wenn wir da einen Schnörkel einbauen.}
 %% \gunnar{Ja. Vielleicht noch ``where a 
-Truncation at zero is not 
-  necessary because the term $S_{best} - S_{old}$ cannot become negative.
+Truncation at zero is not necessary because the term $S_{best} - S_{old}$ cannot become negative.
 %}
 %% \gunnar{Why give this particular functional form?} \kai{Das hat was damit zu tun, dass die lineare Form, EQ~(\ref{eq:10}), oft in genetischen Algorithmen verwendet wird, und ich zeigen wollte, dass alle sinnvollen funktionalen Formen linearisiert identisch sind und man daher keine Religion draus machen sollte. -- Aber praktisch gesehen verwendet \gls{matsim} $P(old \to new) \sim 0.01 \cdot \exp( 0.5 \cdot \beta \cdot (S_{new} - S_{old})$ (leider immer noch ohne renormierende Division, wie von Dir vor langer Zeit angemahnt), und von daher gesehen sollten wir hier wohl auch eher dies verwenden.  Bitte umschreiben, oder wenigstens ein kurzes ``ok'', dann mache ich es, sobald ich dazu komme.}
 %% \gunnar{OK, aber das solltest dann Du so formulieren wie Du es gerne h\"attest.}
 Chapter~\ref{ch:scoring} %\ref{sec:adjust-impr-funct}
-gives an example of how a scoring function for all-day plans could
-look like.
+gives an example of what a scoring function for all-day plans could
+look like:
 %% For a small difference between $S_\text{old}$ and $S_\text{new}$,
 %% this can be linearly approximated by
 %% \begin{equation}
@@ -954,22 +951,22 @@ Note how
 the decreasing switching \emph{fraction} of the continuous case is
 replaced by a decreasing switching \emph{probability} (leading to a switching \emph{rate}).
 
-Clearly, any fixed point of such iterations is a \gls{ue} since at the
-fixed point no switching takes place, meaning that the best reply plan
+Clearly, any fixed point of such iterations is a \gls{ue}, since, at the
+fixed point, no switching takes place, meaning that the best reply plan
 has the same score as the already existing plan.  
 %
-The stability of the fixed point depends on the slope of the switching
-rate at the fixed point, in the above formulation on the $\mu$: All
+Stability of the fixed point depends on the switching rate slope 
+at the fixed point, in the above formulation on the $\mu$: all
 other things equal, making $\mu$ smaller makes the fixed point more
 stable, but slows down convergence. 
 %
-These observations do not only hold in transporation \citep[e.g.,][]{watling-2003},
+These observations hold not only in transporation \citep[e.g.,][]{watling-2003},
 but quite generally in the area of ``evolutionary
 games and dynamical systems'' \citep{HofbSigmBook}. 
 %
 In addition, in the context of
-traffic assignment, the existence of physical queues that allows for 
-spillback across many links has been shown to be an apparently inevitable
+traffic assignment, the existence of physical queues allowing for 
+spillback across many links has apparently been shown to be an nevitable
 source of multiple Nash equilibria \citep[][]{daganzo-1998}.
 %%; also see
 %%\cite{MartinezFixedPointStability} for a similar case in land-use
@@ -979,20 +976,20 @@ Alternatively, some \gls{msa}-like scheme
 may be used \citep{liu-2007}.
 %\gunnar{Kai, Du fragst im Glossar nach einer Referenz zu MSA. Hier ist eine.}  
 %\kai{Danke!}
-A disadvantage is that, with \gls{msa}, the
+One disadvantage: with \gls{msa}, the
 switching rate does not depend on the magnitude of the expected
-improvement, which possibly means slow(er) convergence.  An advantage
+improvement, which could means slow(er) convergence.  An advantage
 of \gls{msa} is that one does not need to find out a good value for the
 proportionality factor ($\mu$ in the above example).  
 
-Yet another approach would be to use a ``gap'' function that measures the
+Yet another approach would be to use a ``gap'' function measuring the
 distance of the current assignment from an equilibrium and to infer
-the switching rate from the requirement that this function needs to
+the switching rate from the requirement that this function must
 be minimized 
 \citep{LuMahmassaniZhou2009GapDue,zhang-2008}.
 However, we are not aware of any operational gap function that applies to all-day plans.
 
-The major criticism of the agent-based \gls{ue} is its lack of behavioral realism.
+The biggest criticism of agent-based \gls{ue} is its lack of behavioral realism.
 In a \gls{ue}, every agent is assumed to react with a best response 
 according to a model of its objectives, which implies 
 that real travelers are able to compute best responses
@@ -1003,20 +1000,20 @@ that real travelers are able to compute best responses
 %%  $\Rightarrow$ Ja, sie geben eine Abschaetzung der Anzahl
 %%  von Moeglichkeiten, die ein optimal planender traveler auswerten
 %%  muesste. Gunnar}
-despite of their combinatorial nature and high dimension
+despite their combinatorial nature and high dimension
 \citep{bowman-1998}.
-Furthermore, like for a pure route assignment, it
+Furthermore, as in a pure route assignment, it
 is reasonable to assume that (i) the behavioral objective is
 imperfectly modeled and that (ii) explorative travel behavior leads
-to more or less random variations in what real travelers do.
+to---more or less---random variations in what real travelers do.
 While (ii) explicitly introduces stochasticity, (i) calls for it as a
-representation of the imprecision in the behavioral model.
+representation of imprecision in the behavioral model.
 
 These considerations do not only lead naturally to the agent-based \gls{sue};
-they also motivate an additional behavioral component that captures
-the explorative learning of real travelers. Similarly to the symmetry
-between day-to-day replanning and the iterative solution of the traffic assignment
-problem, an explorative learning algorithm can be motivated either as
+they also stimulate an additional behavioral component capturing
+real travelers' explorative learning. Similar to the symmetry
+between day-to-day replanning and the traffic assignment problem's iterative solution, 
+an explorative learning algorithm can be oriented either as
 a model of real learning or as a computational method to solve a stochastic
 assignment problem. The following section presents a possible implementation
 of such an algorithm. 
@@ -1095,9 +1092,9 @@ of such an algorithm.
 \label{sec:agent-based-sue}
 
 This section discusses \gls{matsim}'s co-evolutionary algorithm for simulating
-plan choices. An alternative perspective on \gls{matsim}'s plan choice mechanisms
-in terms of mainstream discrete choice theory \citep{BenAkivaLerman_1985} is
-provided in Chapters~\ref{ch:discretechoice} and~\ref{ch:economicEval}.
+plan choices. Chapters~\ref{ch:discretechoice} and~\ref{ch:economicEval} 
+provide an alternative perspective on \gls{matsim}'s plan choice mechanisms
+for mainstream discrete choice theory \citep{BenAkivaLerman_1985}.
 
 % In order to put the proposed method for the simulation of an agent-based
 % SUE into a somewhat broader perspective, the problem
@@ -1128,16 +1125,16 @@ provided in Chapters~\ref{ch:discretechoice} and~\ref{ch:economicEval}.
 It is possible to approach every agent's daily
 planning problem as a population-based search algorithm.  Such a
 search algorithm maintains a \emph{collection} ($=$ population) of
-possible solutions to a problem instance, and obtains better solutions
-via the evolution of that collection.  This is a typical
+possible solutions to a problem instance and obtains better solutions
+via that collection's evolution.  This is a typical
 machine-learning \citep[e.g.][]{RussellNorvigBook} approach; the best-known
 population-based search algorithms (also called \textbf{evolutionary
 algorithms}) are \textbf{genetic algorithms} \citep[e.g.,][]{Goldberg_1989}.
 
 It is important to note that ``population'' here refers to the
-collection of solutions for a single individual.  There is also the
+collection of solutions for a single individual, as opposed to the
 population of travelers.  Every individual uses a population-based
-algorithm in order to ``co-evolve'' in the population of all
+algorithm to ``co-evolve'' in the population of all
 travelers \citep[also see][]{Balmer_PhDThesis_2007}.
 
 A \textbf{population-based search algorithm} typically works as
@@ -1159,11 +1156,11 @@ follows:
 \item \textbf{Scoring:} Evaluate every candidate solution's ``score''
   or ``fitness''.
 
-\item \textbf{Selection:} Decrease the occurrences of ``bad''
+\item \textbf{Selection:} Decrease the occurrence of ``bad''
   solutions.  There are many ways how this can be done.
 
 \item \textbf{Construction of new solutions:} Construct new solutions
-  and add them to the collection of candidate solutions.
+  and add them to the candidate solutions collection.
 
 \end{enumerate}
 
@@ -1171,7 +1168,7 @@ follows:
 
 \end{algorithm}
 
-Regarding the construction of new solutions, two operators are often
+For construction of new solutions, two operators are often
 used in genetic algorithms: \textbf{Mutation}---which takes a
 candidate solution and performs small modifications to it; and
 \textbf{crossover}---which takes \emph{two} candidate solutions and
@@ -1209,11 +1206,11 @@ operator.
 % </person>
 % \end{lstlisting}
 
-Congruent with what has been said before, we typically have a
-situation where multiple travelers evolve simultaneously.  That is, we
-have a \emph{population of persons} where every person has a
+Like what has been said before, we typically have a
+situation where multiple travelers evolve simultaneously:
+ a \emph{population of persons} where every person has a
 \emph{population of plans}.  The result is a co-evolutionary dynamic,
-where every individual person evolves according to a population-based
+where each person evolves according to a population-based
 \textbf{co-evolutionary algorithm}.  The overall approach reads as
 follows \citep[see, e.g.,][for similar
   approaches]{HraberJonesForrestEcho,ArthurBar}:
@@ -1232,19 +1229,19 @@ follows \citep[see, e.g.,][for similar
 
 \begin{enumerate}
 
-\item \textbf{Selection/Choice:} Select, for every agent, one of the plans.
+\item \textbf{Selection/Choice:} Select one of the plans for every agent.
 
 \item \textbf{Scoring:} Obtain a score for every agent's selected
-  plan.  This is done by executing all selected plans simultaneously
-  in a simulation, and attaching some performance measure to each
-  executed plan.  Clearly, what was the network loading before has now
-  evolved to a full-fledged agent-based simulation of daily
+  plan by executing all selected plans simultaneously
+  in a simulation and attaching some performance measure to each
+  executed plan.  Clearly, what was previously the network loading has now
+  evolved into a full-fledged agent-based simulation of daily
   activities.  See Section~\ref{sec:adjust-impr-funct} for more detail on
-  the scoring.
+ scoring.
 
 \item \textbf{Generation of new plans (innovation)/Choice set
-  generation:} For some of the agents, generate new plans, for
-  example as ``best replies'' or as mutations of existing plans
+  generation:} For some of the agents, generate new plans; for
+  example, as ``best replies'' or as mutations of existing plans
   (\eg small departure time changes).
 
 \end{enumerate} %\item \textbf{Iterations:} Goto 2.
@@ -1270,16 +1267,16 @@ follows \citep[see, e.g.,][for similar
 % % ----------
 
 Note that this approach is really quite congruent with the \gls{sue}
-approach: Every person has a collection of plans, which may be
-interpreted as the choice set.  As in \gls{sue}, the choice set may be
-generated while the iterations run or before the iterations start.
-Every person selects between the plans, where one can attach to
+approach: each person has a plan collection, which may be
+interpreted as the choice set.  As in \gls{sue}, the choice set can be
+generated while the iterations run, or before the iterations start.
+Each person selects between the plans, where one can attach to
 every plan a score-based probability to be selected, 
 in the end similar to Equation~(\ref{stoch-equil}).
-Clearly, a relevant research topic in this regards is to specify 
+Clearly, a relevant  related research topic is to specify 
 an evolutionary dynamic that can be shown to converge to choice sets
-that are generated consistently with the requirements of discrete
-choice theory; see Chapters~\ref{ch:discretechoice} and Section~\ref{sec:choicesets}.
+that are generated consistently with discrete choice theory requirements; 
+see Chapters~\ref{ch:discretechoice} and Section~\ref{sec:choicesets}.
 %%\todoKai{Der letzte Satz ersetzt einen anderen, der m.E.
 %%an dieser Stelle keine neue Information mehr liefert. Gunnar}
 %The main
@@ -1316,7 +1313,7 @@ this approach.
 
 %For choice, one can start with a logit model:
 %\textbf{Selection/Choice:} 
-A possible choice algorithm is the following: For persons with
+A possible choice algorithm is the following: for persons with
 unscored plans, select an unscored plan.  For all other persons,
 select between existing plans with some \gls{sue} model, \eg a logit
 model, \ie
@@ -1325,13 +1322,13 @@ P(i) = \frac{e^{\mu S_i}}{\sum_j e^{\mu S_j}} \
 \label{eq:2}
 \end{equation}
 where $S_i$ is the score of plan $i$ and $\mu$ models the
-travelers' ability to distinguish between plans of different
+travelers' ability to distinguish between plans with different
 scores.
 %
 This is implemented in \gls{matsim} by \lstinline{SelectExpBeta}.
 
 In practice, we have found that it is much better to not use
-Equation~(\ref{eq:2}) directly, but rather use a switching process that
+Equation~(\ref{eq:2}) directly, but instead use a switching process that
 \emph{converges} towards Equation~(\ref{eq:2}).  
 This can, for example, be
 achieved by using a switching probability from $i$ to $j$ of
@@ -1380,9 +1377,9 @@ for these $T(i \!\! \to \!\! j)$ \citep[e.g.,][]{ross-2006}.%
 % => Ich habe das unten zitierte Buch von Ross im Büro und schaue 
 % da nochmal nach, wenn ich wieder im Buero bin. Gunnar
 Assume that, after a number of iterations, there is no more
-innovation, \ie the choice set for every agent is fixed, and that
+innovation, \ie the choice set for every agent is fixed and that
 the scores are updated by \gls{msa}.
-Upon convergence of the iterations, all agents draw their plans from
+On convergence of the iterations, all agents draw their plans from
 a fixed choice set based on constant score expectations, 
 \cf (\ref{eq:sue-with-expectation}).
 This means that all agents make their choices independently
@@ -1436,16 +1433,16 @@ following:
   probability of switching from plan $i$ to plan $j$.  Plausibly, this
   probability increases with the magnitude of the improvement.  
 
-  For certain applications, one might desire a more involved approach,
-  \eg an \emph{expected} score of $j$ which then initiates the
+  For certain applications, one might want a more involved approach,
+  \eg an \emph{expected} score of $j$, which then initiates the
   switch.
 
 \item One could replace Equation~(\ref{eq:3}) by a threshold-based
   dynamics, \ie a switch to a better solution will only take place
-  if the improvement is above a certain threshold.  The disadvantage
-  is that one loses some of the mathematical interpretation, but the
-  advantage is that it may be more consistent with some discussion in
-  project appraisal where it is said that small improvements may not
+  if the improvement is above a certain threshold.  
+ One loses some of the mathematical interpretation, but 
+ it may be more consistent with discussion of
+  project appraisal, where small improvements may not
   lead to a change in behavior.
 
 %%\item If the difference between $S_j$ and $S_i$ is small, one can
@@ -1462,9 +1459,9 @@ following:
 
 \end{itemize}
 
-Although we have not done so systematically in past work, it is 
+Although not performed systematically in past work, it is 
 possible to include formulations such as path-size logit 
-\citep{ben-akiva-1999} into the choice probabilities.
+\citep{ben-akiva-1999} in choice probabilities.
 
 %\todoKai{????}  Overall, the approach has both a behavioral and a
 %mathematical interpretation, and it is, in our view, most useful to
@@ -1488,19 +1485,19 @@ The assumption that the scores
 %, $\{S_i\}_i$, 
 eventually converge to
 some constant value intuitively means that the scores cannot display
-spontaneous reactive behavior to a certain iteration.  For example, it
-might be possible that a particular iteration displays ``network
+spontaneous reactive behavior to a certain iteration.  For example,
+a particular iteration might display ``network
 breakdown'' \citep{RieserNagel2008NetworkBreakdown}.  Converged scores
 would not trigger a next-day reaction to that breakdown.  In practice,
 this can be achieved by averaging the scores over many iterations,
-which bears some similarity with fictitious play 
+which is somewhat similar to fictitious play 
 \citep{monderer-1996, garcia-2000}.
 Once more, \gls{msa} is an option (Section~\ref{sec:score-msa}), with the same advantages and
-disadvantages as discussed before (Section~\ref{sec:agent-based-ue}). 
+disadvantages discussed before (Section~\ref{sec:agent-based-ue}). 
 %% \kai{chk where this is discussed (provide pointer).  Also relate all this material to config options.} 
 %\gunnar{Ich hatte den Eindruck, dass Du in den folgenden konzeptionellen
 % Kapiteln bevorzugt von diesen Ansatz ausgehen wolltest, dann sollten es wohl ein vorwaerts-pointer sein.} 
-An alternative is to us a small
+An alternative is to use a small
 \textbf{learning rate} $\alpha$ (Section~\ref{sec:score-averaging}) in
 \begin{equation}
 S_i^\text{new} = (1-\alpha) \, S_i^\text{old} + \alpha \, \tilde S_i \ ,
@@ -1508,17 +1505,17 @@ S_i^\text{new} = (1-\alpha) \, S_i^\text{old} + \alpha \, \tilde S_i \ ,
 where $S_i^{new}$ and $S_i^{old}$ are the agent's memorized scores for
 option $i$, and $\tilde S_i$ is the most recent actual performance
 with that option; also see Chapter~\ref{ch:discretechoice}.  
-The issue, in the end, is the same as with the
+The issue, in the end, is the same as the
 stable-vs-unstable fixed points (\cf Section~\ref{sec:agent-based-ue}):
 If the system is well-behaved (corresponding to a stable fixed point),
 it will converge benignly to constant scores and thus to the detailed
 balance solution.  If the system is not well-behaved, one can still
-force it to such a solution with \gls{msa}, but the meaning of this is less
+force it to such a solution with \gls{msa}, but the meaning is less
 clear (also see Sections~\ref{sec:score-msa} and \ref{sec:score-convergence}).
 
 As stated before, stochastic network loading makes no additional
 conceptual difference, since there is already stochasticity caused by
-the choice behavior.
+choice behavior.
 
 %% \todokai{clarify score convergence with newer MSA option}
 
@@ -1537,12 +1534,12 @@ the choice behavior.
 \subsubsection{Innovation (Choice Set Generation)}
 \label{sec:innovation}
 
-So far, this has left open the question concerning the choice set
+So far, this leaves open the question on choice set
 \emph{generation}, \ie the part that generates new plans or modifies
 existing ones.  
 
-One computationally simple technique that does not require a choice
-set enumeration is to simulate randomly disturbed link costs and to
+One computationally simple technique not requiring a choice
+set enumeration is to simulate randomly disturbed link costs and 
 run best response based on these costs. This, however, can yield
 unrealistic results if one does not get the correlation structure of
 the noise right.
@@ -1550,15 +1547,15 @@ the noise right.
 An alternative is to calculate separate best responses after every
 network loading.  Since the process is stochastic, this will generate
 different solutions from iteration to iteration.  An advantage is that
-the correlations will be generated by the simulation---and are, thus,
-presumably realistic. Chapter~\ref{ch:discretechoice}
+the correlations will be generated by the simulation---and are, 
+presumably, realistic. Chapter~\ref{ch:discretechoice}
 relates this to random utility modeling; see also Chapter~\ref{ch:researchavenues}.
 % A disadvantage is that there is currently
 % little or no understanding how this relates to the noise
 % specifications in random utility modeling.
 
-Beyond that, there is really a myriad of different algorithms that
-could be used here.  Besides the earlier-mentioned ``mutation''
+Beyond that, there are many different algorithms that
+could be used here.  Besides the previously-mentioned ``mutation''
 \citep{BalmerRaneyEtAl2005act-times} or ``crossover''
 \citep{CharyparNagel2005ga4acts,MeisterBalmerEtc2006planomatIatbr},
 there are also many possibilities for constructive algorithms, such as
@@ -1566,8 +1563,8 @@ there are also many possibilities for constructive algorithms, such as
 \citep{ZhuLevinsonZhang2008AgentBasedRouteChoice2}.  One attractive
 option, clearly, is to use a regular activity-based demand generation
 code \citep[e.g.,][]{BowmanEtc1999PortlandActs,MillerRoordaTASHA}
-although our experience is that this may not be as simple as it seems
-\citep{RieserNagelEtc2007early-berlin-trr} since in practice
+although we have found is that this may not be as simple as it seems
+\citep{RieserNagelEtc2007early-berlin-trr}; in practice,
 activity-based models are often constructed with \gls{od} matrices in mind.  
 A successful integration is described by 
 \cite{ZiemkeNagelBhatIntegratingCemdapMatsimTransferability}.
@@ -1597,14 +1594,14 @@ Time to Generalized Utility Functions}
 %%Section gemacht, weil die utility function m.E. noch zu SUE gehoert.
 %%Gunnar}
 
-This chapter takes the inductive approach of arguing that one can make
+This chapter takes the inductive approach and argues that one can make
 the network assignment loop more general by including additional
-choice dimensions beyond routing.  Clearly, for this to work the
-computation of the scoring needs to take the effects of these
+choice dimensions beyond routing.  Clearly, for this to work, the
+computation of scoring needs to take the effects of these
 additional choice dimensions into account \citep[also
   see][]{Balmer_PhDThesis_2007}.  Given evolutionary game theory, it is quite
-obvious how to do that: One has to extend the cost
-function that is used for routing to a general scoring function for
+obvious how to do that: one has to extend the cost
+function used for routing to a general scoring function for
 complete daily plans.
 
 %%\todoNextRevision{start with an example?}
@@ -1642,33 +1639,33 @@ Chapter~\ref{ch:economicEval}; this then closes the loop.
 
 % This paper investigates how behavioral considerations can be
 % integrated into the modeling of network dynamics.  
-Starting from
-regular route assignment, this chapter points out that one can extend the
+Starting from regular route assignment,
+this chapter explains how one can extend the
 iterative solution procedure of static or dynamic traffic assignment
-to include additional behavioral dimensions such as time adaptation,
-mode choice or secondary activity location choice.  This is somewhat
+to include additional behavioral dimensions, such as time adaptation,
+mode choice, or secondary activity location choice.  This is somewhat
 similar to the so-called supernetworks approach, but argues from the
-viewpoint of the iterative solution procedure rather than from the
-viewpoint of the problem definition.
+viewpoint of the iterative solution procedure, rather than the
+problem definition.
 
-In order to address the combinatorial explosion of the commodities
-caused by the expansion of the choice dimensions, it is suggested to
-move to individual particles.  This allows an interpretation of the
+To address the combinatorial explosion of commodities
+caused by expansion of the choice dimensions,
+a move to individual particles is suggested.  This allows an interpretation of the
 solution procedure as behavioral day-to-day learning, but maintains a
-connection to the \gls{sue} definition by interpreting the synthetic
+connection to the \gls{sue} definition by interpreting synthetic
 travelers' behavior as random draws from individual choice sets.  
 % In
 % that latter interpretation, the iterative solution procedure becomes a
 % Monte Carlo simulation that samples from the population's choice
 % distribution.
 
-A major part of this chapter discusses simulation/computer implementation issues.
+Most of this chapter discusses simulation/computer implementation issues.
 From the definition given above, progress can be made by using methods
 from machine learning and co-evolutionary search algorithms.  
 %
 The \gls{sue} problem of random selection between different alternatives can
-be cast as a so-called population-based optimization algorithm where
-every synthetic traveler randomly selects between the different
+be cast as a so-called population-based optimization algorithm, where
+each synthetic traveler randomly selects between the different
 members of the population of possible solutions.
 %
 At the same time, the \emph{population of the travelers} co-evolves
@@ -1697,8 +1694,8 @@ Overall, this chapter has worked out the structural similarity between the
 It is, in fact, possible to run \gls{matsim} in \gls{dta} mode, by converting each trip into a dummy person, with dummy activities at the beginning and end of the trip.  The class \lstinline{RunExample5Trips} (see \url{http://matsim.org/javadoc} $\to$ core) runs an example; the class itself points to a configuration file, which in turn points to \lstinline{examples/equil/plans100trips.xml}.  A dummy person that denotes a trip from link 1 to link 20, departing at 6\,am, is coded as\\
 \usebox{\tripAsPlan}.
 }
-The presentation has focused on the algorithmic issue of how to find solutions 
-of these problems. This is complemented by the subsequent Chapters~\ref{ch:montecarlo} to \ref{ch:kinematicwaves}, 
+The presentation focused on the algorithmic issue of how to find solutions 
+to these problems. This is complemented by the subsequent Chapters~\ref{ch:montecarlo} to \ref{ch:kinematicwaves}, 
 which mostly discuss modeling (descriptive) aspects of \gls{matsim}.
 
 % %%\todoKai{Mit diesem Schluss-Paragraphen habe ich Probleme.  Vorschlaege?
