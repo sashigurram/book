@@ -8,11 +8,11 @@
 
 % ##################################################################################################################
 
-This chapter aims to explain how the agent-based framework of \acrshort{matsim} can be interpreted from a micro\-economic perspective, and how it can be used for the economic evaluation of transport policies, \eg for \gls{bca}. The text of this chapter is partly taken from \citet[][Section~2.3]{Kickhoefer_PhDThesis_2014}.
+This chapter explains how \acrshort{matsim}'s agent-based framework can be interpreted from a micro\-economic perspective and how it can be used for the economic evaluation of transport policies, \eg for \gls{bca}. The text of this chapter is partly taken from \citet[][Section~2.3]{Kickhoefer_PhDThesis_2014}.
 
 Typically, the process of economic policy evaluation consists of three steps:
 %
-First, forecasting the changes in the system by modeling user's reactions to a policy
+First, forecasting changes in the system by modeling users' reactions to a policy
 (Section~\ref{ch:economicEval:describingBehavior}).
 %
 Second, assigning some (potentially monetary) valuation to these changes (Section~\ref{ch:economicEval:valuingBehavior}).
@@ -31,15 +31,14 @@ As will be shown in the next sections, these steps are neither completely indepe
 %% }
 % Alles ok.  Vielen Dank. Kai
 %
-Estimating benefits of a policy intervention relies on a sound descriptive model that is capable to predict the resulting behavioral changes of individuals.
+Estimating policy intervention benefits relies on a sound descriptive model able to predict individuals' related behavioral changes.
 %
 %The following sections will therefore shortly present the concept of aggregated elasticities, followed by a presentation of Discrete Choice Theory and its relationship to the \acrshort{matsim} choice model.
 %
-As explained in Section~\ref{sec:inbrief}, agents in \gls{matsim} optimize their mobility behavior over several iterations by taking the behavior of other agents into account. Even if one assumes homogeneous preferences of individuals in the behavioral parameters of their utility functions (see Section~\ref{sec:typicalParams}), activity locations and activity patterns of agents typically differ. In consequence, the simulation deals with heterogeneous decision makers. It therefore seems reasonable to interpret the simulation from a discrete choice modeling perspective (see Chapter~\ref{ch:discretechoice}). Another attractive reason to follow this interpretation 
+As explained in Section~\ref{sec:inbrief}, agents in \gls{matsim} optimize their mobility behavior over several iterations by reacting to the behavior of other agents. Even if one assumes homogeneous individual preferences in the behavioral parameters of their utility functions (see Section~\ref{sec:typicalParams}), activity locations and activity patterns of agents typically differ, meaning that the simulation deals with heterogeneous decision makers. It thus seems reasonable to interpret the simulation from a discrete choice modeling perspective (see Chapter~\ref{ch:discretechoice}). Another attractive reason to use this interpretation lies in the well-established approaches to estimate user benefits and system welfare changes in   discrete choice models. 
 %might be 
-is that there exist well-established approaches to estimate changes in user benefits and system welfare from discrete choice models.
 
-As shown by \citet[][also see Chapter~\ref{ch:abta} and Section~\ref{sec:score-is-converged}]{NagelFloetteroed2009IatbrResourceInBook}, the \acrshort{matsim} choice model is equivalent to a standard \gls{mnl} model, given that valid choice sets have been found for all individuals, and that the score of each plan has converged to its expectation value (self-consistent state).
+As shown by \citet[][also see Chapter~\ref{ch:abta} and Section~\ref{sec:score-is-converged}]{NagelFloetteroed2009IatbrResourceInBook}, the \acrshort{matsim} choice model is equivalent to a standard \gls{mnl} model; valid choice sets have been found for all individuals and that score of each plan has converged to its expectation value (self-consistent state).
 %
 An approximation of this can be reached by switching innovation off (Section~\ref{sec:innovation-switchoff}) and forcing scores to convergence (Section~\ref{sec:score-msa}, also see Section~\ref{sec:score-is-converged}). 
 %% %
@@ -48,27 +47,27 @@ An approximation of this can be reached by switching innovation off (Section~\re
 %% \benjamin{Kai, pls check the above paragraph. Is the formulation correct?}
 %% %
 %% For these reasons, there exist three methodological issues at the time of writing:
-Still, this leaves the following methodological issues:
+Still, the following methodological issues remain:
 %
 \begin{enumerate}\styleEnumerate
 %
-\item \textbf{Choice set incomplete}: The maximum number of plans $J$ in the choice set of every agent is limited by memory constraints. That is, the choice set for the decision making is unlikely to be complete.
+\item \textbf{Choice set incomplete}: The maximum number of plans $J$ in each agent's choice set is limited by memory constraints; the choice set for the decision making is unlikely to be complete.
 %
-\item \textbf{Plans correlation from innovation}: Plans might be correlated. This is very likely if they are modified or replaced by best-response re-planning modules (\eg the route choice module), since they have a tendency to always generate the same answer. Yet also random mutations in general result in correlated plans, since the concept of a mutation in fact implies only a small change away from the parent.  This violates the required IIA (Independence from Irrelevant Alternatives) property of the choice set that is needed for an \gls{mnl} model.
+\item \textbf{Plans correlation from innovation}: Plans might be correlated. This is very likely if they are modified or replaced by best-response re-planning modules (\eg the route choice module), since they always have a tendency to generate the same answer. However, random mutations, in general, also tend to result in correlated plans, since the concept of a mutation  implies only a small move away from the parent.  This violates the required IIA (Independence from Irrelevant Alternatives) property of the choice set necessary for a \gls{mnl} model.
 %
-\item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to keep similar, \ie  correlated, plans when the number of plans has grown beyond $J$.  The reason for this is that the current default plans remover removes the plan with the lowest score, which typically also is the one most different from the other plans.  As a result, typically only very similar plans with very similar scores remain in the choice set.
+\item \textbf{Plans correlation from plans removal}: The current \acrshort{matsim} implementation has a tendency to retain similar, \ie  correlated, plans when the number of plans has grown beyond $J$, because the current default plans remover removes the plan with the lowest score, which is also typically that most different from  other plans.  As a result, normally only very similar plans---with very similar scores---remain in the choice set.
 %
 \end{enumerate}
 %
 These three issues 
 %might
-may lead to biased behavior, which would then have 
+can lead to biased behavior, which would have 
 %would then also 
-consequences for economic evaluation.  Possible cures of these shortcomings are discussed 
+consequences for economic evaluation.  Possible solutions for these shortcomings are discussed 
 %in more detail 
-in Section~\ref{sec:Evolution-of-choice}, and again, from a different angle, in Section~\ref{sec:choicesets}. For the remainder of this chapter, it will therefore be assumed that the above issues are solved, and that a self-consistent solution has been found for the system states before and after the policy change.
+in Section~\ref{sec:Evolution-of-choice}, and again, from a different angle, in Section~\ref{sec:choicesets}. For the rest of this chapter, it will be assumed that the above issues are solved, and that a consistent solution has been found for the system states before and after the policy change.
 %
-Nonetheless, the following text will provide a short discussion of possible impacts of the above issues on policy appraisal results, wherever it seems to add to a better understanding.
+However, the following text briefly discusses possible impacts of the above issues on policy appraisal results, to facilitate better understanding.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\subsection{Aggregated Elasticities}
@@ -460,11 +459,11 @@ Nonetheless, the following text will provide a short discussion of possible impa
 %\cleardoublepage
 \section{Valuing Human Behavior at the Individual Level}
 \label{ch:economicEval:valuingBehavior}
-Following \citet{deJongEtAl2007LogsumTRA}, a major advantage of the agent-based approach is that it allows for a seamless integration of (i) forecasting behavioral changes as a reaction to changes in the system, and (ii) the subsequent economic evaluation.
+Following \citet{deJongEtAl2007LogsumTRA}, a major advantage of the agent-based approach is a seamless integration of (i) forecasting behavioral changes as a reaction to changes in the system, and (ii) the subsequent economic evaluation.
 %
-In this section, it is shown how estimated agent-specific preferences which determine behavior can directly be used for deriving individual \glspl{vtts}, and how they need to be modified for running a \gls{matsim} simulation in order to obtain individual utility differences resulting from a policy change.
+In this section, it is shown how estimated agent-specific preferences, which determine behavior can directly, be used for deriving individual \glspl{vtts} and how they need to be modified for running a \gls{matsim} simulation to obtain individual utility differences resulting from a policy change.
 %
-The subsequent Section~\ref{ch:economicEval:aggregatingValues} will then focus on how these individual utility changes can be used in order to derive some indicator of overall welfare change for the population under consideration.
+The next Section~\ref{ch:economicEval:aggregatingValues} will then focus on how these individual utility changes can be used to derive some indication of overall welfare change for the considered populationn.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Utility of Time}
@@ -493,15 +492,15 @@ U = \sum_q U_{act,q}(t_{dur,q}, ...) + \sum_q U_{trav,q}(t_{trav,q}, ...)
 \label{eq:scoring-fct-revisited}
 \end{equation}
 %% where $Y$ is ``unearned income'' \citep{Small2012ValuationOfTimeRevisited} (for example a possible toll refund) and $G$ are payments, for example tolls or fares.
-where monetary payments (\eg tolls) are included into $U_{trav,q}$ and the index $i$ was dropped for notational convenience.\footnote{%
+where monetary payments (\eg tolls) are included in $U_{trav,q}$ and the index $i$ was dropped for notational convenience.\footnote{%
 %
-Strictly speaking, at this point of the development it would make more sense to stick with the scores $S$ that \gls{matsim} generates.  Section~\ref{ch:economicEval:valuingBehavior:output2Eval} discusses the relation between \gls{matsim} scores $S$, systematic utility $V$ and total utility $U$ in more detail.
-However, since the following text uses terms such as ``marginal utility of time'' or ``marginal utility of money'', also the equations are noted using $U$ instead of $S$. 
+Strictly speaking, at this point, it would make more sense to stay with the scores $S$ that \gls{matsim} generates.  Section~\ref{ch:economicEval:valuingBehavior:output2Eval} discusses the relation between \gls{matsim} scores $S$, systematic utility $V$ and total utility $U$ in more detail.
+However, since the following text uses terms like ``marginal utility of time'' or ``marginal utility of money'', equations are also noted using $U$ instead of $S$. 
 %
 }
 
 
-An approximate argument about optimal time allocation can be made as follows.
+An approximate argument about optimal time allocation can be made as follows:
 Assume the constraint
 %% \footnote{%
 %% %
@@ -519,9 +518,9 @@ $T - \sum_q t_{dur,q} - \sum_q t_{trav,q} = 0$, \ie that the time per day is lim
 %
 %% \end{itemize}
 %
-Let us for now also assume that all travel times are fixed, \ie we ignore the possible optimization that can come from departure time or mode switches, and let us thus concentrate on the activity time allocation problem.
+Let us now also assume that all travel times are fixed; \ie, we ignore the possible optimization from departure time or mode switches and concentrate on the activity time allocation problem.
 %
-Optimizing under 
+Optimizing under: 
 %these constraints 
 this constraint leads to the Lagrangian
 \begin{equation}
@@ -531,10 +530,10 @@ L = \sum_q U_{act,q}(t_{dur,q}, ...) + \sum_q U_{trav,q}(t_{trav,q}, ...)
 %
 + \mu \cdot (T - \sum_q t_{dur,q} - \sum_q t_{trav,q})  \ ,
 \label{eq:lagrangian}
-\end{equation}
+\end{equation},
 where $\mu$ is the Lagrangian multiplier corresponding to the time constraint.\footnote{%
 %
-Not to be confused with the scale parameter from discrete choice theory; here, in order to be consistent with time allocation theory, $\mu$ represents the marginal utility of time as a resource and corresponds to $\beta_{dur}$ in Chapter~\ref{ch:scoring}.
+This should not be confused with the scale parameter from discrete choice theory; here, to be consistent with time allocation theory, $\mu$ represents the marginal utility of time as a resource and corresponds to $\beta_{dur}$ in Chapter~\ref{ch:scoring}.
 %
 }
 
@@ -578,9 +577,9 @@ Equation~(\ref{eq:lagrangian}) can also be seen as a linearized version of the i
 %
 %\benjamin{Habe gesucht, aber keine gefunden...ggf. hier \url{http://eml.berkeley.edu/~webfac/saez/e131_s04/taxes.pdf}: ``the derivative of the indirect utility function should equal the Lagrange multiplier on the budget constraint''; Ist halt Lehrbuchwissen...}%
 %
-; for example, reducing the duration of travel by $\Delta t_q$ does not only affect $U_{trav,q}$ but will also lead to a utility change of $ \mu \cdot \Delta t_q$ from the constraint, which can be interpreted as the linearized utility effect of spending that time otherwise.\footnote{%
+; for example, reducing the duration of travel by $\Delta t_q$ affects not only $U_{trav,q}$, but will also lead to a utility change of $ \mu \cdot \Delta t_q$ from the constraint, which can be interpreted as the linearized utility effect of spending that time otherwise.\footnote{%
 %
-To recall: The indirect utility function is the utility as a function of the value of the constraint that emerges when for each value of the constraint, the utility is maximized.
+A reminder: the indirect utility function is utility as a function of the value of the constraint that emerges when, for each value of the constraint, utility is maximized.
 %
 }
 %% \gunnar{Ist das jetzt die Definition von ``indirect utility''?}
@@ -595,7 +594,7 @@ In consequence, the \textbf{marginal utility of time spent traveling} reads
 %
 $\mu$ is the \textbf{marginal utility of time as a resource} -- the marginal utility generated by increasing $T$, \ie by making the day longer than 24\,hours. The marginal utility of time spent traveling is thus determined by $\mu$, modified by ``any enjoyment or dislike of the travel itself'' \citep{Small2012ValuationOfTimeRevisited}.
 
-In order to get a handle onto the \acrshort{matsim} utility function in Equation~(\ref{eq:scoring-fct-revisited}), $\mu$ and $U'_{trav,q}$ need to be obtained separately: $\mu$ in order to calibrate $U'_{act,q}$ as in Equation~(\ref{eq:acts}), and $U'_{trav,q}$ in order to calibrate the direct utility of time spent traveling, the ``offset'' to the marginal utility of time as a resource.
+To get a handle on the \acrshort{matsim} utility function in Equation~(\ref{eq:scoring-fct-revisited}), $\mu$ and $U'_{trav,q}$ need to be obtained separately: $\mu$ in order to calibrate $U'_{act,q}$ as in Equation~(\ref{eq:acts}) and $U'_{trav,q}$ to calibrate the direct utility of time spent traveling, the ``offset'' to the marginal utility of time as a resource.
 %
 This will be further discussed in Section~\ref{ch:economicEval:valuingBehavior:estimates2Matsim}.
 
@@ -607,13 +606,13 @@ This will be further discussed in Section~\ref{ch:economicEval:valuingBehavior:e
 \label{ch:economicEval:valuingBehavior:uom}
 Time allocation theory \citep{DeSerpa1997economicsOfTime, Jara-DiazGuevara-2003} makes a similar argument for money, with a budget constraint similar to the time constraint.
 %
-In the same way as the time constraint leads to a marginal utility of time as a resource, the budget constraint leads to a marginal utility of money as a resource.
+Just as the time constraint leads to a marginal utility of time as a resource, the budget constraint leads to a marginal utility of money as a resource.
 
-However, \acrshort{matsim} does not include such a monetary budget constraint. It is also questionable if one should introduce it: The typical theoretical argument assumes the possibility to increase one's income by working more hours, and it is questionable if this is applicable to European countries where work contracts typically include a fixed number of working hours which cannot easily be changed.  
+However, \acrshort{matsim} does not include such a monetary budget constraint. It is also questionable whether it should be introduced: the typical theoretical argument assumes the possibility of increasing one's income by working more hours. It is questionable if this functions in European countries, where work contracts typically include a fixed number of working hours, which cannot easily be changed.  
 %% the typical derivation holds for European countries, since that typical derivation assumes that there one can increase one's income by working more hours.
 %% where work contracts typically include a fixed number of working hours.  
 %
-Hence, an alternative derivation of the marginal utility of money needs to be found.
+Hence, an alternative derivation of money's marginal utility is necessary.
 
 Assume that $U_{trav,q}$ includes a change in the monetary budget, $\lambda \cdot \Delta m$, \eg invoked by fares or tolls.  Then
 \begin{equation}
@@ -632,7 +631,7 @@ We will therefore interpret $\lambda$ as the \textbf{marginal utility of money}.
 %
 \footnote{\label{footnote:income-effects}
 %
-This constant, potentially person-specific factor, implies that income effects \citep{HerrigesKling1999Nonlinearincomeeffects,DalyEtAl2008WelfareMeasuresIncome, DagsvikKarlstrom2005ChoiceProbabilitiesInNonlinearRUM,Jara-Diaz1989IncomeEffectsInModeChoice} do not play a role, \ie that changes in monetary expenses resulting from transport policies are not strong enough to change $\lambda$. In microeconomic theory, $\lambda$ is the common variable for the marginal utility of money and corresponds to $\beta_{m}$ in Chapter~\ref{ch:scoring}.
+This constant, potentially person-specific factor implies that income effects \citep{HerrigesKling1999Nonlinearincomeeffects,DalyEtAl2008WelfareMeasuresIncome, DagsvikKarlstrom2005ChoiceProbabilitiesInNonlinearRUM,Jara-Diaz1989IncomeEffectsInModeChoice} do not play a role, \ie that changes in expenses resulting from transport policies are not strong enough to change $\lambda$. In microeconomic theory, $\lambda$ is the usual variable for the marginal utility of money and corresponds to $\beta_{m}$ in Chapter~\ref{ch:scoring}.
 %
 }
 %
@@ -640,9 +639,9 @@ Taking the first derivative of $L$ with respect to $m$ would lead to the same re
 %% \gunnar{Ich kann keine Definition von $c$ finden.}
 % \kai{danke}
 
-In contrast to the utility of time above, we do \emph{not} decompose the  marginal utility of spending money for travel into a marginal utility of money as a resource plus an ``offset'' for spending money on that particular purpose \citep[for an example of this decomposition, see, e.g.][]{MunizagaEtAl2012TimeAllocationModeChoice}.  The reason for this is that, because there is no monetary budget constraint, there is also no ``neutral'' Lagrange multiplier that would give the marginal utility of money as a resource.
+In contrast to the utility of time above, we do \emph{not} deconstruct the  marginal utility of spending money for travel into a marginal utility of money as a resource, plus an ``offset'' for spending money on that particular purpose \citep[for an example of this decomposition, see, e.g.][]{MunizagaEtAl2012TimeAllocationModeChoice}.  Because there is no monetary budget constraint, there is also no ``neutral'' Lagrange multiplier that would give the marginal utility of money as a resource.
 
-This, however, leads to the problem that if there are multiple monetary channels, they may have different marginal utilities of money.  For example, it commonly found that the marginal utility of toll payments is larger than the marginal utility of payments for fuel---\ie people find it less irritating to pay for fuel than to pay toll 
+This, however, leads to the problem that if there are multiple monetary channels, they may have different marginal utilities of money.  For example, the marginal utility of toll payments is larger than the marginal utility of payments for fuel---\ie people find it less irritating to pay for fuel than to pay tolls 
 %
 %\kai{Benjamin, hättest Du eine citation hierfür?}%
 %
@@ -651,7 +650,7 @@ This, however, leads to the problem that if there are multiple monetary channels
 %% In the original theory, the marginal utility of money, $\lambda_n$, is a Lagrange multiplier.  \cite{Small2012ValuationOfTimeRevisited} points out that it is difficult to estimate; for example, it is \emph{not} the marginal utility of income.  In the formulation of Equation~(\ref{eq:scoring-fct-revisited}), it is instead included into the direct utility.  This makes it seemingly a bit easier, but the problem remains the same: 
 That is, each monetary channel, such as fuel cost, toll, public transport fare, or a toll refund, may lead to different preference estimates.
 
-To our knowledge, there is no best solution to this problem in the literature.  For the time being, we work with forcing all cost-related parameters of all alternatives to a uniform value in preference estimation.
+To our knowledge, there is no best solution to this problem in the literature.  For the time being, we work with forcing all alternatives' cost-related parameters to a uniform value in preference estimation.
 %%  as it was done in Equation~(\ref{eq:ch:economicEval:utilityTraveling}).%
 %% %
 %% \footnote{
@@ -660,7 +659,7 @@ To our knowledge, there is no best solution to this problem in the literature.  
 %% %
 %% }
 %
-However, choice modelers typically avoid to limit the model's degrees of freedom in this way since it suppresses some information contained in the data.\footnote{%
+However, choice modelers typically avoid limiting the model's degrees of freedom in this way, since it suppresses some information contained in the data.\footnote{%
 %
 J. de Dios Ort\'uzar, personal communication.
 %
@@ -669,7 +668,7 @@ J. de Dios Ort\'uzar, personal communication.
 % Or is there something else to it that I am not getting?}
 % \kai{I added an ``in this way''; does this clarify it?}
 %
-It is therefore often not possible to obtain the necessary parameter estimates from the literature. Where the raw data is available, the same model can be re-estimated with a uniform marginal utility of money across alternatives
+It is therefore often impossible to obtain necessary parameter estimates from the literature. Where raw data is available, the same model can be re-estimated with a uniform marginal utility of money across alternatives
 \citep[see, e.g.,][]{KickhoeferEtAl2011PolicyEvaluationIncome, TirachiniHensherRose_TransResB_2014}.
 
 Also, \cite{Small2012ValuationOfTimeRevisited} points out that the ``neutral'' marginal utility of money as a resource is difficult to estimate; for example, it is \emph{not} the marginal utility of income.
@@ -680,12 +679,11 @@ Also, \cite{Small2012ValuationOfTimeRevisited} points out that the ``neutral'' m
 %%
 %\benjamin{Agreed with Kai. Too much text is needed to describe the problem. As long as others cannot estimate this properly, we cannot do anything here.}
 %
-As an alternative research avenue, we can imagine that the monetary channels of a measure are included into the choice experiment.  For example, a travel time improvement in a value-of-time study could come together with a hypothetical income tax increase \emph{or} with a hypothetical toll.  A rudimentary version of this actually takes place in Switzerland, where large infrastructure investments are bundled with tax increases that pay for them before they are put to public vote \citep[see, e.g.,][]{BAV2013FinanzierungFABI}.
+As an alternative research avenue, we could hypothesize that a measure's monetary channels are included in the choice experiment.  For example, a travel time improvement in a value-of-time study could come together with a hypothetical income tax increase, \emph{or} with a hypothetical toll.  A rudimentary version of this actually takes place in Switzerland, where large infrastructure investments are bundled with tax increases that pay for them before they are put to public vote \citep[see, e.g.,][]{BAV2013FinanzierungFABI}.
 
 %% \kai{Man könnte hier einwerfen, dass man es sonst wie bei der Zeit machen sollte: Wähle einen Zahlungskanal für die ``marginal utility of money as a resource'', und gib' alle anderen relativ dazu an.  Auch hier: haben wir bisher nicht gemacht. }
 
 %% Note that even a model with a uniform marginal utility of money may still have mode-dependent\gls{vtts}, since the $\hat{\beta}_{tr}$ may still be mode-dependent.
-
 
 
 
@@ -695,7 +693,7 @@ As an alternative research avenue, we can imagine that the monetary channels of 
 \subsection{Value of Time}
 %% Under the above assumptions, $\mu/\lambda$ is the \textbf{resource value of time}.  $(\mu/\lambda) \cdot \delta$ is the willingness to pay for a (theoretical) extension of the day beyond $T$ by $\delta$.
 
-The \textbf{\gls{vtts} of trip $q$} is now defined as the marginal utility of time spent travelling (Equation~(\ref{eq:marg-UoT})) divided by the marginal utility of money (Equation~(\ref{eq:marg-utl-of-money})), \ie
+The \textbf{\gls{vtts} of trip $q$} is now defined as the marginal utility of time spent traveling (Equation~(\ref{eq:marg-UoT})), divided by the marginal utility of money (Equation~(\ref{eq:marg-utl-of-money})), \ie
 %
 \begin{equation}
 VTTS_q = \frac{\partial L/\partial t_{trav,q}}{\partial L/\partial m} \ ,
@@ -756,9 +754,9 @@ U_{pt,q} & =
 \label{eq:ch:economicEval:utilityTraveling}
 \end{equation}
 %
-where $t_{car,q}$, $t_{pt,q}$, $\Delta{m_{car,q}}$ and $\Delta{m_{pt,q}}$  are the respective travel times and monetary costs in the different modes, and $\hat\beta_x$ are the corresponding parameter estimates.
+where $t_{car,q}$, $t_{pt,q}$, $\Delta{m_{car,q}}$ and $\Delta{m_{pt,q}}$  are, respectively, travel times and monetary costs in the different modes, and $\hat\beta_x$ are the corresponding parameter estimates
 %
-As explained in Section~\ref{ch:economicEval:valuingBehavior:uom}, $\hat\beta_m$ (the same as $\lambda$ above) is assumed to be the same for all modes, or more precisely for all types of expenditure.
+As explained in Section~\ref{ch:economicEval:valuingBehavior:uom}, $\hat\beta_m$ (the same as $\lambda$ above) is assumed to be the same for all modes, or more precisely, for all types of expenditure.
 
 %
 %% \benjamin{Should we use $V_i$ here at all? Or rather $S_i$?}
@@ -811,7 +809,7 @@ According to Equation~(\ref{eq:marg-UoT}), the marginal utility of time spent tr
 
 %% The scale parameter $\mu$, which reflects the variance of the difference between the random components of alternatives, disappears in the above formulation. That is, the \gls{vtts} are not influenced by the rationality of the choice.
 
-We are not aware of a good way to perform this split; \citet{KickhoeferEtAl2011PolicyEvaluationIncome} and \citet{Kickhoefer_PhDThesis_2014} use the least negative $\hat\beta_{trav,mode}$ for $\mu$ (i.e.\ $\beta_{dur}$) and then re-calculate all other direct marginal utilities of travel time relative to that one. As indicated in Section~\ref{sec:typicalParams} of this book, this is currently the preferred procedure.
+We do not know of any good way to perform this split; \citet{KickhoeferEtAl2011PolicyEvaluationIncome} and \citet{Kickhoefer_PhDThesis_2014} use the least negative $\hat\beta_{trav,mode}$ for $\mu$ (i.e.\ $\beta_{dur}$) and then re-calculate all other direct marginal utilities of travel time relative to that. As indicated in Section~\ref{sec:typicalParams} of this book, this is currently the preferred procedure.
 %
 %In addition, equating $c$ with $G$ in Equation (\ref{eq:scoring-fct-revisited}), $\hat\beta_c$ needs to be used for $- \lambda$.
 %
@@ -854,7 +852,7 @@ At the end of the simulation run, each agent $n$ has a number of plans $i=1..J$,
 %
 %% \kai{Hier merkt man, dass Geld vermutl.\ doch besser in der direkten Nutzenfunktion auftachen würde.  Sh....}
 %
-As a preparation for economic evaluation, the question arises how to aggregate these $S_{n,i}$ into an agent-value $S_n$, which can then be interpreted as a utility $U_n$.  Possibilities include to use
+During preparation for economic evaluation, the question arises how to aggregate these $S_{n,i}$ into an agent-value $S_n$, which can then be interpreted as a utility $U_n$.  Possibilities include using:
 %
 %
 \begin{itemize}\styleItemize
@@ -868,7 +866,7 @@ As a preparation for economic evaluation, the question arises how to aggregate t
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Using the Logsum of the Agent's Plans Scores}
 \label{ch:economicEval:valuingBehavior:output2Eval:logsum}
-In the literature, the logsum term 
+In literature, the logsum term 
 \[
 logsum_n = \ln \sum_i e^{V_i}
 \]
@@ -881,11 +879,11 @@ has been proposed for applied welfare analysis with Discrete Choice Models \cite
 Under the assumption of a 
   correctly specified model and choice set,
 %''}
-the logsum term represents the \gls{emu} for a user that has several options $i=1..J$ in her choice set, and the systematic utility of each option $i$ is $V_i$.
+the logsum term represents the \gls{emu} for a user with several options $i=1..J$ in her choice set and the systematic utility of each option $i$ is $V_i$.
 %
-It is the expectation value given that a random (Gumbel-distributed) $\varepsilon_i$ is added to each $V_i$, and that the individual chooses the alternative with the highest $U_i = V_i + \varepsilon_i$.\footnote{%
+It is the expectation value, given that a random (Gumbel-distributed) $\varepsilon_i$ is added to each $V_i$, and that the individual chooses the alternative with the highest $U_i = V_i + \varepsilon_i$.\footnote{%
 %
-We assume that at this point the scale of $V_i$ is already scaled such that the effect of the scale parameter is absorbed.
+We assume that, at this point, the scale of $V_i$ is already scaled such that the effect of the scale parameter is absorbed.
 %
 } In this interpretation, the 
 %\gunnar{expected} 
@@ -951,7 +949,7 @@ of daily plans.
 %
 % Habe das auskommentierte Material mal nach researchavenues.tex kopiert. Kai
 
-With respect to the current \gls{matsim} implementation, the maximum error occurs when all plans are copies of the best plan, rather than having a diversity of plans.
+In the current \gls{matsim} implementation, the maximum error occurs when all plans are copies of the best plan, rather than a diversity of plans.
 %
 An upper bound of this error 
 %% when using the logsum term for evaluation of correlated choice sets 
@@ -972,7 +970,7 @@ At the same time, obviously
 \[
 logsum_n = EMU_n = \ln \sum_{i=1}^{J} e^{V_i} \ge \ln e^{V_1} = V_1 \ .
 \]
-Overal,
+Overall,
 \[
 V_1 \le logsum_n \le V_1 + \ln J \ .
 \]
@@ -1040,10 +1038,10 @@ That is, for a choice set with $I$ alternatives, the true logsum value lies betw
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Using the Score of the Agent's Last Executed Plan}
 \label{ch:economicEval:valuingBehavior:output2Eval:executed}
-Using, for each agent, the logsum over the scores of all plans implies that all these plans are valid behavioral choices.  An alternative would be to simply use the score of the last executed plan.  The behavioral interpretation consistent with this procedure is that there is no additional relevant randomness beyond what \acrshort{matsim} generates intrinsically.  There has not yet been any systematic work in this direction in the \acrshort{matsim} context, but such an approach might be justified 
+Using, for each agent, the logsum over the scores of all plans implies that all these plans are valid behavioral choices.  An alternative would be to simply use the score of the last executed plan.  The behavioral interpretation consistent with this procedure is that there is no additional relevant randomness beyond what \acrshort{matsim} generates intrinsically.  There has  been no systematic work in this direction in the \acrshort{matsim} context, but such an approach might be justified 
 %% As is well known, this leads to lower utilities than the logsum term, and this effect is stronger when the utilities of the different plans are very different.  It seems difficult to justify such an approach, but it becomes very attractive 
 in conjunction 
-with the idea to explicitly generate the missing $\varepsilon_{n,i}$ for each person-alternative-pair $n,i$, and then always select the best plan, as described in Section~\ref{sec:future-frozen-randomness}.
+with the idea of explicitly generating the missing $\varepsilon_{n,i}$ for each person-alternative-pair $n,i$,  then always selecingt the best plan, as described in Section~\ref{sec:future-frozen-randomness}.
 
 %% Using the utilities from executed plans partly circumvents the problem of correlation between alternatives for evaluation, but has substantially less theoretical foundations.
 %% %
@@ -1078,7 +1076,7 @@ S_n = \frac{1}{J} \sum_{i=1}^J S_{n,i} \cdot P_{n,i} \ ,
 \label{eq:average-over-scores}
 \end{equation}
 %
-where $P_{n,i}$ is the probability of plan $i$ for agent $n$. This can, however, only be justified when the choice probabilities, $P_{n,i}$, are interpreted similar to mixed strategies from game theory, \ie that sampling from these probabilities is the true agent behavior.  In principle, we cannot see why such an interpretation should be plausible---except that it is statistically the same as Section~\ref{ch:economicEval:valuingBehavior:output2Eval:executed} with the advantage of having less variance.  Note, however, that the approach is intertwined with the choice model. If, \eg $P_{n,i}$ is one for the plan with the highest score and zero for all other plans, then Section~\ref{ch:economicEval:valuingBehavior:output2Eval:executed} and Equation~(\ref{eq:average-over-scores}) are identical.  
+where $P_{n,i}$ is the probability of plan $i$ for agent $n$. This can, however, only be justified when the choice probabilities, $P_{n,i}$, are interpreted like mixed strategies from game theory, \ie that sampling from these probabilities is the true agent behavior.  In principle, we cannot see why such an interpretation should be plausible---except that it is statistically the same as Section~\ref{ch:economicEval:valuingBehavior:output2Eval:executed} with the advantage of having less variance.  Note, however, that the approach is intertwined with the choice model. If, \eg $P_{n,i}$ is one for the plan with the highest score and zero for all other plans, then Section~\ref{ch:economicEval:valuingBehavior:output2Eval:executed} and Equation~(\ref{eq:average-over-scores}) are identical.  
 
 % \gunnar{Wenn MATSim ein mixture-of-logit Modell implementiert (also simulierte utility variations aus dem
 % congestion feedback mit den gumbel epsilons aus dem logit Modell kombiniert), dann sollte man wohl den
@@ -1094,21 +1092,21 @@ where $P_{n,i}$ is the probability of plan $i$ for agent $n$. This can, however,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Using the Highest Score of the Agent's Plans}
 %As the last alternative to be discussed here, 
-Alternatively, one could simply use the highest score that the agent has in its plan.  This would only make sense if the true behavior is assumed to always select the plan with the highest score.  Again, this should then also be expressed by the choice model, \ie using the highest score only makes sense when the agent always selects the plan with the highest score, in which case the result becomes the same as Section~\ref{ch:economicEval:valuingBehavior:output2Eval:executed} and \ref{ch:economicEval:valuingBehavior:output2Eval:average}.
+Alternatively, one could simply use the highest score that the agent has in its plan.  This would only make sense if  true behavior is assumed to always select the plan with the highest score.  Again, this should then also be expressed by the choice model, \ie using the highest score only makes sense when the agent always selects the plan with the highest score, in which case the result becomes the same as Section~\ref{ch:economicEval:valuingBehavior:output2Eval:executed} and \ref{ch:economicEval:valuingBehavior:output2Eval:average}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{More Complicated Variants}
 \label{sec:more-compl-variants}
 
-Section~\ref{sec:more-general-choice} discusses that \gls{matsim}'s typical choice model might be described by a mixture-of-logit model.  In that model,  $\epsilon_{ni}$ remains fixed per agent $n$ and alternative $i$, but other attributes such as the network conditions vary from one iteration to the next.  
+Section~\ref{sec:more-general-choice} discusses the idea that \gls{matsim}'s typical choice model might be described by a mixture-of-logit model.  In that model,  $\epsilon_{ni}$ remains fixed per agent $n$ and alternative $i$, but other attributes such as the network conditions vary from one iteration to the next.  
 %
-In Equation~(\ref{eq:mixture-of-logit}), $\vec\eta_{ni}$ denotes the random but simulation-generated deviations from the average conditions; let us add an index $k$ for the iteration number, i.e.\ write $\vec\eta_{ni}^k$.  That is, it is postulated that a real person would know both $\epsilon_{ni}$ and $\vec\eta_{ni}^k$, but the simulation only knows the latter (through the \gls{matsim} score).  
+In Equation~(\ref{eq:mixture-of-logit}), $\vec\eta_{ni}$ denotes the random, but simulation-generated, deviations from the average conditions; let us add an index $k$ for the iteration number, i.e.\ write $\vec\eta_{ni}^k$.  That is, it is postulated that a real person would know both $\epsilon_{ni}$ and $\vec\eta_{ni}^k$, but the simulation only knows the latter (through the \gls{matsim} score).  
 %
 Equation~(\ref{eq:mixture-of-logit}) then just describes the resulting choice distribution from what \gls{matsim} often does, i.e.\ apply a logit model to scores that are not averaged.
 
-It is, however, clear that this will not result in optimal \emph{average} agent behavior -- the agent may be pushed towards some choice by a random fluctuation of the $\vec\eta_{ni}^k$, but obtaining a much lower score from that choice in the average.  Overall, the agent would be better off by first averaging the score of each alternative over many iterations, and then base her choice on those scores.  This goes back to the converged scores of Section~\ref{sec:score-is-converged}.
+It is, however, clear that this will not result in optimal \emph{average} agent behavior -- the agent may be pushed towards some choice by a random fluctuation of the $\vec\eta_{ni}^k$, but obtaining a much lower score from that choice in the average.  Overall, the agent would be better off by first averaging the score of each alternative over many iterations, and then basing her choice on those scores.  This goes back to the converged scores of Section~\ref{sec:score-is-converged}.
 
-Calculating benefits from a mixture-of-logit interpretation becomes rather involved: We postulate that the agent sees the full \gls{matsim} score, plus some private $\epsilon$s; that she optimizes based on the sum of these two; that the \gls{matsim} simulation, however, does not know the $\epsilon$s and thus has to sample from the logit model; but that the economic utility has to include the effect of the $\epsilon$s although we do not know them, as in Section~\ref{ch:economicEval:valuingBehavior:output2Eval:logsum}.  Overall, thus, assigning utility values to such behavior as described by Equation~(\ref{eq:mixture-of-logit}) needs a better understanding of the underlying behavioral rationality.  Section~\ref{sec:future-frozen-randomness} discusses this a bit further.
+Calculating benefits from a mixture-of-logit interpretation becomes rather involved: we postulate that the agent sees the full \gls{matsim} score, plus some private $\epsilon$s; that she optimizes based on the sum of these two; that the \gls{matsim} simulation, however, does not know the $\epsilon$s and thus has to sample from the logit model; but that the economic utility has to include the effect of the $\epsilon$s although we do not know them, as in Section~\ref{ch:economicEval:valuingBehavior:output2Eval:logsum}.  Overall, thus, assigning utility values to such behavior as described by Equation~(\ref{eq:mixture-of-logit}) requires a better understanding of  underlying behavioral rationality.  Section~\ref{sec:future-frozen-randomness} discusses this  further.
 
 
 
@@ -1116,7 +1114,7 @@ Calculating benefits from a mixture-of-logit interpretation becomes rather invol
 \subsubsection{Summary}
 \label{ch:economicEval:valuingBehavior:output2Eval:summary}
 
-Overall, there seem to be two consistent strategies to aggregate the various plan scores of an agent $n$ into one value:
+Overall, there seem to be two consistent strategies to aggregate various plan scores of an agent $n$ into one value:
 \begin{itemize}\styleItemize
 
 \item If the choice model is a logit model, then using the logsum term over all plan scores as the agent's utility $U_i$ is consistent with the choice model.
@@ -1124,7 +1122,7 @@ Overall, there seem to be two consistent strategies to aggregate the various pla
 \item If the choice model is such that the plan with the highest score is selected, then using that score as the agent's utility $U_i$ is consistent with the choice model.
 
 \end{itemize}
-In both cases, the choice model needs to be consistent with the behavioral assumption about the agent, \ie in the first case it needs to be assumed that the model does not know the true agent choice beyond the choice probabilities, and the model system thus has to repeatedly sample from these probabilities.  In the second case it needs to be assumed that the randomness has already been ``frozen'' into the score computation (see Section~\ref{sec:future-frozen-randomness}), and the agent thus selects the plan with the highest score.
+In both cases, the choice model needs to be consistent with the behavioral assumption about the agent, \ie in the first case it needs to be assumed that the model does not know the true agent choice beyond the choice probabilities and the model system thus has to repeatedly sample from these probabilities.  In the second case it needs to be assumed that the randomness has already been ``frozen'' into the score computation (see Section~\ref{sec:future-frozen-randomness}) and the agent thus selects the plan with the highest score.
 %
 %% \kaitodo{
 %% \benjamin{Mir ist hier jetzt unklar, welche Rolle dann $\vec{\beta}^T \vec{\eta_{ni}}$ spielt...eine Lösung ist vermutlich: wir zwingen die Scores zum konvergieren (MSA), und der Rest ist frozen. Damit können wir einfach BestScore nehmen. Aber für logsum ist mir unklar wie das gehen soll...}
@@ -1138,7 +1136,7 @@ In both cases, the calculated individual score differences that result from a po
 %%
 %\kai{Aber das verändert die winner/loser ja nicht.  Bestenfalls den Vergleich (``top 10 pct losers'').}
 
-Some economists claim that the modeler's task of providing information for decision support ends at this point \citep{AhlheimRose1989MessungIndividuellerWohlfahrt}. However, in practice, some (monetary) valuation of the resulting behavioral changes is often required. The next section will therefore review different possibilities to monetize and aggregate individual utility differences in the \acrshort{matsim} context.
+Some economists claim that the modeler's task of providing information for decision support ends at this point \citep{AhlheimRose1989MessungIndividuellerWohlfahrt}. However, in practice, some (monetary) valuation of the resulting behavioral changes is often required. The next section review sdifferent possibilities to monetize and aggregate individual utility differences in the \acrshort{matsim} context.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\vfill\eject
@@ -1150,7 +1148,7 @@ After having obtained the individual changes in terms of utility%
 %
 , it is often necessary to convert these utility changes into monetary terms for economic evaluation, \eg in \gls{bca}.
 %
-Unfortunately, there exists no ``correct'' monetization or aggregation approach of individual utility differences. This is reflected by the ongoing discussion%
+Unfortunately, no ``correct'' monetization or aggregation approach exists for  individual utility differences. This is reflected by the ongoing discussion%
 %
 \footnote{
 %
@@ -1163,7 +1161,7 @@ between transport policy appraisal experts:
 %
 \begin{enumerate}\styleEnumerate
 %
-\item The first stream argues in favor of a consistency between values used in demand modeling and appraisal 
+\item The first stream argues in favor of a consistency in values used in demand modeling and appraisal 
 (\citet[p.255]{Grant-MullerEtAl2001EconomicTransportAppraisalRevisited}, \citet[p.S4 and p.S8]{HEATCO2006Delivrable5}, and Proost%
 %
 \footnote{
@@ -1172,11 +1170,11 @@ S. Proost, personal communication.
 %
 }%
 %
-). Values from the literature should only be used if values from the behavioral model are not available. They are, however, aware that this potentially limits the comparability of projects in different regions of the same state, or in different member states of the \gls{eu}.
+). Values from literature should only be used if values from the behavioral model are not available. They are, however, aware that this potentially limits the comparability of projects in different regions of the same state, or in different member states of the \gls{eu}.
 %
-According to these authors, additional indicators such as absolute time savings per income group should additionally be reported in order to address equity issues.
+According to these authors, additional indicators such as absolute time savings per income group should also be reported to address equity issues.
 %
-\item In contrast to the above, \citet[p.12]{MackieWorsley2013ComparisonTransportAppraisal} state, that in the United Kingdom, \enquote{standard [\gls{vtts}] values per minute would be used across incomes, modes and regions. Therefore, practice is to use behavioural information for modelling but standard values for appraisal.} Also \citet{Daly2013hEARTKeynote} distinguishes between ``valuation'', \ie people's willingness-to-pay (or accept) for marginal changes, and ``appraisal'', \ie what these changes are worth from a societal point of view.
+\item In contrast to the above, \citet[p.12]{MackieWorsley2013ComparisonTransportAppraisal} state, that in the United Kingdom, \enquote{standard [\gls{vtts}] values per minute would be used across incomes, modes and regions. Therefore, their practice is to use behavioral information for modeling but standard values for appraisal.} Also \citet{Daly2013hEARTKeynote} distinguishes between ``valuation'', \ie people's willingness-to-pay (or accept) for marginal changes, and ``appraisal'', \ie what these changes are worth from a societal point of view.
 %
 \item \label{lbl:weights} \citet{Fowkes2010ValueOfTTS}, \citet{OECD2006CBA}, and G\"uhnemann%
 %
@@ -1186,9 +1184,9 @@ A. G\"uhnemann, personal communication.
 %
 }
 %
-argue slightly differently but into the same direction: modeling and evaluation should be based on the best heterogeneous preferences that are available; in the evaluation, additional weights should be introduced, \eg to counter the effect of decreasing marginal utilities of money, or increasing \gls{vtts} with income, respectively. These weights would, thus, define the underlying equity concept of the appraisal method.
+argue slightly differently, but in the same direction: modeling and evaluation should be based on the best heterogeneous preferences available; in the evaluation, additional weights should be introduced, \eg to counter the effect of decreasing marginal utilities of money, or increasing \gls{vtts} with income, respectively. These weights would, thus, define the underlying equity concept of the appraisal method.
 %
-\item However, as \citet{AhlheimRose1989MessungIndividuellerWohlfahrt} point out, no approach to empirically determine these weights is possible without assuming some arbitrary a-priori specification.
+\item However, as \citet{AhlheimRose1989MessungIndividuellerWohlfahrt} point out, no approach to empirically determine these weights is feasible without assuming some arbitrary a-priori specification.
 %
 %% \kai{Ist ``exists'' mathematisch gemeint oder erkenntnistheoretisch?  Meiner Intuition nach müsste dies eine mathematische Aussage sein, d.h.\ das wird es auch nie geben.  Bestenfalls könnte man ``die Gesellschaft'' befragen, was sie als fair empfindet.}
 %% %
@@ -1196,12 +1194,12 @@ argue slightly differently but into the same direction: modeling and evaluation 
 %
 %\kai{leicht reformuliert}
 %
-In consequence, every interpersonal comparison of utility changes requires some normative decision, and the weights need therefore to be determined on a political level.
+In consequence, every interpersonal comparison of utility changes requires some normative decision and the weights need therefore to be determined on a political level.
 %
 \end{enumerate}
 
 
-One goal of this section~\ref{ch:economicEval:aggregatingValues} is to show the impacts of a possible integration between behavioral modeling and economic evaluation in the same agent-based framework. 
+One goal of this section~\ref{ch:economicEval:aggregatingValues} is to show the impact of a possible integration between behavioral modeling and economic evaluation in the same agent-based framework. 
 %% Since the additional weights from above can empirically not be determined, the approach implies a consistency between the values used in demand modeling and the values used in appraisal.
 % Verstehe leider nicht, was das hier sagen soll; geht m.E. auch ohne diese Info.  Kai, oct'14
 % Soll sagen, dass man die Gewichte nicht empirisch bestimmen kann, und wir deshalb keine Gewichte benutzen. Sondern eben die Werte des Verhaltensmodells in das der ökonomischen Bewertung hinübernehmen.
@@ -1221,14 +1219,14 @@ First, a conversion into \emph{income equivalents}, and second, a conversion int
 %
 \footnote{
 %
-\citet{Kickhoefer_PhDThesis_2014} shows that the choice of the monetization and aggregation procedure can have major impacts on the results when heterogeneity is assumed in user preferences.
+\citet{Kickhoefer_PhDThesis_2014} shows that the choice of the monetization and aggregation procedure can have major impact on the results when heterogeneity is assumed in user preferences.
 %
 }
 %
 %At any rate, t
 The choice of the procedure depends on a (normative) decision whether one $\mathit{EUR}$ or one $h$ should be valued equally across individuals.
 %
-It is therefore important that decision makers and modelers who deal with economic evaluation understand the possible effects of that choice; simply going with the most common approach may not be advisable.
+It is, therefore, important that decision makers and modelers who deal with economic evaluation understand the possible effects of that choice; simply going with the most common approach may not be advisable.
 %
 %\benjamin{Behavioral model parameters vs Evaluation model parameters, see slides by \citet{Daly2013hEARTKeynote}, as well as \citet{Daly2013ForecastingBehaviour,DalyEtAl2011SmallTimeSavings}; describing individual behavior becomes more and more accurate, but should one use these very different values for economic evaluation?}
 %%
@@ -1242,7 +1240,7 @@ It is therefore important that decision makers and modelers who deal with econom
 %
 \paragraph*{Basic Approach}
 %
-The most common approach in welfare economics to convert utility changes into money terms is to calculate the monetary amount $\Delta Y_n$ that one would need to give or take from individual $n$ in order to offset the impact of the policy on the utility level $\Delta U_n$.
+The most common approach used in welfare economics to convert utility changes into money terms is to calculate the monetary amount $\Delta Y_n$ that one would need to give or take from individual $n$ to offset the impact of the policy on the utility level $\Delta U_n$.
 %
 %% \benjamin{Ist das jetzt $V_n$ oder $U_n$ ??}
 %% %
@@ -1298,7 +1296,7 @@ The above approach is often criticized for equity reasons: if the marginal utili
 
 To counter this effect in economic evaluation, the use of ``standard'' or ``equity'' values is proposed in the literature \citep[see][for an overview of possible solutions]{RizziSteinmetz2015VOTIncomePreferenceEquity}.
 %
-One possibility is to replace the person-specific marginal utility of money, $\lambda_n$, by a population average,
+One possibility is to replace the person-specific marginal utility of money, $\lambda_n$, with a population average,
 \begin{equation}
 \overline\lambda := \frac{1}{N} \sum_n \lambda_n \ ,
 \label{eq:av-utl-of-income}
@@ -1309,7 +1307,7 @@ and then
 \label{eq:using-av-utl-of-income}
 \end{equation}
 %
-In the sense of the argument by \cite{Fowkes2010ValueOfTTS}, \cite{OECD2006CBA} and \cite{GuehnemannEtAl2011MethodologyReportMCA} mentioned above (Item~\ref{lbl:weights}), this would be one particular way to introduce the necessary weights.
+Following the argument by \cite{Fowkes2010ValueOfTTS}, \cite{OECD2006CBA} and \cite{GuehnemannEtAl2011MethodologyReportMCA} mentioned above (Item~\ref{lbl:weights}), this would be one particular way to introduce the necessary weights.
 
 %% A problem with this approach is that it is not immediately clear what this does, since according to the theory, utility values are not comparable between different persons, and dividing all them by the same constant $\overline\lambda$ does not make that argument obsolete.
 %% %
@@ -1324,9 +1322,9 @@ In the sense of the argument by \cite{Fowkes2010ValueOfTTS}, \cite{OECD2006CBA} 
 
 Another option to derive a monetary measure of welfare changes is composed of two steps:
 %
-First, a conversion of individual utility changes into \emph{equivalent hours of time as a resource} \citep{JaradiazEtc2008ValueOfLeisure, MackieJara-DiazFowkesTt-savings}. This would be the number of hours $\Delta T_n$ that one would need to give or take from individual $n$ in order to offset the impact of the policy on the utility level $\Delta U_n$. 
+First, a conversion of individual utility changes into \emph{equivalent hours of time as a resource} \citep{JaradiazEtc2008ValueOfLeisure, MackieJara-DiazFowkesTt-savings}. This would be the number of hours $\Delta T_n$ that one would need to give or take from individual $n$  to offset the policy impact on the utility level $\Delta U_n$: 
 %
-Second, a monetization of the resulting numbers through an arbitrary conversion factor, \ie the monetary value of one hour for the individual or for society.
+second, a monetization of the resulting numbers through an arbitrary conversion factor, \ie the monetary value of one hour for the individual or for society.
 
 In the \acrshort{matsim} sense, one could first calculate the corresponding time equivalent 
 %% with respect to Equation~\ref{XXX}
@@ -1366,14 +1364,15 @@ Similar to the marginal utility of money, also the marginal utility of time as a
 %% %
 %% \benjamin{Ich nehme an, dass du schreiben willst, dass die VoT auch noch von den Schließzeiten abhängen. Das sehe ich ein, frage mich aber ob das nicht zu kompliziert wird hier?}
 
-One option would be to stop with these time equivalents, \ie the \gls{bca} would return time equivalents per invested monetary unit.  
+One option would be to stop using these time equivalents, \ie the \gls{bca} would return time equivalents per invested monetary unit.
+ 
 %
-In many situations, however, it is desirable to convert all impacts of a policy into monetary terms, \ie to compute
+In many situations, however, it is desirable to convert all impacts of a policy into monetary terms, \ie to compute,
 \begin{equation}
 \Delta Y_n = \alpha_n \cdot \Delta T_n \ ,
 \label{eq:ch:economicEval:monetizationTime2Money}
 \end{equation}
-for example in order to compare with investment or external costs.  The following options then come to mind for $\alpha_n$:
+for example,  to compare with investment or external costs.  The following options are then possibilities for $\alpha_n$:
 \begin{itemize}\styleItemize
 
 \item
@@ -1413,7 +1412,7 @@ value for monetization, \eg
 \alpha_n \equiv \overline\alpha = \frac{1}{N} \, \sum_{n=1}^N \frac{\mu_n}{\lambda_n} \ .
 \]
 
-\item As yet another alternative, one could average over the marginal utility of money only, \ie 
+\item As another alternative, one could average over the marginal utility of money only, \ie 
 \[
 \overline\lambda = \frac{1}{N} \sum_n \lambda_n
 \]
@@ -1422,9 +1421,9 @@ and then
 \alpha_n = \frac{\mu_n}{\overline\lambda} \ .
 \label{eq:resource-vot-w-equitable-income}
 \end{equation}
-This would pick up that some persons are more pressed for time than others, while at the same time using an equal value for the marginal utility of money.
+This would highlight that some persons are more pressed for time than others, while, at the same time, using an equal value for the marginal utility of money.
 %
-Clearly, this gives the same result as Equations~(\ref{eq:av-utl-of-income}) and (\ref{eq:using-av-utl-of-income}).  It does, however, lend itself to a clearer interpretation: First, all utility differences are converted to a comparable scale, \ie time as a resource (Equation \ref{eq:ch:economicEval:monetizationTime}).  Then, these times are converted to a monetary scale, using a conversion factor which includes the pressure for time (\ie the person-specific $\mu_n$) but assumes an average marginal utility of money. 
+Clearly, this gives the same result as Equations~(\ref{eq:av-utl-of-income}) and (\ref{eq:using-av-utl-of-income}).  It does, however, lend itself to a clearer interpretation: first, all utility differences are converted to a comparable scale, \ie time as a resource (Equation \ref{eq:ch:economicEval:monetizationTime}).  Then, these times are converted to a monetary scale, using a conversion factor which includes the pressure for time (\ie the person-specific $\mu_n$) but assumes an average marginal utility of money. 
 
 
 
@@ -1445,7 +1444,7 @@ In all cases, the overall welfare change $\Delta W$ for the population with indi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Income vs Time Equivalents: Discussion}
 \label{ch:economicEval:aggregatingValues:discussion:incVsTime}
-The above sections show how to monetize and aggregate individual utility differences via income equivalents or via time equivalents. The following findings can be summarized:
+The sections above show how to monetize and aggregate individual utility differences though income equivalents or time equivalents. To summarize:
 %
 \begin{itemize}\styleItemize
 %
@@ -1454,9 +1453,9 @@ The above sections show how to monetize and aggregate individual utility differe
 %
 \item The aggregation of income equivalents yields the overall
 %willingness-to-pay of 
-equivalent monetary cash flow for
-the population under consideration
-that would be generated by the project.
+equivalent monetary cash flow that would be generated by the project for
+the population considered.
+
 %in order to realize a project.
 %
 That is, one $\mathit{EUR}$ is valued equally across individuals.
@@ -1482,7 +1481,7 @@ That is, one hour of life time is valued equally across individuals.
 %% The person-specific \gls{vtts} offset the equal value for one $h$ of life time.
 % Finde nicht, dass der Satz hilft. Wenn, dann vielleicht eher ``compensates for'' oder ``inverts''. Kai, oct'14
 %
-\item A monetization of time equivalents via some average value of time as a resource therefore in general leads to a different total benefit than directly aggregating income equivalents.  Such an approach maintains the equal value for one $h$ of life time.
+\item A monetization of time equivalents using some average value of time as a resource, therefore generally leads to a different total benefit than directly aggregating income equivalents.  Such an approach maintains the equal value for one $h$ of life time.
 %
 \end{itemize}
 
@@ -1496,34 +1495,34 @@ That is, one hour of life time is valued equally across individuals.
 
 \paragraph*{Scoring Function}
 
-A correct scoring function is central to the correct functioning of \acrshort{matsim}.
+A correct scoring function is central to correct \acrshort{matsim} functioning .
 %% \gunnar{Why is ``correct'' in quotation marks?}
 %
-The mathematics and understanding of that scoring function need to be derived from time allocation theory in economics.  In particular, any marginal utility of travel time needs to be split into the marginal utility of time as a resource ($\mu$ in the text above, and $\beta_{dur}$ in Section~\ref{sec:typicalParams}), and an additional direct marginal utility of time spent traveling ($U'_{trav,q}$ in the text above, and $\beta_{trav,mode,q}$ in Section~\ref{sec:typicalParams}).
+The mathematics and understanding of that scoring function need to be derived from time allocation theory in economics.  In particular, any marginal utility of travel time needs to be split into the marginal utility of time as a resource ($\mu$ in the text above, and $\beta_{dur}$ in Section~\ref{sec:typicalParams}) and an additional direct marginal utility of time spent traveling ($U'_{trav,q}$ in the text above, and $\beta_{trav,mode,q}$ in Section~\ref{sec:typicalParams}).
 
-Since most discrete choice models estimate the sum of these two, some way to split this sum up needs to be defined.  A somewhat ad-hoc way to achieve this is to find the mode with the largest ($=$ least negative) marginal utility of time, and use that value for the marginal utility of time as a resource.  That reference mode's direct marginal utility of time spent traveling is then zero, and all other modes' direct marginal utilities of time spent traveling are relative to the one of the reference mode.
+Since most discrete choice models estimate the sum of these two, definition is required about how to split up this sum.  A somewhat ad-hoc way to achieve this is to find the mode with the largest ($=$ least negative) marginal utility of time and use that value for the marginal utility of time as a resource.  That reference mode's direct marginal utility of time spent traveling is then zero; all other modes' direct marginal utilities of time spent traveling are relative to that of the reference mode.
 
-If one is interested in monetization, \ie converting utility values into monetary terms, then in addition the marginal utility of money as a resource ($\lambda$ in the text above, and $\beta_m$ in Section~\ref{sec:typicalParams}), needs to be known. 
+If one is interested in monetization, \ie converting utility values into monetary terms, then the marginal utility of money as a resource ($\lambda$ in the text above, and $\beta_m$ in Section~\ref{sec:typicalParams})also needs to be known. 
 
 Our current approach to obtain an approximation to $\lambda$ is to force all monetary preferences in the estimation of a choice model to a unique value.  If this is not possible, then one has to make a normative decision which monetary channel is considered most ``neutral'', \ie most similar to an ``unearned income'' channel.
 
 \paragraph*{Choice Model and Score Aggregation}
 
-\gls{matsim} agents normally have more than one plan, and each plan has a score.  There are two consistent approaches to come up with a utility value from those scores:
+\gls{matsim} agents normally have more than one plan; each plan has a score.  There are two consistent approaches to come up with a utility value from those scores:
 \begin{itemize}\styleItemize
 
-\item Using a \gls{mnl} choice model that makes probabilistic draws from those plans using their scores. The correct aggregation is then the logsum of all scores.
+\item Using a \gls{mnl} choice model that makes probabilistic draws from those plans using their scores: the correct aggregation is then the logsum of all scores.
 
-\item Using a choice model that selects the plan with the highest score. The correct aggregation is then to use the score of that plan.
+\item Using a choice model that selects the plan with the highest score: the correct aggregation is then to use the score of that plan.
 
 \end{itemize}
-In both cases, the result is the total utility $U$ of the choice set.  In the first case, the logsum term includes an expectation value of the randomness which is typically denoted by $\varepsilon$.  In the second case, all randomness, if any, needs to be ``frozen'' into the alternatives, and included into the computation of the score.
+In both cases, the result is the total utility $U$ of the choice set.  In the first case, the logsum term includes an expectation value of the randomness,  typically denoted by $\varepsilon$.  In the second case, all randomness, if any, needs to be ``frozen'' into the alternatives, and included into the computation of the score.
 
 \paragraph*{Monetization}
 
 Individual utility differences resulting from a change in the transport system can be converted into monetary terms by dividing them by $\lambda_n$. The result is the change in individual user benefit. Aggregating these individual benefits provides an indicator for the overall welfare change.
 %
-Since $\lambda_n$ may vary among agents, \eg according to their incomes, such approach will put a higher weight on people with small $\lambda_n$, which are typically those with large incomes.  An alternative is to use an average $\overline\lambda$ for this conversion even when the behavioral model ($=$ the scoring function) uses person-specific $\lambda_n$.
+Since $\lambda_n$ may vary among agents, \eg according to their incomes, such approach will put a higher weight on people with small $\lambda_n$, typically those with large incomes.  An alternative is to use an average $\overline\lambda$ for this conversion, even when the behavioral model ($=$ the scoring function) uses person-specific $\lambda_n$.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}
