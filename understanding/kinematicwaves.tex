@@ -14,20 +14,20 @@
 \section{\label{sec:Introduction}Introduction}
 
 \gls{matsim} comes with a number of \glspl{mobsim} (\cf
-Sections~\ref{sec:using-mobsims},~\ref{sec:deqsim}), the most important ones
-currently being the so-called \SINGLEQUEUESIM\ and the so-called
+Sections~\ref{sec:using-mobsims},~\ref{sec:deqsim}); the most important 
+are the so-called \SINGLEQUEUESIM\ and 
 \DOUBLEQUEUESIM. These differ from the implementation perspective
-(time-stepping vs.\ event-based, degree of parallelism), but they constitute
-all (at least approximate) solvers of the same underlying traffic flow model.
+(time-stepping vs.\ event-based, degree of parallelism), but 
+all are (at least approximate) solvers of the same underlying traffic flow model.
 The purpose of this chapter is to relate \gls{matsim}'s \glspl{mobsim} 
-to the existing traffic flow theory. It should be acknowledged that there exist
-similar simulation packages that are rooted in the same underlying modeling concepts 
-\citep[][]{mahut-2007,zhou-2014}.
+to the existing traffic flow theory. 
+There are other similar simulation packages rooted in the same underlying modeling concepts 
+\citep[][]{mahut-2007,zhou-2014}. 
 
-At the heart of \gls{matsim}'s traffic flow model is the flow-density relationship
-(also called \gls{fd}) shown in Figure~\ref{fig:Fundamental-diagram}.
+The flow-density relationship (also called \gls{fd}), shown in Figure~\ref{fig:Fundamental-diagram}
+is at the heart of \gls{matsim}'s traffic flow model.
 Given a long, homogeneous
-road it predicts the average flow $q$ (in vehicles per time unit)
+road, it predicts average flow $q$ (in vehicles per time unit)
 through any cross-section of that road, given an average vehicle density
 $\varrho$ (in vehicles per length unit) on that road. 
 
@@ -42,21 +42,21 @@ $\varrho$ (in vehicles per length unit) on that road.
 
 The \gls{fd} is defined as the minimum of a sending function $S(\varrho)$
 (solid) and a receiving function $R(\varrho)$ (dashed), resulting
-overall in a triangular curve that is parametrized by the free flow speed $v$, 
-the maximum density $\hat{\varrho}$ and the
-backward shockwave speed $w$. The maximum velocity is an observable
+overall in a triangular curve parametrized by free flow speed $v$, 
+maximum density $\hat{\varrho}$ and 
+backward shockwave speed $w$. Maximum velocity is an observable
 parameter that can be set in the network file (\texttt{freespeed}
-attribute of the \texttt{link} element). The maximum density equals
+attribute of the \texttt{link} element). Maximum density equals
 one over the length of a vehicle (\texttt{effectivecellsize} attribute
 of the \texttt{links} element) for a single-lane link and needs to
 be multiplied with the number of lanes (\texttt{permlanes} attribute
-of the \texttt{link} element) otherwise. The backward wave speed turns
-out to be the ratio of the length of a vehicle to the safety time
-gap adopted by drivers in congested conditions. This parameter turns
-out to be fairly constant; a vehicle length of 7.5\,meters and a time
+of the \texttt{link} element), otherwise. Backward wave speed turns
+out to be the ratio of vehicle length to the safety time
+gap adopted by drivers in congested conditions. This parameter 
+is fairly constant; a vehicle length of 7.5\,meters and a time
 gap of 2\,seconds leads to a value of 13.5\,kilometers per hour. 
 The backward wave speed can be set in the \DOUBLEQUEUESIM\ through the
-\lstinline|gapTravelSpeed| parameter; it currently cannot be set in the
+\lstinline|gapTravelSpeed| parameter; it cannot currently be set in the
 \SINGLEQUEUESIM. 
 %% \kaitodo{chk before going to print}
 % \note{Can it be set somewhere, or is there a hardcoded value?} 
@@ -70,7 +70,7 @@ The considered \gls{fd} alone applies only in stationary conditions, where
 it predicts that (i) flow increases linearly with density at low densities
 (\ie in uncongested conditions); (ii) flow decreases linearly with
 density at high densities (\ie in congested conditions); and (iii)
-in-between it attains a maximal value that constitutes the flow capacity
+in between, it attains a maximal value constituting the flow capacity
 \begin{eqnarray}
 \hat{q} & = & \frac{vw\hat{\varrho}}{v+w}\label{eq:flow-cap}
 \end{eqnarray}
@@ -85,12 +85,12 @@ and flow change over space and time) is possible by inserting the
 in the sense that vehicles cannot vanish or spontaneously appear on
 a road segment without on- and off-ramps). This leads to the \gls{kwm} 
 of traffic flow \citep[][]{lighthill-1955,richards-1956},
-where the sending and receiving function receive an intuitive interpretation:
-The instantaneous flow across any interface, possibly with different
+where the sending and receiving function receive an intuitive interpretation;
+instantaneous flow across any interface, possibly with different
 densities prevailing and \glspl{fd} applying up- and downstream of that interface,
 is defined by (i) inserting the density upstream of the interface
 into the upstream sending function, (ii) inserting the density downstream
-of that interface into the downstream receiving function, and (iii)
+of that interface into the downstream receiving function and (iii)
 taking the minimum of these two quantities \citep{Daganzo_TransResPartB_1994,lebacque-1996}.
 Intuitively: The flow is limited by what can be sent from upstream
 and what can be received downstream, but otherwise it is maximized.
@@ -103,22 +103,22 @@ of readability; pointers to the literature are provided.
 
 % ##################################################################################################################
 \section{\label{sec:Link-model}Link Model}
-To compute the flows entering and leaving a link, one needs to know
-how much flow can at most enter the link and how much flow can at
-most leave the link. Both constraints depend on the internal (congestion)
+To compute flows entering and leaving a link, one needs to know
+how much flow can maximally enter the link and how much flow can 
+maximally leave the link. Both constraints depend on the internal (congestion)
 state of the link. In symbols, one is interested in the instantaneous
 receiving flow rate $R$ of the link's upstream end and the instantaneous
 sending flow rate $S$ of the link's downstream end. Multiplying these
 rates by the duration $\delta$ of a simulation time step then yields
-the maximum number of vehicles that can enter respectively leave the link
+the maximum number of vehicles that can enter or leave the link
 during a time step.
 
-\gls{matsim} also needs to compute these quantities. The way in which it
+\gls{matsim} also needs to compute these quantities; how it
 does so is rooted in Newell's {}''simplified theory of kinematic
 waves'' \citep{newell-1993}, which provides a tracktable recipe for
-computing the flow and the density anywhere inside of a link given
+computing flow and density anywhere in a link, given
 that one keeps track only of the flows at the link's up- and
-downstream interface. In terms of the continuum model (\ie one that
+downstream interface. In the continuum model (\ie one that
 allows for real-valued flows and densities at real-valued locations
 and times) specified by \citet{newell-1993}, the cumulative in- and
 outflow of a link are defined as
@@ -127,27 +127,27 @@ N^{\text{in}}(t) & = & \int_{0}^{t}q^{\text{in}}(z)dz\label{eq:cum-in}\\
 N^{\text{out}}(t) & = & \int_{0}^{t}q^{\text{out}}(z)dz\label{eq:cum-out}
 \end{eqnarray}
 where $t$ denotes time, $q^{\text{in}}$ and $q^{\text{out}}$are
-the instantaneous in- and outflow rate (in vehicles per time unit)
-of the link, and an initially (at $t=0$) empty link is assumed. From
-\gls{matsim}'s vehicle-discrete perspective, the cumulative inflow (outflow)
-at a given point in time hence represents the total number of vehicles
+the instantaneous in- and outflow rates (in vehicles per time unit)
+of the link and an initially (at $t=0$) empty link is assumed. From
+\gls{matsim}'s vehicle-discrete perspective, cumulative inflow (outflow)
+at a given point in time hence represents total number of vehicles
 having entered (left) the link up to that point in time.
 
 \citet{yperman-2006,yperman-phd} observe that if Newell's theory
-allows to compute instantaneous densities anywhere in a link then
-it also allows to compute densities at the up- and downstream end
+allows computation of instantaneous densities anywhere in a link, then
+it also allows computation of densities at the up- and downstream ends
 of that link. Inserting these densities in the link's sending and
-receiving function then allows to express sending and receiving flows
+receiving function then allows expression of sending and receiving flows
 as functions of time-shifted cumulative in- and outflows only, with
-the time-shifts being specified according to the original recipe of
-\citet{newell-1993}:
+the time-shifts specified according to the original
+\citet{newell-1993} formula:
 \begin{eqnarray}
 R(t) & = & \min\left\{ \hat{\varrho}L-\left[N^{\text{in}}(t)-N^{\text{out}}(t+\delta-L/|w|)\right],\,\hat{q}\delta\right\} \label{eq:R-yperman}\\
 S(t) & = & \min\left\{ \left[N^{\text{in}}(t+\delta-L/v)-N^{\text{out}}(t)\right],\,\hat{q}\delta\right\} .\label{eq:S-yperman}
-\end{eqnarray}
-where $L$ is the length of the link and $\delta$ is the (small)
+\end{eqnarray},
+where $L$ is the link length and $\delta$ is the (small)
 discrete time step length. \citet{yperman-phd} provides some 
-intuition for this otherwise rather formal specification.
+intuition for this rather formal specification.
 
 The connection to \gls{matsim} can now be made explicit by labeling the
 two bracketed terms in \MyEqRef{eq:R-yperman} and \MyEqRef{eq:S-yperman}
@@ -167,10 +167,10 @@ From this (and symmetric operations for DQ), one obtains
 \text{DQ}(t) & = & \text{DQ}(t-\delta)+\delta\left[q^{\text{in}}(t-L/v)-q^{\text{out}}(t-\delta)\right].\label{eq:DQ-rek}
 \end{eqnarray}
 These recursive definitions turn out to be the continuum version of
-how the \DOUBLEQUEUESIM\ updates its link model: In
+how the \DOUBLEQUEUESIM\ updates its link model; in
 every time step, all vehicles that have just left the link are taken
 out of the DQ and all vehicles that have entered the link $L/v$ time
-units ago (corresponding to the free-flow travel time) are inserted
+units ago (corresponding to free-flow travel time) are inserted
 into the DQ. Similarly, all vehicles that have just entered the link
 are put into the UQ and all vehicles that have left the link $L/|w|$
 time units ago are only now taken out of the UQ. Further, inserting
@@ -179,11 +179,11 @@ and (\ref{eq:S-yperman}) yields
 \begin{eqnarray}
 R(t) & = & \min\left\{ \hat{\varrho}L-\text{UQ}(t),\,\hat{q}\delta\right\} \label{eq:R-matsim}\\
 S(t) & = & \min\left\{ \text{DQ}(t),\,\hat{q}\delta\right\} \label{eq:S-matsim}
-\end{eqnarray}
-which again corresponds to the way in which the \DOUBLEQUEUESIM\ 
-evaluates the boundary conditions of a link: The amount of flow that
-is allowed to enter the link is limited by the space in its UQ, and
-the amount of flow that is allowed to leave the link is limited by the
+\end{eqnarray},
+which again corresponds to how \DOUBLEQUEUESIM\ 
+evaluates the boundary conditions of a link; amount of flow 
+allowed to enter the link is limited by the space in its UQ and
+amount of flow allowed to leave the link is limited by the
 number of vehicles in its DQ. 
 % \note{Is this description compatible with the actual implementation?} 
 % \kai{Das muss ich im Moment auf die jdeqsim beziehen, weil die QSim das ja noch gar nicht implementiert hat.  Bei der jdeqsim kenne ich mich aber nicht aus.  --  Aber das, was wir in der QSim derzeit probieren, sieht so aus.}
@@ -191,34 +191,34 @@ number of vehicles in its DQ.
 A \gls{mobsim} that implements the rules \MyEqRef{eq:UQ-rek}, \MyEqRef{eq:DQ-rek}
 and \MyEqRef{eq:R-matsim}, \MyEqRef{eq:S-matsim} implements a \gls{kwm}-consistent
 link model. This is almost the case for the \DOUBLEQUEUESIM,
-which, in its implementation as of December 2014, has the sole deficiency
-of not limiting the link's inflow to its flow capacity. 
+which, in its implementation as of December 2014, is only limited
+by not limiting the link's inflow to its flow capacity. 
 % \note{Is this correct?} 
 % \kai{Kenne mich mit jdeqsim nicht aus.  Man kann da irgendetwas einstellen.  Das, was wir in der QSim derzeit ausprobieren, wird keine link inflow capacity restriction haben.}
 % \ah{in \gls{jdeqsim} there is \emph{no} maximum inflow capacity, there is only the \lstinline|minimumInFlowCapacity| parameter to prevent gridlocks.}
 %
 The \SINGLEQUEUESIM\ turns out to be a
-particular instance of the same model where the backward wave speed
+particular instance of the same model where backward wave speed
 is set to $\left|w\right|=L/\delta$. Inserting this into \MyEqRef{eq:UQ-rek}
 leads to
 \begin{eqnarray}
 \text{UQ}(t) & = & \text{UQ}(t-\delta)+\delta\left[q^{\text{in}}(t-\delta)-q^{\text{out}}(t-\delta)\right],
-\end{eqnarray}
-which represents nothing but the total number of vehicles in the link.
-This corresponds indeed to the behavior of the \SINGLEQUEUESIM,
-where the inflow to a link is limited only by the available space
+\end{eqnarray},
+which represents only total number of vehicles in the link.
+This corresponds to \SINGLEQUEUESIM  behavior,
+where inflow to a link is limited only by the available space
 in the link as a whole. Letting $\left|w\right|=L/\delta$ means that
-the \SINGLEQUEUESIM\ behaves like a \gls{kwm} with an extremely
+the \SINGLEQUEUESIM\ behaves like a \gls{kwm}, with an extremely
 high backward shockwave speed, which physically means that a queue
-on the link does not dissolve from its downstream end but moves {}''en
+on the link does not dissolve from its downstream end, but moves {}''en
 block'' over the link. 
 
 % ##################################################################################################################
 \section{\label{sec:Node-model}Node Model}
-All \glspl{mobsim} in \gls{matsim} implement the same node model. Somewhat surprisingly,
-this node model can be traced back at least to \cite[][under the name of ``fair intersections'']{CetinBurriNagel2003queue}, whereas
-the literature based on which its consistency with the \gls{kwm} can be
-established is only a few years old \citep{tampere-2010b,floetteroed-2011a,corthout-2012}. 
+All \glspl{mobsim} in \gls{matsim} implement the same node model. Surprisingly,
+this node model can be traced back at least to \cite[][under the name of ``fair intersections'']{CetinBurriNagel2003queue}, while
+literature citing its consistency with the \gls{kwm} 
+is only a few years old \citep{tampere-2010b,floetteroed-2011a,corthout-2012}. 
 
 Nodes in \gls{matsim} have no spatial dimension; they merely connect up-
 and downstream links. \citet{tampere-2010b} specify a set of requirements
@@ -227,7 +227,7 @@ that the flow through the node shall be maximized subject to the following
 constraints:
 \begin{enumerate}
 \item Flows are non-negative and conserved within the node. This means that
-vehicles cannot drive backwards, and they must neither disappear nor
+vehicles cannot drive backwards and they must neither disappear nor
 spontaneously appear within the node.
 \item Flow ratios comply with exogenous specified turning fractions. For
 instance, if it is specified that 20\,\% of the outflow of link
@@ -235,24 +235,24 @@ $i$ shall turn into link $j$, then the amount of flow that actually
 advances from link $i$ into link $j$ shall indeed be 20\,\%
 of the flow that actually leaves link $i$.
 \item Sending flows of upstream links and receiving flows of downstream
-downstream are not exceeded. The meaning of this is explained in Section~\ref{sec:Link-model}.
+downstream are not exceeded. This is explained in Section~\ref{sec:Link-model}.
 \item The invariance principle of \citet{lebacque-2005} is satisfied. The
-intuitively most important implication of this principle is that the
+most important intuitive implication of this principle is that the
 advancement of a queuing vehicle is not affected by the vehicles
 behind it.
 \item A {}``supply constraint interaction rule'' is satisfied. It defines
 how the limited receiving flow of a downstream link is shared
-by competing upstream link. In practical terms, a right-of-way specification.
+by a competing upstream link: in practical terms, a right-of-way specification.
 \end{enumerate}
 \citet{floetteroed-2011a} specify an {}``incremental node model''
-that satisfies these requirements, and they also provide an intuitive
-and computationally efficient solution algorithm. In each simulation
+that satisfies these requirements, also providing an intuitive,
+computationally efficient solution algorithm. In each simulation
 time step, this algorithm incrementally (hence the name) moves flow
 from upstream links into downstream links. It does so such that all
-of the aforementioned constraints are satisfied anytime during the
-transfer, and it terminates only once no more flow can be moved. In
-consequence, the ultimately moved flows also comply with all constraints,
-and they are maximal. 
+the previously constraints are satisfied anytime during the
+transfer, terminating only once no more flow can be moved. 
+Thus, ultimately moved flows also comply with all constraints
+and are maximal. 
 
 Now consider the code documentation of \gls{matsim}'s \lstinline|queuesim.QueueNode.moveNode|
 (as of December 2014):
@@ -260,7 +260,7 @@ Now consider the code documentation of \gls{matsim}'s \lstinline|queuesim.QueueN
 \noindent \texttt{Moves vehicles from the inlinks' buffer to the outlinks
 where possible. The inLinks are randomly chosen, and for each link
 all vehicles in the buffer are moved to their desired outLink as long
-as there is space. If the front most vehicle in a buffer cannot move
+as there is space. If the front vehicle in a buffer cannot move
 across the node because there is no free space on its destination
 link, the work on this inLink is finished and the next inLink's buffer
 is handled.}
@@ -268,33 +268,33 @@ is handled.}
 This is an informal description of how the incremental node model
 of \citet{floetteroed-2011a} works, given that one adopts the conventions
 that the sending flow of a link is stored in its {}``buffer'' and
-that the receiving flow of a link is labeled here as the free space
+that the receiving flow of a link is labeled here as free space
 in (the upstream queue of) that link. A more detailed inspection of
-the underlying implementation also does not reveal any inconsistencies
-with the incremental node model specification.
+the underlying implementation reveals no inconsistencies
+with incremental node model specification.
 
-There are two aspects of the \gls{matsim} node model that is not reflected
+There are two aspects of the \gls{matsim} node model not reflected
 by the above code comment.
 \begin{itemize}\styleItemize
-\item The sending flows of an upstream link may be limited by by an outflow
-capacity that is below the flow capacity \MyEqRef{eq:flow-cap} of
-that link, for instance to approximate the capacity reduction resulting
+\item Sending flows of an upstream link may be limited by by an outflow
+capacity below the flow capacity \MyEqRef{eq:flow-cap} of
+that link: for instance, to approximate capacity reduction resulting
 from a downstream traffic light. This is still consistent with the
 framework described above.
 \item The selection probability of {}``inLinks'' is proportional to their
-flow capacity, meaning that links with higher capacity send on average
+flow capacity, meaning that links with higher capacity send, on average,
 more flow. This is again consistent with \citet{floetteroed-2011a}
 and constitutes a concrete {}``supply constraint interaction rule'',
 as required by \citet{tampere-2010b}.
 \end{itemize}
 The relative simplicity of \gls{matsim}'s intersection logic may be refined
-in many regards; for instance, turning pockets may be added and conflicts
-within the intersection may be modeled (\cf Chapter~\ref{ch:signalslanes}). 
+in many ways; for instance, turning pockets may be added and conflicts
+within intersections may be modeled (\cf Chapter~\ref{ch:signalslanes}). 
 %\note{I think Dominik has done something like this. Need to find a reference.} \kai{Andreas: Das wäre die ''lanes core extension''.}\ah{gracias}
 However, some caution is needed when implementing such extensions.
 The present node model is, due to its simplicity, guaranteed to yield
-unique node flows. This property needs to be revisited when turning
-to more complicated specifications \citep{corthout-2012}.
+unique node flows. This property needs to be revisited when 
+implementing more complicated specifications \citep{corthout-2012}.
 
 % ##################################################################################################################
 \section{\label{sec:kinematicwaves-summary}Summary}
