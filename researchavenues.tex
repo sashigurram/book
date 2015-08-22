@@ -66,7 +66,7 @@ The core \gls{matsim} architecture---where agents learn utilities for plans---wa
 \citet{ArthurBar} addresses a coordination problem where agents receive a payoff only when less than 60 out of 100 go to an event.  He addresses this by first generating a large number of heuristic predictors for the next round's attendance, such as ``same as in last round'' or ``trend from last four rounds''.  He next gives each agent a randomly selected handful of these strategies, so that agents have different sets of predictors.  Then, many rounds of the game are played, where the score of each predictor is updated based on its prediction quality,  
 %\kwaah{payoff?} 
 %\kai{nein, eigentlich so, wie es da steht: der score ($=$ payoff) wird angepasst basierend auf der Qualität der Vorhersage.  Wenn es unverständlich ist, was können wir dann tun?}
-and agents act based on their current best predictor.  Simulations demonstrate that the approach leads to successful coordination, \ie around 60\,agents show up in every round.
+and agents act based on their currently best predictor.  Simulations demonstrate that the approach leads to successful coordination, \ie around 60\,agents show up in every round.
 %
 That approach, in turn, builds on work by \cite{PalmerEtAl_PhysicaD_1994}, who simulate a stock market, \citet{Holland_1992}, whose classifier systems have more structure than  Arthur's model, but a similar model of performance learning, or \cite{AxelrodBook}, who investigates adaptive agents in the face of repeated non-cooperative games.  
 
@@ -207,15 +207,15 @@ From an econometric/discrete choice perspective (\cf Section~\ref{sec:Evolution-
 Section~\ref{sec:Evolution-of-choice} discusses a version of the plans' generation/removal process, but makes rather strong assumptions about the capability to compute best-response plans.  Here, let us instead consider a heuristic argument.
 Assume that plans $i$ for a person $n$ are created with a certain probability $p^{create}_{n,i}$; the person index $n$ will be dropped in the following.  Also assume that plans are removed with probability $p^{remove}_{i}$.  The master equation for the probability $q_{i}$ of plan $i$ to be contained in the choice set becomes in leading order\footnote{%
 %
-In higher order, one would have to correct for the possibility that a plan may appear more than once in the plan set.
+In higher order, one would have to correct for the possibility that a plan may appear more than once in the choice set.
 %
 }
 \[
-\frac{\partial q_{i}}{\partial t}
+\frac{d q_{i}}{d t}
 %
 = - q_{i} \cdot p^{remove}_{i} + p^{create}_{i} \ .
 \]
-The steady state solution, obtained from $\partial q_{i}/\partial t = 0$, is given by
+The steady state solution, obtained from $d q_{i}/d t = 0$, is given by
 \begin{equation}
 q_{i} = \frac{p^{create}_{i}}{p^{remove}_{i}} \ .
 \label{eq:5}
@@ -310,22 +310,27 @@ Such an approach is experimentally available as \lstinline{PathSizeLogitSelector
 No extended research has yet been undertaken to see whether \gls{matsim} could adopt the strategy of 
 %% \glspl{ga}, which 
 % Gibt es dafür eine Referenz?  Meiner Erinnerung nach gibt es diesen Ansatz auch ganz außerhalb von GA, so etwas wie ``hillclimbing combined with random re-start''.  kai, mar'15
-regularly introduces new random 
+regularly introducing new random 
 starting solutions to avoid local minima. 
 One  challenge: the generation of such random plans would result---in most cases---in nonsensical plans, which would need to be removed through computationally expensive iterations. 
 See \citet[][]{Feil_PhDThesis_2010} for  difficulties in constructing optimal alternative plans for the number and sequence of activities. 
-One possibility is to initially allocate a small set of randomly chosen alternative day plans and measure their similarity throughout the simulation. to reduce the chances of their removal based on their lack of similarity with other plans. %% (also \cf Section~\ref{sec:heterogeneity-in-plans-removal}). 
+One possibility is to initially allocate a small set of randomly chosen alternative day plans and measure their similarity throughout the simulation. 
+%% to reduce the chances of their removal based on their lack of similarity with other plans. %% (also \cf 
+%% Section~\ref{sec:heterogeneity-in-plans-removal}). 
 There is no research on a replanning technique involving switching of the day plan activity order, which again would produce more dissimilar plans than currently possible. 
 
 \citet{MoyoNagelptNetCalibration} and \citet{NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA} report computational experiments where a randomized Pareto router is used to generate a different route every time it is called.  The Pareto router randomly draws a trade-off between different utility function contributions, such as fare/toll, travel time, access/egress time, then computes an optimal route based on the resulting generalized cost. The randomized approach considerably reduces the requirement that the router be consistent with the scoring function.  The randomized Pareto router generates a collection of possible routing solutions;  each agent then can select one that best suits its own trade-off between monetary budget and time pressure.  Heterogeneity is generated by each synthetic traveler having a different trade-off.
 
 The approach of \citet[also see Chapter~\ref{ch:destinationchoice} of this book]{Horni_PhDThesis_2013} can also be seen in this sense: attaching a random error term to each location-person-pair means that even two persons---at exactly the same home location with exactly the same activity pattern---will select different locations for their activities.  So far, this describes heterogeneity between persons.  However, the approach also generates more heterogeneity per person, since the destinations attractive to each synthetic person will be spatially more spread out than they might otherwise be.
 
-% =======================================================================================
-\subsection{Using the Logsum for Economic Evaluation}
-\label{sec:using-logsum-4-eval}
+% %% =======================================================================================
+%% \subsection{Using the Logsum for Economic Evaluation}
+%% \label{sec:using-logsum-4-eval}
 
-As discussed in Section~\ref{ch:economicEval:valuingBehavior:output2Eval}, using the \gls{logsum} overall agent plan scores is attractive for both theoretical and operational reasons.  Clearly, these statistics in the \gls{matsim} context need to be better understood.
+%% As discussed in Section~\ref{ch:economicEval:valuingBehavior:output2Eval}, using the \gls{logsum} overall agent plan scores is attractive for both theoretical and operational reasons.  Clearly, these statistics in the \gls{matsim} context need to be better understood.
+
+% \kai{Ich habe diesen Abschnitt jetzt ganz rausgenommen, weil mir im Moment gar nicht ganz klar ist, was er hier genau bedeutet.}
+
 %\kwaah{ 
 %\st{Especially the choice set for which the log sum term is calculated given the discussion above about plan addition and removal. Approaches in which a set of plans is kept constant for a final set of iterations might be needed}%
 %%\citep[][]{DeJongEtAl_ResRep_AVV_2005}
@@ -377,7 +382,9 @@ As discussed in Section~\ref{ch:economicEval:valuingBehavior:output2Eval}, using
 
 %\kwaah{
 The need for a strategies meta-search, as sketched by \citet[][]{ArthurBar}, remains an open question. 
-In the \gls{matsim} context, all decisions, based on explicit search for alternatives, can be studied to see how far apart choice set generation strategies of discrete choice modeling (which draw (stratified) (randomly) from the universal choice sets), are from explicit construction strategies. 
+In the \gls{matsim} context, all decisions, based on explicit search for alternatives, can be studied to see how far apart choice set generation strategies of discrete choice modeling (which draw 
+%(stratified) (randomly) 
+from the universal choice sets), are from explicit construction strategies. 
 One idea would be to observe the second step to see what impact these would have on the results and the policy conclusions. 
 
 A good example is parking search \citep[][]{Waraich_unpub_IATBR_2012}, for which multiple strategies have been documented and which explains the empirical observations \citep[][]{Shoup_2005}. 
@@ -432,7 +439,8 @@ addition and dropping \citep[][p.127f]{Feil_PhDThesis_2010}. %% \citet[][]{MATSi
 %
 As already stated in Section~\ref{sec:zero-util-durat}, the problem is that, 
 %in the standard formulation, 
-during the typical duration, all activities generate the same score, independent of their actual duration; thus, it makes sense to first drop the longest activity, since that generates the least amount of utility \emph{per time unit}. This is typically the home or  work activity; dropping this first clearly is nonsensical.
+%during 
+at the typical duration, \ie at $t_{dur,q} = t_{typ,q}$, all activities generate the same score, independent of their actual duration; thus, it makes sense to first drop the longest activity, since that generates the least amount of utility \emph{per time unit}. This is typically the home or  work activity; dropping this first clearly is nonsensical.
 
 The property that all activities have the same utility at their typical duration is obtained by computing the value of the parameter $t_{0,q}$ from the condition\footnote{%
 %
@@ -465,7 +473,7 @@ leading to
 \tilde t_{0,q} = t_{typ,q} \cdot \exp( - const ) \ .
 \label{eq:9}
 \end{equation}
-That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{matsim} scoring function would make, in order, all activities equally likely to drop.  Starting with \gls{matsim} release~0.7.x, there will be a config switch 
+That is, replacing Equation~(\ref{eq:8}) by Equation~(\ref{eq:9}) in the \gls{matsim} scoring function would make, in first order, all activities equally likely to drop.  Starting with \gls{matsim} release~0.7.x, there will be a config switch 
 \begin{lstlisting}{xml}
 <param name="typicalDurationScoreComputation" value="..." />
 \end{lstlisting}
@@ -821,7 +829,7 @@ A challenge, however, is that it is normally not possible to just collect and co
 %
 For example, if walking access/egress to/from \gls{pt} is not included in the estimation, then its effect may be partially be included in the alternative-specific constant, or in the population density (which may serve as a proxy for the density of \gls{pt} access points).  Just adding the effect of walking access/egress from some other study is thus incorrect.
 
-\item Even when \gls{matsim} is able \emph{in principle} to add these elements, doing so---in practice---poses a considerable statistical challenge.  For example, one may assume that households inside a zone self-select their precise residential location based on the \gls{pt} accessibility of their regular destinations.  
+\item Even when \gls{matsim} is able \emph{in principle} to add these elements, doing so in practice poses a considerable statistical challenge.  For example, one may assume that households inside a zone self-select their precise residential location based on the \gls{pt} accessibility of their regular destinations.  
 %
 In contrast, a typical \gls{matsim} initial demand generation process will first assign residential locations, then generate their destinations, \eg their workplaces.
 %
@@ -961,7 +969,9 @@ As a long-term perspective, one could also imagine estimating choice models dire
 % =========================================================================================
 \subsection{Agent-Specific Preferences}
 \label{sec:agent-specific-prefs}
-\gls{matsim} scenarios so far consider a relatively small set of agent attributes, essentially because of missing data suitable for deriving detailed large population attributes for \citep[][]{MuellerFloetteroed_unpub_hEART_2014}. 
+\gls{matsim} scenarios so far consider a relatively small set of agent attributes, essentially because of missing data suitable for deriving detailed large population attributes 
+%for 
+\citep[][]{MuellerFloetteroed_unpub_hEART_2014}. 
 Some studies, however, used larger sets of attributes. 
 \citet{GretherEtAl2010TrbIncomeInTRR, KickhoeferEtAl2011PolicyEvaluationIncome} estimated individual income-contingent utility functions. 
 \citet[][]{HorniEtAl_TechRep_IVT_2012_a, HorniAxhausen_TechRep_IVT_2014} incorporated agent-specific travel preferences and individual income-dependent marginal utilities of money; preference values, however, were assigned randomly. 
@@ -987,13 +997,13 @@ More formally:
 %
 The current \gls{matsim} choice process can be interpreted as maximizing, for each agent $n$, 
 \[
-U_{ni} = V_{ni} + \tilde V_{ni} + \vec{\beta}^T \vec{\eta_{ni}} + \tilde \eps_{ni} \ ,
+U_{ni} = V_{i} + \tilde V_{ni} + \vec{\beta}^T \vec{\eta_{ni}} + \tilde \eps_{ni} \ ,
 \]
 where 
 %
-$V_{ni}$ is the systematic utility of alternative $i$, 
+$V_{i}$ is the systematic utility of alternative $i$, 
 %
-$\tilde V_{ni}$ is a random but fixed (frozen) addition, 
+$\tilde V_{ni}$ is an agent-specific addition, 
 %
 $\vec{\beta}^T \vec{\eta_{ni}}$ describes randomness inserted by the network loading model (see Equations~(\ref{eq:score}) and~(\ref{eq:mixture-of-logit})), and $\tilde \eps_{ni}$ is remaining (unexplained) noise.
 %
@@ -1008,7 +1018,7 @@ $\to$ To be consistent, a choice model and a \gls{matsim} implementation used to
 
 Moreover, the default plans removal (Sections \ref{sec:plans-removal} and \ref{sec:heterogeneity-in-plans-removal}) has a tendency to remove all alternatives except the best, effectively setting the $\tilde\eps_{ni}$ to zero for \emph{all} typical \gls{matsim} configurations when run for sufficiently many iterations.
 
-This is acceptable in situations where most of the noise can be assumed to be in the $\tilde V_{ni}$ and/or the $\vec{\beta}^T \vec{\eta_{ni}}$; this may be the case for the choice dimensions of route, mode, and time.  It is clearly wrong for locations where $\tilde\eps_{ni}$ subsumes preferences that are specific to each person--alternative--pair and that often cannot be included into the $\tilde V_{ni}$.  For example, a person may have a strong preference for ``swimming'' in a situation where the data only knows about ``leisure'' facilities.  In this situation, a possible approach is to generate random but ``frozen'' $\tilde\eps_{ni}$, as described in Chapter~\ref{ch:destinationchoice}.
+This is acceptable in situations where most of the noise can be assumed to be in the $\tilde V_{ni}$ and/or the $\vec{\beta}^T \vec{\eta_{ni}}$ (and thus generated with hopefully plausible structure by the \gls{matsim} dynamics); this may be the case for the choice dimensions of route, mode, and time.  It is clearly wrong for locations where $\tilde\eps_{ni}$ subsumes preferences that are specific to each person-alternative-pair and that often cannot be included into the $\tilde V_{ni}$.  For example, a person may have a strong preference for ``swimming'' in a situation where the data only knows about ``leisure'' facilities.  In this situation, a possible approach is to generate random but ``frozen'' $\tilde\eps_{ni}$, as described in Chapter~\ref{ch:destinationchoice}.
 
 $\to$ One should thus evaluate how far, and how, a similar approach could be introduced for choice dimensions beyond destination choice.
 
@@ -1070,14 +1080,14 @@ The \gls{jdeqsim} (Section~\ref{sec:using-jdeqsim}) and the deprecated \gls{deqs
 % ##################################################################################################################
 \section{Choice Dimensions, in Particular Expenditure Division}
 \label{sec:ra-choice-dimensions}
-As shown in Section~\ref{sec:zhgroup_matsim} and pictured in Figure~\ref{fig:dimensions}, the Zürich group targets a fuller scheduling model. In addition to standard choice dimensions (printed in red in cited figure), numerous choices are subject to ongoing research. In particular, ``expenditure division'', is unexplored not only in \gls{matsim}, but in transport planning in general; study has focused on single-travelers or household-based groups. 
-The field's understanding of both expenditure patterns and allocation styles inside a household are poor, which is no surprise; relevant questions are missing in surveys. 
+As shown in Section~\ref{sec:zhgroup_matsim} and pictured in Figure~\ref{fig:dimensions}, the Zürich group targets a fuller scheduling model. In addition to standard choice dimensions (printed in red in the cited figure), numerous choices are subject to ongoing research. In particular, ``expenditure division'' is unexplored not only in \gls{matsim}, but in transport planning in general; studies have focused on single-travelers or household-based groups. 
+The field's understanding of both expenditure patterns and allocation styles inside a household are poor, which is no surprise since relevant questions are missing in surveys. 
 First tests for necessary survey works are currently in process and 
-will lead to a better understanding of activity participation and time values travelers bring to their decisions.   
+will lead to a better understanding of activity participation and time values that travelers bring to their decisions.   
 
 % ##################################################################################################################
 \section{Considering Social Contacts}
-Apparently, social contacts, within households and extended social networks have a substantial influence on travel decisions, particular for social activities in leisure time \citep[][]{KowaldEtAl_unpub_STRC_2009}.
+Apparently, social contacts, within households as well as within extended social networks, have a substantial influence on travel decisions, particular for social activities in leisure time \citep[][]{KowaldEtAl_unpub_STRC_2009}.
 An early social networks study, in context, but not based on \gls{matsim}, is \citet[][]{MarchalNagel_TRR_2005}.
 Further work based on or, again, in context of \gls{matsim} was undertaken by \citet[][]{Hackney_PhDThesis_2009, Illenberger2012PhD, IllenbergerEtAl_TechRep_VSP_2010, KowaldEtAl_unpub_STRC_2009, KowaldEtAl_ASNA_2009}.
 Most recent work on joint trips is reported in Chapter~\ref{ch:jointtrips}. 
