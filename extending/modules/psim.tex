@@ -53,7 +53,11 @@ In risk analysis, these models are called ``surrogate models'' \citep[][]{Sudret
 \section{Basic Idea}
 \gls{psim} exploits classes that record various network performance aspects during queue simulations and uses them as an approximate meta-model of \gls{qsim}. It fires the same sequence of events for car and public transport passengers that is produced during a \gls{qsim} mobility simulation, except that event timings are approximate values expected at the time of day they occur.
 
-For private vehicle traffic, it calls the \lstinline|getLinkTravelTime(Link link, double time, Person person, Vehicle vehicle)| method of classes implementing the \lstinline|TravelTime| interface to fire \lstinline|LinkEnterEvents| and \lstinline|LinkLeaveEvents| at appropriate times for all car route links. For public transportation, the events sequence generated for a passenger traveling on a particular service relies on a meta-model of stop-to-stop travel times (\lstinline|interface StopStopTime|) and waiting times at stops (\lstinline|interface WaitTime|); both concepts were developed by Sergio Ord\`o\~nez at the Future Cities Laboratory (package \lstinline|playground.singapore.transitRouterEventsBased|).
+For private vehicle traffic, it calls the 
+\begin{lstlisting}
+getLinkTravelTime(Link link, double time, Person person, Vehicle vehicle)
+\end{lstlisting}
+method of classes implementing the \lstinline|TravelTime| interface to fire \lstinline|LinkEnterEvents| and \lstinline|LinkLeaveEvents| at appropriate times for all car route links. For public transportation, the events sequence generated for a passenger traveling on a particular service relies on a meta-model of stop-to-stop travel times (\lstinline|interface StopStopTime|) and waiting times at stops (\lstinline|interface WaitTime|); both concepts were developed by Sergio Ord\`o\~nez at the Future Cities Laboratory (package \lstinline|playground.singapore.transitRouterEventsBased|).
 
 \gls{psim} plans are scored using the same function as  \gls{qsim} iterations and are compatible with most replanning modules in \gls{matsim}. Following a series of \gls{psim} iterations, a plan is selected for each agent, in the usual fashion, and a \gls{qsim} iteration is run to start a new cycle. The various classes used in \gls{psim} are updated with the latest network performance information and the process repeats.
 
