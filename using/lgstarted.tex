@@ -26,16 +26,17 @@ Getting the source code into different computing environments and extending \gls
 
 To run \gls{matsim} you must install the \gls{javase} that complies with the appropriate \gls{matsim} version. At this time, this is \gls{javase}~7.
 
-You also need the official \emph{\gls{matsim} release,}, a zip file (usually designated with the version number \lstinline|matsim-yy.yy.yy.zip|), that includes everything required to run it. It can be downloaded following the ``release'' link under \url{http://matsim.org/downloads}.
+You also need the official \emph{\gls{matsim} release,} a zip file (usually designated with the version number \lstinline|matsim-yy.yy.yy.zip|), that includes everything required to run it. It can be downloaded following the ``release'' link under \url{http://matsim.org/downloads}.
 %on the \gls{matsim} web page. 
 Unzipping results in the \textbf{\gls{matsim} directory tree}. Continue with Section~\ref{sec:runexample}.
 
-If you prefer to use the more up-to-date \emph{nightly builds,} you should download
+If you prefer to use the more up-to-date---but less stable---\emph{nightly builds,} you should download, via the same \gls{url} \url{http://matsim.org/downloads},
 \begin{itemize}\styleItemize
 \item the \gls{matsim} \gls{jar} file (usually tagged with the revision number \lstinline|MATSim_ryyyy.jar|), and
 \item the required external \glspl{library} (\lstinline|MATSim_libs.zip|). 
-Unzipping this collection of 3rd-party libraries, you should then get a directory \lstinline|libs|, with several \gls{jar} files inside. If the directory \lstinline|libs| is in the same directory as the \gls{matsim} \gls{jar} file, the libraries are found automatically and don't have to be added manually to the \lstinline|classpath| manually.
+Unzipping this collection of 3rd-party libraries, you should then get a directory \lstinline|libs|, with several \gls{jar} files inside. If the directory \lstinline|libs| is in the same directory as the \gls{matsim} \gls{jar} file, the libraries are found automatically and don't have to be added manually to the \lstinline|classpath|.
 \end{itemize}
+Continue with Section~\ref{sec:runexample}.
 
 % ================================================================================================
 \subsection{Running MATSim}
@@ -52,7 +53,8 @@ This feature will appear in the releases, starting with version~0.7.
 {}
 % ----------
 
-%For the release~0.6, \gls{matsim} does not provide a \gls{gui}; thus, you must be able to handle and access a command line tool.\footnote{%
+For the release~0.6, \gls{matsim} does not provide a \gls{gui}; thus, you must be able to handle and access a command line tool.
+%\footnote{%
 %%
 %\parskip0.3\baselineskip
 %\parindent0pt
@@ -63,18 +65,22 @@ On the command prompt type the following command in one line, but substitute the
 %% \lstinline|java -Xmx512m -cp /path/to/matsim.jar org.matsim.run.Controler /path/to/config.xml|
 
 On Linux or Mac OS X, something like:
-\begin{lstlisting}
+\begin{shell}
 java -Xmx512m -cp /path/to/matsim.jar org.matsim.run.Controler /path/to/config.xml
-\end{lstlisting}
+\end{shell}
 
 %% On Mac OS X: 
 %% \lstinline|java -Xmx512m -cp /path/to/matsim.jar org.matsim.run.Controler /path/to/config.xml|
 
 On Windows, an example command could be: 
-\begin{lstlisting}
-java -Xmx512m -cp C:$\backslash$MATSim$\backslash$matsim.jar org.matsim.run.Controler
-   C:$\backslash$MATSim$\backslash$input$\backslash$config.xml
-\end{lstlisting}
+\begin{shell}
+java -Xmx512m -cp C:\MATSim\matsim.jar org.matsim.run.Controler
+   C:\MATSim\input\config.xml
+\end{shell}
+%% \begin{lstlisting}
+%% java -Xmx512m -cp C:$\backslash$MATSim$\backslash$matsim.jar org.matsim.run.Controler
+%%    C:$\backslash$MATSim$\backslash$input$\backslash$config.xml
+%% \end{lstlisting}
 % problems with the combination of lstinline, backslash, and footnote. :-(  kai, jan'15
 %\ah{... and linebreaks ... and \begin{lstlisting}}
 
@@ -148,13 +154,13 @@ A fairly minimal \gls{configfile} contains the following information:
 For a working example, see the \gls{matsim} directory tree (\cf \ref{sec:settingUpMatsim}) under \lstinline{examples/tutorial/config/example1-config.xml}.
  
 In the example, supply is provided 
-the network and demand in the plans file (typical input data produced is described in Section~\ref{sec:inputdata}). 
+by the network and demand by the plans file. Typical input data is described in Section~\ref{sec:inputdata}. 
 %
 The specification that the first and last iteration are the same means that no \gls{replanning} of the demand is performed.  
 %
-What \emph{is} executes is the \gls{mobsim} (Figure~\ref{fig:matsimcycle}), followed by each executed plan's performance scoring.
+What \emph{is} executed is the \gls{mobsim} (Figure~\ref{fig:matsimcycle}), followed by each executed plan's performance scoring.
 %
-To function, the scoring needs to know all activity types used in the plans and the typical duration for each activity type.
+To function, the scoring needs to know, from the \gls{configfile}, all activity types used in the plans and the typical duration for each activity type.
 
 Further configuration possibilities are described in Chapter~\ref{ch:configuring}.
 
