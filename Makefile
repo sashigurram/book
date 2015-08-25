@@ -32,7 +32,7 @@ kai.aux: localbib
 #	pdflatex -interaction=nonstopmode kai
 
 
-kaibib: kai.aux
+kaibib: kai.aux localbib
 	pdflatex kai
 	makeindex kai
 	bibtex -min-crossrefs=999 kai
@@ -61,8 +61,13 @@ wc:
 	wc ${NAME}.txt
 
 localbib:
-	- ./bibexport.sh -a -o 0/tub.bib ../../shared-svn/documents/inputs/bib/vsp ../../shared-svn/documents/inputs/bib/kai ../../shared-svn/documents/inputs/bib/ref
-	../../shared-svn/documents/inputs/bib/repair_bib.rb 0/tub.bib
+	grep -v 'url=' ../../shared-svn/documents/inputs/bib/vsp.bib > 0/vsp.bib 
+	grep -v 'url=' ../../shared-svn/documents/inputs/bib/kai.bib > 0/kai.bib 
+	grep -v 'url=' ../../shared-svn/documents/inputs/bib/ref.bib > 0/ref.bib 
+	- ./bibexport.sh -a -o 0/tmp.bib 0/vsp 0/kai 0/ref
+	../../shared-svn/documents/inputs/bib/repair_bib.rb 0/tmp.bib
+	grep -v 'url =' 0/tmp.bib > 0/tub.bib
+
 spin:
 	make pdf; while true; do inotifywait -r . $(shell find . -type l -xtype d -printf '%p/*\n') $(shell find . -type l -xtype f) -e CREATE,MODIFY,DELETE; make -j2 pdf; done
 
