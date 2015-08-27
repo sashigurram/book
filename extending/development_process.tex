@@ -57,19 +57,32 @@ Picture~\ref{fig:team} shows a snapshot of the participants of the first concept
 There are the following roles in the \gls{matsim} community.
 %
 \begin{itemize}\styleItemize
-\item The \imp{\gls{matsim} user} uses the official releases or nightly builds and runs \gls{matsim} core with the \gls{configfile} (Section~\ref{sec:using-core-only}). He or she does not write computer code. Part~I of the book is dedicated to the \gls{matsim} user. On the web page he or she finds relevant information in the \emph{user's guide} and in the user's mailing list \lstinline|users@matsim.org|.
+\item The \imp{\gls{matsim} user} uses the official releases or nightly builds and runs \gls{matsim} core with the \gls{configfile} (Section~\ref{sec:using-core-only}). He or she does not write computer code. Part~I of the book is dedicated to the \gls{matsim} user. On the web page he or she finds relevant information in the \emph{user's guide} section and in the user's mailing list \lstinline|users@matsim.org|.\footnote{%
 %
-\item The \imp{\gls{matsim} power user} is a \gls{matsim} user with knowledge on how to use the additional modules presented in the book's part~II. He or she does \emph{not} program but knows how to use \gls{matsim} scripts as shown in Section~\ref{sec:writing-scripts-java}. Part~I and~II of the book are helpful to the \gls{matsim} power user.
+During the writing of this book, the information that had so far been contained in the user's guide was moved to this book.  In consequence, the user's guide section on the web page is currently empty.
+%
+} There is also a list of questions and answers under \url{http://matsim.org/faq}.\atend{faq moved?}
+
+User's should also remember to consult the files \lstinline{logfileWarningsErrors.log} and \lstinline{output_config.xml.gz}, as also explained in Section~\ref{sec:survival}.  The former file is an extract from \lstinline{logfile.log}, but only contains the warnings and errors.  The latter is a complete dump of the currently available configuration options, including comments to most options.
+%
+\item The \imp{\gls{matsim} power user} is a \gls{matsim} user with knowledge on how to use the additional modules presented in the book's part~II. He or she does \emph{not} program but knows how to use \gls{matsim} scripts-in-\gls{java} prepared by others or her/himself, as shown in Section~\ref{sec:writing-scripts-java}. Part~I and~II of the book are helpful to the \gls{matsim} power user.  Information about \glspl{extension} can be found under \url{http://matsim.org/extensions}.  Most \glspl{extension} come with example script-in-\gls{java}.  Again, questions and answer are under \url{http://matsim.org/faq}.
 %
 \item The \imp{\gls{matsim} 
 %\gls{api} 
-developer} extends \gls{matsim} by programming against the \gls{matsim} \gls{api} (Section~\ref{sec:writing-your-own-extensions}). He or she also finds his or her information in Part~II of the book, in particular in Chapter~\ref{ch:extensionpoints}, on the web page in the \emph{\gls{api} user's guide} and the \emph{developer's guide} and in the mailing list \lstinline|developers@matsim.org|.
+developer} extends \gls{matsim} by programming against the \gls{matsim} \gls{api} (Section~\ref{sec:writing-your-own-extensions}). He or she also finds his or her information in Part~II of the book, in particular in Chapter~\ref{ch:extensionpoints}, on the web page in 
+%the \emph{\gls{api} user's guide} and 
+% does no longer exist.  kai, aug'15
+the \emph{developer's guide}, and in the mailing list \lstinline|developers@matsim.org|.
 %
 %\item The \imp{\gls{matsim} \gls{api} developer} also programs against the \gls{matsim} \gls{api}, but additionally he or she is part of the \gls{matsim} code base by having his or her own playground or \gls{contribution} being part of the refactorings. 
 %\ah{contribs auch, oder?} \kai{ja}. 
 %The \gls{api} developer finds information in Part~II of this book, on the web page in the \emph{developer's guide} and in the mailing list \lstinline|developers@matsim.org| 
 %
-\item There are relatively few \textbf{\gls{matsim} core developers} stemming from the \gls{matsim} team, \ie the \gls{matsim} core developers group. This role is an extension of the \gls{matsim} \gls{api} developer and these guys make necessary modifications of the core (as defined in Section~\ref{sec:extending-core}), usually after having discussed them in the issue tracker, in the \gls{matsim} committee, or at a developer meeting (see below). 
+\item There are relatively few \textbf{\gls{matsim} core developers} in the \gls{matsim} team. 
+%This role is an extension of the \gls{matsim} \gls{api} developer and 
+These 
+%guys 
+persons make necessary modifications of the core (as defined in Section~\ref{sec:extending-core}), usually after having discussed them in the issue tracker, in the \gls{matsim} committee, or at a developer meeting (see below). 
 %% Part~II and part~III of this book might be particularly interesting for them.
 %
 % \kn{Sehe nicht, warum ausgerechnet die core developers neben dem software engineering auch noch die mathematisch-konzeptionelle Arbeit übernehmen müssen. --> weglassen}
@@ -293,35 +306,43 @@ The internal development is organized by regular group meetings, in Zürich for 
 
 \gls{matsim} development makes use of a 
 %whole bunch 
-large number of tools, hopefully leading to better software quality.  Historically, many of those tools ran from automated scripts and were made available at \url{http://matsim.org/developer}.  Nowadays, most of them are automatically available from the build server (see \url{http://ci.matsim.org:8080}) and/or from the repository (\url{https://github.com/matsim-org/matsim}), so that some of them are scheduled for removal from \url{http://matsim.org/developer}.  Some of these tools are:
+large number of tools, hopefully leading to better software quality.  Historically, many of those tools ran from automated scripts and were made available at \url{http://matsim.org/developer}.  Nowadays, most of them are automatically available from the build server (see \url{http://ci.matsim.org:8080}) and/or from the repository (\url{https://github.com/matsim-org/matsim}), so that many of them are scheduled for removal from \url{http://matsim.org/developer}.  Some of these tools are:
 %% Summarized and accessible from :
 %---with private access---
 %
 %m.E. war das nie non-public.  Evtl. nicht auf der home page ausgewiesen. kai, dec'14
-a change log; an issue tracker; the \gls{javadoc} documentation; static code analyses performed by \emph{FindBugs} and \emph{PMD}; test code coverage analysis; copy paste analysis; code metrics; \gls{maven} dependencies; the complete code linked by \gls{xref}; and information about the nightly test results. These nightly test results are generated by the \gls{matsim} build server based on the \gls{jenkins} software. 
+a change log; an issue tracker; the \gls{javadoc} documentation; static code analyses performed by \emph{FindBugs} and \emph{PMD}; test code coverage analysis; copy paste analysis; code metrics; \gls{maven} dependencies; 
+%the complete code linked by \gls{xref}; % scheduled to go away. kai, aug'15
+and information about the nightly test results. These nightly test results are generated by the \gls{matsim} build server based on the \gls{jenkins} software. 
 
 Furthermore, there is a \gls{matsim} benchmark at \url{http://matsim.org/files/benchmark/benchmark.zip}. For results see \url{http://matsim.org/benchmarks}.
 %\url{http://www.matsim.org/docs/devguide/optimization}. \kai{link funktioniert nicht.  Wir hatten neulich schon danach gefahndet, aber das Material ist einfach in den latex user guide gewandert.  Der Benchmark selber ist unter \url{http://matsim.org/files/benchmark/benchmark.zip}.}
 %\ah{danke}
+\todokai{fix benchmarks www page}
 
-Most \gls{matsim} developers use \gls{eclipse} as an \gls{ide}. The \gls{matsim} documentation is tailored to this \gls{ide}. Team development is now, currently based on \gls{svn}; a switch to \gls{git} is considered. External libraries dependencies are managed by \gls{maven}.
+Most \gls{matsim} developers use \gls{eclipse} as an \gls{ide}. The \gls{matsim} documentation is tailored to this \gls{ide}. Team development is currently based on \gls{git} as revision control system. External libraries dependencies are managed by \gls{maven}.
 
 % ##################################################################################################################
 \section{Documentation, Dissemination and Support}
 
-The main documentation can be found on the \gls{matsim} web page \citep[][]{MATSIM-Docu_Webpage_2015}, where information is provided in the three guides mentioned above. Additionally, a handful of tutorials is available, with the ``Quickstart''-tutorial to give fast access to \gls{matsim} and the ``Learning \gls{matsim} in 8\,Lessons''-tutorial, which is used for the user's meetings and hands-on tutorials in Berlin, Zürich and occasionally elsewhere, also listed on that page. \todokai{revise tutorial process}
-
-Code documentation in form of \gls{javadoc} can be found unter \url{http://matsim.org/javadoc}, 
+The main documentation is now this book.  Additional information, incuding tutorials, can be found under \url{http://matsim.org/docs}.
+%
+%% can be found on the \gls{matsim} web page \citep[][]{MATSIM-Docu_Webpage_2015}, where information is provided in the three guides mentioned above. Additionally, a handful of tutorials is available, with the ``Quickstart''-tutorial to give fast access to \gls{matsim} and the ``Learning \gls{matsim} in 8\,Lessons''-tutorial, which is used for the user's meetings and hands-on tutorials in Berlin, Zürich and occasionally elsewhere, also listed on that page. \todokai{revise tutorial process}
+%
+Code documentation in form of \gls{javadoc} can be found unter \url{http://matsim.org/javadoc}.
 %at \citet[][]{MATSIM-Javadoc_Webpage_2015}, 
-as \gls{xref} view \url{http://matsim.org/xref} \todokai{wurde nicht gerade beschlossen, xref abzuschaffen?} and as doxygen documentation \url{http://matsim.org/doxygen}. %\kai{gerne auch xref und doxygen URLs: \url{http://matsim.org/xref} and \url{http://matsim.org/doxygen}.}
+%% as \gls{xref} view \url{http://matsim.org/xref} \todokai{wurde nicht gerade beschlossen, xref abzuschaffen?} and as doxygen documentation \url{http://matsim.org/doxygen}. 
+%\kai{gerne auch xref und doxygen URLs: \url{http://matsim.org/xref} and \url{http://matsim.org/doxygen}.}
 
 For fast application of \gls{matsim} some small-scale example scenarios are provided in the code base (\lstinline|folder: examples|), where recently an extended version of the well-known benchmark scenario for the City of Sioux Falls has been added \citep[][]{ChakirovFourie_TechRep_FCL_2014} (Chapter~\ref{ch:siouxfalls}). %\kai{Auf den test input folder sollte m.E.\ auf keinen Fall verwiesen werden ... test inputs bleiben normalerweise auf dem Status, mit dem sie erstellt wurden, passen sich also nicht an neue Entwicklungen an.  Stattdessen bitte ``folder: examples''.} \ah{danke}
 
-Further information is disseminated at the afore-described annual user meetings and \gls{matsim} mailing lists \url{http://www.matsim.org/mailinglists}. Usually, also support is provided by the \gls{matsim} team via these mailing lists. Particularly active in support are the Berlin group and \gls{senozon}. A theoretical overview of all the components in \gls{matsim} is given by the numerous papers published in international journals and presented at worldwide conferences; an overview can be found at \url{http://www.matsim.org/publications}.
+Further information is disseminated at the afore-described annual user meetings and \gls{matsim} mailing lists \url{http://www.matsim.org/mailinglists}.  Support is provided by the \gls{matsim} team via these mailing lists and via \url{http://matsim.org/faq}, both on a best effort basis. Particularly active in support are the Berlin group and \gls{senozon}. Many components \gls{matsim} are documented by the numerous papers published in international journals and presented at worldwide conferences; information about such publications can, \eg be obtained from \url{http://www.matsim.org/publications} 
 %\citep[][]{MATSIM-Publications_Webpage_2015} \kai{@Andreas: Das sieht irgendwie weder schön noch hilfreich aus.  Hast Du mal so etwas wie author=\{MATSim www page\} im bibtex file probiert?} 
-and in this book's part~II.
+%% and in this book's part~II.
+and from this book.
+% not only part II. kai, aug'15
 
-The information on \gls{matsim} is quite extensive, however, getting a complete picture as a new \gls{matsim} user or developer requires a substantial literature search. Minimization of this effort is the goal of the book at hand.
+%% The information on \gls{matsim} is quite extensive, however, getting a complete picture as a new \gls{matsim} user or developer requires a substantial literature search. Minimization of this effort is the goal of the book at hand.
 
 % ##################################################################################################################
 \section{Your Contribution to MATSim}

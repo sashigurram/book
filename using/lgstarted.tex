@@ -8,7 +8,9 @@
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
 % ##################################################################################################################
-This chapter explains how to set up and run \gls{matsim} and describes the requirements for building a basic \gls{scenario}. This book attempts to be as stable and timely as possible, meaning that the \gls{matsim} user guide \citep[][]{MATSim_Userguide_2015} \todokai{rm usrguide} should also be consulted when doing an actual installation. Frequently changed, detailed information like download paths, or version-dependent configurations, are omitted here---as far as possible---and left to the user guide. 
+This chapter explains how to set up and run \gls{matsim} and describes the requirements for building a basic \gls{scenario}.  Updated information may be available from \url{http://matsim.org}, in particular from \url{http://matsim.org/docs}.
+
+%% This book attempts to be as stable and timely as possible, meaning that the \gls{matsim} user guide \citep[][]{MATSim_Userguide_2015} \todokai{rm usrguide} should also be consulted when doing an actual installation. Frequently changed, detailed information like download paths, or version-dependent configurations, are omitted here---as far as possible---and left to the user guide. 
 
 Getting the source code into different computing environments and extending \gls{matsim} through the \gls{api} is described in the book's second part, Chapter~\ref{ch:extensionpoints}.
 
@@ -771,20 +773,29 @@ More pre-packaged scenarios can be found under \url{http://www.matsim.org/exampl
 There are many options and possibilities available with \gls{matsim}, and finding them can be a taunting exercise.  Here are a couple of recommendations, derived from our own frequent use of the system.
 \begin{enumerate}\styleEnumerate
 
-\item Always start and test with a small example.
+\item \emph{Always start and test with a small example.}
 
-\item Always test large scenarios with one percent runs first (\eg a randomly drawn a 10\,\% or a 1\,\% subsample of your initial demand). As described in Section~\ref{sec:using-mobsims}, this requires adaptation of parameters, in particular the \gls{mobsim}'s \lstinline|flowCapacityFactor| and \lstinline|storageCapacityFactor| factors. As shown in part~II of the book, in Section~\ref{sec:extending-counts}, sample scenarios require parameter adaption for count data comparisons. The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to adapt all parameters at once with the command \lstinline|Tools...Create Sample Population|. %\ah{thx Marcel! :)}
-%\kai{this needs to be described somewhere.  flowcap; storcap larger (see matsim4urbansim); counts}
+\item \emph{Always test large scenarios with one percent runs first (\eg a randomly drawn a 10\,\% or a 1\,\% subsample of your initial demand).} 
 
-\item If your set-up does not work any more, \emph{immediately} go back to a working version and proceed from there in small steps.
+As described in Section~\ref{sec:using-mobsims}, this requires adaptation of parameters, in particular the \gls{mobsim}'s \lstinline|flowCapacityFactor| and \lstinline|storageCapacityFactor| factors. As shown in part~II of the book, in Section~\ref{sec:extending-counts}, sample scenarios also require parameter adaption for count data comparisons. The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to adapt all parameters at once with the command \lstinline|Tools...Create Sample Population|. %\ah{thx Marcel! :)}
 
-\item Check \lstinline{logfileWarningsErrors.log}.
+\kaitodo{this needs to be described somewhere.  flowcap; storcap larger (see matsim4urbansim); counts [[this todo got commented out, but withouth description of what was done ... for example, in matsim4urbansim, we set storage capacity to something like $1/sampleSize^{0.25}$ including documentation for this; is this done here as well?]]}
 
-\item Check the comments that are attached to the config options.
+\ahtodo{\kai{Andreas, I just checked the code, and it does not look like it is doing antying but creating the sample population.  (And write it to a separate file, which can then be used together with a different config file.)  Where does the info come from that it also adapts config parameter values?}}
 
-  One finds them in the file \lstinline{output_config.xml.gz}, or near the beginning of \lstinline{logfile.log}.
+\item \emph{If your set-up does not work any more, \emph{immediately} go back to a working version and proceed from there in small steps.}
 
-\item Search for documentation via \url{http://matsim.org/javadoc}.
+\item \emph{Check \lstinline{logfileWarningors.log}.}
+
+\item \emph{Check the comments that are attached to the \gls{configfile} options.}
+
+One finds them in the file \lstinline{output_config.xml.gz}, or near the beginning of \lstinline{logfile.log}.
+
+\item \emph{Try setting as few \gls{configfile} options as possible.}
+
+This has two advantages: (i) Except for the deliberately set options, your simulation will move along with changed \gls{matsim} defaults, and thus with what the community currently considers the best configuration.  (ii) You will not be affected by changes in the \gls{configfile} syntax as long as the are different from your own settings.
+
+\item \emph{Search for documentation via \url{http://matsim.org/javadoc}.}
 
 \end{enumerate}
 
