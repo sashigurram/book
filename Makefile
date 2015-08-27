@@ -60,7 +60,7 @@ wc:
 	wc ${NAME}.txt
 
 localbib:
-	- ./bibexport.sh -a -o 0/tmp.bib ../../shared-svn/documents/inputs/bib/vsp.bib ../../shared-svn/documents/inputs/bib/kai.bib ../../shared-svn/documents/inputs/bib/ref.bib
+	- ./bibexport.sh -a -o 0/tmp.bib ../../shared-svn/documents/inputs/bib/vsp ../../shared-svn/documents/inputs/bib/kai ../../shared-svn/documents/inputs/bib/ref
 	../../shared-svn/documents/inputs/bib/repair_bib.rb 0/tmp.bib
 	sed 's/url =/OPTurl =/' 0/tmp.bib > 0/tub.bib
 
