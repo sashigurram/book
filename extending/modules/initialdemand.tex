@@ -23,20 +23,12 @@ Part~IV will show how initial input was generated on a practical level---discuss
 
 \subsection{Coordinate systems}
 
-\todokai{overlap with Section~\ref{sec:coordinatesystems}}
-
-Before building a \gls{matsim} scenario, one must decide on the coordinate system that one wants to use (also see Section~\ref{sec:coordinatesystems}).  The coordinate system should be metric since \gls{matsim} uses the coordinate system for distance estimates.\footnote{%
-%
-\gls{matsim} normally also works with non-metric coordinate systems, but some computations become a lot slower, and visualisations typically look awkward.
-%
-} A good choice are the \gls{utm} coordinate systems, see \url{https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system} for more information.  A typical coordinate conversion string in the \gls{java} scripts looks like
+Section~\ref{sec:coordinatesystems} has already said some things about coordinate systems.   For \gls{matsim} to function properly, all input data needs to be in the same coordinate system, which is preferably metric.  When using \gls{java} and \gls{matsim} for input data generation, coordinate transformations derived from geotools \cite{geotools-www-page} can be used.  For example, 
 \begin{lstlisting}
 CoordinateTransformation ct = \
 TransformationFactory.getCoordinateTransformation("WGS84", "WGS84_UTM33N");
 \end{lstlisting}
-which would transform data given in WGS84 coordinates to data given in UTM coordinates.
-
-While WGS84 is a globally valid coordinate system, UTM coordinates are only locally valid.  This has to do with the fact that the earth is approximately a sphere.  While WGS84 is a globally valid spherical coordinate system, UTM is an approximately metric projection.  Clearly, this projection is only valid at its origin, and leads to ever larger errors the further one moves away from that origin.  In consequence, each scenario needs to select its own appropriate UTM zone.
+would transform data given in WGS84 coordinates to data given in UTM coordinates.
 
 \subsection{Network Generation}
 
@@ -50,25 +42,25 @@ A fairly standardized way to generate a \gls{matsim} network is from \gls{osm} d
 
 \item Download a recent \gls{osmosis} build from \url{http://wiki.openstreetmap.org/wiki/Osmosis}.
 
-\item The necessary command approximately is
+\item The necessary command to extract the road network approximately is
 \begin{lstlisting}
 java -cp osmosis.jar --rb file=xxx.osm.pbf \
---bounding-box top=47.701 left=8.346 bottom=47.146 right=9.019 \
-completeWays=true --used-node --wb allroads.osm.pbf
+   --bounding-box top=47.701 left=8.346 bottom=47.146 right=9.019 \
+   completeWays=true --used-node --wb allroads.osm.pbf
 \end{lstlisting}
 The bounding box can, \eg be obtained from \url{http://www.osm.org}; it is in WGS84 coordinates.
 
 \item It makes a lot of sense to add the large roads of a much larger region.  The necessary command approximately is
 \begin{lstlisting}
 java -cp osmosis.jar --rb file=xxx.osm.pbf --tf accept-ways \
-highway=motorway,motorway_link,trunk,trunk_link,primary,primary_link \ 
---used-node --wb bigroads.osm.pbf
+   highway=motorway,motorway_link,trunk,trunk_link,primary,primary_link \ 
+   --used-node --wb bigroads.osm.pbf
 \end{lstlisting}
 
 \item The two files are merged with approximately the following command:
 \begin{lstlisting}
 java -cp osmosis.jar --rb file=bigroads.osm.pbf --rb allroads.osm.pbf \
---merge --wx merged-network.osm
+   --merge --wx merged-network.osm
 \end{lstlisting}
 
 \end{enumerate}
