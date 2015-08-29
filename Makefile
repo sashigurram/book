@@ -62,7 +62,8 @@ wc:
 localbib:
 	- ./bibexport.sh -a -o 0/tmp.bib ../../shared-svn/documents/inputs/bib/vsp ../../shared-svn/documents/inputs/bib/kai ../../shared-svn/documents/inputs/bib/ref
 	../../shared-svn/documents/inputs/bib/repair_bib.rb 0/tmp.bib
-	sed 's/url =/OPTurl =/' 0/tmp.bib > 0/tub.bib
+	sed -f 0/tub-bib.sed 0/tmp.bib > 0/tub.bib
+	git co -- 0/ivt_bibs.bib
 	sed -f 0/ivt_bibs.sed 0/ivt_bibs.bib > 0/ivttmp.bib; rm 0/ivt_bibs.bib
 	mv 0/ivttmp.bib 0/ivt_bibs.bib
 
