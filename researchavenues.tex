@@ -57,11 +57,7 @@ This chapter highlights chances for further discussion and action.
 \subsection{Complex Adaptive Systems}
 \label{sec:complex-adaptive-systems}
 
-\glsreset{cas}
-
-The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the field of \gls{cas}
-% acronym ok. kai, aug'15
-\citep[e.g.][also see Section~\ref{sec:streams}]{AxelrodBook,Holland_1992,HraberJonesForrestEcho,PalmerEtAl_PhysicaD_1994}. 
+The core \gls{matsim} architecture---where agents learn utilities for plans---was originally derived from the field of \glsunset{cas}\acrlong{cas} \citep[CAS; \eg][]{AxelrodBook,Holland_1992,HraberJonesForrestEcho,PalmerEtAl_PhysicaD_1994} (also see Section~\ref{sec:streams} of this book). 
 %% %\kwaah{Has this been spelled out somewhere ?} \ah{yes, gls()}
 %% \kwaah{Why not Axelrod (1980) or Schelling: ``Schelling, TC 1978. Micromotives and Macrobehavior. Toronto, Canada: George J. McLeod Ltd.'' mit seinem Segregationsmodell} 
 %% \ah{m.E. ist dies sein Seggregationspaper: \citet[][]{Schelling_TJMS_1971} (Issue 2), \citet[][]{Sakoda_TJMS_1971} (Issue 1) war aber sowieso vorher  gemäss Prof. Hegselmann.}
@@ -82,7 +78,7 @@ That approach, in turn, builds on work by \cite{PalmerEtAl_PhysicaD_1994}, who s
 
 \glsreset{ai}
 
-\gls{cas} focuses on many agents, agent interaction and emergence. \Gls{ai} kai, aug'15
+\gls{cas} focuses on many agents, agent interaction and emergence. \glsunset{ai}\Acrfull{ai} 
 in contrast, concentrates on single agents. In \gls{ai} terms, the original \gls{matsim} agents (those doing day-to-day learning) are very simple 
 %active 
 reinforcement learning agents \citep[][Chapter 21.3]{RusselNorvig2010ArtificialIntelligence}. Since these \gls{matsim} agents have only one state (the initial/nightly state) and each action is simply a plan, the distinction between Q-learning and utility learning \citep[as defined by][]{RusselNorvig2010ArtificialIntelligence} actually collapses; what remains is the temporal difference 
@@ -130,15 +126,13 @@ See Chapters~\ref{ch:withinday} and~\ref{ch:dts} as well as Section~\ref{sec:res
 
 %\mnote{definition}
 
-\glsreset{its}
-
 Within-day replanning, \ie the ability of the agents to respond to the immediate context, is the standard mode of operation for simulation models. 
 %
 In the transport domain, note the traffic flow models as an example, where aspects such as acceleration/braking, or lane changing, are (obviously) computed reactively, while the simulation is running and not before the simulation starts \citep[e.g.][]{Wiedemann_PhDThesis_1974}.
 %
 Many traveler-oriented or agent-based models of travel demand adopt the same approach, \cf ORIENT \citep[][]{Sparmann_TechRep_1980}, ORIENT/RV \citep{AxhausenHerz_JTE_1989}, MobiTOPP \citep[][]{SchnittgerZumkeller_ETC_2004}.
 %
-For many aspects of \gls{its} systems, within-day replanning is indispensable \citep[e.g.,][]{hall-1993,EmmerinkEtAl_TransResC_1995,Dobler_PhDThesis_2013}.
+For many aspects of \glsunset{its}\acrfull{its} systems, within-day replanning is indispensable \citep[e.g.,][]{hall-1993,EmmerinkEtAl_TransResC_1995,Dobler_PhDThesis_2013}.
 %
 %% and all the work on intelligent transport system 
 %% \kwaah{do we have more?})
@@ -1016,9 +1010,10 @@ could incorporate a mechanism to generate the error terms with the correct corre
 More formally: 
 %
 The current \gls{matsim} choice process can be interpreted as maximizing, for each agent $n$, 
-\[
+\begin{equation}
 U_{ni} = V_{i} + \tilde V_{ni} + \vec{\beta}^T \vec{\eta_{ni}} + \tilde \eps_{ni} \ ,
-\]
+\label{eq:utl-fct-w-frozen-rnd}
+\end{equation}
 where 
 %
 $V_{i}$ is the systematic utility of alternative $i$, 
@@ -1049,9 +1044,18 @@ $\to$ One should thus evaluate how far, and how, a similar approach could be int
 %\benjamin{Ich finde den Text hier sehr gut, und finde auch keine Fehler o.ä.}
 %\ah{Danke. nur Syntax-Korrektur}
 
+\subsection{Economic evaluation}
 
-%\vfill\eject
-% ##################################################################################################################
+Section~\ref{sec:future-frozen-randomness} indicates that further work is desirable to better understand the connection between \gls{matsim} scores and economic utilities.  At face value, Equation~(\ref{eq:utl-fct-w-frozen-rnd}) could be taken as each agent's utility.   As also discussed in Section~\ref{ch:economicEval:valuingBehavior:output2Eval}, problems arise when the $\tilde\epsilon_{ni}$ are not explicitly known for each person-alternative-pair $ni$.
+
+In many past \gls{matsim} runs (those using \lstinline{Change/SelectExpBeta}), their effect was therefore parametrized by a logit choice model.  In these cases, the logsum of all plans' scores of an agent is each agent's correct utility measure.  This, however, requires that the logit model scale parameter is correctly estimated, and that each agent's set of plans is consistent with the estimation of the logit model.  Especially the second requirement is currently difficult to fulfill, see Section~\ref{sec:heterogeneity-in-plans-removal}.
+
+In other \gls{matsim} runs (those using \lstinline{BestScore}), the $\tilde\epsilon_{ni}$ were effectively assumed to be zero.  In these cases, the highest of all plans' scores of an agent is each agent's correct utility measure.  Because of the \lstinline{BestScore} plan selection model, the plan with the highest score will at the same time also be the selected plan.
+
+For some of us, it seems attractive to move into the direction of working with frozen randomness, as discussed in Section~\ref{sec:future-frozen-randomness}.  That approach would combine the advantages of the two approaches: It would inherit the parsimonious interpretation of the \lstinline{BestScore} approach, where only the plan with highest score ($=$ the selected plan) of each agent is considered, and at the same time include the effect of the $\epsilon_{ni}$.
+
+
+%##################################################################################################################
 \section{Double-Queue Mobsim}
 \label{sec:researchavenues-double-queue-mobsim}
 The standard \gls{matsim} \gls{mobsim} \gls{qsim} implements a single-queue model as described in Chapter~\ref{ch:kinematicwaves}. The associated \gls{fd} (flow vs. density) is horizontal for medium densities, and falls to zero very steeply at very high densities. This is consistent with the fact that a vehicle leaving a link opens up its space already in the next time step; jam patterns thus have a backwards traveling speed of $L/1\,s$ ($L$ is the length of respective link) rather than the conventional approx.\ 15\,kilometers per hour 

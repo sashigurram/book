@@ -203,15 +203,11 @@
 \makeindex
 
 % make gls entries in the following format ``acr (long desc)''
-%%\AtBeginDocument{%
-%%  \defglsdisplayfirst[\acronymtype]{%
-%%    \glsentryshort{\glslabel} (\glsentrylong{\glslabel})#4%
-%%  }%
-%%}
-%
-% This seems to have other problems; it produces something like ``<abr> (<full>) (<abr> (<full>))''.  Also see below, but this do not seem to be all cases. kai, aug'15
-
-% So for the time being use \acrfull{<label>}\glsunset{<label>} if you want to introduce an acronym the other way round.  \glsunset, somewhat badly named, sets the acronym (opposite of \glsreset). kai, aug'15
+\AtBeginDocument{%
+  \defglsdisplayfirst[\acronymtype]{%
+    \glsentryshort{\glslabel} (\glsentrylong{\glslabel})#4%
+  }%
+}
 
 %\usepackage[toc]{glossaries}
 \usepackage[]{glossaries}
@@ -219,11 +215,8 @@
 \newglossary[alg]{acronym}{acr}{acn}{Acronyms}
 \makeglossaries
 
-% \acrfull{...} does not seem to work any more as a result of the above; it produces something like ``<abr> (<full>) (<abr> (<full>))''.  I am therefore now disabling acrfull; combine other options (including \glsreset{<label>}) to achieve effect you want.
-%%\let\acrfull=\fatal
-%%\let\acrfullpl=\fatal
-%%\let\Acrfull=\fatal
-%%\let\Acrfullpl=\fatal
+% \acrfull{...} does not work any more as a result of the above when it is the first occurence of the label; it produces something like ``<abr> (<full>) (<abr> (<full>))''. 
+% One can instead use \glsunset{<label>)\acrfull{<label>}
 
 \usepackage{csquotes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -76,7 +76,7 @@ FUNCTION {bbl.of}        { "of" }
 FUNCTION {bbl.number}    { "no." }
 FUNCTION {bbl.nr}        { "no." }
 FUNCTION {bbl.in}        { "in" }
-FUNCTION {bbl.ppa}       { "paper presented at the" }
+FUNCTION {bbl.ppa}       { "paper presented at" }
 FUNCTION {bbl.pages}     { "" }
 FUNCTION {bbl.page}      { "" }
 FUNCTION {bbl.chapter}   { "chap." }
@@ -264,7 +264,8 @@ FUNCTION {output.doi}
 { 
     doi empty$
         { skip$ }
-        { "\href{http://dx.doi.org/" doi * "}{doi:" * doi * "}" * output }
+        %{ "\href{http://dx.doi.org/" doi * "}{doi:" * 	  doi * "}" * output }
+        { skip$ }
     if$
 }
 
@@ -394,16 +395,16 @@ FUNCTION {format.in.editors}
 FUNCTION {format.isbn}
 { isbn empty$
     { "" }
-    {
-      "ISBN " isbn * }
+    %{ "ISBN " isbn * }
+    { "" }
   if$
 }
 
 FUNCTION {format.issn}
 { issn empty$
     { "" }
-    {
-      "ISSN " issn * }
+    %{ "ISSN " issn * }
+    { "" }
   if$
 }
 
