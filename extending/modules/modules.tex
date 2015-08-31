@@ -6,6 +6,8 @@
 
 \begin{center} \includegraphics[width=0.5\textwidth, angle=0]{extending/figures/modules.pdf} \end{center}
 
+\atend{re-read modulex.tex just before going to print}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\kai{need to clarify the factory concept somewhere (in the future probably just PopulationUtils.createActivity(...)).}
@@ -49,7 +51,7 @@ config functions,
 replanning components,
 contributions,
 or even 
-external tools,\footnote{standalone tools referencing \gls{matsim} as a library, such as the network editor, or the visualizer \gls{via}}
+external tools,\footnote{Standalone tools referencing \gls{matsim} as a library, such as the network editor, or the visualizer \gls{via}.}
 are sometimes described under the notion of modules. 
 Metaphorically speaking, the term module can thus be seen as the greatest common divisor (gcd) of different functionality provided in \gls{matsim}.
 Much more important is to understand the different levels of access stemming from the generally modular architecture.
@@ -61,7 +63,7 @@ Much more important is to understand the different levels of access stemming fro
 \begin{enumerate}\styleEnumerate
 \item using the \gls{matsim} core only, 
 \item using the \gls{matsim} main distribution, 
-\item using \gls{matsim} main distribution and \glspl{contribution}, 
+\item using \gls{matsim} main distribution, \glspl{contribution}, and possibly extensions,
 \item writing ``scripts in \gls{java}'', and finally 
 \item  writing your own \glspl{extension}.
 \end{enumerate}
@@ -86,18 +88,20 @@ We think that the \gls{matsim} core is already quite powerful; for example, the 
 % --------------------------------------------------------------------------------------
 \subsubsection{Using MATSim Main Distribution}
 \label{sec:using-main-distro}
-The \glspl{extension} in the \gls{matsim} main distribution are by design very close to the \gls{matsim} core and thus even less configuration is required than for \glspl{contribution} as shown below. Often providing additional files together with a respective \gls{configfile} entry is sufficient to use them; required steps are described below case by case. Extensions are listed at \url{http://matsim.org/extensions}.
+The \glspl{extension} in the \gls{matsim} main distribution are by design very close to the \gls{matsim} core and thus even less configuration is required than for \glspl{contribution} as shown below. Often providing additional files together with a respective \gls{configfile} entry is sufficient to use them; required steps are described below case by case. Extensions that are contained in the main distribution are listed in a separate section at \url{http://matsim.org/extensions}.
 
 % --------------------------------------------------------------------------------------
-\subsubsection{Using One or More Contribs}
+\subsubsection{Using One or More Contribs or Other Extensions}
 \label{sec:using-contribs}
 %\kai{Das wären jetzt eigentlich extensions; ``contribs'' sind diejenigen extensions, die sich gleichzeitig im matsim repository befinden.  Oder?}
 %\ah{Nein, gemäss momentaner Buch-Definition liegen contribs unter ``contribs'', Module, welche über config, pop, network hinausgehen, aber im Core (was immer das nun genau ist) liegen, haben im Moment keinen Namen.}
 %\ah{geklärt}
 %
 \Glspl{contribution} are in a separate part of the repository, separate from the \gls{matsim} main distribution.  
-The documentation is not yet fully organized; information about \glspl{contribution} can be found at \url{http://matsim.org/javadoc} or \url{http://matsim.org/extensions}. 
-There are also release versions and nightly builds, which can be found by following the links at %\url{http://sourceforge.net/projects/matsim/files/} 
+The documentation is not yet fully organized; information about \glspl{contribution} and other extensions can be found at 
+%\url{http://matsim.org/javadoc} or 
+\url{http://matsim.org/extensions}. 
+For the \glspl{contribution}, there are also release versions and nightly builds, which can be found by following the links at %\url{http://sourceforge.net/projects/matsim/files/} 
 %\url{http://matsim.org/files/builds/}. % \kai{check} \ah{gibt es beides am gleichen Ort wie MATSim} \kai{url?}.
 \url{http://matsim.org/downloads}.
 
@@ -347,6 +351,7 @@ The description of the modules in this and the following chapters is based on th
 	Facilities & Section~\ref{sec:extending-facilities} \\
 	Households & Section~\ref{sec:extending-households} \\
 	Vehicles & Section~\ref{sec:extending-vehicles} \\
+	Scenario & Section~\ref{sec:extending-scenario} \\
 	\hline
 	\textbf{Global Modules and Global Aspects} & Section~\ref{sec:using-globalmodules} and \ref{sec:extending-globalmodules} \\
 	\hline
@@ -458,7 +463,10 @@ The description of the modules in this and the following chapters is based on th
 % ===================================================================================
 \subsection{Time-dependent Network}
 \label{sec:extending-network}
-An important feature of the network module is using time-dependent network attributes. Network state changes can thus be considered, as \eg implied by accidents, and adaptive traffic control, with varying speed limits or driving directions of lanes on multi-lane roads with heavily unbalanced load over the course of a day. Attributes that can be adapted are ``free speed'', ``number of lanes'' and ``flow capacity''.
+
+The network container was already described in Section~\ref{sec:using-network}.
+%
+An important additional feature of the network module is using time-dependent network attributes. Network state changes can thus be considered, as \eg implied by accidents, or adaptive traffic control, with varying speed limits or driving directions of lanes on multi-lane roads with heavily unbalanced load over the course of a day. Attributes that can be adapted are ``free speed'', ``number of lanes'' and ``flow capacity''.
 
 The adaptation can be specified by adding following two lines to the \lstinline|network| \gls{configfile} section:
 \begin{xml}
@@ -494,6 +502,8 @@ Alternatively, network change events can be directly added to the code.
  %% \lstinline|org.matsim.integration.timevariantnetworks.QSimIntegrationTest| class.
 An example can be found in the \lstinline{RunTimeDependentNetworkExample} class under \url{http://matsim.org/javadoc} $\to$ main distribution.
 
+Note that change values of type absolute need to be given in \glsunset{si}\gls{si} units, which means speeds in meters per second and flow capacities in vehicles per second.
+
 %% \kaitodo{Write RunXxx example!}
 %% \ahtodo{Write RunXxx example!}
 
@@ -515,7 +525,10 @@ An example can be found in the \lstinline{RunTimeDependentNetworkExample} class 
 % ===================================================================================
 \subsection{Person Attributes and Subpopulations}
 \label{sec:extending-population}
-A powerful extension of a standard population can be achieved by specifying further agent attributes in a \lstinline|ObjectAttributes| file input to \gls{matsim} by parameter \lstinline|inputPersonAttributesFile|. 
+
+Also the population container was already discussed earlier, in Section~\ref{sec:using-population}.
+%
+A powerful extension of a standard population can be achieved by specifying further agent attributes in an \lstinline|ObjectAttributes| file input to \gls{matsim} by the parameter \lstinline|inputPersonAttributesFile|. 
 %% Furthermore, subpopulations can be defined by parameter \lstinline|subpopulation|.
 %
 % not sure what this means. Maybe it is meant in relation to strategies but this would have to be stated more precisely IMO. kai, jul'15
@@ -565,12 +578,12 @@ The following listing shows an example of a \lstinline|counts.xml| input file re
    </count> 
 </counts>
 \end{xml}
-For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (\cf Section~\ref{sec:settingUpMatsim}).
+For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (\cf Section~\ref{sec:settingUpMatsim}).  
 
 It starts with a header containing general descriptive information about the counts, including a year to describe how current the data is. Next, for each link having real world counts data, the hourly volumes can be specified. The network-link is referenced by the \lstinline|loc_id| attribute, in the example, it is link~2. The attribute \lstinline|cs_id| (counting station identifier) can be used to store an arbitrary description of the counting station. Most often it is used to note the original real word counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day and its value, are optional: That is, not for every hour a value must be given. If for a counting station data is only available for certain hours of the day (\eg only during peak hours) it is possible to omit the other hours from the \gls{xml} listing. Note that the first hour of the day, from 0:00\,am to 1:00\,am, is numbered as ``1'', and \emph{not} by ``0'' as is often done in computer science.
 
 \paragraph{Output}
-The counts module prints overview summaries for the whole network but also analyses for individual links, \ie a google maps based visualization is available, showing each station with a its load curve (see the example in Figure~\ref{fig:countcomparison}) in a pop-up window at the geographic location shown .
+The counts module prints overview summaries for the whole network but also analyses for individual links, \ie a google maps based visualization is available, showing each station with a its load curve (see the example in Figure~\ref{fig:countcomparison}) in a pop-up window at the geographic location shown.
 
 % ----------
 \createfigure%
@@ -612,6 +625,8 @@ A working facilities example file can be found in the \gls{matsim} directory tre
 
 Facilities are mostly used in the \gls{matsim} Zürich group, in particular in the Zürich scenario, where facilities are derived from the Federal Enterprise Census~2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information and using NOGA-classification. Detailed technical description of facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008, Meister_unpub_IVT_2007}. Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
 
+Note that loading a facilities file into \gls{matsim} by itself does not use them; the functionality needs to be switched on by other means.  Currently, this is only possible by using some class with a \lstinline{main} method that does that.
+
 % Code:\lstinline|org.matsim.core.facilities|
 
 % ##################################################################################################################
@@ -629,7 +644,7 @@ There used to be an additional ``useHouseholds'' config switch.  In relase 0.7.x
 %
 }
 
-Loading the households file does not mean that it is used anywhere in the code; such functionalities needs to be switched on separately.  Currently, no such functionality can be switched on from the \gls{configfile} alone.
+Again, loading the households file does not mean that it is used anywhere in the code; such functionalities needs to be switched on separately.  Currently, no such functionality can be switched on from the \gls{configfile} alone.
 
 % \ah{households file listing?} \ah{maybe next revision}
 
@@ -653,7 +668,7 @@ There used to be an additional ``useVehicles'' config switch.  In release 0.7.x,
 }
 %% the \lstinline|useVehicles|\kaitodo{chk the useXxx switches} parameter in the \lstinline|scenario| \gls{configfile} section must be set to true. Furthermore the \gls{configfile} must contain a section \lstinline|vehicles|. This section should specify the paths to a file containing vehicles (parameter \lstinline|vehiclesFile|). 
 
-Just loading the vehicles does not use them; that needs to be configured separately.  See Section \ref{sec:vehicles-in-qsim} for details.
+Once more, just loading the vehicles does not use them; that needs to be configured separately.  See Section \ref{sec:vehicles-in-qsim} for details.
 
 
 %\citet[][]{JaeggiEtAl_TRR_2012} might serve as an empirical base for the assignment of vehicles to agents or households. \ah{Füllsatz}
@@ -690,6 +705,11 @@ Just loading the vehicles does not use them; that needs to be configured separat
 
 % Code: \lstinline|org.matsim.vehicles|
 
+\subsection{Scenario}
+\label{sec:extending-scenario}
+
+\lstinline{Scenario} is a super-container that contains all the other data containers, accessible for example as \lstinline{scenario.getNetwork()}.  It used to have configuration options, but these are all gone now, so \lstinline{Scenario} is only visible once you are programming in \gls{java}. 
+
 
 %##################################################################################################################
 \section{Global Modules and Global Aspects}
@@ -697,7 +717,7 @@ Just loading the vehicles does not use them; that needs to be configured separat
 % ===================================================================================
 \subsection{Controler}
 \label{sec:extending-controler}
-The controler module, can be extended by \lstinline|ControlerEvents| and \lstinline|ControlerListeners| as detailed in Chapter~\ref{ch:extensionpoints}. 
+The controler module can be extended by \lstinline|ControlerEvents| and \lstinline|ControlerListeners| as detailed in Chapter~\ref{ch:extensionpoints}. 
 %% Classes implementing one or more \lstinline|Listener Interfaces| and can be registered with the Controler with \lstinline|addControlerListener()|. The controler fires \lstinline|Controler Events| at specific points during the run to the registered \lstinline|Listeners|, which can then execute their own code.
 %
 %Das ist nur ein Ausschnitt von dem, was der Controler kann.  Da es im entsprechenden Kap. ja beschrieben wird, brauchen wir das hier m.E. nicht nochmal. kai, dec'14

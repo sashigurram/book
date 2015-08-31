@@ -23,12 +23,12 @@ Part~IV will show how initial input was generated on a practical level---discuss
 
 \subsection{Coordinate systems}
 
-Section~\ref{sec:coordinatesystems} has already said some things about coordinate systems.   For \gls{matsim} to function properly, all input data needs to be in the same coordinate system, which is preferably metric.  When using \gls{java} and \gls{matsim} for input data generation, coordinate transformations derived from geotools \cite{geotools-www-page} can be used.  For example, 
+Section~\ref{sec:coordinatesystems} has already said some things about coordinate systems.   For \gls{matsim} to function properly, all input data needs to be in the same coordinate system, which is preferably metric.  When using \gls{java} and \gls{matsim} for input data generation, coordinate transformations derived from geotools \citep{geotools-www-page} can be used.  For example, 
 \begin{lstlisting}
-CoordinateTransformation ct = \
-TransformationFactory.getCoordinateTransformation("WGS84", "WGS84_UTM33N");
+CoordinateTransformation ct = 
+  TransformationFactory.getCoordinateTransformation("WGS84", "WGS84_UTM33N");
 \end{lstlisting}
-would transform data given in WGS84 coordinates to data given in UTM coordinates.
+would transform data given in WGS84 coordinates to data in UTM coordinates.
 
 \subsection{Network Generation}
 
@@ -43,11 +43,11 @@ A fairly standardized way to generate a \gls{matsim} network is from \gls{osm} d
 \item Download a recent \gls{osmosis} build from \url{http://wiki.openstreetmap.org/wiki/Osmosis}.
 
 \item The necessary command to extract the road network approximately is
-\begin{lstlisting}
+\begin{shell}
 java -cp osmosis.jar --rb file=xxx.osm.pbf \
    --bounding-box top=47.701 left=8.346 bottom=47.146 right=9.019 \
    completeWays=true --used-node --wb allroads.osm.pbf
-\end{lstlisting}
+\end{shell}
 The bounding box can, \eg be obtained from \url{http://www.osm.org}; it is in WGS84 coordinates.
 
 \item It makes a lot of sense to add the large roads of a much larger region.  The necessary command approximately is
