@@ -4,6 +4,9 @@ kai:
 kaibib:
 	cd ../.. ; ${MAKE} kaibib
 
+newpdf:
+	cd ../.. ; ${MAKE} newpdf
+
 pdf:
 	cd ../.. ; ${MAKE} pdf
 
