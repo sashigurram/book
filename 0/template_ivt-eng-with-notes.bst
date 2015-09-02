@@ -264,8 +264,8 @@ FUNCTION {output.doi}
 { 
     doi empty$
         { skip$ }
-        %{ "\href{http://dx.doi.org/" doi * "}{doi:" * 	  doi * "}" * output }
-        { skip$ }
+        { "\href{http://dx.doi.org/" doi * "}{doi:" * 	  doi * "}" * output }
+        %{ skip$ }
     if$
 }
 
