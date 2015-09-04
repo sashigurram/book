@@ -11,3 +11,5 @@ s/ \\textcolor{red}{Kickh}/ Kickh/
 s/ Kickh/ \\textcolor{red}{Kickh}/
 s/ \\textcolor{red}{Raney}, / Raney,/
 s/ Raney,/ \\textcolor{red}{Raney}, /
+s/ \\textcolor{red}{Grether}, / Grether,/
+s/ Grether,/ \\textcolor{red}{Grether}, /
