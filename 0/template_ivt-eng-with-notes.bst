@@ -75,7 +75,7 @@ FUNCTION {bbl.volume}    { "vol." }
 FUNCTION {bbl.of}        { "of" }
 FUNCTION {bbl.number}    { "no." }
 FUNCTION {bbl.nr}        { "no." }
-FUNCTION {bbl.in}        { "in" }
+FUNCTION {bbl.in}        { "in:" }
 %FUNCTION {bbl.ppa}       { "paper presented at" }
 FUNCTION {bbl.ppa}       { "in:" }
 FUNCTION {bbl.pages}     { "" }

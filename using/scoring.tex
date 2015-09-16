@@ -170,14 +170,12 @@ The config syntax (config version v2) approximately is
    <param name="lateArrival" value="-18.0" />
    <param name="earlyDeparture" value="-0.0" />
    <parameterset type="activityParams" >
-   <param name="activityType" value="work" />
-   <param name="typicalDuration" value="08:00:00" />
-
-   <param name="openingTime" value="07:00:00" />
-   <param name="latestStartTime" value="09:00:00" />
-   <param name="closingTime" value="19:00:00" />
-
-   ...   
+      <param name="activityType" value="work" />
+      <param name="typicalDuration" value="08:00:00" />
+      <param name="openingTime" value="07:00:00" />
+      <param name="latestStartTime" value="09:00:00" />
+      <param name="closingTime" value="19:00:00" />
+      ...   
    </parameterset>
    ...   
 </module>
@@ -236,12 +234,12 @@ The config syntax (config version v2) approximately is
       <param name="constant" value="0.0" />
       <param name="marginalUtilityOfDistance_util_m" value="0.0" />
       <param name="marginalUtilityOfTraveling_util_hr" value="-6.0" />
-      <param name="monetaryDistanceCostRate" value="-1.0" />
+      <param name="monetaryDistanceRate" value="-1.0" />
    </parameterset>
    ...    
 </module>
 \end{xml}
-\atend{check possible re-name of monetaryDistanceCostRate}
+%% \atend{check possible re-name of monetaryDistanceCostRate}
 
 %% \benjamin{Irgendwo müsste dann definiert werden, was ``direct'' vs ``indirect'' ist; M.E. einfach ``without'' vs ``with'' (time) costraints.}
 %% %
@@ -434,7 +432,7 @@ For an adaptive \gls{algorithm}, a penalty like this needs to be defined so that
 
 \paragraph*{First and Last Activity not the Same}
 
-Clearly, the wrap-around approach fails if the first and last activity are not the same.  The present code does not look at locations, but gives a warning and problematic results if they are different types.
+Clearly, the wrap-around approach fails if the first and last activity are not the same.  The present code does not look at locations, but gives a warning and problematic results if they are of different types.
 
 \subsection{Score Averaging}
 \label{sec:score-averaging}
@@ -455,7 +453,7 @@ Non-executed plans just keep their score.
 \subsection{Forcing Scores to Convergence}
 \label{sec:score-msa}
 
-For many situations, both practical and theoretical (see Section~\ref{sec:score-convergence}), it is desirable that each plan's score converges to its expectation value.  Equation (\ref{eq:score-averaging}) will not achieve that; it just dampens the fluctuations.  A well known approach to force convergence to the expectation value is the \gls{msa}: 
+For many situations, both practical and theoretical (see Section~\ref{sec:score-convergence}), it is desirable that each plan's score converges to its expectation value.  Equation (\ref{eq:score-averaging}) will not achieve that; it just dampens the fluctuations.  A well known approach to force convergence to the expectation value is \gls{msa}: 
 \begin{equation}
 S^m = \frac{1}{m} \, S + \frac{m-1}{m} \, S^{m-1} \ .
 \label{eq:score-msa}
@@ -496,14 +494,15 @@ The current \gls{matsim} default values are
 \label{eq:std-params}
 \end{equation}
 %% \atend{check $\beta_{trav, mode(q)}$}
-They are very loosely based on the Vickrey bottleneck model \citep[e.g.][]{ArnottEtcBottleneck-inelastic}; one additional insight: in many of the systems we model, traveling does not seem to be less convenient than ``doing nothing''.  Thus, the \emph{direct} marginal utility of traveling, $\beta_{trav}$, is close to zero and sometimes even positive \citep[see, e.g.,][]{RedmondMokhtarian_Transportation_2001,PawlakEtAl_ICMC_2011} .
+They are very loosely based on the Vickrey bottleneck model \citep[e.g.][]{ArnottEtcBottleneck-inelastic}. 
 
+%
 %% \kai{there is at least one paper by handy and/or mokhtarian, but i can't find it in the bibtex}.
 %% \ah{\citet[][]{, MokhtarianPSalomon_TransResA_2001, }}
 %\kai{danke}
-
-\def\betaperf{\beta_{\it perf}}
-
+%
+\def\betaperf{\beta_{\it dur}}
+%
 %% %% (\cf Equation~(\ref{eq:derivation-of-scoring-default})).
 %% %% These parameters were derived from \citet[][]{ArnottEtAl_TAER_1993} by also consulting \citet[][]{ChaumetEtAl_2006}. 
 %% %% \kai{Andreas, wieso Chaument?} 
@@ -557,7 +556,9 @@ They are very loosely based on the Vickrey bottleneck model \citep[e.g.][]{Arnot
 %% %
 %% %m.E. nicht notwendig.  kai, jan'2015
 
-A possible approach to calibration is as follows:\footnote{%
+An additional insight is that, in many of the systems we model, traveling does not seem to be less convenient than ``doing nothing''.  Thus, the \emph{direct} marginal utility of traveling, $\beta_{trav}$, is close to zero and sometimes even positive \citep[see, e.g.,][]{RedmondMokhtarian_Transportation_2001,PawlakEtAl_ICMC_2011} .
+%
+Based on this, a possible approach to calibration is as follows:\footnote{%
 %
 Different groups have different systems; this one is typical for VSP, although it uses ideas from Michael Balmer.
 %
@@ -576,7 +577,7 @@ If you do not have a mode choice logit model, set to $1.0$.  (This is the defaul
 
 This is normally a positive value (since having more money normally increases utility).
 
-\item Set $\betaperf \equiv$ \verb$performing$ to whatever the prefactor of car travel time is in your mode choice mode (probably with a sign change, see below).
+\item Set $\betaperf \equiv$ \verb$performing$ to whatever the prefactor of car travel time is in your mode choice mode, while changing that parameter's sign from its typical $-$ to a $+$.
 
 If you do not have a mode choice logit model, set to $+6.0$.  (This is the default.)
 
@@ -601,9 +602,9 @@ then
 
 If you do not have a mode choice logit model, set all $\beta_{tt,mode} \equiv$ \verb$travelingXxx$ values to zero (i.e.\ same as car).
 
-\item Set distance cost rates \verb$monetaryDistanceCostRate...$ to plausible values, if you have them.
+\item Set distance cost rates \verb$monetaryDistanceRate...$ to plausible values, if you have them.
 
-For the time being, this needs to be negative (not entirely plausible, but it is the way it is).
+Note that this needs to be negative: distance consumes money at a certain rate.
 
 \item Use the alternative-specific constants $C_{mode} \equiv$ \verb$constant$ to calibrate your modal split.
 
