@@ -7,12 +7,14 @@
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
 % ##################################################################################################################
-This chapter lists modules important in the past, but no longer being developed.
+This chapter lists modules that were important for several projects in the past, but which are no longer being developed.
 
 % ################################################################################################################
 \section{DEQSim}
 \label{sec:deqsim}
-\gls{deqsim} was used for project \emph{Westumfahrung} \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009}. It was a queue-based, event-based parallel simulation written in \gls{cpp} \citep[][]{CharyparAxhausenEtAl2007Event-DrivenQueueBasedTraffic,Charypar_PhDThesis_2008}. This simulation included handling of reduced capacities due to traffic lights in an aggregate manner \citep[][p.139 ff]{Charypar_PhDThesis_2008}. It also supported modeling of gap back propagation at junctions \citep[][p.98 ff]{Charypar_PhDThesis_2008}. Events handling was done via file input and output, which represented a major framework performance bottleneck; it was replaced by a \gls{java} version, the \gls{jdeqsim} (see Section~\ref{sec:using-jdeqsim}).
+\gls{deqsim} was used for project \emph{Westumfahrung} \citep[][]{BalmerEtAl_ResRep_bdktzrh_2009}. It was a queue-based, event-based parallel simulation written in \gls{cpp} \citep[][]{CharyparAxhausenEtAl2007Event-DrivenQueueBasedTraffic,Charypar_PhDThesis_2008}. This simulation included handling of reduced capacities due to traffic lights in an aggregate manner \citep[][p.139 ff]{Charypar_PhDThesis_2008}. It also supported modeling of gap back propagation at junctions \citep[][p.98 ff]{Charypar_PhDThesis_2008}.
+
+Events were written do file by \gls{deqsim} and subsequently read by \gls{matsim}.  This represented a major framework performance bottleneck. \Gls{deqsim} was therefore replaced by a \gls{java} version, the \gls{jdeqsim} (see Section~\ref{sec:using-jdeqsim}).
  %% \kai{Andreas, gibt es da ein Kapitel zu?}. \ah{nicht wirklich}).
 
 % ################################################################################################################
@@ -32,7 +34,7 @@ Unfortunately, there were three interacting problem complexes with Planomat:
 
 All best reply modules here face the challenge that they cannot run the full \gls{mobsim} ($=$ network loading $=$ synthetic reality) every time they need such information. As a result, all best reply modules are forced to build some internal synthetic reality model.  
 
-Planomat did this by running its plans through a simplified \gls{mobsim} of its own. This \gls{mobsim} was a re-implementation of the most important core aspects \gls{mobsim}.
+Planomat did this by running its plans through a simplified \gls{mobsim} of its own. This \gls{mobsim} was a re-implementation of the most important aspects for the core \gls{mobsim}.
 %
 %% Planomat 
 %% %did not re-use core \gls{matsim} structural information, but 
@@ -47,11 +49,11 @@ In other words, any addition to the \gls{matsim} system: \eg tolls, or opening/c
 %
 \item Planomat always tended to return the same solution: understandable from a best-reply module, but it becomes a problem when what the module thinks is a best reply starts to differ from what the \gls{matsim} core thinks.  
 
-While an innovative strategy, which deliberately generates diversity, can be useful even when not fully consistent with the \gls{matsim} core \citep{NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}, this cannot function in a non-diverse innovative strategy, since it insists on returning only suboptimal plans.
+While an innovative strategy that deliberately generates diversity can be useful even when not fully consistent with the \gls{matsim} core \citep{NagelKickhoeferJoubert2014HeterogeneousVoTsPROCEDIA}, this cannot function with a non-diverse innovative strategy, since it then insists on returning only suboptimal plans.
 %
 \item In addition, Planomat used the \gls{matsim} core router in a way that hindered further software development of the core router. Essentially, Planomat used \gls{matsim} classes and methods not designed for re-use, but just happened to be public.
 
-It was thus an obstacle for a major \gls{matsim} core router re-design, undertaken by T.~Dubernet (Section~\ref{sec:router-extension-point} for the result).
+It was thus an obstacle for a major \gls{matsim} core router re-design, undertaken by T.~Dubernet (se Section~\ref{sec:router-extension-point}).
 \end{itemize}
 
 The combination of these three issues meant that Planomat was eventually discarded; moving it to the new router infrastructure would have entailed a major piece of one-time work. After that, maintaining Planomat's best-reply capability would have been a permanent work-intensive obligation. It was thus decided instead to invest our scarce resources in the design of a better core allowing extensions to survive without much manual intervention. Although this will always be work in progress, Chapter~\ref{ch:extensionpoints} explains our substantial progress toward pluggable extensibility.
@@ -66,7 +68,7 @@ However, it must be noted that the improved software architecture does not resol
 % ################################################################################################################
 \section{PlanomatX}
 \label{sec:planomatX}
-PlanomatX was based on Planomat. It extended it by performing activity choice and adopting a Tabu Search approach \citep[][]{Feil_PhDThesis_2010}. To cope with the dimensionality curse (due to the added choice dimension), PlanomatX introduced schedule recycling, basically a warmstart concept. Due to problems with a logarithmic utility function for activity choice, PlanomatX also derived an alternative utility function from \citet[][]{Joh_PhDThesis_2004}. Rough estimates for its parameters based on an \gls{mnl} exist, but turned out to be problematic, as shown in Section~\ref{sec:s-shaped}.
+PlanomatX was based on Planomat. It extended it by performing activity choice and adopting a Tabu Search approach \citep[][]{Feil_PhDThesis_2010}. To cope with the dimensionality curse (due to the added choice dimension), PlanomatX introduced schedule recycling, basically a warmstart concept. Because of problems when using the standard \gls{matsim} logarithmic utility function for activity choice, PlanomatX also derived an alternative utility function from \citet[][]{Joh_PhDThesis_2004}. Rough estimates for its parameters based on an \gls{mnl} exist, but turned out to be problematic, as shown in Section~\ref{sec:s-shaped}.
 
 PlanomatX, derived from Planomat, suffered from the same maintenance problems and was eventually abandoned for the same reasons.
 
