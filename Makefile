@@ -33,6 +33,7 @@ kai.aux: localbib
 
 
 kaibib: kai.aux
+	makeglossaries kai
 	makeindex kai
 	bibtex -min-crossrefs=999 kai
 	pdflatex kai
