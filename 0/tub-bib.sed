@@ -12,4 +12,4 @@ s/Raney,/ \\hl{Raney},/
 s/ Grether/ \\hl{Grether}/
 s/~Grether/ \\hl{Grether}/
 s/Grether,/ \\hl{Grether},/
-
+s/note =/OPTnote =/
