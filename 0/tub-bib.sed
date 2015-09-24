@@ -13,3 +13,5 @@ s/ Grether/ \\hl{Grether}/
 s/~Grether/ \\hl{Grether}/
 s/Grether,/ \\hl{Grether},/
 s/note =/OPTnote =/
+s/, Virginia, USA//
+s/, UK//
