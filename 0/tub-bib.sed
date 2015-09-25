@@ -1,17 +1,20 @@
 s/url =/OPTurl =/
-s/ Nagel/ \\hl{Nagel}/
-s/~Nagel/ \\hl{Nagel}/
-s/Nagel,/ \\hl{Nagel},/
-s/ Illenberger/ \\hl{Illenberger}/
-s/~Illenberger/ \\hl{Illenberger}/
-s/Illenberger,/ \\hl{Illenberger},/
-s/Kickh{\\"o}fer/\\hl{Kickhoefer}/
-s/ Raney/ \\hl{Raney}/
-s/~Raney/ \\hl{Raney}/
-s/Raney,/ \\hl{Raney},/
-s/ Grether/ \\hl{Grether}/
-s/~Grether/ \\hl{Grether}/
-s/Grether,/ \\hl{Grether},/
 s/note =/OPTnote =/
 s/, Virginia, USA//
 s/, UK//
+s/, Germany, Decemter 2010//
+s/, Germany, 09 2013//
+s/chapter =/OPTchapter =/
+s/, Monte Veriat, Switzerland.//
+s/, CA//
+s/Keynote of //
+s/Proceedings of the //
+s/title =         {/title =         {\\hl{tub.bib} /
+s/, NL//
+s/month =/OPTmonth =/
+s/, TX, USA//
+s/edition =/OPTedition= /
+s/isbn =/OPTisbn =/
+s/howpublished =/OPThowpublished =/
+s/, Germany//
+s/, Switzerland//

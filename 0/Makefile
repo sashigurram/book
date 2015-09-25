@@ -4,6 +4,12 @@ default:
 kai:
 	cd .. ; ${MAKE} kai
 
+localbib:
+	cd .. ; ${MAKE} localbib
+
+newpdf:
+	cd .. ; ${MAKE} newpdf
+
 kaibib:
 	cd .. ; ${MAKE} kaibib
 
