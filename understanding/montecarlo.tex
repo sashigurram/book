@@ -26,9 +26,12 @@
 {}``Agents'' that {}``learn'' in a {}``synthetic reality'' is a common term
 in Artificial Intelligence \citep{RusselNorvig2010ArtificialIntelligence} and/or 
 Multi-Agent simulation~\citep{FerberBook}, but it does
-not belong to transport modeling standard terminology. This
-chapter explains MATSim function in modeling and simulation concepts
-more established in the transportation field.
+not belong to \corr{transport modeling standard terminology}{the standard
+terminology of transport modeling}.
+This chapter explains \corr{MATSim function in modeling and simulation concepts
+more established in the transportation field}{the functioning of MATSim in
+terms of modeling and simulation concepts that are more established in the
+transportation field}.
 % \kai{Gunnar, habe an obigem Satz ein wenig gebastelt.  Wir haben uns diese Sprache 
 % ja nicht selbst ausgedacht; sie war immer nur eine Reaktion auf Dinge, die wir 
 % anderswo gelesen haben, und die u.E.\ besser passten als die etabliertere Terminologie.}
@@ -55,14 +58,15 @@ MATSim, both kinds of feedback are strong modeling drivers.
 % ----------
 
 Consider Figure~\ref{fig:Demand/supply-perspective-on}, displaying
-MATSim as a model system comprising a (travel) demand model and a
+\gls{matsim} as a model system comprising a (travel) demand model and a
 (network) supply model. The travel demand model predicts travelers' behavior,
 given their information about network conditions.
 The network supply model predicts these network conditions using a
-certain travel behavior chosen by all travelers in the system. Over
-this, comes the modeling assumption that demand and supply should
-be mutually consistent, in the sense that network conditions resulting
-from certain travel behavior are statistically equal to the network
+certain travel behavior chosen by all travelers in the system. 
+\corr{Over
+this, comes the}{This is complemented by the} modeling assumption that demand
+and supply \corr{should be}{are} mutually consistent, in the sense that network
+conditions resulting from certain travel behavior are statistically equal to the network
 conditions that caused this behavior.
 
 Simulation addresses the question of how to identify this state of
@@ -133,23 +137,24 @@ Denoting the iteration index by $k$, the following happens in every
 iteration:
 \begin{enumerate}
 \item \label{enu:Every-traveler-chooses}All agents choose some planned
-travel behavior, resulting in travel demand $D^{k}$ of the entire
+travel behavior, resulting in \corr{}{the} travel demand $D^{k}$ of the entire
 agent population.
 \item \label{enu:All-travelers-execute}All agents execute their travel
-plans, resulting in (time-of-day dependent) network conditions
+plans, resulting in \corr{}{the} (time-of-day dependent) network conditions
 $S^{k}$.
 \item \label{enu:All-travelers-observe}All agents see the resulting network
-conditions $S^{k}$. As a result, information $Z^{k}$ is now
-available to agents.
+conditions $S^{k}$. As a result, \corr{}{the} information $Z^{k}$ is now
+available to \corr{}{all} agents.
 \end{enumerate}
 The variables $D$ and $Z$ apply to the population as a whole, comprising
 all agents. Similarly, the variable $S$ represents network conditions
 for an entire day and for the entire physical system. Given MATSim's
 high level of detail, one can think of $D$, $S$ and $Z$ as
-placeholders for arbitrarily large data and complex structures.
+placeholders for arbitrarily large \corr{data and complex structures}{and
+complex data structures}.
 %\note{Refer to corresponding data containers in MATSim?}\kai{done, see next.}  
-Under standard conditions, $D$ corresponds to the set of selected plans, 
-$S$ to the collection of all events 
+Under \gls{matsim}'s standard conditions, $D$ corresponds to the set of selected
+plans, $S$ to the collection of all events 
 and $Z$ to the full plans file including the scores.
 
 Step~\ref{enu:Every-traveler-chooses} evaluates the (stochastic)
@@ -158,31 +163,34 @@ an optional update of the plan choice set and (ii) the choice of one
 plan to be executed. Symbolically, this is written as
 \begin{equation}
 D^{k}\sim P(D\mid Z^{k-1}),\label{eq:choice-model}
-\end{equation},
-meaning that iteration $k$travel demand follows a probability
-distribution conditional on information $Z^{k-1}$
+\end{equation}\corr{,}{}
+meaning that \corr{iteration $k$travel demand follows a probability
+distribution conditional on information}
+{the travel demand of iteration $k$ follows a probability distribution
+that is conditional on the information} $Z^{k-1}$
 available to agents at the end of iteration $k-1$.
 
 %% \kai{@Gunnar: Wir haben $S$ für score im Buch.  Habe daher aus Deinem $S$ mal $C$ gemacht; das entspricht auch der Notation in der Lehrveranstaltung Verkehrstelematik ($C$ $=$ ``conditions'').}
 %% \gunnar{ok}
 
-Step~\ref{enu:All-travelers-execute} runs the (stochastic) mobility
+Step~\ref{enu:All-travelers-execute} runs \corr{}{the} the (stochastic) mobility
 simulation that moves all agents jointly through the network. In symbols,
 this becomes
 \begin{equation}
 C^{k}\sim P(S\mid D^{k}),\label{eq:network-loading-model}
-\end{equation},
-meaning that the network conditions of iteration $k$ follows a probability
-distribution conditional on $D^{k}$ demand. 
+\end{equation}\corr{,}{}
+meaning that the network conditions of iteration $k$ follow a
+probability distribution \corr{conditional on $D^{k}$ demand}{that is
+conditional on the demand $D^{k}$}.
 
-Step~\ref{enu:All-travelers-observe} updates (possibly stochastically)
-information available to all agents using the new network
-conditions $C^{k}$. This is written as
+Step~\ref{enu:All-travelers-observe} updates \corr{}{the} (possibly
+\corr{stochastically}{stochastic}) information available to all agents
+using the new network conditions $C^{k}$. This is written as
 \begin{equation}
 Z^{k}\sim P(Z\mid C^{k},Z^{k-1}).\label{eq:learning-model}
 \end{equation}
 That is, the new information $Z^{k}$ is not only a transformation
-of the current network conditions $C^{k}$, but may also be based on
+of the current network conditions $C^{k}$\hl{,} but may also be based on
 the previously available information $Z^{k-1}$.
 
 The conditional distributions \MyEqRef{eq:choice-model}--(\ref{eq:learning-model})
@@ -191,15 +199,16 @@ describes the plan selection mechanisms leading to $P(D\mid C^{k-1})$,
 Chapter~\ref{ch:kinematicwaves} explains the physical processes underlying
 $P(S\mid D^{k})$, and Chapter~\ref{ch:scoring}
 %% \note{REF?} \ah{Interesting, but not treated explicitly anywhere. Different cases: Regular repl.: plan set is subject to slow diffusion. Within-day-repl: instantaneous update} 
-specifies at least some of the information update logic behind $P(Z\mid C^{k})$. A greater level of detail is, however, not necessary in this chapter.
+specifies at least some of the information update logic behind $P(Z\mid C^{k})$. 
+A greater level of detail is, however, not necessary in this chapter.
 
 
 \subsection{\label{sub:Markov-chain-perspective}Markov Chain Perspective}
 
 Algorithm~\ref{alg:Iterative-scheme-to} constitutes a discrete time
-stochastic process. {}``Discrete-time'', because it evolves from
-iteration to iteration: stochastic, because it evaluates stochastic
-models. Further, one iteration of this process requires only information
+stochastic process. {}``Discrete-time''\hl{,} because it evolves from
+iteration to iteration\corr{:}{;} stochastic\hl{,} because it evaluates
+stochastic models. Further, one iteration of this process requires only information
 about the previous iteration's outcome. This allows the expression of
 Algorithm~\ref{alg:Iterative-scheme-to} in terms of a {}``Markov
 chain'' \citep{ross-2006}.
@@ -214,13 +223,13 @@ stage to the next can then be expressed as follows:
 P(X^{k+1}=x) & = & \sum_{y}P(X^{k}=y)\cdot T_{y}^{x}.\label{eq:one-mc-transition}
 \end{eqnarray}
 Each argument of the sum expresses the probability of the chain being
-in one particular state $y$, then entering $x$. The overall probability
-of arriving in $x$ results from summing up these probabilities.
+in one particular state $y$\corr{,}{ and} then entering $x$. The overall
+probability of arriving in $x$ results from summing up these probabilities.
 
 Markov chains tend, under certain assumptions sketched in
 the next section, to stabilize after sufficient iterations,
-in the sense that a long-term probability, $\Pi(x$) of
-encountering the process in state $x$, exists. This stationary distribution
+in the sense that a long-term probability $\Pi(x$) of
+encountering the process in state $x$ exists. This stationary distribution
 satisfies
 \begin{eqnarray}
 \Pi(x) & = & \sum_{y}\Pi(y)\cdot T_{y}^{x},\label{eq:mc-stationary}
@@ -239,14 +248,14 @@ of that chain and (ii) what transition distribution underlies the
 
 A state variable must provide sufficient information to simulate a
 process further into the future. Candidates for \gls{matsim}'s state space
-are: demand $D$, network condition $S$ and information
-$Z$. Of these, only information $Z$ qualifies as a state variable:
+are: demand $D$, network condition $S$\corr{}{,} and information
+$Z$. Of these, only \corr{}{the} information $Z$ qualifies as a state variable:
 if one knows $Z^{k}$, it is possible to draw the next day's travel
-demand $D^{k+1}$, based on \MyEqRef{eq:choice-model}, to insert this
+demand $D^{k+1}$\corr{,}{} based on \MyEqRef{eq:choice-model}, to insert this
 demand into \MyEqRef{eq:network-loading-model} and obtain the network
 conditions $C^{k+1}$ and finally use both $C^{k+1}$ and $Z^{k}$
 to obtain an updated $Z^{k+1}$ through \MyEqRef{eq:learning-model}.
-This last step is what disqualifies $D$ and $S$ as state variables,
+This last step is what disqualifies $D$ and $S$ as state variables\hl{,}
 because an evaluation of \MyEqRef{eq:learning-model} is impossible
 without having $Z$ in the state space.
 
@@ -262,8 +271,10 @@ P(Z^{k+1}\!=\!x\mid C^{k}\!=\!s,Z^{k}\!=\!y)
 \, P(D^{k}\!=\!d\mid Z^{k}\!=\!y) .\label{eq:matsim-transition-distr}
 \end{eqnarray}
 Each double sum argument represents the probability of one
-particular given information $y$sequence, resulting travel demand
-$d$, resulting network conditions $s$ and updated information $x$.
+particular \corr{given information $y$sequence, resulting travel demand
+$d$, resulting network conditions $s$ and updated information $x$}
+{sequence of given information $y$, resulting travel demand
+$d$, resulting network conditions $s$, and updated information $x$}.
 The double sum over all possible travel demand realizations $d$ and
 network conditions $s$ then accounts for the fact that there are
 many different such sequences through which one can start out at $y$
@@ -302,22 +313,21 @@ from its transition function. This also leads to useful insights for
 {}
 % ----------
 
-Two key properties are: aperiodicity and irreducibility. Informally,
+Two key properties are\corr{:}{} aperiodicity and irreducibility. Informally,
 a Markov chain is aperiodic if all of its states can be visited at
 irregular times; Figure~(\ref{fig:Example-of-(a)periodicity}) provides
 an example. It is irreducible if it can reach any other state from any given initial
 state with one or more transitions; see Figure~(\ref{fig:Example-of-(ir)reducibility})
 for an example. Aperiodicity and irreducibility are essential when
 it comes to long-term predictions, where (i) aperiodicity guarantees
-that the concrete iteration where one evaluates the simulation
+that the concrete iteration \corr{where}{in which} one evaluates the simulation
 does not play a role and (ii) irreducibility ensures that every possible
 future system state can be reached (predicted) by the simulation.
 If both properties are given, the Markov chain has the following properties
 \citep{ross-2006}:
 \begin{enumerate}
 \item A unique stationary distribution exists. The simulation process attains
-this distribution after {}``many'' iterations, independently of
-its initial state.
+this distribution after many iterations, independently of its initial state.
 \item It is feasible to compute statistics of the stationary distribution
 from a single simulation run, meaning that it is not necessary to
 run replications.
@@ -335,13 +345,15 @@ because the following sequence of events may occur by chance:
 %% as often as the agent memory is long: 
 (i) no agent uses plan innovation,
 (ii) all agents select the same plan as in the previous iteration, 
-(iii) mobility simulation creates identical congestion and travel time patterns 
-%% as in the previous iteration.
-such that $Z^k$ from \MyEqRef{eq:learning-model} remains the same as $Z^{k-1}$; practically, this means that all plan scores remain the same. 
+(iii) the mobility simulation creates such congestion and travel time
+patterns that $Z^k$ from \MyEqRef{eq:learning-model} remains the same as
+$Z^{k-1}$; practically, this means that all plan scores remain the same. 
 %% \kai{@Gunnar: Habe das mal umgeschrieben, weil in der praktischen Implementierung die Agenten kein Memory haben; sie merken sich nur den geglätteten Score.}  
 %% \gunnar{ok}
 
-The above is a rather formal argument; more intuitively, the stochasticity in \gls{matsim} means that, even if the system returns multiple times exactly to a state where it has been before, it is improbable that it does so in the same number of steps. 
+More intuitively, this means that, even if the system returns multiple times 
+exactly to a state where it has been before, 
+it is improbable that it does so in the same number of steps. 
 %% \kai{@Gunnar: pls chk the above.}
 %% \gunnar{ok}
 
@@ -362,7 +374,7 @@ Even if plans creation and removal could be modeled such that irreducibility was
 
 
 \item With plan innovation switched off, 
-MATSim in its {}``standard configuration'' is likely to 
+MATSim in its standard configuration is likely to 
 % have
 %% these properties if the plan choice sets of all agents are a priori
 %% defined, meaning technically that all {}``plan innovation'' modules
@@ -374,7 +386,8 @@ behind this follow \citet{cascetta-1989}, who presents a related
 result for a much simpler, trip-based traffic simulation that only
 allows for route choice. Observing that travel plans are, technically,
 paths in a rather complicated decision network, one can then carry
-this result over to \gls{matsim}. See also \citet{NagelEtc2000tristan-succ} and \citep{floetteroed-2010e}.
+this result over to \gls{matsim}. See also \citet{NagelEtc2000tristan-succ} and
+\citet{floetteroed-2010e}.
 
 %% \kai{@Gunnar: Du erwähnst in Deiner Email etwas von ``finite score memories''.  Kann leider nicht sagen, wie sich das überträgt: matsim in std config hat eigentlich gar kein memory.  Von vorherigen Iterationen übrig bleiben nur die scores, die evtl.\ auch noch gemittelt sind.  Es kann allerdings sein, dass es sehr lange her ist, dass ein Plan zum letzten Mal angefasst wurde, und der Score daher sehr alt ist.
 
@@ -601,9 +614,9 @@ about this is given in Chapter~\ref{ch:discretechoice}.
 %
 %\kai{Würde es erstmal hier lassen.  Man kann ja drauf verweisen.  Wir können es ggf.\ immer noch später umstellen.}
 
-Many of the models used in \gls{matsim} are stochastic: for instance, plan choice random
-utility models or the randomized selection of the
-next vehicle to enter a congested downstream link in the mobility
+Many of the models used in \gls{matsim} are stochastic\corr{: for instance,}{.
+Examples are the} plan choice random utility model or the randomized selection
+of the next vehicle to enter a congested downstream link in the mobility
 simulation. The reason for this randomness is that real mobility and
 transportation processes are not completely understood.
 The insertion of randomness represents uncertainty remaining in
@@ -661,8 +674,8 @@ variance-covariance matrix).
 \begin{eqnarray}
 \text{Pr}(y\geq\theta) & = & \sum_{y}\mathbf{1}(y\geq\theta)\cdot\Pi(y)\label{eq:question-proba}
 \end{eqnarray}
-This expression merely sums up all simulation probability outputs  
- that exceed the threshold.
+This expression merely sums up all simulation \corr{probability outputs}{output
+probabilities} that exceed the threshold.
 \item ...
 \end{itemize}
 This enumeration of symbols reveals a common structure. The mathematical
@@ -705,8 +718,9 @@ a sample converges to its expectation as the number of samples grows
 where the simulation outputs $y_{r}$, $r=1\ldots R$, are independent
 draws from $\Pi(y)$.
 
-Now recall initially asking certain questions about
-simulation outputs. The first row \MyEqRef{eq:define-question}
+Now recall \corr{initially asking certain questions about
+simulation outputs}{that initially certain questions about
+simulation outputs were asked}. The first row \MyEqRef{eq:define-question}
 represents exactly these questions in a formal way---and the last
 row \MyEqRef{eq:approximate-answer} provides a simple method for computing
 answers to these questions, which reads as follows:
@@ -741,9 +755,9 @@ of interest.
 Revisiting Section~\ref{sec:Existence-and-uniqueness}, it may
 be possible to make these computations more efficient. If (i) there
 is no uncertainty in the model inputs and (ii) the simulation uses
-fixed choice sets, then it could probably be feasible to compute the above
+fixed choice sets, then it could be feasible to compute the above
 statistics by averaging over many stationary iterations of a single
-simulation run, instead of having to run a large number of replications
+simulation run\hl{,} instead of having to run a large number of replications
 to convergence. 
 
 Practically, all of this is just a starting point. Important questions,
@@ -763,13 +777,13 @@ process behavior.
 
 This long-term behavior was then related to iteration logic properties  
 using the the Markov chain formalism. \gls{matsim} was phrased as
-such a chain, with its state space comprised of nformation
-available for replanning. This representation was exploited to
+such a chain, with its state space comprised of \corr{nformation}{the
+information} available for replanning. This representation was exploited to
 observe that the long-term distribution of \gls{matsim} is likely to exist
-and be unique, if the plan choice sets are a priori fixed.
+and be unique\hl{,} if the plan choice sets are a priori fixed.
 % ; and to (ii)
 % provide insights into how the \texttt{ExpBetaPlanChanger} avoids network
-% breakdowns. 
+% breakdowns.  
 
 It further was explained that (i) there are good reasons for the stochasticity
 both in \gls{matsim}'s inputs and outputs and that (ii) instead of avoiding
