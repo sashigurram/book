@@ -45,7 +45,8 @@ choices) from this distribution. One always needs a model before one
 can simulate. Possible feedback from simulation to modeling comprises
 (i) new insights into emergent model properties and (ii) computational
 constraints that prohibit overly complex model specifications. In
-MATSim, both kinds of feedback are strong modeling drivers. 
+MATSim, both kinds of feedback are strong \corr{modeling drivers}{drivers of
+the modeling}.
 
 
 % ----------
@@ -60,20 +61,20 @@ MATSim, both kinds of feedback are strong modeling drivers.
 Consider Figure~\ref{fig:Demand/supply-perspective-on}, displaying
 \gls{matsim} as a model system comprising a (travel) demand model and a
 (network) supply model. The travel demand model predicts travelers' behavior,
-given their information about network conditions.
+given their information about \corr{}{the} network conditions.
 The network supply model predicts these network conditions using a
 certain travel behavior chosen by all travelers in the system. 
 \corr{Over
 this, comes the}{This is complemented by the} modeling assumption that demand
-and supply \corr{should be}{are} mutually consistent, in the sense that network
-conditions resulting from certain travel behavior are statistically equal to the network
-conditions that caused this behavior.
+and supply \corr{should be}{are} mutually consistent\corr{,}{} in the sense that
+\corr{}{the} network conditions resulting from \corr{}{a} certain travel
+behavior are statistically equal to the network conditions that caused this behavior.
 
 Simulation addresses the question of how to identify this state of
 mutual demand/supply consistency, \ie it solves the model. The model
 system shown in Figure~\ref{fig:Demand/supply-perspective-on} is
-complicated---it is nonlinear, stochastic and extremely high-dimensional.
-The only known technique to solve it exploits an additional modeling
+complicated -- it is nonlinear, stochastic and extremely high-dimensional.
+The only known operational technique to solve it exploits an additional modeling
 assumption that justifies the real occurrence of demand/supply consistency:
 travelers adjust their behavior for their own benefit and only
 stop doing that when further improvement is insubstantial. Demand/supply
@@ -97,34 +98,36 @@ consistency}
 \end{algorithm}
 
 
-Now, consider Algorithm~\ref{alg:Iterative-scheme-to}, which displays
-the high-level simulation logic of \gls{matsim}. This is indeed a logic
-that iteratively adjusts travel demand. If this logic adjusts the
-simulated behavior of the simulated travelers until further simulated
-improvements are insubstantial, then this logic should
-approach a state of demand/supply consistency. That is, Algorithm~\ref{alg:Iterative-scheme-to}
-may be a valid solution method for the model system shown in Figure~\ref{fig:Demand/supply-perspective-on}.
-However, that model system does not specify how demand and supply
-become consistent, it merely specifies that this eventually happens.
-The only modeling assumption made is that some process of this type
-exists. The purpose of Algorithm~\ref{alg:Iterative-scheme-to} is
-not to mimic this (unspecified) process; it only identifies the final
-outcome of that process.
+Now, consider Algorithm~\ref{alg:Iterative-scheme-to}, which displays the
+high-level simulation logic of \gls{matsim}. This is indeed a logic that
+iteratively adjusts travel demand. If this logic adjusts the simulated behavior
+of the simulated travelers until further simulated improvements are
+insubstantial, then this logic should approach a state of demand/supply
+consistency. That is, Algorithm~\ref{alg:Iterative-scheme-to} may be a valid
+solution method for the model system shown in
+Figure~\ref{fig:Demand/supply-perspective-on}.
+However, that model system does not specify how demand and supply become
+consistent\corr{,}{;} it merely specifies that this eventually happens.
+The only modeling assumption made is that some process of this type exists. The
+purpose of Algorithm~\ref{alg:Iterative-scheme-to} is not to mimic this
+(unspecified) process; it only identifies the final outcome of that process.
 
 The fact that Algorithm~\ref{alg:Iterative-scheme-to} 
 mimics real, urban, day-to-day dynamics invites misleading interpretations
 of the underlying model system. In particular, it is a misconception
-that the there is more than a superficial resemblance between the
+that \corr{the}{} there is more than a superficial resemblance between the
 {}``learning agents'' in \gls{matsim} and the (hardly understood) learning
 processes of real humans. If the notion of {}``learning'' has to
 be used at all when interpreting Algorithm~\ref{alg:Iterative-scheme-to},
 it should be understood as {}``moving a \gls{matsim} model closer to its
-solution point''.  Also see Sec.~\ref{sec:transients-vs-learning}.
+solution point''.  Also see Section~\ref{sec:transients-vs-learning}.
 % \kai{Gunnar, I hope that this is ok.}
 
-The remainder of this chapter phrases these statements more technically and explains 
-their implications for \gls{matsim} output interpretation.  This presentation is, in part, a 
-more technical reformulation of Chapter~\ref{ch:abta}.
+The remainder of this chapter phrases these statements more technically and
+explains their implications for \corr{}{the interpretation of} \gls{matsim}
+\corr{output interpretation}{outputs}.
+This presentation is \corr{, in part,}{in parts} a more technical reformulation
+of Chapter~\ref{ch:abta}.
 
 
 \section{\label{sec:Relaxation-as-a}Relaxation as a Stochastic Process}
@@ -141,20 +144,20 @@ travel behavior, resulting in \corr{}{the} travel demand $D^{k}$ of the entire
 agent population.
 \item \label{enu:All-travelers-execute}All agents execute their travel
 plans, resulting in \corr{}{the} (time-of-day dependent) network conditions
-$S^{k}$.
+$C^{k}$.
 \item \label{enu:All-travelers-observe}All agents see the resulting network
-conditions $S^{k}$. As a result, \corr{}{the} information $Z^{k}$ is now
+conditions $C^{k}$. As a result, \corr{}{the} information $Z^{k}$ is now
 available to \corr{}{all} agents.
 \end{enumerate}
 The variables $D$ and $Z$ apply to the population as a whole, comprising
-all agents. Similarly, the variable $S$ represents network conditions
+all agents. Similarly, the variable $C$ represents network conditions
 for an entire day and for the entire physical system. Given MATSim's
-high level of detail, one can think of $D$, $S$ and $Z$ as
+high level of detail, one can think of $D$, $C$ and $Z$ as
 placeholders for arbitrarily large \corr{data and complex structures}{and
 complex data structures}.
 %\note{Refer to corresponding data containers in MATSim?}\kai{done, see next.}  
 Under \gls{matsim}'s standard conditions, $D$ corresponds to the set of selected
-plans, $S$ to the collection of all events 
+plans, $C$ to the collection of all events 
 and $Z$ to the full plans file including the scores.
 
 Step~\ref{enu:Every-traveler-chooses} evaluates the (stochastic)
@@ -168,16 +171,16 @@ meaning that \corr{iteration $k$travel demand follows a probability
 distribution conditional on information}
 {the travel demand of iteration $k$ follows a probability distribution
 that is conditional on the information} $Z^{k-1}$
-available to agents at the end of iteration $k-1$.
+available to \corr{}{the} agents at the end of iteration $k-1$.
 
 %% \kai{@Gunnar: Wir haben $S$ für score im Buch.  Habe daher aus Deinem $S$ mal $C$ gemacht; das entspricht auch der Notation in der Lehrveranstaltung Verkehrstelematik ($C$ $=$ ``conditions'').}
 %% \gunnar{ok}
 
-Step~\ref{enu:All-travelers-execute} runs \corr{}{the} the (stochastic) mobility
+Step~\ref{enu:All-travelers-execute} runs the (stochastic) mobility
 simulation that moves all agents jointly through the network. In symbols,
 this becomes
 \begin{equation}
-C^{k}\sim P(S\mid D^{k}),\label{eq:network-loading-model}
+C^{k}\sim P(C\mid D^{k}),\label{eq:network-loading-model}
 \end{equation}\corr{,}{}
 meaning that the network conditions of iteration $k$ follow a
 probability distribution \corr{conditional on $D^{k}$ demand}{that is
@@ -190,35 +193,36 @@ using the new network conditions $C^{k}$. This is written as
 Z^{k}\sim P(Z\mid C^{k},Z^{k-1}).\label{eq:learning-model}
 \end{equation}
 That is, the new information $Z^{k}$ is not only a transformation
-of the current network conditions $C^{k}$\hl{,} but may also be based on
+of the current network conditions $C^{k}$\corr{,}{} but may also be based on
 the previously available information $Z^{k-1}$.
 
 The conditional distributions \MyEqRef{eq:choice-model}--(\ref{eq:learning-model})
 are detailed elsewhere in this book: Chapter~\ref{ch:discretechoice} 
 describes the plan selection mechanisms leading to $P(D\mid C^{k-1})$,
 Chapter~\ref{ch:kinematicwaves} explains the physical processes underlying
-$P(S\mid D^{k})$, and Chapter~\ref{ch:scoring}
+$P(C\mid D^{k})$, and Chapter~\ref{ch:scoring}
 %% \note{REF?} \ah{Interesting, but not treated explicitly anywhere. Different cases: Regular repl.: plan set is subject to slow diffusion. Within-day-repl: instantaneous update} 
-specifies at least some of the information update logic behind $P(Z\mid C^{k})$. 
+specifies at least some of the information update logic behind $P(Z\mid
+C^{k},Z^{k-1})$.
 A greater level of detail is, however, not necessary in this chapter.
 
 
 \subsection{\label{sub:Markov-chain-perspective}Markov Chain Perspective}
 
-Algorithm~\ref{alg:Iterative-scheme-to} constitutes a discrete time
-stochastic process. {}``Discrete-time''\hl{,} because it evolves from
-iteration to iteration\corr{:}{;} stochastic\hl{,} because it evaluates
-stochastic models. Further, one iteration of this process requires only information
-about the previous iteration's outcome. This allows the expression of
-Algorithm~\ref{alg:Iterative-scheme-to} in terms of a {}``Markov
-chain'' \citep{ross-2006}.
+Algorithm~\ref{alg:Iterative-scheme-to} constitutes a discrete time stochastic
+process. {}``Discrete-time''\corr{,}{} because it evolves in stages (from
+iteration to iteration)\corr{:}{,} stochastic\corr{,}{} because it evaluates
+stochastic models. Further, one iteration of this process requires only
+information about the previous iteration's outcome. This allows the expression
+of Algorithm~\ref{alg:Iterative-scheme-to} in terms of a {}``Markov chain''
+\citep{ross-2006}.
 
-In symbols, let $X^{k}$ be the Markov
-chain's stochastic state during stage $k$, and let $P(X^{k}=x)$ be the probability
-that that the chain is in the concrete state $x$. Further, let $T_{y}^{x}$
-be the probability that the chain enters state $x$ in its next stage,
-given that it is currently in state $y$. The transition from one
-stage to the next can then be expressed as follows:
+In symbols, let $X^{k}$ be the Markov chain's stochastic state during stage $k$,
+and let $P(X^{k}=x)$ be the probability that \corr{that}{} the chain is in the
+concrete state $x$. Further, let $T_{y}^{x}$ be the probability that the chain
+enters state $x$ in its next stage\corr{,}{} given that it is currently in state
+$y$.
+The transition from one stage to the next can then be expressed as follows:
 \begin{eqnarray}
 P(X^{k+1}=x) & = & \sum_{y}P(X^{k}=y)\cdot T_{y}^{x}.\label{eq:one-mc-transition}
 \end{eqnarray}
@@ -238,45 +242,46 @@ which essentially results from removing the $k$-indices from \MyEqRef{eq:one-mc-
 Intuitively, removing the stage-indices $k$ means that \MyEqRef{eq:mc-stationary}
 now applies, in the long term, for any stage $k$.
 
-Given that long-term behavior of Algorithm~\ref{alg:Iterative-scheme-to}
-shapes the predictions made with \gls{matsim}, its characterization as
-the stationary distribution of a corresponding Markov chain is
-of interest. To obtain a Markov chain representation of Algorithm~\ref{alg:Iterative-scheme-to},
-one must specify (i) what variables in \gls{matsim} represent the states
-of that chain and (ii) what transition distribution underlies the
-\gls{matsim} simulation logic.
+Given that \corr{}{the} long-term behavior of
+Algorithm~\ref{alg:Iterative-scheme-to} shapes the predictions made with
+\gls{matsim}, its characterization \corr{as}{in terms of} the stationary
+distribution of a corresponding Markov chain is of interest. To obtain a Markov chain
+representation of Algorithm~\ref{alg:Iterative-scheme-to}, one must specify (i)
+what variables in \gls{matsim} represent the states of that chain and (ii) what
+transition distribution underlies the \gls{matsim} simulation logic.
 
-A state variable must provide sufficient information to simulate a
-process further into the future. Candidates for \gls{matsim}'s state space
-are: demand $D$, network condition $S$\corr{}{,} and information
-$Z$. Of these, only \corr{}{the} information $Z$ qualifies as a state variable:
-if one knows $Z^{k}$, it is possible to draw the next day's travel
-demand $D^{k+1}$\corr{,}{} based on \MyEqRef{eq:choice-model}, to insert this
-demand into \MyEqRef{eq:network-loading-model} and obtain the network
-conditions $C^{k+1}$ and finally use both $C^{k+1}$ and $Z^{k}$
-to obtain an updated $Z^{k+1}$ through \MyEqRef{eq:learning-model}.
-This last step is what disqualifies $D$ and $S$ as state variables\hl{,}
-because an evaluation of \MyEqRef{eq:learning-model} is impossible
-without having $Z$ in the state space.
+A state variable must provide sufficient information to simulate a process
+further into the future. Candidates for \gls{matsim}'s state space
+are\corr{:}{the} demand $D$, \corr{}{the} network condition $C$ and \corr{}{the}
+information $Z$. Of these, only \corr{}{the} information $Z$ qualifies as a
+state variable:
+\corr{if}{If} one knows $Z^{k}$, it is possible to draw the next day's travel
+demand $D^{k+1}$\corr{,}{} based on \MyEqRef{eq:choice-model}, to insert this demand
+into \MyEqRef{eq:network-loading-model} and obtain the network conditions
+$C^{k+1}$ and \corr{}{to} finally use both $C^{k+1}$ and $Z^{k}$ to obtain an
+updated $Z^{k+1}$ through \MyEqRef{eq:learning-model}.
+This last step is what disqualifies $D$ and $C$ as state variables\corr{,}{}
+because an evaluation of \MyEqRef{eq:learning-model} is impossible without having $Z$ in
+the state space.
 
-Letting $X^{k}=Z^{k}$, the transition distribution hence needs to
-express how the information $Z^{k}$ available to the population in
-iteration $k$ carries over to the information $Z^{k+1}$ 
-available in iteration $k+1$. This relationship is given by
+Letting $X^{k}=Z^{k}$, the transition distribution hence needs to express how
+the information $Z^{k}$ available to the population in iteration $k$ carries
+over to the information $Z^{k+1}$ available in iteration $k+1$. This
+relationship is given by
 \begin{eqnarray}
-T_{y}^{x} & = & \sum_{s}\sum_{d}
+T_{y}^{x} & = & \sum_{c}\sum_{d}
 %
-P(Z^{k+1}\!=\!x\mid C^{k}\!=\!s,Z^{k}\!=\!y)
-\, P(C^{k}\!=\!s\mid D^{k}\!=\!d) 
+P(Z^{k+1}\!=\!x\mid C^{k}\!=\!c,Z^{k}\!=\!y)
+\, P(C^{k}\!=\!c\mid D^{k}\!=\!d) 
 \, P(D^{k}\!=\!d\mid Z^{k}\!=\!y) .\label{eq:matsim-transition-distr}
 \end{eqnarray}
-Each double sum argument represents the probability of one
-particular \corr{given information $y$sequence, resulting travel demand
+Each \corr{double sum argument}{argument of the double sum} represents the
+probability of one particular \corr{given information $y$sequence, resulting travel demand
 $d$, resulting network conditions $s$ and updated information $x$}
 {sequence of given information $y$, resulting travel demand
-$d$, resulting network conditions $s$, and updated information $x$}.
+$d$, resulting network conditions $c$ and updated information $x$}.
 The double sum over all possible travel demand realizations $d$ and
-network conditions $s$ then accounts for the fact that there are
+network conditions $c$ then accounts for the fact that there are
 many different such sequences through which one can start out at $y$
 and end up at $x$.
 
@@ -338,24 +343,24 @@ With respect to \gls{matsim}, the following holds: %\kai{@Gunnar: Das habe ich
 % aufgrund unsere Diskussionen neu versucht; schaust Du es bitte durch?  Danke.}
 \begin{itemize}
 
-\item Periodicity is already broken if a nonzero probability of staying in
-the same state exists. This is possible in \gls{matsim} 
-%if agents have a finite memory
-because the following sequence of events may occur by chance:
-%% as often as the agent memory is long: 
-(i) no agent uses plan innovation,
-(ii) all agents select the same plan as in the previous iteration, 
-(iii) the mobility simulation creates such congestion and travel time
-patterns that $Z^k$ from \MyEqRef{eq:learning-model} remains the same as
-$Z^{k-1}$; practically, this means that all plan scores remain the same. 
-%% \kai{@Gunnar: Habe das mal umgeschrieben, weil in der praktischen Implementierung die Agenten kein Memory haben; sie merken sich nur den geglätteten Score.}  
-%% \gunnar{ok}
+\item Periodicity is already broken if a nonzero probability of staying in the
+same state exists. This is likely to be the case in \gls{matsim},
+% if agents have a finite memory
+for instance because the following sequence of events may occur by chance:
+% % as often as the agent memory is long:
+(i) No agent uses plan innovation, (ii) all agents select the same plan as in
+the previous iteration, (iii) the mobility simulation creates identical
+congestion and travel time patterns as before, meaning that $Z^k$ from
+\MyEqRef{eq:learning-model} remains the same as $Z^{k-1}$. Practically, this
+means that all plan scores stay unchanged.
+% % \kai{@Gunnar: Habe das mal umgeschrieben, weil in der praktischen
+% Implementierung die Agenten kein Memory haben; sie merken sich nur den
+% geglätteten Score.} % \gunnar{ok}
 
-More intuitively, this means that, even if the system returns multiple times 
-exactly to a state where it has been before, 
-it is improbable that it does so in the same number of steps. 
-%% \kai{@Gunnar: pls chk the above.}
-%% \gunnar{ok}
+More intuitively\corr{, this means that, even}{: Even} if the system returns
+multiple times exactly to a state where it has been before, it \corr{is
+improbable}{unlikely} that it does so in the same number of steps.
+% % \kai{@Gunnar: pls chk the above.} % \gunnar{ok}
 
 %% \gunnar{Kai, Du hattest Folgendes geschrieben: ``Periodicity is easily broken by stochasticity.  
 %% Given the many sources of stochasticity in MATSim, it is improbable that deterministic cycles exist.''
@@ -364,30 +369,38 @@ it is improbable that it does so in the same number of steps.
 
 %% \kai{Mir würde es plausibel erscheinen, wenn wir das auf einen bestimmten Zustand beziehen.  Wenn wir davon ausgehen, dass Innovation ausgeschaltet ist, dann fällt (i) weg.  Danach bleibt dann die Frage, was ein ``state'' ist; wenn dies der Vektor der gewählten Pläne ist, dann reicht (ii) bereits aus für ``staying in same state''.  Wenn die ``plan scores'' zu ``state'' dazu gehören, dann brauchen wir auch noch, dass die scores bereits konvergiert sind.}
 
-\item With plan innovation (see Sections~\ref{sec:strategymodules}, \ref{sec:innovation-switchoff} and~\ref{sec:innovation}) switched on, the system is in general not irreducible:
-%% The MATSim property that causes problems when it comes to irreducibility are the changes to the set of possible plans per agent: 
-Every time a new plan is added somewhere, the previous state space subspace where the plan was not available \emph{cannot} be reached any more until that plan is removed; similarly, every time a plan is removed, the previous state space subspace where the plan was available cannot be reached any more until the plan is re-created again. (Chapter~\ref{ch:discretechoice} discusses this in greater detail and also suggests a solution for this problem.)
+\item With plan innovation (see Sections~\ref{sec:strategymodules},
+\ref{sec:innovation-switchoff} and~\ref{sec:innovation}) switched on, 
+\corr{the system is in general not irreducible:}{irreducibility cannot be
+postulated:}
+% % The MATSim property that causes problems when it comes to irreducibility are
+% the changes to the set of possible plans per agent:
+Every time a new plan is added somewhere, the previous state space subspace
+where the plan was not available \emph{cannot} be reached any more until that
+plan is removed; similarly, every time a plan is removed, the previous state
+space subspace where the plan was available cannot be reached any more until the
+plan is re-created again. (Chapter~\ref{ch:discretechoice} discusses this in
+greater detail and also suggests a solution for this problem.)
 
-Even if plans creation and removal could be modeled such that irreducibility was guaranteed, these process dynamics would be slow due to the state space size.
+Even if plans creation and removal could be modeled such that irreducibility was
+guaranteed, \corr{these}{the resulting} process dynamics would be slow due to
+the state space size.
 
  %% that it would be impractial to sample over the resulting iterations. Thus, although the above item~\ref{it:self-averaging} would be formally correct, one would never have enough iterations to put it to practical use.  \gunnar{Sind wir da sicher? Wenn wir uns nur f\"ur niedrigdimensionale projections interessieren, dann mag es durchaus sein, dass sich diese projections hinreichend schnell durchmischen. Ich bin zumindest nicht daf\"ur, die M\"oglichkeit von vorneherein auszuschliessen.}
 
 
-\item With plan innovation switched off, 
-MATSim in its standard configuration is likely to 
-% have
-%% these properties if the plan choice sets of all agents are a priori
-%% defined, meaning technically that all {}``plan innovation'' modules
-%% are switched off and that only {}``plan selection'' modules are
-%% used. 
+\item With plan innovation switched off, MATSim in its standard configuration is
+likely to
+% have % these properties if the plan choice sets of all agents are a priori %
+% defined, meaning technically that all {}``plan innovation'' modules % are
+% switched off and that only {}``plan selection'' modules are % used.
 be irreducible.  This is only {}``likely'', because the notion of a {}``standard
-configuration'' itself is not rigorously specified here. Arguments
-behind this follow \citet{cascetta-1989}, who presents a related
-result for a much simpler, trip-based traffic simulation that only
-allows for route choice. Observing that travel plans are, technically,
-paths in a rather complicated decision network, one can then carry
-this result over to \gls{matsim}. See also \citet{NagelEtc2000tristan-succ} and
-\citet{floetteroed-2010e}.
+configuration'' itself is not rigorously specified here. Arguments behind this
+follow \citet{cascetta-1989}, who presents a related result for a much simpler,
+trip-based traffic simulation that only allows for route choice. Observing that
+travel plans are, technically, paths in a rather complicated decision network,
+one can then carry this result over to \gls{matsim}. See also
+\citet{NagelEtc2000tristan-succ} and \citet{floetteroed-2010e}.
 
 %% \kai{@Gunnar: Du erwähnst in Deiner Email etwas von ``finite score memories''.  Kann leider nicht sagen, wie sich das überträgt: matsim in std config hat eigentlich gar kein memory.  Von vorherigen Iterationen übrig bleiben nur die scores, die evtl.\ auch noch gemittelt sind.  Es kann allerdings sein, dass es sehr lange her ist, dass ein Plan zum letzten Mal angefasst wurde, und der Score daher sehr alt ist.
 
@@ -405,7 +418,7 @@ from one iteration to the next.
 
 If config option \lstinline|ChangeExpBeta| is used, some
 correlation is maintained between choices in subsequent iterations, 
-even though long-term choice distributions remain unchanged.
+even though \corr{}{the} long-term choice distributions remain unchanged.
 
 \end{itemize}
 
@@ -450,7 +463,8 @@ even though long-term choice distributions remain unchanged.
 % \note{Mention broken ergodicity?}
 
 In summary, a mathematical framework exists allowing a rather
-rigorous characterization of \gls{matsim}'s relaxation process outcome.
+rigorous characterization of \corr{}{the outcome of} \gls{matsim}'s relaxation
+process\corr{ outcome}{}.
 It turns out that \gls{matsim}, in its current form, is not necessarily a ``well-behaved''
 stochastic process; however, casting it into this framework enables a structured
 approach to developing the simulation logic further. An example of how to go
@@ -615,12 +629,12 @@ about this is given in Chapter~\ref{ch:discretechoice}.
 %\kai{Würde es erstmal hier lassen.  Man kann ja drauf verweisen.  Wir können es ggf.\ immer noch später umstellen.}
 
 Many of the models used in \gls{matsim} are stochastic\corr{: for instance,}{.
-Examples are the} plan choice random utility model or the randomized selection
-of the next vehicle to enter a congested downstream link in the mobility
-simulation. The reason for this randomness is that real mobility and
-transportation processes are not completely understood.
-The insertion of randomness represents uncertainty remaining in
-the modeling. 
+Examples are the discrete choice models used for} plan selection\corr{
+random utility model}{} or the randomized selection of the next vehicle to enter a congested
+downstream link in the mobility simulation. The reason for this randomness is
+that real mobility and transportation processes are not completely understood.
+The insertion of randomness represents \corr{}{the} uncertainty remaining in the
+modeling.
 
 This uncertainty may apply to both (i) model inputs, meaning that
 random variables are computed once before a simulation run and then
@@ -628,16 +642,16 @@ kept fixed (for instance, the random generation of a synthetic population)
 and to (ii) processes, meaning that random variables are computed
 throughout the simulation (for instance, the repeated evaluation of
 discrete choice models). Technically, if a \gls{matsim} scenario is simulated
-$R$ times, with different random seeds, one obtains $r=1\ldots R$
-independent simulation outputs $y_{r}$. Note that, while the raw outputs
+$R$ times\corr{,}{} with different random seeds\corr{,}{} one obtains $r=1\ldots
+R$ independent simulation outputs $y_{r}$. Note that, while the raw outputs
 are plans and event files, the actual quantities for which $y_{r}$
 stands here are numerical in in the majority of applications.
 
 Given that one has used different random seeds, $y_{1},\ldots,y_{R}$
-constitute independent draws from a distribution $\Pi(y)$. This means
+constitute independent draws from a distribution $\Pi(Y)$. This means
 that if one performed a huge number of simulation runs and plotted
 a (possibly multidimensional) histogram of the $y$ values, then this
-histogram would eventually attain the shape of $\Pi(y)$. It is important
+histogram would eventually attain the shape of $\Pi(Y)$. It is important
 to acknowledge that stochastic simulation outputs are a desirable
 consequence of stochasticity inserted elsewhere in the simulation;
 just as a deterministic model output is a truthful representation
@@ -645,8 +659,8 @@ of its input consequences, a stochastic model output contains
 a truthful representation of the prediction uncertainty resulting
 from uncertainties in its input and its process specification.
 
-To help intuition, one may think, in the following, of $y_{r}$ as a
-large vector containing travel times on all links in all one-hour
+To help intuition, one may think\corr{,}{} in the following\corr{,}{} of $y_{r}$
+as a large vector containing travel times on all links in all one-hour
 time bins as observed during the last iteration of the $r$th simulation
 run. Questions like these may then be asked:
 \begin{itemize}
@@ -661,27 +675,30 @@ instance:
 \begin{itemize}
 \item What travel times can one expect on average?
 \begin{eqnarray}
-\text{E}\{y\} & = & \sum_{y}y\cdot\Pi(y)\label{eq:question-exp}
+\text{E}\{Y\} & = & \sum_{y}y\cdot\Pi(Y=y)\label{eq:question-exp}
 \end{eqnarray}
 This asks for the expected value of the simulation output distribution.
 \item What is the travel time variability?
 \begin{eqnarray}
-\text{VAR}\{y\} & = & \sum_{y}(y-\text{E}\{y\})^{2}\cdot\Pi(y)\label{eq:question-var}
+\text{VAR}\{Y\} & = &
+\sum_{y}(y-\text{E}\{Y\})^{2}\cdot\Pi(Y=y)\label{eq:question-var}
 \end{eqnarray}
 This asks for the variance (or, for multidimensional outputs, the
 variance-covariance matrix).
 \item How probable are travel times beyond some threshold $\theta$?
 \begin{eqnarray}
-\text{Pr}(y\geq\theta) & = & \sum_{y}\mathbf{1}(y\geq\theta)\cdot\Pi(y)\label{eq:question-proba}
+\text{Pr}(Y\geq\theta) & = &
+\sum_{y}\mathbf{1}(y\geq\theta)\cdot\Pi(Y=y)\label{eq:question-proba}
 \end{eqnarray}
-This expression merely sums up all simulation \corr{probability outputs}{output
-probabilities} that exceed the threshold.
+This expression merely sums up \corr{all simulation probability
+outputs}{the probabilities of all simulation outputs} that exceed the threshold.
 \item ...
 \end{itemize}
+%
 This enumeration of symbols reveals a common structure. The mathematical
 formulation of each question can be written in the form
 \begin{equation}
-\sum_{y}m(y)\cdot\Pi(y)\label{eq:exp-of-m}
+\sum_{y}m(y)\cdot\Pi(Y=y)\label{eq:exp-of-m}
 \end{equation}
 with different specifications of $m(y)$:
 
@@ -695,9 +712,9 @@ with different specifications of $m(y)$:
 \hline 
 quantity of interest & corresponding $m(y)$ \tabularnewline
 \hline 
-$\text{E}\{y\}$ & $y$\tabularnewline
-$\text{VAR}\{y\}$ & $(y-\text{E}\{y\})^{2}$\tabularnewline
-$\text{Pr}(y\geq\theta)$ & $\mathbf{1}(y\geq\theta)$\tabularnewline
+$\text{E}\{Y\}$ & $y$\tabularnewline
+$\text{VAR}\{Y\}$ & $(y-\text{E}\{Y\})^{2}$\tabularnewline
+$\text{Pr}(Y\geq\theta)$ & $\mathbf{1}(y\geq\theta)$\tabularnewline
 $\ldots$ & $\ldots$\tabularnewline
 \hline 
 \end{tabular}
@@ -705,25 +722,29 @@ $\ldots$ & $\ldots$\tabularnewline
 
 \par\end{center}
 
-By definition, \MyEqRef{eq:exp-of-m} is the expectation $\text{E}\{m(y)\}$
-given that $y$ is distributed according to its stationary distribution
-$\Pi(y)$. Combining this with the observation that the mean over
+By definition, \MyEqRef{eq:exp-of-m} is the expectation $\text{E}\{m(Y)\}$
+given that $Y$ is distributed according to its stationary distribution
+$\Pi(Y)$. Combining this with the observation that the mean over
 a sample converges to its expectation as the number of samples grows
 (the Law of Large Numbers), one obtains
 \begin{eqnarray}
-\text{E}\{m(y)\} & = & \sum_{y}m(y)\cdot\Pi(y)\label{eq:define-question}\\
- & = & \lim_{R\rightarrow\infty}\frac{1}{R}\sum_{r=1}^{R}m(y_{r})\\
- & \approx & \frac{1}{R}\sum_{r=1}^{R}m(y_{r})\qquad\text{for a finite }R,\label{eq:approximate-answer}
+\text{E}\{m(Y)\} 
+& = & 
+\sum_{y}m(y)\cdot\Pi(Y=y)\label{eq:define-question}\\
+ & = & 
+ \lim_{R\rightarrow\infty}\frac{1}{R}\sum_{r=1}^{R}m(y_{r})\\
+ & \approx & 
+ \frac{1}{R}\sum_{r=1}^{R}m(y_{r})\qquad\text{for a finite }R,\label{eq:approximate-answer}
 \end{eqnarray}
 where the simulation outputs $y_{r}$, $r=1\ldots R$, are independent
-draws from $\Pi(y)$.
+draws from $\Pi(Y)$.
 
-Now recall \corr{initially asking certain questions about
-simulation outputs}{that initially certain questions about
-simulation outputs were asked}. The first row \MyEqRef{eq:define-question}
-represents exactly these questions in a formal way---and the last
-row \MyEqRef{eq:approximate-answer} provides a simple method for computing
-answers to these questions, which reads as follows:
+Now recall \corr{initially asking certain questions about simulation
+outputs}{that initially certain questions about simulation outputs were asked}.
+The \MyEqRef{eq:define-question} (first row) represents exactly these questions
+in a formal way--and \MyEqRef{eq:approximate-answer} (last row) provides a
+simple method for computing answers to these questions\corr{, which}{. It} reads
+as follows:
 \begin{enumerate}
 \item Define the function $m(y)$ that represents the question of interest.
 \item Perform $R$ independent simulation runs and obtain the outputs $y_{1},\ldots,y_{R}$.
@@ -733,19 +754,19 @@ Returning to the example questions, one thus obtains the following:
 \begin{itemize}
 \item What travel times can one expect on average?
 \begin{eqnarray}
-\text{E}\{y\} & \approx & \frac{1}{R}\sum_{r=1}^{R}y_{r}
+\text{E}\{Y\} & \approx & \frac{1}{R}\sum_{r=1}^{R}y_{r}
 \end{eqnarray}
 Not surprisingly, this turns out to be the mean value over all simulated
 travel times.
 \item What is the travel time variability?
 \begin{eqnarray}
-\text{VAR}\{y\} & \approx & \frac{1}{R}\sum_{r=1}^{R}(y_{r}-\text{E}\{y\})^{2}
+\text{VAR}\{Y\} & \approx & \frac{1}{R}\sum_{r=1}^{R}(y_{r}-\text{E}\{Y\})^{2}
 \end{eqnarray}
 This is the empirical variance of the simulated travel times. (Note
-that in practice $\text{E}\{y\}$ needs to be replaced by its estimator.)
+that in practice $\text{E}\{Y\}$ needs to be replaced by its estimator.)
 \item How probable are travel times beyond some threshold $\theta$?
 \begin{eqnarray}
-\text{Pr}(y\geq\theta) & \approx & \frac{1}{R}\sum_{r=1}^{R}\mathbf{1}(y_{r}\geq\theta)
+\text{Pr}(Y\geq\theta) & \approx & \frac{1}{R}\sum_{r=1}^{R}\mathbf{1}(y_{r}\geq\theta)
 \end{eqnarray}
 This divides the number of times the threshold was exceeded by the
 total number of experiments, i.e.\ it yields the frequency of the event
@@ -757,7 +778,7 @@ be possible to make these computations more efficient. If (i) there
 is no uncertainty in the model inputs and (ii) the simulation uses
 fixed choice sets, then it could be feasible to compute the above
 statistics by averaging over many stationary iterations of a single
-simulation run\hl{,} instead of having to run a large number of replications
+simulation run\corr{,}{} instead of having to run a large number of replications
 to convergence. 
 
 Practically, all of this is just a starting point. Important questions,
@@ -775,15 +796,16 @@ stressed that the behavioral day-to-day interpretation of \gls{matsim} is
 not to be taken literally; realism can only be expected from the long-term
 process behavior.
 
-This long-term behavior was then related to iteration logic properties  
-using the the Markov chain formalism. \gls{matsim} was phrased as
-such a chain, with its state space comprised of \corr{nformation}{the
-information} available for replanning. This representation was exploited to
-observe that the long-term distribution of \gls{matsim} is likely to exist
-and be unique\hl{,} if the plan choice sets are a priori fixed.
-% ; and to (ii)
-% provide insights into how the \texttt{ExpBetaPlanChanger} avoids network
-% breakdowns.  
+This long-term behavior was then related to \corr{iteration logic
+properties}{the properties of the iteration logic} using the the Markov chain
+formalism.
+\gls{matsim} was phrased as such a chain, with its state space comprised of
+\corr{nformation}{the information} available for replanning. This representation
+was exploited to observe that the long-term distribution of \gls{matsim} is
+likely to exist and be unique\corr{,}{} if the plan choice sets are a priori
+fixed.
+% ; and to (ii) provide insights into how the \texttt{ExpBetaPlanChanger} avoids
+% network breakdowns.
 
 It further was explained that (i) there are good reasons for the stochasticity
 both in \gls{matsim}'s inputs and outputs and that (ii) instead of avoiding
