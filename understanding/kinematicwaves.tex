@@ -2,8 +2,6 @@
 \label{ch:kinematicwaves}
 % ##################################################################################################################
 
-\gunnar{The title is truncated at the right.}
-
 \hfill \textbf{Author:} Gunnar Flötteröd
 
 \begin{center} \includegraphics[width=0.4\textwidth, angle=0]{understanding/figures/waves/fig0.pdf} \end{center}
@@ -15,8 +13,8 @@
 
 \section{\label{sec:Introduction}Introduction}
 
-\gls{matsim} comes with a number of \glspl{mobsim} \gunnar{This should become a
-plural.} (\cf Sections~\ref{sec:using-mobsims},~\ref{sec:deqsim}); the most
+\gls{matsim} comes with a number of \glspl{mobsim} 
+(\cf Sections~\ref{sec:using-mobsims},~\ref{sec:deqsim}); the most
 important are the so-called \SINGLEQUEUESIM\ and 
 \DOUBLEQUEUESIM. These differ from the implementation perspective
 (time-stepping vs.\ event-based, degree of parallelism), but 
@@ -46,17 +44,17 @@ The \gls{fd} is defined as the minimum of a sending function $S(\varrho)$
 (solid) and a receiving function $R(\varrho)$ (dashed), resulting
 overall in a triangular curve parametrized by free flow speed $v$, 
 maximum density $\hat{\varrho}$ and 
-backward shockwave speed $w$. \corr{M}{The m}aximum velocity is an observable
-parameter that can be set in the network file (\texttt{freespeed}
-attribute of the \texttt{link} element). \corr{M}{The m}aximum density equals
-one over the length of a vehicle (\texttt{effectivecellsize} attribute
-of the \texttt{links} element) for a single-lane link and needs to
-be multiplied with the number of lanes (\texttt{permlanes} attribute
-of the \texttt{link} element), otherwise. \corr{B}{The b}ackward wave speed
-turns out to be the ratio of vehicle length to the safety time
+backward wave speed $w$. \corr{M}{The m}aximum velocity is an observable
+parameter that can be set in the network file (\lstinline{freespeed}
+attribute of the \lstinline{link} element). \corr{M}{The m}aximum density equals
+one over the length of a vehicle (\lstinline{effectivecellsize} attribute
+of the \lstinline{links} element) for a single-lane link and needs to
+be multiplied with the number of lanes (\lstinline{permlanes} attribute
+of the \lstinline{link} element), otherwise. \corr{B}{The b}ackward wave speed
+turns out to be the (negative of the) ratio of vehicle length to the safety time
 gap adopted by drivers in congested conditions. This parameter 
 is fairly constant; a vehicle length of 7.5\,meters and a time
-gap of 2\,seconds leads to a value of 13.5\,kilometers per hour. 
+gap of 2\,seconds leads to a value of (minus) 13.5\,kilometers per hour. 
 The backward wave speed can be set in the \DOUBLEQUEUESIM\ through the
 \lstinline|gapTravelSpeed| parameter; it cannot currently be set in the
 \SINGLEQUEUESIM. 
@@ -132,7 +130,7 @@ where $t$ denotes time, $q^{\text{in}}$ and $q^{\text{out}}$are
 the instantaneous in- and outflow rates (in vehicles per time unit)
 of the link and an initially (at $t=0$) empty link is assumed. From
 \gls{matsim}'s vehicle-discrete perspective, cumulative inflow (outflow)
-at a given point in time hence represents total number of vehicles
+at a given point in time hence represents \corr{}{the} total number of vehicles
 having entered (left) the link up to that point in time.
 
 \citet{yperman-2006,yperman-phd} observe that if Newell's theory
@@ -185,7 +183,7 @@ S(t) & = & \min\left\{ \text{DQ}(t),\,\hat{q}\delta\right\}, \label{eq:S-matsim}
 which again corresponds to how \DOUBLEQUEUESIM\ 
 evaluates the boundary conditions of a link\corr{;}{: The} amount of flow 
 allowed to enter the link is limited by the space in its UQ and
-amount of flow allowed to leave the link is limited by the
+\corr{}{the} amount of flow allowed to leave the link is limited by the
 number of vehicles in its DQ. 
 % \note{Is this description compatible with the actual implementation?} 
 % \kai{Das muss ich im Moment auf die jdeqsim beziehen, weil die QSim das ja noch gar nicht implementiert hat.  Bei der jdeqsim kenne ich mich aber nicht aus.  --  Aber das, was wir in der QSim derzeit probieren, sieht so aus.}
@@ -193,8 +191,9 @@ number of vehicles in its DQ.
 A \gls{mobsim} that implements the rules \MyEqRef{eq:UQ-rek},
 \MyEqRef{eq:DQ-rek}, \MyEqRef{eq:R-matsim} and \MyEqRef{eq:S-matsim} implements
 a \gls{kwm}-consistent link model. This is almost the case for the \DOUBLEQUEUESIM,
-which, in its implementation as of December 2014, is\corr{ only limited
-by}{} not limiting the link's inflow to its flow capacity. 
+which, in its implementation as of December 2014, \corr{is only limited
+by}{exhibits the sole inconsistency of} not limiting the link's inflow to its
+flow capacity.
 % \note{Is this correct?} 
 % \kai{Kenne mich mit jdeqsim nicht aus.  Man kann da irgendetwas einstellen.  Das, was wir in der QSim derzeit ausprobieren, wird keine link inflow capacity restriction haben.}
 % \ah{in \gls{jdeqsim} there is \emph{no} maximum inflow capacity, there is only the \lstinline|minimumInFlowCapacity| parameter to prevent gridlocks.}
@@ -206,12 +205,13 @@ leads to
 \begin{eqnarray}
 \text{UQ}(t) & = & \text{UQ}(t-\delta)+\delta\left[q^{\text{in}}(t-\delta)-q^{\text{out}}(t-\delta)\right],
 \end{eqnarray}
-which represents \corr{only}{the} total number of vehicles in the link.
+which represents \corr{only}{the} total number of vehicles in the
+\corr{}{entire} link.
 This corresponds to \SINGLEQUEUESIM\ behavior,
 where inflow to a link is limited only by the available space
 in the link as a whole. Letting $\left|w\right|=L/\delta$ means that
 the \SINGLEQUEUESIM\ behaves like a \gls{kwm}\corr{,}{} with an extremely
-high backward shockwave speed, which physically means that a queue
+high backward wave speed, which physically means that a queue
 on the link does not dissolve from its downstream end\corr{,}{} but moves {}''en
 block'' over the link. 
 
@@ -222,17 +222,18 @@ this node model can be traced back at least to \cite[][under the name of ``fair 
 \corr{literature citing}{the literature establishing} its consistency with the
 \gls{kwm} is only a few years old \citep{tampere-2010b,floetteroed-2011a,corthout-2012}. 
 
-Nodes in \gls{matsim} have no spatial dimension; they merely connect up-
-and downstream links. \citet{tampere-2010b} specify a set of requirements
-for a (continuum) node model to be consistent with the \gls{kwm}. They require
-that the flow through the node shall be maximized subject to the following
+Nodes in \gls{matsim} have no spatial dimension; they merely connect up- and
+downstream links. \citet{tampere-2010b} specify a set of requirements for a
+(continuum) node model to be consistent with the \gls{kwm}. They require that
+the flow through the node shall be maximized subject to the following
 constraints:
 \begin{enumerate}
 \item Flows are non-negative and conserved within the node. This means that
 vehicles cannot drive backwards and they must neither disappear nor
 appear within the node.
-\item Flow ratios comply with exogenous specified turning fractions. For
-instance, if it is specified that 20\,\% of the outflow of link
+\item Flow ratios comply with \corr{exogenous}{exogenously} specified turning
+fractions.
+For instance, if it is specified that 20\,\% of the outflow of link
 $i$ shall turn into link $j$, then the amount of flow that actually
 advances from link $i$ into link $j$ shall indeed be 20\,\%
 of the flow that actually leaves link $i$.
@@ -255,7 +256,7 @@ time step, this algorithm incrementally (hence the name) moves flow
 from upstream links into downstream links. It does so such that all
 the previously \corr{}{enumerated} constraints are satisfied anytime during the
 transfer, terminating only once no more flow can be moved. 
-Thus, \corr{the} ultimately moved flows also comply with all constraints
+Thus, \corr{}{the} ultimately moved flows also comply with all constraints
 and are maximal. 
 
 Now consider the code documentation of \gls{matsim}'s \lstinline|queuesim.QueueNode.moveNode|
@@ -281,9 +282,9 @@ There are two aspects of the \gls{matsim} node model \corr{}{that are} not
 reflected by the above code comment.
 \begin{itemize}\styleItemize
 \item \corr{Sending flows}{The sending flow} of an upstream link may be limited
-by by an outflow capacity below the flow capacity \MyEqRef{eq:flow-cap} of
-that link: for instance, to approximate \corr{}{a} capacity reduction resulting
-from a downstream traffic light. This is still consistent with the
+by \corr{by}{} an outflow capacity below the flow capacity \MyEqRef{eq:flow-cap}
+of that link\corr{:}{;} for instance, to approximate \corr{}{a} capacity
+reduction resulting from a downstream traffic light. This is still consistent with the
 framework described above.
 \item The selection probability of {}``inLinks'' is proportional to their
 flow capacity, meaning that links with higher capacity send, on average,
