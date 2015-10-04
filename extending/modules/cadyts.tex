@@ -23,21 +23,23 @@
 \section{Introduction}
 
 \gls{cadyts}\footnote{\url{http://people.kth.se/~gunnarfl/cadyts.html}}
----licensed under \gls{gplv3}---calibrates disaggregate travel demand models 
+--licensed under \gls{gplv3}--calibrates disaggregate travel demand models 
 of \gls{dta} simulators from traffic counts and vehicle re-identification data. 
 \gls{cadyts} is broadly compatible with \gls{dta} microsimulators,
 into which it can be hooked through sparse interfaces.
 
-As explained formally in Chapter~\ref{ch:abta} and~\ref{ch:montecarlo}, 
-\gls{dta} targets consistency between a travel demand dynamic model---  
-\gls{matsim}, represented by the agents' plans---
-and a network supply dynamic model, capturing spatiotemporal
-network flows and congestion evolution.
+As explained formally in Chapter~\ref{ch:abta} and~\ref{ch:montecarlo},
+\gls{dta} \corr{targets}{aims at} consistency between a \corr{travel demand
+dynamic}{dynamic travel demand} model\corr{--- matsim, represented by the
+agents' plans---}{, defining the choice of activity-travel plans,} and a
+\corr{network supply dynamic model}{dynamic network supply model}, capturing
+spatiotemporal network flows and congestion evolution.
 
-\gls{cadyts} adjusts all agents' plan choice probabilities,
-resulting in simulated network conditions consistent with 
-measured real-world data, while maintaining behavioral 
-plausibility of the underlying travel demand model. 
+\gls{cadyts} adjusts \corr{all agents' plan choice probabilities}{the plan
+choice probabilities of all agents}, resulting in
+simulated network conditions \corr{}{that are} consistent with measured
+real-world data\corr{,}{} while maintaining \corr{}{the} behavioral plausibility
+of the underlying travel demand model.
 Within MATSim, plan choice probabilities adjustment is realized 
 by adjusting plan scores, as explained in the next section.
 
@@ -56,18 +58,18 @@ these correction terms become
 \Delta S_a(k) = \frac{y_a(k) - q_a(k)} {\sigma_a^2(k)}
 \end{equation}
 %
-where $y_a(k)$ is real-world measurement on link $a$ in time step $k$, 
-$q_a(k)$ is its simulated counterpart, and $\sigma^2_a(k)$ is (an estimate of) 
+where $y_a(k)$ is \corr{}{the} real-world measurement on link $a$ in time step
+$k$, $q_a(k)$ is its simulated counterpart and $\sigma^2_a(k)$ is (an estimate of) 
 the real measurement variance  (assuming its expected value 
 coincides with the prediction $q_a(k)$ of a perfectly calibrated simulator).
 
-Score correction of an agent's given activity-travel plan is calculated as 
-the sum of all $\Delta S_a(k)$, when following that plan 
-implies entering link $a$ within time step $k$. 
-%\citep{FloetteroedChenEtAl2011BehavioralCalibAndAnaNETS}.
-With this, the \textit{a posteriori} choice probability of agent $n$'s plan $i$, given
-the count data ${\bf y} = \{y_a(k)\}$, becomes:
-%
+\corr{Score}{The score} correction of an agent's given activity-travel plan is
+calculated as the sum of all $\Delta S_a(k)$, \corr{when}{given that} following
+that plan implies entering link $a$ within time step $k$.
+% \citep{FloetteroedChenEtAl2011BehavioralCalibAndAnaNETS}.
+With this, the \textit{a posteriori} choice probability of agent $n$'s plan
+$i$\corr{,}{} given the count data ${\bf y} = \{y_a(k)\}$\corr{,}{}
+becomes\corr{:}{}
 \begin{equation}
 P_n(i\mid{\bf y}) \sim 
 \exp\left(S_n(i)+ \sum_{ak\in_{}i} \Delta S_a(k) \right)
@@ -76,20 +78,25 @@ P_n(i\mid{\bf y}) \sim
 \label{eq:cadyts:selection}
 \end{equation}
 where $S_n(i)$ is the \textit{a priori} score of plan $i$ of agent $n$, as 
-calculated---for example---with Equation~(\ref{eq:matsimUTF}) and $ak\in i$ reads: 
+calculated\corr{--}{ }for example\corr{--}{ }with Equation~(\ref{eq:matsimUTF}) and $ak\in
+i$ reads:
 ``following plan $i$ implies entering link $a$ in time step $k$''.
 
-Intuitively, if the simulation value $q_a(k)$ is smaller than the real measurement 
-$y_a(k)$, then a score increase, and thus a choice increase 
-probability, results. 
-$\sigma^2_a(k)$ denotes level of trust in that specific measurement
----a large variance $\sigma^2_a(k)$ implies low trust level, taking effect through
-a large denominator in the corresponding score correction addend.
+Intuitively, if the \corr{simulation}{simulated} value $q_a(k)$ is smaller than
+the real measurement $y_a(k)$, then a score increase, and thus a \corr{choice
+increase probability}{choice probability increase}, results.
+\corr{}{The variance} $\sigma^2_a(k)$ denotes \corr{}{the} level of trust in
+that specific measurement --\ a large \corr{variance}{} $\sigma^2_a(k)$ implies
+\corr{}{a} low trust level, taking effect through a large denominator in the
+corresponding score correction addend.
 
 \citet[][]{floetteroed-2010e} is the key methodological reference on \gls{cadyts}.
-Its calibration approach is derived from a Bayesian argument, providing
-more technical information, such as a more general functional utility form 
-correction in Equation~(\ref{eq:cadyts:correction}), that also applies when congestion is present. 
+\corr{Its calibration approach is derived from a Bayesian argument,
+providing}{It derives the calibration approach from a Bayesian argument and
+provides} more technical information, such as a more general \corr{functional
+utility form correction}{correction of the utility function than} in
+Equation~(\ref{eq:cadyts:correction})\corr{,}{} that also applies when congestion
+is present.
 A  lighter presentation is 
 \citet[][]{FloetteroedChenEtAl2011BehavioralCalibAndAnaNETS}, where the 
 formulas above are discussed in somewhat greater detail.
@@ -101,8 +108,8 @@ Hooking \gls{cadyts} into \gls{matsim} is based on the following operations:
 \item Initialization: When the calibration is started, it requires all available 
 traffic counts and some further parameters. 
 For this, the \gls{cadyts} function \lstinline|void addMeasurement(...)| is called once for every 
-measurement, before the simulation starts. It registers a certain measurement type, which 
-has been observed on a specific link.
+measurement\corr{,}{} before the simulation starts. It registers a certain
+measurement type, which has been observed on a specific link.
 \item Iterations: The calibration is run jointly with the simulation until (calibrated) 
 stationary conditions are reached.
 	\begin{enumerate}[label=\emph{\alph*})]
@@ -113,16 +120,16 @@ stationary conditions are reached.
 	%CadytsScoring-Klasse herausgefischt, bin mir aber nicht sicher, wie das auf der MATSim-Seite
 	%zusammenspielt.}
 	%\ah{m.E. geschieht genau das in \lstinline|org.matsim.contrib.cadyts.general.CadytsPlanChanger.selectPlan(...)|}\kai{Ja.  Noch einfacher in CadytsScoring.}
-	Before a \gls{matsim} agent chooses a plan, he or she asks the calibration through the 
-	\gls{cadyts} function
+	Before a \gls{matsim} agent chooses a plan, \corr{he or she}{it} asks the
+	calibration through the \gls{cadyts} function
 	\lstinline|double calcLinearPlanEffect(Plan plan)| for all of its plans' score offsets.
     The agent then chooses a plan based on accordingly modified scores.
 	\item Supply simulation: The calibration must observe simulated network conditions 
   to evaluate their deviation from real traffic counts.
 	For this, the \gls{cadyts} function \lstinline|void afterNetworkLoading(SimResults simResults)| 
-	is called once after each network loading. It passes a container object to the calibration, 
-	providing information about most recent network loading results, particularly on 
-	simulated flows at measurement locations.
+	is called once after each network loading. It passes a container object to the calibration
+	\corr{, providing}{that provides} information about \corr{}{the} most recent
+	network loading results, particularly on simulated flows at measurement locations.
 	\end{enumerate}
 \end{enumerate}
 
