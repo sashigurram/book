@@ -19,8 +19,9 @@ discrete choice modeling perspective.
 
 Discrete choice theory originates in work by \citet{Luce1965PreferenceUtility} and 
 \citet{McFadden1975DiscreteChoiceModel}; \citet{BenAkivaLerman_1985} 
-and \citet{Train_2003} wrote the two standard textbooks in this area. The theory is mainly used 
-to describe individual choices among 
+and \citet{Train_2003} \corr{wrote}{are} the two standard textbooks in this
+area.
+The theory is mainly used to describe individual choices among 
 mutually exclusive % \emph{mutually exclusive}
 alternatives. 
 Discrete choice models typically do not predict individual choices with complete accuracy.
@@ -48,7 +49,7 @@ Technically, the \gls{matsim} plan \emph{innovation} modules draw from this dist
 The term $P_{n}(i\mid C_{n})$ represents the probability that agent
 $n$ selects plan $i$ given that its concrete choice set is $C_{n}$.
 Technically, the \gls{matsim} plan \emph{selection} modules draw from this distribution.
-The product of these terms thus represents the probability that\corr{:}{} 
+The product of these terms thus represents the joint probability that\corr{:}{} 
 choice set $C_{n}$ is available and that plan $i$ is chosen from
 that set. The probability of selecting plan $i$ independently
 of the concrete choice set then results from \corr{adding}{summing up} the
@@ -86,20 +87,24 @@ It is set to one in the remainder of this section.
 \subsection{Case 1: Score is or Converges Towards a Deterministic Value}
 \label{sec:score-is-converged}
 
-If the score
-of a plan was a deterministic number representing an expected value, 
-then Equation~(\ref{eq:ExpBetaPlanSelector}) would constitute a plain \gls{mnl} choice model with $\mu$ taking the role
-of a scale parameter \citep[see, e.g.,][p.45]{Train_2003}. 
-Such behavior 
-can be approximated in \acrshort{matsim} by the following configuration settings:
+If the score of a plan was a deterministic number representing an expected
+value, then Equation~(\ref{eq:ExpBetaPlanSelector}) would constitute a plain
+\gls{mnl} choice model with $\mu$ taking the role of a scale parameter
+\citep[see, e.g.,][p.45]{Train_2003}.
+Such behavior can be approximated in \acrshort{matsim} by the following
+configuration settings:
 \begin{itemize}
 \styleItemize
-\item A fixed choice set $C_n$ is eventually obtained by setting the configuration option \verb$fractionOfIterationsToDisableInnovation$ below one,  
-meaning that, for the remaining fraction of iterations beyond the configured value, innovation (see Section~\ref{sec:Evolution-of-choice}) will be switched off.
+\item A fixed choice set $C_n$ is eventually obtained by setting the configuration 
+option \verb$fractionOfIterationsToDisableInnovation$ below one,  
+meaning that innovation (see Section~\ref{sec:Evolution-of-choice}) will be
+switched off for the remaining fraction of iterations beyond the configured value.
 %% \ie the choice sets will remain fixed from then on;
-\item Score convergence to its expectation value can be achieved by setting the configuration option \verb$fractionOfIterationsToStartScoreMSA$ below one, 
-meaning that, for the remaining fraction of iterations, scores will be averaged
-according to \corr{the}{} \glsreset{msa}\gls{msa}.
+\item Score convergence to its expectation value can be achieved by setting 
+the configuration option \verb$fractionOfIterationsToStartScoreMSA$ below one, 
+meaning that scores will be averaged
+according to \corr{the}{} \glsreset{msa}\gls{msa}
+for the remaining fraction of iterations.
 \end{itemize}
 %
 %% \benjamin{Ich verstehe nur bedingt, warum diese 2 Punkte zu einem ``plain MNL choice model'' führen sollen; denn die choice set generation (welche in diesem Teil des Kapitels gar nicht behandelt wird), kommt hier auf einmal doch vor...diese 2 Punkte beziehen sich doch eher auf Eq.~\ref{eq:unconditional-choice-proba}, oder?}
@@ -108,18 +113,20 @@ according to \corr{the}{} \glsreset{msa}\gls{msa}.
 \subsection{Case 2: More General}
 \label{sec:more-general-choice}
 
-Without the particular configuration mentioned in the previous section, things are somewhat more complicated.
-%
-Assume that the attribute vector $\mathbf{x}_{ni}$ of the alternatives in \MyEqRef{eq:ExpBetaPlanSelector}
-is defined through (a transformation of) the network conditions observed
-during the last iteration(s). Assume further that the score is a linear
-function of these attributes:
+Without the particular configuration mentioned in the previous section, things
+are somewhat more complicated.
+Assume that the attribute vector $\mathbf{x}_{ni}$ of the alternatives in
+\MyEqRef{eq:ExpBetaPlanSelector} is defined through (a transformation of) the
+network conditions observed during the last iteration(s). Assume further that
+the score is a linear function of these attributes:
 \begin{eqnarray}
-S_{ni} & = & \boldsymbol{\beta}^{T}\mathbf{x}_{ni}\\
+S_{ni} 
+& = & 
+\boldsymbol{\beta}^{T}\mathbf{x}_{ni}\\
  & = & \boldsymbol{\beta}^{T}(\text{E}\{\mathbf{x}_{ni}\}+\boldsymbol{\eta}_{ni})\label{eq:score}
 \end{eqnarray}
-where $\boldsymbol{\beta}$ is a coefficient vector, superscript $T$ denotes the transpose,
-and $\boldsymbol{\eta}_{ni}$ is a zero mean random vector. 
+where $\boldsymbol{\beta}$ is a coefficient vector, superscript $T$ denotes the
+transpose\corr{,}{} and $\boldsymbol{\eta}_{ni}$ is a zero mean random vector. 
 In the general case of $S_{ni}$ being a random
 variable\corr{,}{ and} not just an expected value, one obtains a
 mixture-of-logit model with the choice distribution
@@ -135,7 +142,7 @@ $\boldsymbol{\eta}_{n}=(\boldsymbol{\eta}_{ni})_i$,
 \ie the joint probability
 density function of \corr{}{the} random disturbances of all alternatives of
 individual $n$
-\citep[][, Section 6]{Train_2003}. This formulation comprises most, if not all,
+\citep[][Section 6]{Train_2003}. This formulation comprises most, if not all,
 \gls{matsim} configurations currently used. It represents the \lstinline{ExpBetaPlanSelector}
 and the equivalent \lstinline{ExpBetaPlanChanger}. It also comprises
 the \lstinline{BestPlanSelector}, because that is equivalent to the \lstinline{ExpBetaPlanSelector}
@@ -156,30 +163,30 @@ through the mobility simulation. It is not available in closed form;
 one can only draw from it.
 
 Additional complexity results from \corr{}{the} simulated network conditions
-being, in turn, the consequence of simulated travel behavior that
-is again defined through \MyEqRef{eq:mixture-of-logit}. 
-%% This circular
-%% dependency is natural, given that \gls{matsim} is mainly a transport planning
-%% model (see Chapter~\ref{ch:montecarlo}).
-%% %
-%% \benjamin{Dies verstehe ich nicht, klingt ein wenig abwertend. Wieso muss das in einer Transportsimulation so sein? Wie wäre es denn wenn MATSim eine Börsensimulation wäre? Ähnlich oder? Ansonsten sehr schön formuliert, man versteht, dass wir auch nicht wissen, was alles in $\boldsymbol{\eta}_n$ drinsteckt :)}
-%% %
-%% Indeed, 
-Just as a representation
-of the mutual demand/supply dependency is essential in transport planning,
-the circular definition of the $\boldsymbol{\eta}_n$ terms adds realism to \gls{matsim}:
+being, in turn, the consequence of simulated travel behavior that is again
+defined through \MyEqRef{eq:mixture-of-logit}.
+% % This circular % dependency is natural, given that \gls{matsim} is mainly a
+% transport planning % model (see Chapter~\ref{ch:montecarlo}).
+% % % % \benjamin{Dies verstehe ich nicht, klingt ein wenig abwertend. Wieso
+% muss das in einer Transportsimulation so sein? Wie wäre es denn wenn MATSim
+% eine Börsensimulation wäre? Ähnlich oder? Ansonsten sehr schön formuliert, man
+% versteht, dass wir auch nicht wissen, was alles in $\boldsymbol{\eta}_n$
+% drinsteckt :)} % % % Indeed,
+Just as a representation of the mutual demand/supply dependency is essential in
+transport planning, the circular definition of the $\boldsymbol{\eta}_n$ terms
+adds realism to \gls{matsim}:
 \begin{enumerate}
 \item Assume one could somehow make \corr{}{the} simulated network conditions
 more realistic. The result would be a more realistic distribution $p(\boldsymbol{\eta}_n)$
 of the simulated error terms.
 \item All else equal, increasing the realism of $p(\boldsymbol{\eta}_n)$ in \MyEqRef{eq:mixture-of-logit}
-would also increase the realism of \corr{}{the} resulting choice distributions.
+would also increase the realism of \corr{}{the} resulting choice distribution.
 \item This, in turn, would lead to the selection of more realistic travel
 plans, meaning that their execution would result in even
 more realistic network conditions.
 \end{enumerate}
 However, this positive feedback only applies to the extent to which
-\corr{postulated behavioral model random error terms}{error terms in the
+\corr{postulated behavioral model random error terms}{the error terms in the
 behavioral model} are indeed mobility simulation outputs. Simulated travel time
 (variability) is such a case. Unobserved preferences of the decision maker, however, are not an output of the mobility simulation and hence need to be
 differently captured. 
@@ -211,8 +218,8 @@ represented simulated days then a real human learning model would be needed
 to combine a sequence of past network conditions \corr{to make an}{into an}
 instantaneous $\boldsymbol{\eta}_n$ realization. 
 Without a sound instance of such a learning model,
-a behavioral justification of \MyEqRef{eq:mixture-of-logit} cannot
-be given.
+a \corr{behavioral justification}{learning-based interpretation} of
+\MyEqRef{eq:mixture-of-logit} cannot be given.
 
 Another perspective on this problem is possible, continuing
 the arguments of Chapter~\ref{ch:montecarlo}. \corr{It is argued there that one
@@ -243,16 +250,17 @@ through the \lstinline{learningRate} parameter.
 
 Assuming -- for simplicity -- that \corr{on convergence, the unfiltered
 stationary score $S_{ni}^{\infty}$ fluctuates}{the unfiltered
-stationary score $S_{ni}^{\infty}$ fluctuates in stationary conditions}
+stationary score $S^{\infty}$ fluctuates in stationary conditions}
 independently from iteration to iteration around its expected value, one can derive the following 
 (as demonstrated in this chapter's appendix):
 \begin{eqnarray}
 \text{E}\{\bar{S}_{ni}^{\infty}\} & = & \text{E}\{S_{ni}^{\infty}\}\\
 \text{VAR}\{\bar{S}_{ni}^{\infty}\} & = & \frac{\alpha}{2-\alpha}\text{VAR}\{S_{ni}^{\infty}\}.
 \end{eqnarray}
-\corr{}{This means that the filtered score} $\bar{S}$ is unbiased
+\corr{$\bar{S}$}{This means that the filtered score} is unbiased
 \corr{for}{with respect to} the underlying score process and \corr{}{that} its
-variance is in the interval from zero to $\text{VAR}\{S\}$, depending on the chosen $\alpha$. 
+variance is in the interval from zero to \corr{$\text{VAR}\{S\}$}{the variance
+of the unfiltered score}, depending on the chosen $\alpha$.
 There is no need to justify this
 through a learning process. One has merely constructed a parametrization
 of the distribution $p(\boldsymbol{\eta}_n)$. In the resulting
@@ -392,7 +400,7 @@ necessary for such an endeavor are, in principle, available
 
 %% %% \end{oframed}
 
-\subsection{\label{sub:expected-maximum-utility}Expected maximum utility}
+\subsection{\label{sub:expected-maximum-utility}Expected Maximum Utility}
 
 The expected maximum utility of \MyEqRef{eq:mixture-of-logit} is 
 relevant to the \corr{MATSim output microeconomic interpretation}
@@ -406,13 +414,13 @@ U_{i} & = & V_{i}+\eta_{i}+\varepsilon_{i}\label{eq:full-random-utility-without-
 using the shortcuts $V_{i}=\boldsymbol{\beta}^{T}\text{E}\{\mathbf{x}_{ni}\}$,
 $\eta_{i}=\boldsymbol{\beta}^{T}\boldsymbol{\eta}_{ni}$, letting
 $\varepsilon_{i}$ be the Gumbel error assumed by the multinomial
-logit model, and dropping the $n$ index for brevity. Following this
+logit model and dropping the $n$ index for brevity. Following this
 notation, \MyEqRef{eq:score} is rewritten as
 \begin{eqnarray}
 S_{i} & = & V_{i}+\eta_{i}.\label{eq:score-shorthand}
 \end{eqnarray}
 
-One must distinguish between the score of a plan when
+One needs to distinguish between the score of a plan when
 it is selected and its updated score after it has been executed.
 To start, it is assumed that the agent receives an expected maximum 
 utility depending on \corr{}{the} scores at the time of plan selection,
@@ -429,24 +437,24 @@ where the law of total expectation is used and $\text{E}_{\varepsilon}$
 and $\text{E}_{\eta}$ represent expectations \corr{for}{with respect to}
 $\varepsilon$ and $\eta$, respectively. 
 The remaining
-expectation argument is the expected maximum utility of a multinomial logit
-choice model, given the systematic utilities $V_{i}+\eta_{i}$. This
-expression can be numerically approximated by averaging over many
-realizations of $\eta$ (i.e. over simulation iterations):
+\corr{expectation argument}{argument of the expectation} is the expected maximum
+utility of a multinomial logit choice model\corr{,}{} given the systematic
+utilities $V_{i}+\eta_{i}$. This expression can be numerically approximated by averaging over many
+realizations of $\eta_i$ (i.e. over simulation iterations):
 \begin{eqnarray}
 \text{E}_{\eta}\left\{ \ln\sum_{i\in C_n}e^{V_{i}+\eta_{i}}\right\}  & \approx & 
 \frac{1}{R}\sum_{r=1}^{R}\ln\sum_{i\in
 C_n}e^{V_{i}+\eta_{i}^{r}}\label{eq:wartezimmer}
 \end{eqnarray}
-where $\eta^r$ is the realization of $\eta$ in iteration $r$.
+where $\eta_i^r$ is the realization of $\eta_i$ in iteration $r$.
 This expression holds\corr{,}{} regardless of the \corr{mobsim-generated mixture
 distribution functional form}{functional form of the mobsim-generated mixture
 distribution}.
 
-Now, one must account for the fact that agents can only evaluate 
+Now, one needs to account for the fact that agents can only evaluate 
 \emph{past} information when making a choice leads to a \emph{future} 
 score payoff.
-Recalling that score variability is represented by the $\eta$ variables 
+Recalling that score variability is represented by the $\eta_i$ variables 
 in \MyEqRef{eq:mixture-of-logit},
 \begin{eqnarray}
 \eta_{i} & = & \hat{\eta}_{i} +\gamma_{i}\label{eq:score-random-walk}
@@ -499,14 +507,14 @@ Environment}
 \subsection{Overview}
 
 The choice set of agents can in principle be \corr{pre-computed and then be fed
-into the MATSim simulation, technically using MATSim as a choice model 
-(Section~\\ref\{sec:Evaluating-choice-models\})}{computed a priori and then
-held fixed during a MATSim simulation run}.
-%
-However, the pre-computation would have to be done for every system state (\eg before and after a policy change). Alternatively, \acrshort{matsim} can be used to generate agents' choice sets within the iterative loop (Section~\ref{sec:inbrief}).
-%
-%\benjamin{Some reference to the loop.}%
-%
+into the MATSim simulation, technically using MATSim as a choice model
+(Section~\\ref\{sec:Evaluating-choice-models\})}{computed a priori and then held
+fixed during a MATSim simulation run}.
+However, the pre-computation would have to be done for every relevant system
+state (\eg before and after a policy change). Alternatively, \acrshort{matsim} can be used
+to generate agents' choice sets within the iterative loop
+(Section~\ref{sec:inbrief}).
+%  \benjamin{Some reference to the loop.}%
 
 % \subsection{Issues}
 % \label{sec:Evolution-of-choice:issues}
@@ -543,17 +551,22 @@ However, the pre-computation would have to be done for every system state (\eg b
 % \benjamin{Das ist ein harter Bruch an dieser Stelle. M.E. müsste konkreter formuliert werden, welche(s) der drei oben aufgeführten Probleme das folgende versucht zu lösen. Auch die Fußnoten von oben könnten hier hinein... Habe mal eine Subsection eingefügt...müsste aber sicher noch etwas besser anmoderiert werden...}
 %
 
-As Equation~(\ref{eq:unconditional-choice-proba}) at the beginning of this chapter showed, 
-the generation of \corr{}{the} choice sets \corr{will always affect}{affects
-the} simulated choices.
-%
+As Equation~(\ref{eq:unconditional-choice-proba}) \corr{at the beginning of this
+chapter showed}{shows}, the generation of \corr{}{the} choice sets \corr{will
+always affect}{affects the} simulated choices.
 The simplest illustration of this mechanism is\corr{:}{that} alternatives that
-never appear in the choice set cannot be chosen. 
-Similarly, including certain alternatives with a low (high) probability in the choice set decreases (increases) their probability of being chosen, given that the choice model is not changed. When a policy study's synthetic choice sets are very different from  alternatives used in the real world, it is unlikely that the simulation will display correct aggregated quantities and even more unlikely that the simulation will provide useful sensitivities for policy measures.
+never appear in the choice set cannot be chosen.
+Similarly, including certain alternatives with a low (high) probability in the
+choice set decreases (increases) their probability of being chosen, given that
+the choice model is not changed. When a policy study's synthetic choice sets are
+very different from \corr{alternatives used}{the alternatives considered} in the
+real world, it is unlikely that the simulation will display correct aggregated
+quantities \corr{and even more unlikely that the simulation will provide}{or}
+useful sensitivities for policy measures.
 
 These types of biases are \corr{fully acknowledged}{well-known} in the discrete
-choice community, even though their focus is, arguably, more on estimation than 
-simulation.
+choice community, even though \corr{their focus is}{the focus is there},
+arguably, more on estimation than simulation.
 The problem is particularly acute in route choice modeling\corr{,}{} because the
 combinatorial size of the universal route choice set prohibits its enumeration.
 Drawing further from the discrete choice literature \citep[specifically][]{frejinger-2010}, 
@@ -575,7 +588,7 @@ and that the choice of unfeasible alternatives is impeded by correspondingly low
 utility values. In this setting, mutation and innovation constitute
 \emph{sampling techniques} serving the \emph{computational} purpose of reducing
 the universal choice set to a small, representative subset.
-
+%
 However, one still faces the problem from above that the concrete sampling
 protocol has a concrete effect on the simulated behavior. The cure when
 \emph{estimating} choice models is to correct for the sampling based on known
@@ -605,7 +618,7 @@ the same context, \citet[][Chapter~6]{Grether_PhDThesis_2014} and
 approaches \citep[see,
 e.g.,][]{DaganzoSheffi_TransScience_1977,FrejingerBierlaire_TransResB_2007} to
 maintain diversity in the choice set by penalizing similar alternatives.
-Still, these approaches are---as of now---ad-hoc solutions, with little
+Still, these approaches are--as of now--ad-hoc solutions, with little
 theoretical foundation in the simulation context\corr{;}{.}
 
 \corr{it}{It} thus seems worthwhile to revisit the plan choice set generation
@@ -621,23 +634,20 @@ mindset\corr{,}{} than \corr{to}{} deliver a complete solution.
 
 %% \benjamin{Es gibt jetzt nunmehr nur diese eine Unterüberschrift...ich finde das unüblich. Vielleicht noch eine weitere oben einziehen?}
 
-\gls{matsim} performs in every iteration the following operations for each
-agent: (1) update of the choice set 
-%and 
-or (2) choice of a plan from
-the 
-%updated 
-choice set, using the model in Equation~(\ref{eq:ExpBetaPlanSelector}).
-To make the simulated long-term (stationary) plan choice independent
-of the plan choice set generation, one may require the following stationary
-choice distribution:
+% \gls{matsim} performs in every iteration one of the following operations for
+% each agent: (1) update of the choice set and (2) choice of a plan from the
+% updated choice set, using the model in
+% Equation~(\ref{eq:ExpBetaPlanSelector}).
+To make the simulated long-term (stationary) plan choice independent of the plan
+choice set generation, one may require the following stationary choice
+distribution:
 \begin{eqnarray}
 P_{n}(i\mid \mathcal{U}_n) & = & \frac{e^{\mu S_{ni}}}{\sum_{j\in \mathcal{U}_n}e^{\mu S_{nj}}},
 \label{eq:global-choice-model}
 \end{eqnarray}
 meaning that plans are selected from the universal choice set $\mathcal{U}_n$.
 
-Denoting further by $P(C_{n}\rightarrow C_{n}')$ the probability
+Denoting by $P(C_{n}\rightarrow C_{n}')$ the probability
 that plan mutation/innovation turns the choice set $C_{n}$ into $C_{n}'$,
 it is possible to enforce the long-term choice distribution \MyEqRef{eq:global-choice-model}
 through an application of the \gls{mh} algorithm \citep[][see also \citet{floetteroed-2012b} for a related approach to a similar
@@ -716,11 +726,11 @@ against the last iteration.
 \corr{The}{Let the} corresponding plan innovation distribution \corr{is}{be}
 approximated by $e^{\mu_{\text{inno}}S_{ni}}/\sum_{j\in
 \mathcal{U}_n}e^{\mu_{\text{inno}}S_{nj}}$\corr{,}{} with a very large
-$\mu_{\text{inno}}$. Assuming further that $i_{\text{in}}$
+$\mu_{\text{inno}}$. \corr{Assuming}{Assume} further that $i_{\text{in}}$
 replaces exactly one uniformly selected plan $i_{\text{out}}$, which implies
-that the choice set size $J$ is constant and excluding\corr{,}{} for
+that the choice set size $J$ is constant and \corr{excluding,}{exclude} for
 simplicity\corr{,}{} the case that the best response innovation reconstructs the
-removed plan exactly, \corr{from this, one obtains}{one obtains}
+removed plan exactly. \corr{from this, one obtains}{This leads to}
 \begin{eqnarray}
 P(C_{n}\rightarrow C_{n}') & = & \frac{1}{J}\cdot\frac{e^{\mu_{\text{inno}}S_{ni_{\text{in}}}}}{\sum_{j\in \mathcal{U}_n}e^{\mu_{\text{inno}}S_{nj}}}\\
 P(C_{n}'\rightarrow C_{n}) & = & \frac{1}{J}\cdot\frac{e^{\mu_{\text{inno}}S_{ni_{\text{out}}}}}{\sum_{j\in \mathcal{U}_n}e^{\mu_{\text{inno}}S_{nj}}}.
@@ -765,10 +775,10 @@ a different, randomly selected stationary iteration.
 
 
 
-This would allow selection of plans according to (\ref{eq:global-choice-model})
-from an unconstrained choice set, even though one enumerates only a
-small subset of the full choice set, which is updated through a computationally
-efficient best-response mechanism.
+This would allow the selection of plans according to
+(\ref{eq:global-choice-model}) from an unconstrained choice set, even though one
+enumerates only a small subset of the full choice set, which is updated through
+a computationally efficient best-response mechanism.
 
 %
 %\benjamin{Wie vorhin: Best-response wäre gut, wenn es irgendwo erklärt wäre. 
@@ -820,8 +830,8 @@ Best-response creates new plans that are\corr{,}{} by chance\corr{,}{} better
 %Allerdings aggregiert er eben Reisezeiten in 15~min Timebins, und deshalb kann die ex-post Erfahrung eines neuen Superplans auch wieder schlecht sein...}
 %
 than any other plan in a given iteration. Best-response is
-thus corrected by accepting the new plan\corr{,}{} only if it is\corr{,}{} by chance\corr{,}{}
-worse than a randomly selected alternative plan, with both plans being
+thus corrected \corr{}{for} by accepting the new plan\corr{,}{} only if it
+is\corr{,}{} by chance\corr{,}{} worse than a randomly selected alternative plan, with both plans being
 evaluated in randomly selected stationary iterations.
 %"\karen {oh my, that last is a VERY difficult sentence. Maybe we can split it up?  Thanks.}"
 
