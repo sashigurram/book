@@ -215,21 +215,21 @@ conditions) are consistent with each other. Travel demand results
 from a demand model that reacts to conditions in the network; these 
  are the output of a supply model
 (network loading model) using travel demand as its input. 
-Solution of the traffic assignment problem describes an 
+\corr{Solution}{A solution} of the traffic assignment problem describes an 
 equilibrium between travel demand and travel supply.
 
 Possibly, the most intuitive mathematical formulation of this problem is 
-defined by a fixed point: find a demand pattern generating network 
+defined by a fixed point: \corr{find}{Find} a demand pattern generating network 
 conditions that, in turn, cause the same demand pattern to re-appear. This 
-formulation is operationally important because it encourages a straightforward 
-way of calculating an equilibrium by alternately evaluating the demand 
+formulation is operationally important because it \corr{encourages}{motivates} a
+straightforward way of calculating an equilibrium by alternately evaluating the demand 
 model and the supply model. If these iterations stabilize, a fixed 
 point is attained that solves the traffic assignment problem.
 
 The remainder of this chapter places \gls{matsim} into this \gls{dta} framework.
 Section~\ref{sec:agent-based-DTA-from-routes-to-agents} starts out from the
-static and macroscopic route flow assignment and incrementally enriches this 
-formulation into a dynamic and fully disaggregate agent-based assignment problem.
+static and macroscopic \corr{route flow assignment}{assignment of route flows}
+and incrementally enriches this formulation into a dynamic and fully disaggregate agent-based assignment problem.
 Section~\ref{sec:agent-based-simul} then turns to the problem of how to
 simulate (solve) this model system, with a particular focus on \gls{matsim}'s
 coevolutionary approach. Section~\ref{sec:agentbased-dta-conclusion} concludes
@@ -247,17 +247,20 @@ entire development. Deliberately, this solution method also has a behavioral
 interpretation as a model of day-to-day replanning; see also Chapter~\ref{sec:transients-vs-learning}.
 
 We start by considering route assignment only. The generalization towards further 
-choice dimensions will turn out to be a natural generalization of the route assignment problem.
+choice dimensions will 
+turn out to be \corr{a natural generalization of the route assignment
+problem}{rather straightforward}.
 
 \subsection{\label{static-macro-assignment}Static Traffic Assignment}
 
 Consider a network of nodes and links, where some, or all, of the nodes are demand origins, 
 denoted by $o$, and/or demand destinations, denoted by $d$. 
-The constant demand $q^{od}$ in a \gls{od} relation $od$ splits up among a set of routes $K^{od}$. 
+The constant demand $q^{od}$ in \corr{a}{an} \gls{od} relation $od$ splits up
+among a set of routes $K^{od}$.
 Denote the flow on route $k\in K^{od}$ by $r^{od}_k$, where $\sum_{k\in K^{od}} r^{od}_k = q^{od}$.
 
-Most route assignment models either specify a \gls{ue} (Nash, Wardrop) ,
-or a \gls{sue}.  
+Most route assignment models either specify a \gls{ue} \corr{(Nash, Wardrop),}{}
+or \corr{a}{an} \gls{sue}.  
 A \gls{ue} postulates that $r^{od}_k$ is zero for every route $k$ of non-minimal cost \citep{Wardrop_PICE_1952}:
 \begin{eqnarray}
 c(k)=\min_{s\in K^{od}}c(s) & \Rightarrow & r^{od}_{k}\geq0\\
@@ -266,7 +269,7 @@ c(k)>\min_{s\in K^{od}}c(s) & \Rightarrow & r^{od}_{k}=0
 where $c(k)$ is the cost (typically delay) on route $k$.
  
 An alternative, frequently-used approach is to distribute the demand onto
-the routes such that a \gls{sue} is
+the routes such that \corr{a}{an} \gls{sue} is
 achieved, where users have different perceptions of route cost and
 every user takes the route of \emph{perceived} minimal cost \citep{DaganzoSheffi_TransScience_1977}.
 Mathematically, this means that the route flows fulfill some distribution
@@ -320,14 +323,14 @@ enumeration of all possible routes is computationally unfeasible.
 
 \textbf{Choice:} Usually, demand is shifted among the routes 
 to improve consistency with the route choice model, assuming---in the simplest case---
-constant network delays: in a \gls{ue}, the flow on the current best routes
-is increased at the cost of the other route flows (``best reply'' or ``best response''
-choice), whereas for a \gls{sue},  flows are shifted towards the desired
-route choice distribution \citep[often a version of multinomial logit,
+constant network delays: \corr{in}{In} a \gls{ue}, the flow on the current
+best routes is increased at the cost of the other route flows (``best reply'' or ``best response''
+choice), whereas for \corr{a}{an} \gls{sue},  flows are shifted towards the
+desired route choice distribution \citep[often a version of multinomial logit,
   e.g.,][]{dial-1971, cascetta-1996, ben-akiva-1999}. For
 stability reasons, this shift is typically realized in a gradual
-way that dampens iteration dynamics. See below for more
-discussion on convergence issues. 
+way that dampens \corr{}{the} iteration dynamics. See below for more
+discussion on convergence issues.
 
 The \textbf{iterations} are repeated until some stopping criterion is
 fulfilled, indicating that a fixed point is attained.
@@ -343,6 +346,9 @@ In the \gls{sue} situation, the fixed point means that a route flow pattern
 $\{r^{od}_k\}$ is found that leads to exactly those network conditions the
 travelers (the \gls{od} flows) perceived when choosing their routes,
 giving no incentive to re-route.
+
+\gunnar{Started a new paragraph here.}
+
 Destination choice and elasticity in the demand are behavioral dimensions
 beyond route choice that can be captured by a
 static model.
@@ -396,15 +402,15 @@ The algorithm structure does not change. The individual steps now look as follow
 
 Once more, \emph{if} the new routes are best replies (\ie best paths
 based on the last iteration), \emph{if} demand is shifted towards
-these new routes and \emph{if} these iterations reach a fixed point;
-this is then a dynamic \gls{ue}, since best reply dynamics mean that no
-traveler (no \gls{od} flow) can unilaterally deviate to a better route.  The
+these new routes and \emph{if} these iterations reach a fixed point\corr{;}{,
+then} this is then a dynamic \gls{ue}\corr{,}{} since best reply dynamics mean
+that no traveler (no \gls{od} flow) can unilaterally deviate to a better route.  The
 \gls{sue} interpretation carries over in a similar way.
 
 Destination choice and elasticity in demand apply naturally to 
 the dynamic case as well. Beyond this, the dynamic setting also enables 
 the modeling of departure time choice. Again, the sole consideration 
-of route choice does, at least technically, not constitute a limitation, 
+of route choice does, at least technically, not constitute a limitation\corr{,}{} 
 because departure time choice can be translated into route choice in a 
 time-expanded version of the original network \citep{vanderzijpp-2001}.
 
@@ -430,8 +436,8 @@ to find an appropriate path.
 %%\yyyy{"The variable $r_k^n$ will denote the route if the $n$th traveller uses the $k$th route." -- I moved this where it is used first (subsection on particle SUE). Gunnar}
 %ok. kai
 %
-Arguably, in the dynamic case, this re-interpretation is behaviorally
-more plausible.
+Arguably,\corr{ in the dynamic case,}{} this re-interpretation is behaviorally
+more plausible \corr{}{in the dynamic case}.
 
 In a trip-based context, there are two major motivations to go from 
 continuous flows to individual travelers:
@@ -442,9 +448,9 @@ difficult to model as continous flows
 \citep[e.g.,][]{floetteroed-2011a}, but are relatively straightforward 
 to simulate at the individual vehicle level 
 \citep[][]{aimsun-www,paramics-www,transmodeler-www,vissim-www,DynusT-nat,zhou-2014}. 
-Disaggregating an \gls{od} matrix into individual trip-makers allows  
-assignment of one vehicle to every trip-maker in the microscopic traffic flow 
-simulation.
+Disaggregating an \gls{od} matrix into individual trip-makers allows
+\corr{}{the} assignment of one vehicle to every trip-maker in the microscopic
+traffic flow simulation.
 
 \item It is computationally inefficient to capture demand heterogeneity 
 through a large number of commodity flows, but the sampling of 
@@ -484,15 +490,15 @@ behaviorally plausible route to each of these travelers''. The gradual shift tha
 helps stabilize iterations in the continuous assignment carries
 over here to an equally stabilizing ``inert shift''; not all travelers
 change their routes at once. This is a consistent reformulation; if
-one reduces the traveler number to $\varepsilon \rightarrow 0$ and
-increases the number of travelers by a factor of $1/\varepsilon$,
+one reduces the traveler \corr{number}{size from one} to $\varepsilon
+\rightarrow 0$ and increases the number of travelers by a factor of $1/\varepsilon$,
 a 10\,\% chance of
 changing routes in the disaggregate case carries over to shifting 10\,\%
 of all flows to new routes in the aggregate case (``\textbf{continuous
 limit}'').
 
 Apart from this, the iterations do not look much different from 
-those previously:
+\corr{those previously}{what was shown before}:
 
 \begin{algorithm}[H]
 \label{dynamic-micro-routes}
@@ -526,44 +532,46 @@ those previously:
 
  \gls{ue} and \gls{sue} notions carry over to the disaggregate case if the notion of an \gls{od} pair (or a commodity) is replaced by  an individual \textbf{particle} ($=$ microscopic traveler).
 
-A \textbf{particle \gls{ue}} may be defined as a system state, where no
-particle can unilaterally improve itself. 
-%
-This definition is consistent with definitions in game theory, which
-normally start from the discrete problem.
-%
-It should be noted, however, that this makes the problem
-combinatorial, which means that even a problem that had a unique
-solution in its continuous version may have a large number of
-solutions in its discrete version.  That is, the particle \gls{ue} is
-deliberately not searching for, say, an integer approximation of the
-continuous solution.
-%
-This is structurally similar to the situation that linear programming
-jumps to being NP-hard when the variables are required to be
+A \textbf{particle \gls{ue}} may be defined as a system state\corr{,}{} where no
+particle can unilaterally improve itself.
+This definition is consistent with definitions in game theory, which normally
+start from the discrete problem.
+\gunnar{I have reorganized the reminder of this paragraph.}
+It should be noted, however, that this makes the problem combinatorial, which
+means that even a problem that had a unique solution in its continuous version
+may have a large number of solutions in its discrete version.
+Further, \corr{this is structurally similar to}{the complexity of finding a
+solution increaces similarly to} the situation \corr{that}{where} linear
+programming jumps to being NP-hard when the variables are required to be
 integers.\footnote{%
-%
 See \url{http://en.wikipedia.org/wiki/Linear_programming_relaxation}.
-%
-}
-%\citep{karmarkar1984}. 
-%% \todoNextRevision{wikipedia linear programming integer unknowns refers
-%%   to the interior point method as non-exponential solution method of
-%%   linear programming.  There should be some book (Garey and Johnson is
-%%   too early).  Nemhauser integer programming?} 
-%%   \gunnar{Von mir aus k\"onnen wir den letzten Satz gerne weglassen.
-%%   Insbesondere, weil simplex-based non-integer linear programming meines
-%%   Wissens auch kombinatorisch ist: Man muss die ``binding constraints'' finden.
-%%   Ich kenne mich damit (und auch mit interior point) aber nicht aus.}
-%% \kai{Meiner Erinnerung nach stammt der NP-hard-Satz ursprünglich von mir.  Du hattest dann wohl nach einer Quelle gesucht und dabei die wikipedia-Aussage gefunden. -- Beim genauen Lesen ist das aber eigentlich kein Widerspruch: linear programming in real variables is non-exponential; wenn die Lösungen nur noch integer sein dürfen, wird es NP-hard. -- Also fehlt nach wie vor nur noch die Referenz.  Gunnar, wenn Du soweit einverstanden bist, dann schreib' bitte kurz ``ok''; vielleicht finden wir dann noch eine Referenz.}
-%% \gunnar{OK. Karmarkar scheint hier die Schl\"usselreferenz zu sein:}
+} The particle \gls{ue} is hence deliberately not searching for\corr{, say,}{}
+an integer approximation of the continuous solution.
+%  \citep{karmarkar1984}.
+% % \todoNextRevision{wikipedia linear programming integer unknowns refers %  
+% to the interior point method as non-exponential solution method of %   linear
+% programming.  There should be some book (Garey and Johnson is %   too early). 
+% Nemhauser integer programming?} %   \gunnar{Von mir aus k\"onnen wir den
+% letzten Satz gerne weglassen.
+% %   Insbesondere, weil simplex-based non-integer linear programming meines %  
+% Wissens auch kombinatorisch ist: Man muss die ``binding constraints'' finden.
+% %   Ich kenne mich damit (und auch mit interior point) aber nicht aus.} %
+% \kai{Meiner Erinnerung nach stammt der NP-hard-Satz ursprünglich von mir.  Du
+% hattest dann wohl nach einer Quelle gesucht und dabei die wikipedia-Aussage
+% gefunden. -- Beim genauen Lesen ist das aber eigentlich kein Widerspruch:
+% linear programming in real variables is non-exponential; wenn die Lösungen nur
+% noch integer sein dürfen, wird es NP-hard. -- Also fehlt nach wie vor nur noch
+% die Referenz.  Gunnar, wenn Du soweit einverstanden bist, dann schreib' bitte
+% kurz ``ok''; vielleicht finden wir dann noch eine Referenz.} % \gunnar{OK.
+% Karmarkar scheint hier die Schl\"usselreferenz zu sein:}
 
-It is common knowledge that situations may occur where mixed strategy
-equilibria exist; these are equilibria, where participants draw
-between different fixed strategies randomly.  This implies that the
-opponents need to interpret the outcome of the game probabilistically:
-even if they themselves play fixed strategies, they need to maximize
-some expectation value.
+It is common knowledge \gunnar{Perhaps not common enough to not give a
+reference?} that situations may occur where mixed strategy equilibria exist;
+these are equilibria, where participants draw between different fixed strategies
+randomly.  This implies that the opponents need to interpret the outcome of the
+game probabilistically:
+\corr{even}{Even} if they themselves play fixed strategies, they need to
+maximize some expectation value.
 
 %Note that there may be
 %multiple UE that ``correspond'' to a continuous limit UE, and in
@@ -593,12 +601,12 @@ the cost structure---based on individual choices made---becomes probabilistic as
 \citep[][]{balijepalli-2007, cascetta-1991, cascetta-1989}.
 
 A particle \gls{sue} is defined as a system state where travelers draw routes from a
-stationary choice distribution; the resulting distribution of
-traffic conditions re-generates that choice distribution.
+stationary choice distribution\corr{;}{ and where} the resulting distribution
+of traffic conditions re-generates that choice distribution.
 
-An operational particle specification \gls{sue} results if one
-assumes that travelers filter out the random fluctuations from what
-they observe and base their decisions only on average route
+An operational \textbf{particle \corr{specification}{} \gls{sue}}
+\corr{specification}{} results if one assumes that travelers filter out the
+random fluctuations from what they observe and base their decisions only on average route
 costs:
 \begin{equation}
 \label{eq:sue-with-expectation}
@@ -638,8 +646,8 @@ fluctuating network conditions \citep[][]{floetteroed-2010e}.
 %where $x(.)$ is the network loading.
 
 The resulting route flows $r_k^{n}$
-represent not only mean network conditions,
-but also their variability, due to individual-level
+represent not only mean network conditions\corr{,}{}
+but also their variability, due to \corr{}{the} individual-level
 route sampling.
 Alternatively, one could use the particles merely as a 
 discretization scheme of continuous
@@ -678,7 +686,7 @@ With stochastic network loading, given the same input, one obtains a
 \emph{distribution} of vectors of network costs.
 
 The macroscopic \gls{sue} approach of Section~\ref{static-macro-assignment}
-assumes a distribution of choices, but
+assumes a distribution of choices\corr{,}{} but
 converts choice probabilities into choice fractions before starting
 the network loading.  That is, one effectively performs 
 $\text{NetworkLoading}( \text{E}\{ \text{Choices} \})$.  
@@ -691,8 +699,8 @@ the particle \gls{sue} makes this problem explicit: If, at the choice level,
 one generates draws from the choice distribution, it makes
 sense to \emph{first} perform the network loading and \emph{then} do
 the averaging, rather than the other way around.
-This is especially true if day-to-day replanning is modeled where
-draws from the choice distribution have a
+This is especially true if day-to-day replanning is modeled\corr{ where}{, in
+which case} draws from the choice distribution have a
 behavioral interpretation as the actual choices of the trip makers
 on a given day (but see also Chapter~\ref{sec:transients-vs-learning}).
 %\yyyy{Streng genommen brauchen wir hierfuer die definition von day-to-day replanning,
@@ -701,22 +709,22 @@ on a given day (but see also Chapter~\ref{sec:transients-vs-learning}).
 %true if one assumes that the draws from the choice distribution have a
 %behavioral interpretation.
 
-This, however, makes output from the network loading effectively
-stochastic, since the input to the network loading is stochastic.  In
+This, however, makes \corr{}{the} output from the network loading effectively
+stochastic\corr{,}{} since the input to the network loading is stochastic.  In
 consequence, any behavioral model that uses the traffic conditions as
 input needs to deal with the issue that these inputs are stochastic.
-\emph{Thus, using a stochastic, instead of a deterministic, network
-loading makes little difference.}  
-Making network loading stochastic simplifies the implementation of
+\emph{Thus, using a stochastic\corr{,}{} instead of a deterministic\corr{,}{}
+network loading makes little difference.}  
+Making \corr{}{the} network loading stochastic simplifies the implementation of
 certain network loading models.  
 %\todoKai{Implementation of what models becomes easier?}
 In particular, randomness is a method to
 resolve fractional behavior in a model with discrete particles.
 
-With stochastic network loading, additional iterative dynamics aspects
-need to be defined.  For example, a ``best
-reply'' could be against the last stochastic realization, or against
-some average.
+With stochastic network loading, additional \corr{iterative dynamics
+aspects}{aspects of the iterative dynamics} need to be defined.  For example, a
+``best reply'' could be against the last stochastic realization\corr{,}{} or
+against some average.
 
 %%\todoKai{Diesen Absatz verstehe ich nicht. "It makes sense to.." ..for
 %%what purpose?  Meinst Du hiermit irgendein Mittelung im network
@@ -736,10 +744,10 @@ some average.
 
 Given the above behavioral interpretation, it is now straightforward
 to extend the assignment loop to other choice dimensions.  For
-example, the ``best reply'' can include optimal departure times
-\citep[e.g.,][]{METROPOLIS,EttemaEtcRoutes-timesIatbr03}, or optimal mode
-choice.  This becomes easiest to interpret (and, in our view, most
-powerful in practice), if one moves from the concept of ``trips'' to
+example, the ``best reply'' can include optimal departure \corr{times}{time
+choice} \citep[e.g.,][]{METROPOLIS,EttemaEtcRoutes-timesIatbr03} \corr{,}{} or
+optimal mode choice.  This becomes easiest to interpret (and, in our view, most
+powerful in practice)\corr{,}{} if one moves from the concept of ``trips'' to
 daily plans.
 % One way to denote daily plans is using an
 % XML notation \citep[][]{xml-www}:
@@ -758,12 +766,13 @@ for an
 example. However, different from \gls{dta}, all activities are chained together.
 
 This widens the behavioral modeling scope dramatically; all
-choice dimensions of a daily travel plan can now be jointly
+choice dimensions of \corr{a daily}{an all-day} travel plan can now be jointly
 equilibrated. This increases the degrees of freedom that
-need to be modeled, but also carries a set of natural constraints
+need to be modeled\corr{,}{} but also carries a set of natural constraints
 along, which again reduce the solution space. Most notably, the
-destination of one trip must be the origin of an individual's subsequent trip 
-and an agent (synthetic traveler) must arrive before it departs.
+destination of one trip must be the origin of \corr{an individual's}{the same
+agent's (synthetic traveler's)} subsequent trip and an agent \corr{(synthetic
+traveler)}{} must arrive before it departs.
 Also, constraints such as H\"agerstrand's space-time prisms
 \citep{Haegerstrand1970WhatAboutPeople} are
 automatically enforced when the agents need
@@ -793,27 +802,27 @@ unilaterally improve its plan.
 
 An \textbf{agent-based \gls{sue}} implies individual travelers
 (Section~\ref{sec:indiv-trav}), additional choice dimensions
-(Section~\ref{sec:extend-route-assignm}), and, normally, stochastic network
-loading (Section~\ref{sec:stoch-netw-load}).  Corresponding to the
+(Section~\ref{sec:extend-route-assignm})\corr{,}{} and, normally, stochastic
+network loading (Section~\ref{sec:stoch-netw-load}).  Corresponding to the
 particle \gls{sue}, it is defined as a system state where agents draw from a
-stationary choice distribution; the resulting distribution of
+stationary choice distribution \corr{;}{and where} the resulting distribution of
 traffic conditions re-generates that choice distribution.
 %\yyyy{This formulation should appear in the particle SUE section. Gunnar}
 
-If  iterations aim at an agent-based \gls{ue}, then choice set generation
-and choice should implement a ``best reply'' logic; some
+If \corr{}{the} iterations aim at an agent-based \gls{ue}, then choice set
+generation and choice should implement a ``best reply'' logic; some
 'optimal' plans are calculated and assigned to the agents. This
-is emphatically not an easy task.  
+is \corr{emphatically not}{anything but} an easy task.  
 
-The disaggregate counterpiece of a
+The disaggregate counterpiece of \corr{a}{an}
 \gls{sue} implies that every agent considers a whole choice set of (possibly
 suboptimal) plans and selects one of these plans probabilistically,
 which can lead to huge data structures.
 %Section~\ref{sec:agent-based-simul} gives examples of how to deal with
 %these difficulties.
 
-Summarizing, we have now arrived at a dynamic DTA specification that accounts 
-for arbitrary behavioral dimensions. 
+Summarizing, we have now arrived at a \corr{}{fully disaggregate} dynamic DTA
+specification that accounts for arbitrary behavioral dimensions. 
 % Since the presentation was mostly intuitive, 
 % the introductory note on the statistical meaning of a disaggregate simulation 
 % system should be recalled at this point: 
@@ -828,6 +837,7 @@ for arbitrary behavioral dimensions.
 %%that this is not the most pressing issue to resolve.  But it may need
 %%to be revisited in the future.
 
+\gunnar{(to self) Continue here.}
 
 %%\vfill\eject
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
