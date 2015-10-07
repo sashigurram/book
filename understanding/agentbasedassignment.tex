@@ -565,9 +565,8 @@ an integer approximation of the continuous solution.
 % kurz ``ok''; vielleicht finden wir dann noch eine Referenz.} % \gunnar{OK.
 % Karmarkar scheint hier die Schl\"usselreferenz zu sein:}
 
-It is common knowledge \gunnar{Perhaps not common enough to not give a
-reference?} that situations may occur where mixed strategy equilibria exist;
-these are equilibria, where participants draw between different fixed strategies
+\corr{It is common knowledge that situations}{Situations} may occur where mixed
+strategy equilibria exist; these are equilibria, where participants draw between different fixed strategies
 randomly.  This implies that the opponents need to interpret the outcome of the
 game probabilistically:
 \corr{even}{Even} if they themselves play fixed strategies, they need to
@@ -605,7 +604,7 @@ stationary choice distribution\corr{;}{ and where} the resulting distribution
 of traffic conditions re-generates that choice distribution.
 
 An operational \textbf{particle \corr{specification}{} \gls{sue}}
-\corr{specification}{} results if one assumes that travelers filter out the
+\corr{}{specification} results if one assumes that travelers filter out the
 random fluctuations from what they observe and base their decisions only on average route
 costs:
 \begin{equation}
@@ -767,7 +766,7 @@ example. However, different from \gls{dta}, all activities are chained together.
 
 This widens the behavioral modeling scope dramatically; all
 choice dimensions of \corr{a daily}{an all-day} travel plan can now be jointly
-equilibrated. This increases the degrees of freedom that
+equilibrated. This increases the degrees of freedom that 
 need to be modeled\corr{,}{} but also carries a set of natural constraints
 along, which again reduce the solution space. Most notably, the
 destination of one trip must be the origin of \corr{an individual's}{the same
@@ -837,8 +836,6 @@ specification that accounts for arbitrary behavioral dimensions.
 %%that this is not the most pressing issue to resolve.  But it may need
 %%to be revisited in the future.
 
-\gunnar{(to self) Continue here.}
-
 %%\vfill\eject
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -860,11 +857,12 @@ floetteroed-2012b}.
 See also Chapter~\ref{ch:discretechoice}.
 
 As long as household interactions are not included, the demand modeling problem can be 
-deconstructed by agents once network conditions are given---a great computational advantage. 
+\corr{deconstructed by agents}{decomposed by agent} once \corr{}{the} network
+conditions are given---a great computational advantage.
 The supply model, on the other hand, deals with congestion, which is, by definition, a result of all travelers' 
-physical interactions. Modeling large urban areas requires dealing with millions of travelers 
-and an operational supply simulation must be able to load all of these travelers on the network in 
-reasonable computation time . 
+physical interactions. Modeling large urban areas requires dealing with millions
+of travelers\corr{}{,} and an operational supply simulation must be able to
+load all of these travelers on the network in reasonable computation time . 
 % This \emph{is} now possible if one carefully balances the model resolution against computational considerations.
 
 The following sections describe solutions for these problems. Concrete examples
@@ -896,7 +894,7 @@ implementation of the behavioral elements.
 
 \textbf{Choice set generation:} For every agent,
   generate what would have been best in the previous iteration.
-  This does not concern just the route,
+  This does not concern just the route\corr{,}{}
   but all considered choice dimensions, \eg departure times and/or
   mode choice. 
 %% \todoNextRevision{transims?}
@@ -908,8 +906,8 @@ The choice set generation implements a ``best reply'' dynamic.
 %\todoNextRevision{transims?} 
 This now requires identification of an optimal all-day plan for given network conditions. 
 While the calculation of time-dependent shortest paths for \gls{ue} route assignment is 
-computationally manageable, identification of optimal plans is far more difficult 
-\citep[][]{recker-2001}. 
+computationally manageable, \corr{}{the} identification of optimal plans is far
+more difficult \citep[][]{recker-2001}. 
 This is an important technical motivation to switch to an agent-based \gls{sue}, 
 where optimality is not required (see below).
 
@@ -921,8 +919,8 @@ Time-dependent routing algorithms require knowledge of every link's travel
 time as a function of the link entrance time.  In computational
 practice, this information exists only in an average, 
 interpolated way. Thus, such computations become more
-robust if plan performance is directly taken directly from the network
-loading, instead of relying on the best reply computation prediction;  
+robust if plan performance is directly taken \corr{directly}{} from the network
+loading\corr{,}{} instead of relying on the best reply computation prediction;  
 an agent sticks with a new plan only if it
 \emph{performs} better than the previous plan
 \citep{RaneyNagel2004agdb}.  However, to keep run times
@@ -934,7 +932,8 @@ For the choice, a useful approach is to make the switching probability from
 current to best reply solution proportional to the
 expected improvement, \ie
 \[
-P(\text{old} \to \text{best}) = \min[ 1, \mu \cdot (S_{best} - S_{old}) ]
+P(\text{old} \to \text{best}) = \min[ 1, \mu \cdot (S_\text{best} -
+S_\text{old}) ]
 \]
 %% \begin{equation}
 %% P(\text{old} \to \text{new}) \propto \max[ 0, e^{\mu \, (S_{\text{new}} - S_{\text{old}})} - 1]\ .
@@ -942,13 +941,14 @@ P(\text{old} \to \text{best}) = \min[ 1, \mu \cdot (S_{best} - S_{old}) ]
 where $S_\text{best}$ and $S_\text{old}$ are the (expected) scores of the best reply
 and the old plan, respectively, and the $\min$ takes care of the fact that a probability should not be larger than one. %% \kai{@Gunnar: Habe jetzt die proportionale Form direkt genommen; sehe im Moment nicht, was wir gewinnen, wenn wir da einen Schnörkel einbauen.}
 %% \gunnar{Ja. Vielleicht noch ``where a 
-Truncation at zero is not necessary because the term $S_{best} - S_{old}$ cannot become negative.
+Truncation at zero is not necessary because the term $S_\text{best} -
+S_\text{old}$ cannot become negative.
 %}
 %% \gunnar{Why give this particular functional form?} \kai{Das hat was damit zu tun, dass die lineare Form, EQ~(\ref{eq:10}), oft in genetischen Algorithmen verwendet wird, und ich zeigen wollte, dass alle sinnvollen funktionalen Formen linearisiert identisch sind und man daher keine Religion draus machen sollte. -- Aber praktisch gesehen verwendet \gls{matsim} $P(old \to new) \sim 0.01 \cdot \exp( 0.5 \cdot \beta \cdot (S_{new} - S_{old})$ (leider immer noch ohne renormierende Division, wie von Dir vor langer Zeit angemahnt), und von daher gesehen sollten wir hier wohl auch eher dies verwenden.  Bitte umschreiben, oder wenigstens ein kurzes ``ok'', dann mache ich es, sobald ich dazu komme.}
 %% \gunnar{OK, aber das solltest dann Du so formulieren wie Du es gerne h\"attest.}
 Chapter~\ref{ch:scoring} %\ref{sec:adjust-impr-funct}
 gives an example of what a scoring function for all-day plans could
-look like:
+look like\corr{:}{.}
 %% For a small difference between $S_\text{old}$ and $S_\text{new}$,
 %% this can be linearly approximated by
 %% \begin{equation}
@@ -962,23 +962,24 @@ Note how
 the decreasing switching \emph{fraction} of the continuous case is
 replaced by a decreasing switching \emph{probability} (leading to a switching \emph{rate}).
 
-Clearly, any fixed point of such iterations is a \gls{ue}, since, at the
-fixed point, no switching takes place, meaning that the best reply plan
-has the same score as the already existing plan.  
+Clearly, any fixed point of such iterations is a \gls{ue}\corr{,}{} since\corr{,
+at the fixed point,}{} no switching takes place \corr{}{at the fixed point},
+meaning that the best reply plan has the same score as the already existing plan.  
 %
 Stability of the fixed point depends on the switching rate slope 
-at the fixed point, in the above formulation on the $\mu$: all
-other things equal, making $\mu$ smaller makes the fixed point more
-stable, but slows down convergence. 
+at the fixed point, in the above formulation on the $\mu$: \corr{all other
+things}{All else} equal, making $\mu$ smaller makes the fixed point more
+stable\corr{,}{} but slows down convergence. 
 %
-These observations hold not only in transporation \citep[e.g.,][]{watling-2003},
-but quite generally in the area of ``evolutionary
-games and dynamical systems'' \citep{HofbSigmBook}. 
+These observations hold not only in transporation
+\citep[e.g.,][]{watling-2003}\corr{,}{} but quite generally in the area of
+``evolutionary games and dynamical systems'' \citep{HofbSigmBook}. 
 %
 In addition, in the context of
 traffic assignment, the existence of physical queues allowing for 
-spillback across many links has apparently been shown to be an nevitable
-source of multiple Nash equilibria \citep[][]{daganzo-1998}.
+spillback across many links has apparently been shown to be an
+\corr{nevitable}{inevitable} source of multiple Nash equilibria
+\citep[][]{daganzo-1998}.
 %%; also see
 %%\cite{MartinezFixedPointStability} for a similar case in land-use
 %%modelling.
@@ -987,9 +988,9 @@ Alternatively, some \gls{msa}-like scheme
 may be used \citep{liu-2007}.
 %\gunnar{Kai, Du fragst im Glossar nach einer Referenz zu MSA. Hier ist eine.}  
 %\kai{Danke!}
-One disadvantage: with \gls{msa}, the
+One disadvantage\corr{:} with \gls{msa}\corr{,}{is that} the
 switching rate does not depend on the magnitude of the expected
-improvement, which could means slow(er) convergence.  An advantage
+improvement, which could \corr{means}{mean} slow(er) convergence.  An advantage
 of \gls{msa} is that one does not need to find out a good value for the
 proportionality factor ($\mu$ in the above example).  
 
@@ -1024,7 +1025,7 @@ These considerations do not only lead naturally to the agent-based \gls{sue};
 they also stimulate an additional behavioral component capturing
 real travelers' explorative learning. Similar to the symmetry
 between day-to-day replanning and the traffic assignment problem's iterative solution, 
-an explorative learning algorithm can be oriented either as
+an explorative learning algorithm can be \corr{oriented}{interpreted} either as
 a model of real learning or as a computational method to solve a stochastic
 assignment problem. The following section presents a possible implementation
 of such an algorithm. 
@@ -1105,7 +1106,8 @@ of such an algorithm.
 This section discusses \gls{matsim}'s co-evolutionary algorithm for simulating
 plan choices. Chapters~\ref{ch:discretechoice} and~\ref{ch:economicEval} 
 provide an alternative perspective on \gls{matsim}'s plan choice mechanisms
-for mainstream discrete choice theory \citep{BenAkivaLerman_1985}.
+\corr{for}{in terms of} mainstream discrete choice theory
+\citep{BenAkivaLerman_1985}.
 
 % In order to put the proposed method for the simulation of an agent-based
 % SUE into a somewhat broader perspective, the problem
@@ -1138,7 +1140,7 @@ planning problem as a population-based search algorithm.  Such a
 search algorithm maintains a \emph{collection} ($=$ population) of
 possible solutions to a problem instance and obtains better solutions
 via that collection's evolution.  This is a typical
-machine-learning \citep[e.g.][]{RussellNorvigBook} approach; the best-known
+machine-learning \citep[e.g.,][]{RussellNorvigBook} approach; the best-known
 population-based search algorithms (also called \textbf{evolutionary
 algorithms}) are \textbf{genetic algorithms} \citep[e.g.,][]{Goldberg_1989}.
 
@@ -1179,7 +1181,7 @@ follows:
 
 \end{algorithm}
 
-For construction of new solutions, two operators are often
+For \corr{}{the} construction of new solutions, two operators are often
 used in genetic algorithms: \textbf{Mutation}---which takes a
 candidate solution and performs small modifications to it; and
 \textbf{crossover}---which takes \emph{two} candidate solutions and
@@ -1278,16 +1280,17 @@ follows \citep[see, e.g.,][for similar
 % % ----------
 
 Note that this approach is really quite congruent with the \gls{sue}
-approach: each person has a plan collection, which may be
+approach: \corr{each}{Each} person has a plan collection, which may be
 interpreted as the choice set.  As in \gls{sue}, the choice set can be
-generated while the iterations run, or before the iterations start.
+generated while the iterations run\corr{,}{} or before the iterations start.
 Each person selects between the plans, where one can attach to
-every plan a score-based probability to be selected, 
+every plan a score-based probability to be selected, \corr{}{which becomes}
 in the end similar to Equation~(\ref{stoch-equil}).
 Clearly, a relevant  related research topic is to specify 
 an evolutionary dynamic that can be shown to converge to choice sets
 that are generated consistently with discrete choice theory requirements; 
-see Chapters~\ref{ch:discretechoice} and Section~\ref{sec:choicesets}.
+see \corr{Chapters}{Chapter}~\ref{ch:discretechoice} and
+Section~\ref{sec:choicesets}.
 %%\todoKai{Der letzte Satz ersetzt einen anderen, der m.E.
 %%an dieser Stelle keine neue Information mehr liefert. Gunnar}
 %The main
@@ -1324,7 +1327,7 @@ this approach.
 
 %For choice, one can start with a logit model:
 %\textbf{Selection/Choice:} 
-A possible choice algorithm is the following: for persons with
+A possible choice algorithm is the following: \corr{for}{For} persons with
 unscored plans, select an unscored plan.  For all other persons,
 select between existing plans with some \gls{sue} model, \eg a logit
 model, \ie
@@ -1339,18 +1342,18 @@ scores.
 This is implemented in \gls{matsim} by \lstinline{SelectExpBeta}.
 
 In practice, we have found that it is much better to not use
-Equation~(\ref{eq:2}) directly, but instead use a switching process that
-\emph{converges} towards Equation~(\ref{eq:2}).  
+Equation~(\ref{eq:2}) directly\corr{,}{} but instead use a switching process
+that \emph{converges} towards Equation~(\ref{eq:2}).  
 This can, for example, be
-achieved by using a switching probability from $i$ to $j$ of
+achieved by using a switching probability from $i$ to $j$ of \corr{}{the form}
 \begin{equation}
-T(i \to j) = \gamma \,  e^{\beta ( S_j - S_i )/2} \ ,
+T(i \to j) = \gamma \,  e^{\beta ( S_j - S_i )/2}
 \label{eq:3}
 \end{equation}
 %%\todoKai{Ich habe $\alpha$ durch $\gamma$ ersetzt, 
 %%weil ersteres auch noch die learning rate beim score averaging ist. Gunnar}
 where $i$ is the previous plan, $j$ is a randomly selected plan from
-the same person, and $\gamma$ is a proportionality constant that needs
+the same person\corr{,}{} and $\gamma$ is a proportionality constant that needs
 to be small enough so that the expression is never larger than one
 (since it denotes a probability).  This works because the logit model~(\ref{eq:2})
 %\begin{equation}
@@ -1454,7 +1457,9 @@ following:
  One loses some of the mathematical interpretation, but 
  it may be more consistent with discussion of
   project appraisal, where small improvements may not
-  lead to a change in behavior.
+  lead to a change in behavior. 
+	\gunnar{Warning -- what means ``consistent with discussion of
+  project appraisal''?}
 
 %%\item If the difference between $S_j$ and $S_i$ is small, one can
 %%  linearize Eq.~(\ref{eq:3}):
@@ -1472,7 +1477,7 @@ following:
 
 Although not performed systematically in past work, it is 
 possible to include formulations such as path-size logit 
-\citep{ben-akiva-1999} in choice probabilities.
+\citep{ben-akiva-1999} in \corr{choice probabilities}{the choice model}.
 
 %\todoKai{????}  Overall, the approach has both a behavioral and a
 %mathematical interpretation, and it is, in our view, most useful to
@@ -1497,7 +1502,7 @@ The assumption that the scores
 eventually converge to
 some constant value intuitively means that the scores cannot display
 spontaneous reactive behavior to a certain iteration.  For example,
-a particular iteration might display ``network
+a particular iteration might display \corr{}{a} ``network
 breakdown'' \citep{RieserNagel2008NetworkBreakdown}.  Converged scores
 would not trigger a next-day reaction to that breakdown.  In practice,
 this can be achieved by averaging the scores over many iterations,
@@ -1511,11 +1516,12 @@ disadvantages discussed before (Section~\ref{sec:agent-based-ue}).
 An alternative is to use a small
 \textbf{learning rate} $\alpha$ (Section~\ref{sec:score-averaging}) in
 \begin{equation}
-S_i^\text{new} = (1-\alpha) \, S_i^\text{old} + \alpha \, \tilde S_i \ ,
+S_i^\text{new} = (1-\alpha) \, S_i^\text{old} + \alpha \, \tilde S_i
 \end{equation}
-where $S_i^{new}$ and $S_i^{old}$ are the agent's memorized scores for
+where $S_i^\text{new}$ and $S_i^\text{old}$ are the agent's memorized scores for
 option $i$, and $\tilde S_i$ is the most recent actual performance
 with that option; also see Chapter~\ref{ch:discretechoice}.  
+%
 The issue, in the end, is the same as the
 stable-vs-unstable fixed points (\cf Section~\ref{sec:agent-based-ue}):
 If the system is well-behaved (corresponding to a stable fixed point),
@@ -1525,7 +1531,7 @@ force it to such a solution with \gls{msa}, but the meaning is less
 clear (also see Sections~\ref{sec:score-msa} and \ref{sec:score-convergence}).
 
 As stated before, stochastic network loading makes no additional
-conceptual difference, since there is already stochasticity caused by
+conceptual difference\corr{,}{} since there is already stochasticity caused by
 choice behavior.
 
 %% \todokai{clarify score convergence with newer MSA option}
@@ -1573,8 +1579,8 @@ there are also many possibilities for constructive algorithms, such as
 ``agent-based'' construction
 \citep{ZhuLevinsonZhang2008AgentBasedRouteChoice2}.  One attractive
 option, clearly, is to use a regular activity-based demand generation
-code \citep[e.g.,][]{BowmanEtc1999PortlandActs,MillerRoordaTASHA}
-although we have found is that this may not be as simple as it seems
+code \citep[e.g.,][]{BowmanEtc1999PortlandActs,MillerRoordaTASHA}\corr{}{,}
+although we have found \corr{is}{} that this may not be as simple as it seems
 \citep{RieserNagelEtc2007early-berlin-trr}; in practice,
 activity-based models are often constructed with \gls{od} matrices in mind.  
 A successful integration is described by 
@@ -1605,13 +1611,13 @@ Time to Generalized Utility Functions}
 %%Section gemacht, weil die utility function m.E. noch zu SUE gehoert.
 %%Gunnar}
 
-This chapter takes the inductive approach and argues that one can make
-the network assignment loop more general by including additional
+This chapter takes \corr{the}{an} inductive approach and argues that one can
+make the network assignment loop more general by including additional
 choice dimensions beyond routing.  Clearly, for this to work, the
-computation of scoring needs to take the effects of these
+\corr{computation of}{} scoring needs to take the effects of these
 additional choice dimensions into account \citep[also
   see][]{Balmer_PhDThesis_2007}.  Given evolutionary game theory, it is quite
-obvious how to do that: one has to extend the cost
+obvious how to do that: \corr{one}{One} has to extend the cost
 function used for routing to a general scoring function for
 complete daily plans.
 
@@ -1620,7 +1626,7 @@ complete daily plans.
 That is, the performance of a daily plan needs to be scored.  An
 established method to estimate scoring functions for different
 alternatives is random utility theory \citep[e.g.][]{BenAkivaLerman_1985},
-which is why in the following, ``scoring'' will be replaced by
+which is why in the following\corr{,}{} ``scoring'' will be replaced by
 ``utility''.  For a utility function for daily plans, the following
 arguments may serve as starting points:
 \begin{itemize}
@@ -1653,16 +1659,16 @@ Chapter~\ref{ch:economicEval}; this then closes the loop.
 Starting from regular route assignment,
 this chapter explains how one can extend the
 iterative solution procedure of static or dynamic traffic assignment
-to include additional behavioral dimensions, such as time adaptation,
-mode choice, or secondary activity location choice.  This is somewhat
-similar to the so-called supernetworks approach, but argues from the
-viewpoint of the iterative solution procedure, rather than the
+to include additional behavioral dimensions\corr{,}{} such as time adaptation,
+mode choice\corr{,}{} or secondary activity location choice.  This is somewhat
+similar to the so-called supernetworks approach\corr{,} but argues from the
+viewpoint of the iterative solution procedure\corr{,}{} rather than the
 problem definition.
 
 To address the combinatorial explosion of commodities
-caused by expansion of the choice dimensions,
+caused by \corr{}{the} expansion of the choice dimensions,
 a move to individual particles is suggested.  This allows an interpretation of the
-solution procedure as behavioral day-to-day learning, but maintains a
+solution procedure as behavioral day-to-day learning\corr{,}{} but maintains a
 connection to the \gls{sue} definition by interpreting synthetic
 travelers' behavior as random draws from individual choice sets.  
 % In
@@ -1696,18 +1702,25 @@ towards a stationary distribution of choices.
 \end{xml}
 \end{lrbox}
 
-Overall, this chapter has worked out the structural similarity between the 
-``classical'' \gls{dta} problem and the more recent agent-based assignment problem.\footnote{%
-%
-%% \gunnar{Wasn't there somewhere on the web site a tutorial on 
-%% ``running MATSim as a standard DTA''? That would fit well in here, I think.} \kai{ok.  Not much of a tutorial, but at least an example plans file and some text with it.  Will do when I get around.}  \kai{See below.}
-%
-It is, in fact, possible to run \gls{matsim} in \gls{dta} mode, by converting each trip into a dummy person, with dummy activities at the beginning and end of the trip.  The class \lstinline{RunExample5Trips} (see \url{http://matsim.org/javadoc} $\to$ main distribution) runs an example; the class itself points to a configuration file, which in turn points to \lstinline{examples/equil/plans100trips.xml}.  A dummy person that denotes a trip from link 1 to link 20, departing at 6\,am, is coded as\\
+Overall, this chapter has worked out the structural similarity between the
+``classical'' \gls{dta} problem and the more recent agent-based assignment
+problem.\footnote{%
+%  % \gunnar{Wasn't there somewhere on the web site a tutorial on % ``running
+% MATSim as a standard DTA''? That would fit well in here, I think.} \kai{ok. 
+% Not much of a tutorial, but at least an example plans file and some text with
+% it.  Will do when I get around.}  \kai{See below.}
+It is, in fact, possible to run \gls{matsim} in \gls{dta} mode, by converting
+each trip into a dummy person, with dummy activities at the beginning and end of
+the trip.  The class \lstinline{RunExample5Trips} (see
+\url{http://matsim.org/javadoc} $\to$ main distribution) runs an example; the
+class itself points to a configuration file, which in turn points to
+\lstinline{examples/equil/plans100trips.xml}.  A dummy person that denotes a
+trip from link 1 to link 20, departing at 6\,am, is coded as\\
 \usebox{\tripAsPlan}.
-}
-The presentation focused on the algorithmic issue of how to find solutions 
-to these problems. This is complemented by the subsequent Chapters~\ref{ch:montecarlo} to \ref{ch:kinematicwaves}, 
-which mostly discuss modeling (descriptive) aspects of \gls{matsim}.
+} The presentation \corr{}{has} focused on the algorithmic issue of how to find
+solutions to these problems. This is complemented by the subsequent
+Chapters~\ref{ch:montecarlo} to \ref{ch:kinematicwaves}, which mostly discuss
+modeling (descriptive) aspects of \gls{matsim}.
 
 % %%\todoKai{Mit diesem Schluss-Paragraphen habe ich Probleme.  Vorschlaege?
 % %%  weglassen?  Kai $\Rightarrow$ Hab's mal versucht. Gunnar}
