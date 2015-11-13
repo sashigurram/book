@@ -18,11 +18,11 @@
 \section{Motivation}
 Traffic signals ensure security of travelers at junctions and regulate right of way. 
 Furthermore, by assigning green times to the different approaches of a junction, they determine and evaluate junctions' performance. 
-There are different strategies for traffic signal control: fixed-time traffic signal control, for example, periodically repeats the same schedule for signalization, while traffic-responsive signal control reacts dynamically to the prevailing traffic patterns, improving the junction or system performance overall.   
-Even if traffic control improves the traffic conditions at a single junction, it might not benefit the whole system. 
+There are different strategies for traffic signal control: fixed-time traffic signal control, for example, periodically repeats the same schedule for signalization, while traffic-responsive signal control reacts dynamically to the prevailing traffic patterns to improve the junction or system performance.   
+Traffic signal control can improve the traffic conditions at a single junction, but the whole system can be worse if a single junction is improved. 
 \citet{Hu1997D2DFlowEvolutionReactiveSignalsDynasmart} argue that second order or network effects should be taken into account when effects of signal control strategies are tested. Network effects include drivers' reactions: not only route choice, but also scheduling. 
 Thus, traffic control, especially traffic-responsive signals, need certain constraints. Otherwise, traffic may become unstable: rapidly at two nearby junctions, or at the network level \citep{LaemmerHelbing2010SelfStabilizingSignalControlRealNet}. \gls{matsim} can capture most of these effects. This chapter reviews concepts, usage and restrictions of the traffic signal control extension for \gls{matsim}. 
-The chapter is particularly interesting for\gls{matsim} users, who plan to simulate traffic signals microscopically. 
+The chapter is particularly interesting for \gls{matsim} users, who plan to simulate traffic signals microscopically. 
 If one wishes to capture signalization effects on a rather coarse level, consider the approach presented in~\citet[][pp.~139]{Charypar_PhDThesis_2008}, that can be realized with the time variant network feature of \gls{matsim} \citep{LaemmelGretherNagel2009TimeDependentNetworks}. 
 Before we go into detail on motivating traffic signals with \gls{matsim}, a case study is reviewed. 
 
@@ -71,7 +71,7 @@ The code base, however, can help simulate other use cases, \eg evacuation or air
 \gls{matsim}'s open source nature provides hooks and interfaces for extension. 
 But one must consider the amount of work required, the current state of development and specific project planning. 
 The rest of the chapter goes into more detail.  
-Section~\ref{sec:signals_traffic_signal_control} provides some traffic signal control background, vocabulary and options for modeling traffic signals with \gls{matsim}. 
+Section~\ref{sec:signals_traffic_signal_control} provides some traffic signal control background, vocabulary, and options for modeling traffic signals with \gls{matsim}. 
 Technical details can be found in the traffic signals user guide.  
 Section~\ref{sec:signals_network_traffic_flow} goes into details on network and traffic flow modeling. 
 Iterations and learning are discussed in Section~\ref{sec:signals_iterations_learning}. 
@@ -89,7 +89,7 @@ On a coarse level, control strategies for traffic signals can be classified in f
 Fixed-time traffic signal control periodically assigns green times for each junction approach. 
 Cycle time and green split are not modified within short time periods. 
 To establish green waves between adjacent junctions, the green light start for approaches within the cycle can be adjusted by a global timer; 
-these shifts are referred to as coordination offsets. 
+these shifts are referred to as (coordination) offsets. 
 For optimization of fixed-time signals, different equilibrium traffic flow regimes are determined for several periods of time, \eg weekday morning, midday, evening and night plus a separate estimate for weekends. Optimization may target all signalized junction parameters---green split, cycle, offsets, and phase composition,  
 but it is not possible to react to current changes in equilibrium traffic flows. 
 
@@ -112,17 +112,17 @@ Data is divided into five different types of input:
 		There is no explicit phase representation; 
 		if required, this can be realized over signal groups.  
 	\item[Signal Control:] Specifies the control algorithm for each signal system. 
-		Data comprises information for fixed-time control and can be extended to capture custom control algorithms' parameters . 
+		Data comprises information for fixed-time control and can be extended to capture custom control algorithms' parameters. 
 	\item[Amber:] Specifies the amber phase at the beginning and end of green time. 
-		Currently, this information is used only for visualization purposes. 
-		Driving is not permitted if a traffic signal group shows amber light. 
+		Currently, driving is not permitted if a traffic signal group shows amber light and  
+		this information is used only for visualization purposes. 
 	\item[Intergreens:] The inter-green time specifies minimal time period between the ending of one and beginning of another signal group's green time.  
 		This information is important because \gls{matsim}'s traffic flow model does not contain any collision detection. 
 		A validation module reads the event stream and triggers a warning, or an error, if security constraints are violated. 
 		Further, customized control strategies can access this information to ensure security aspects' control validity.    
 \end{description}
 
-For detailed information on file structures and how to link them in the \gls{matsim} \gls{configfile}, we refer to the user guide in the contribution ``signals'', which we update periodically.
+For detailed information on file structures and how to link them in the \gls{matsim} \gls{configfile}, we refer to the user guide in the contribution ``signals''. % which we update periodically.
 
 The next section explains network representation and traffic signal location in more detail. 
 
@@ -234,7 +234,8 @@ We conclude with this advice; clearly document what and how was simulated and pr
 \label{sec:signals_evaluation_conclusion}
 \gls{matsim} can simulate traffic signal control microscopically. 
 However, certain traffic signal effects are not represented by \gls{matsim} without further customization and implementation, \eg microscopic deceleration and acceleration as a reaction to traffic control. Evaluations must be checked and interpreted against the simulation setup to ensure that everything derived from simulation results is also appropriately simulated.  
-This chapter provides an overview of traffic signals in \gls{matsim}, detailing what to consider before taking first steps in larger scenarios. Further details can be found in the \gls{javadoc} documentation referenced above. 
+This chapter provides an overview of traffic signals in \gls{matsim}, detailing what to consider before taking first steps in larger scenarios. Details for implementation can be found in the \gls{javadoc} documentation referenced above. 
+For the detailed scientific discussion of modeling aspects the reader is referred to \citet{Grether_PhDThesis_2014}.
 
 We think that \gls{matsim} is a superior tool for microscopic simulated traffic-responsive signal control that should be analyzed network-wide, assuming heterogeneous user reactions. 
 
