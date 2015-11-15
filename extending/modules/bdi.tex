@@ -41,8 +41,9 @@ framework, using the concepts of goals, hierarchical abstract plans
 (containing sub-goals) and percepts (information from the
 environment), as well as information about the current situation. For
 example, we used it to model residents in a 
-bush fire evacuation, as well as an incident controller in an evacuation
-scenario. The residents may receive information about the bush fire from
+bushfire\footnote{Bushfire is the Australian term for what is
+  otherwise known as a wildfire or forest fire.} evacuation, as well as an incident controller in an evacuation
+scenario. The residents may receive information about the bushfire from
 the fire simulation, as well as warnings and messages from the incident
 controller agent. They may well have to
 pick up children, check on neighbors and communicate with
@@ -77,9 +78,9 @@ reactive behavior and goal-based commitment. Different \gls{bdi} platforms
 have different strengths, but are, in general, based on a simplified
 psychological/philosophical view of how people behave, facilitating a
 high level specification of complex human behavior. These systems have
-been proved to be very efficient for building complex
-applications \citep{benfield}.  The process of providing the appropriate system
-interface support is developed; any \gls{bdi} system can be coupled to
+been demonstrated to be very efficient for building complex
+applications \citep{benfield}.  Provided the appropriate system
+interface support is developed, any \gls{bdi} system can be coupled to
 \gls{matsim}, as described here. Until now, we have used three different \gls{bdi}
 systems, for which the system level interface is available.  The
 decisions made in the \gls{bdi} system are then inserted into the relevant agents' \gls{matsim}
@@ -89,7 +90,8 @@ the same efficient manner as in standard \gls{matsim}.
 % ##################################################################################################################
 \section{Software Structure}
 \label{sec:bdi-structure}
-Our framework supports the \gls{matsim} independent execution and the \gls{bdi} platform, with 
+Our framework supports independent  execution of  \gls{matsim} and the
+\gls{bdi} platform, with   
 synchronization via the infrastructure provided.
 They can either run within a single process (in
 separate synchronized threads, or sequentially in a single thread), or in two
@@ -100,7 +102,7 @@ Conceptually, for every \gls{matsim} agent whose decision making is to be
 carried out in the \gls{bdi} system, a \gls{bdi} agent must be created. The \gls{bdi} counterpart can
 be regarded as ``the brain'' associated with the \gls{matsim} agent. It is
 possible to have \gls{bdi} agents with no \gls{matsim} counterpart and vice
-versa. For example, in our bush fire application, the incident
+versa. For example, in our bushfire application, the incident
 controller has no \gls{matsim} agent, as he does not move on the road
 network. He receives information about the fire and has some static
 location information;  his role in the simulation is to issue
@@ -108,7 +110,7 @@ warnings and evacuation advisories, which, in turn, affect the resident
 agents. There may also be \gls{matsim} agents that do not have a \gls{bdi}
 counterpart. For example, in a taxi modeling application, there may be
 \gls{matsim} agents using the road network, but with no need for
-complex decision-making modeling;hese may exist only within
+complex decision-making modeling; these may exist only within
 \gls{matsim}. 
 
 Figure~\ref{architecture} shows the two parallel systems' basic architecture 
@@ -140,7 +142,7 @@ consists of {\it BDI Actions}\footnote{We call these actions \gls{bdi}
 always initiated by the \gls{bdi} system. Their status field, however, can be
 modified by both systems.  When a \gls{bdi} action such as
 \lstinline{DriveTo(loc)} is decided by the \gls{bdi} agent, the \gls{bdi} system
-sets the status of this action as``INITIATED''. \gls{matsim} will then
+sets the status of this action as ``INITIATED''. \gls{matsim} will then
 set its status to ``RUNNING'', which will probably remain in this state for
 several steps. When the \lstinline{loc} destination is reached,
 the \gls{matsim} routine will set the status to ``PASSED'' and the \gls{bdi}
@@ -238,12 +240,12 @@ SUSPENDED & Temporarily suspended by the \gls{bdi} agent  \\
 
 To manage \gls{bdi} actions, we provide a \lstinline{MatsimAgentManager} class
 responsible for updating \gls{bdi} actions status for all agents.
-At each step, the \lstinline{MatsimAgentManager.updateActions(\ldots)} function
+At each step, the \lstinline{MatsimAgentManager.updateActions(...)} function
   identifies (from the information package supplied by the \gls{bdi} system)
   all agents initiating, aborting, or suspending
   actions. These are the agents which may require their \gls{matsim} plans
-  to be modified.  When an agent undertakes   
-  status ``INITIATED'' action, the action is passed to the agent's action handler 
+  to be modified.  For each agent that has some action with s   
+  status ``INITIATED'', the action is passed to the agent's action handler 
   class \lstinline{MatsimActionHandler} via a call to
   \lstinline{MatsimActionHandler.processAction(agentID, actionID, params)}.
   This function, based on the action, calls an appropriate helper
@@ -254,7 +256,7 @@ At each step, the \lstinline{MatsimAgentManager.updateActions(\ldots)} function
 %
 For example, for a \lstinline{DriveTo} action, a
 \lstinline{processDriveTo(agentID, loc)} function is executed to determine the leg 
-associated with \lstinline{loc} obtain a route using the \gls{matsim} router and
+associated with \lstinline{loc}, obtain a route using the \gls{matsim} router and
 insert this into the \gls{matsim} agent's plan. The standard \gls{matsim} execution then
 follows this plan at each subsequent step. 
 If the \lstinline{processAction} function returns a success
@@ -265,7 +267,7 @@ If the \lstinline{processAction} function returns a success
  Sometimes, a running
   action can also  fail in the \gls{abms} for some reason. For
   instance, a \lstinline{DriveTo(loc)} action could fail due to a
-  road-closure in a bush fire evacuation simulation.
+  road-closure in a bushfire evacuation simulation.
   While this
   functionality is supported by our infrastructure, it has not yet been used
   in the applications we have built with \gls{matsim}. Failing actions will
@@ -285,7 +287,7 @@ Approaching a destination is one example. \gls{matsim} callbacks are used to cap
 information within \gls{matsim}; this is then provided to the \gls{bdi}
 counterpart via our infrastructure. The appropriate \gls{matsim} event is
 caught with
-\\ \lstinline{AgentActivityEventHandler.handleEvent(event-type)}.  The
+ \lstinline{AgentActivityEventHandler.handleEvent(event-type)}.  The
 \lstinline{handleEvent(event-type)} function then first checks whether the
 agent receiving the event is one registered for a percept that
 triggers with this event type, and if so, calls the appropriate function
@@ -328,7 +330,8 @@ This function then uses the \lstinline{query} string received to extract the
 percept type and make a specific function call to obtain and provide the
 results. For example, if an agent \lstinline{agentID} sends a
 \lstinline{queryPercept(agentID, ``RequestLocation agentX'', loc)} query to
-request the location \lstinline{loc} of another agent \lstinline{agentX}, then the
+request the location \lstinline{loc} of some agent \lstinline{agentX}
+(possibly itself), then the
 \lstinline{queryPercept} 
 function will execute the clause:
 \begin{lstlisting}
@@ -350,7 +353,7 @@ Section~\ref{sec:bdi-usage}.
 %
 This structure allows all high-level decision making to be carried out by 
 individual agents, within the \gls{bdi}-system, which is designed and
-optimized for this purpose, for both representation and
+optimized for this purpose with regard to both representation and
 execution. On the \gls{matsim} side, specified functions simply modify the
 agents' \gls{matsim} plans (in parallel, if desired), retaining the standard
 \gls{matsim} simulation execution where each agent just follows its \gls{matsim}
@@ -384,6 +387,7 @@ send the agent location at every step. However, this is unnecessary
 overhead; instead, we send \lstinline{ClosetoDest} as a percept. 
 This requires the \gls{bdi} agent to query its location to evaluate
 whether there are pending jobs whose location necessitates triggering
+some instance of
  \lstinline{GrabJob}.  This gives us an
 example of a percept and a query required in \gls{matsim}. On the right hand
 component in Figure~\ref{taxigptree}, we see four different actions
@@ -397,15 +401,15 @@ The following must usually be done:
 \item every plan trigger which is information from \gls{matsim} must
 be defined as a percept; 
 \item all information required from
-\gls{matsim}, but not a trigger, must be defined either as: a
-percept (and then stored locally) or as a query; 
+\gls{matsim}, that is not a trigger, must be defined either as a
+percept (and then stored locally), or as a query; 
 \item all actions which should be executed in \gls{matsim} must be defined.
 \end{itemize}
 %
 In the rest of this section, we describe exactly what must be provided
 in the \gls{matsim} application files for each of these to work as
 expected. Instructions and examples for the \gls{bdi} application can be
-found in the integration repository at \url{}.
+found in the integration repository (noted at start of chapter).
 
 %\begin{figure}
 %\begin{center}
@@ -434,7 +438,7 @@ calculated. For example, \lstinline{arriveAtDest} is already defined for use as 
 \gls{bdi} percept. 
 %
 If the percept collection function already exists, 
-confirmation is necessary to ensure that the appropriate type agent is
+the developer must ensure that the appropriate agent type is
 registered for this percept within the relevant function.
 For example, in \lstinline{arriveAtDest()} we have:
 \begin{lstlisting}
@@ -474,9 +478,10 @@ event \lstinline{enterLink}, so to add this, we must add the call to
     ``close-to'' link-ID.
 
 In principle, percepts could also be calculated in a function 
-executed after all agents had been stepped. It is very important 
-that the percept is recorded in the percept data
-package for that agent when it occurs. Further work is required to ascertain which
+executed after all agents had been stepped. The important thing is
+that when a percept occurs, 
+it is recorded in the percept data
+package for that agent. Further work is required to ascertain which
 percept collection methods will be most efficient with very large
 numbers of agents.
 
@@ -557,13 +562,13 @@ where the action should be considered FAILED
 and to detect this in a similar way. Alternatively, failure can be
 managed by sending a percept, and having the \gls{bdi} agent abort the
 action as a result\footnote{The simplest way in JACK is to use a
-  maintenance condition relying on a belief modified 
-by a percept.}.
+  maintenance condition relying on a belief that is modified 
+as the result of a percept.}.
 
 The current structure assumes that multiple actions of a single agent
 cannot be executed in parallel (a reasonable assumption for
 \gls{matsim}). It is the responsibility of the \gls{bdi} system to allow only
-one \gls{bdi} action per active agent.
+one active \gls{bdi} action per agent.
 
 Further instructions, as well as examples, can be found in our
 \gls{bdi}-\gls{matsim} integration repository.
@@ -588,13 +593,13 @@ may provide insights to guide decisions.
 \section{Examples}
 \label{sec:bid-examples}
 Here, we describe two different examples of \gls{bdi} agents within
-\gls{matsim}: a bush fire evacuation simulation, where \gls{matsim} is
+\gls{matsim}: a bushfire evacuation simulation, where \gls{matsim} is
 being used because traffic flow is a crucial component in this type of
 evacuation and a taxi application developed as a
 demonstrator for integration of a \gls{bdi} system with \gls{matsim} \citep{ecai}. We 
-compare this approach to incorporating taxis, as
+compare this approach to incorporating taxis with that
 described in Chapter~\ref{ch:dts} for
-incorporating dynamically scheduled vehicles, with the approaches
+incorporating dynamically scheduled vehicles and with the approaches
 to ``within-day replanning'' described in Chapter~\ref{ch:withinday}.
 
 %
@@ -605,10 +610,10 @@ could benefit from a combination of \gls{bdi} agents and agents which evolve usi
 \gls{matsim}'s scoring and replanning, but we have not yet investigated them.
 
 % ===========================================================================
-\subsection{Bush fire Example}
-The bush fire example (currently) involves modeling of residents and
+\subsection{Bushfire Example}
+The bushfire example (currently) involves modeling of residents and
 their decision-making behavior about what to do regarding a nearby
-bush fire. Potential driving activities include picking up children
+bushfire. Potential driving activities include picking up children
 from a school or other facility, checking on neighbors or friends
 and driving to a local or more distant destination, possibly via a
 specified route. Decision making may involve various factors, such as
@@ -616,7 +621,7 @@ time of day, ideas about what other family members are doing,
 warnings and notifications from emergency services, observations of
 neighbors, etc. In one approach, we focused on incorporating
 well-developed and validated actual human decision making models in
-a bush fire situation, developed by a collaborator. Our contribution
+a bushfire situation, developed by a collaborator. Our contribution
 has been to integrate this with \gls{matsim}, using our integration
 framework, to provide data about any traffic-related issues, thus
 providing a more valuable simulation to planners. In our other
@@ -644,9 +649,10 @@ realistically, people would not choose their routes based on global
 knowledge of current congestion; the other was that, regardless of
 congestion, people would not head back into the fire zone. The current
 solution is to use a routing algorithm not accounting for 
-current road speeds, using only static speed limits. Going forward ,one
+current road speeds, using only static speed limits. Going forward, one
 may want to assume some knowledge of congestion (based on radio
-broadcasts or other social media). An interesting future research question: how to best
+broadcasts or other social media). An interesting future research
+question is how to best
 achieve responsibility sharing for realistic behavior between
 \gls{matsim} and the \gls{bdi} decision-making program, on route
 selection. 
