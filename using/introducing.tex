@@ -1,5 +1,5 @@
 \chapter{Introducing MATSim}
-\kaitodo[inline]{read chapter/section}
+%% \kaitodo[inline]{read chapter/section}
 \label{ch:introducing}
 % ##################################################################################################################
 \hfill \textbf{Author:} Andreas Horni, Kai Nagel, Kay W. Axhausen
@@ -101,9 +101,11 @@ efficient, modular, open-source software enabling further development on travel 
 \gls{matsim} is an activity-based, extendable, multi-agent simulation \gls{framework} 
 %toolkit
 %\kai{m.E.\ framework} 
-implemented with 
+implemented in
 %the current version of 
-\gls{java}. It is open-source and can be downloaded from the Internet \citep[][]{MATSIM_Webpage_2015, GitHub_Webpage_2015}. The \gls{framework} is especially designed for large-scale scenarios, meaning that all models' features are stripped down to efficiently handle the targeted functionality; parallelization has also been very important \citep[e.g.,][]{Dobler_TechRep_IVT_2011, Charypar_PhDThesis_2008}. For the network loading simulation, for example, a queue-based model is implemented, omitting very complex and computationally expensive car-following behavior (see Section~\ref{sec:trafficflowmodel}).
+\gls{java}. It is open-source and can be downloaded from the Internet \citep[][]{MATSIM_Webpage_2015, GitHub_Webpage_2015}. The \gls{framework} is 
+%especially 
+designed for large-scale scenarios, meaning that all models' features are stripped down to efficiently handle the targeted functionality; parallelization has also been very important \citep[e.g.,][]{Dobler_TechRep_IVT_2011, Charypar_PhDThesis_2008}. For the network loading simulation, for example, a queue-based model is implemented, omitting very complex and computationally expensive car-following behavior (see Section~\ref{sec:trafficflowmodel}).
 
 At this time, \gls{matsim} is 
 %conceptually 
@@ -136,7 +138,7 @@ into the iterative loop.
 
 A \gls{matsimrun} contains a configurable number of iterations, represented by the loop of Figure~\ref{fig:matsimcycle} and detailed below. 
 %
-It starts with an initial demand arising from the \gls{study} area population's daily activity chains. The modeled persons are called agents in \gls{matsim}. Activity chains are usually derived from empirical data through sampling or discrete choice modeling. A variety of approaches is suitable, as evidenced in the scenarios' chapters (Chapter~\ref{ch:scenarios}). During iterations, this initial demand is optimized. Every agent possesses a memory containing a fixed number of day plans, where each \gls{plan} is composed of a daily activity chain and an associated \gls{score}.  The score can be interpreted as econometric utility (\cf Chapter~\ref{ch:economicEval}).
+It starts with an initial demand arising from the \gls{study} area population's daily activity chains. The modeled persons are called agents in \gls{matsim}. Activity chains are usually derived from empirical data through sampling or discrete choice modeling. A variety of approaches is suitable, as evidenced in the scenarios' chapters (cf.\ Chapter~\ref{ch:scenarios}). During iterations, this initial demand is optimized individually by each agent. Every agent possesses a memory containing a fixed number of day plans, where each \gls{plan} is composed of a daily activity chain and an associated \gls{score}.  The score can be interpreted as econometric utility (\cf Chapter~\ref{ch:economicEval}).
 
 In every iteration, prior to the simulation of the network loading with the \gls{matsim} \emph{\gls{mobsim}} \citep[e.g.,][]{Cetin_PhDThesis_2005}, each agent selects a plan from its memory. This selection is dependent on the plan \emph{scores}, which are computed after each mobsim run, based on the executed plans' performances. A certain share of the agents 
 %$\varphi$ 
@@ -165,7 +167,7 @@ Initial day chains do not have to be very carefully defined for the replanning d
 
 If an agent ends up with too many plans (configurable), the plan with the lowest score (configurable) is removed from the agent's memory. Agents that have not undergone replanning select between existing plans. The selection model is configurable; in many \gls{matsim} investigations, a model generating a logit distribution for plan selection is used.
 
-An iteration is completed by evaluating agents' day experience of the selected day plans (\emph{scoring}). The applied scoring function is described in detail in Chapter \ref{ch:scoring}.
+An iteration is completed by evaluating the agents' experiences with the selected day plans (\emph{scoring}). The applied scoring function is described in detail in Chapter \ref{ch:scoring}.
 
 % ------------
 \createfigure[t]%
@@ -190,7 +192,7 @@ in principle, every module of the framework can be exchanged. \gls{matsim} modul
 % ##################################################################################################################
 \section{MATSim's Traffic Flow Model}
 \label{sec:trafficflowmodel}
-\gls{matsim} provides two internal \glspl{mobsim}: \gls{qsim} and \gls{jdeqsim} and external mobility simulations can be plugged in. Some years ago, the \gls{deqsim} written in \gls{cpp} and described by \citet[][]{Charypar_PhDThesis_2008,%
+\gls{matsim} provides two internal \glspl{mobsim}: \gls{qsim} and \gls{jdeqsim}; in addition, external mobility simulations can be plugged in. Some years ago, the \gls{deqsim} written in \gls{cpp} and described by \citet[][]{Charypar_PhDThesis_2008,%
 %% CharyparEtAl_TRR_2007,%
 CharyparAxhausenEtAl2007Event-DrivenQueueBasedTraffic,%
 %CharyparEtAl_WCTRS_2007,%
@@ -208,7 +210,7 @@ was plugged into \gls{matsim} and frequently used. The multi-threaded \gls{qsim}
 \item macroscopic models, based on flows rather than single traveler units (\eg cars).
 \end{itemize}
 
-As \gls{matsim} is designed for large-scale \glspl{scenario}, it adopts the computationally efficient queue-based approach (see Figure~\ref{fig:queue}). A car entering a network link (\ie a road segment) is added to the tail of the waiting queue. It remains there until the time for traveling the link with free flow has passed and until he or she is at the head of the waiting queue and until the next destination link allows entering. The approach is very efficient, but clearly it comes at the price of reduced resolution, \ie car following effects are not captured.   
+As \gls{matsim} is designed for large-scale \glspl{scenario}, it adopts the computationally efficient queue-based approach (see Figure~\ref{fig:queue}). A car entering a network link (\ie a road segment) from an intersection is added to the tail of the waiting queue. It remains there until the time for traveling the link with free flow has passed and until he or she is at the head of the waiting queue and until the next link allows entering. The approach is very efficient, but clearly it comes at the price of reduced resolution, \ie car following effects are not captured.   
 %
 \createfigure%
 {Traffic flow model}%
@@ -238,14 +240,19 @@ The \gls{matsim} traffic flow model is strongly based on the two link attributes
 %
 %% For scenarios with a population smaller then the full population, say a 10\% sample, however, it needs to be scaled down, since otherwise there will be no spill-back any more.
 
-Flow capacity specifies the outflow capacity of a link, \ie how many travelers can leave the respective link. 
+Flow capacity specifies the outflow capacity of a link, \ie how many travelers can leave the respective link per time step. 
 It is an individual attribute of the link.  
-In current implementations, there is no \emph{maximum} inflow capacity specified.
-The many simulation experiments with \gls{qsim} (and the former \lstinline|queueSimulation|) have shown that neglecting \emph{maximum} inflow capacity does not have a substantial effect, but further reduces model complexity. 
-In the earlier \gls{deqsim} and current \gls{jdeqsim}, a \emph{minimum} inflow capacity can also be specified to capture breakdowns at link entries \citep[][p.~99]{Charypar_PhDThesis_2008}.
+%In current implementations, there is 
+The current implementation of \gls{qsim} has no \emph{maximum} inflow capacity specified.
+%% The many simulation experiments with \gls{qsim} (and the former \lstinline|queueSimulation|) have shown that neglecting \emph{maximum} inflow capacity does not have a substantial effect, but further reduces model complexity. 
+In contrast, in the earlier \gls{deqsim} and current \gls{jdeqsim}, an 
+%\emph{minimum} 
+inflow capacity can also be specified, which may move jams at merges from the end of the first common link, where the \gls{qsim} generates them, upstream to where the links merge and where they plausibly should be \citep[][p.~99]{Charypar_PhDThesis_2008}. 
+% Ich habe obigen das mit der maximum/minimum inflow capacity mal rausgenommen.  Eine minimum inflow capacity wäre meinem Verständnis nach eine, die nicht _unter_schritten werden kann.  Meinem Verständnis nach meint Charypar auf o.g. S.99 aber (auch) eine, die nicht _über_schritten werden kann.
+However, additional data is needed for this, which is often not available.
 
 This basic traffic flow model has been extended with various modules; signals and multiple lane modeling have been added (Chapter~\ref{ch:signalslanes}), 
-backward-moving gaps, as investigated by \citet[][]{Charypar_PhDThesis_2008}, are included in \gls{jdeqsim}, but only available on an \emph{experimental base} for \gls{qsim} (Section\ref{sec:researchavenues-double-queue-mobsim}). 
+backward-moving gaps, as investigated by \citet[][]{Charypar_PhDThesis_2008}, are included in \gls{jdeqsim}, but only available on an \emph{experimental basis} for \gls{qsim} (Section\ref{sec:researchavenues-double-queue-mobsim}). 
 Interactions between different modes are described in Section~\ref{sec:using-othermodesthancar} and Chapter~\ref{ch:multimodalsim}. 
 % \ah{This is not correct anymore as far as I know. signals+lanes contrib and qsim passingQ}
 %Limitations of the traffic flow model concern link dynamics (in particular overtaking and slow drivers) 
@@ -270,7 +277,7 @@ Interactions between different modes are described in Section~\ref{sec:using-oth
 %
 %\kai{Nett.  Gibt es eine Quelle für den ``co-evolutionary algorithm''?} \ah{fürs Bild? Hab ich mir selber aus den Fingern gesogen. Für Co-EAs allgemein?} \thibaut{du kannst \cite{PopoviciEtAl_2012} %gucken, find ich sehr gut. zum mindesten benutze ich immer diese in meine Papers}
 %
-As illustrated in Figure~\ref{fig:ea}, the \gls{matsim} equilibrium is searched by a \emph{\index{co-evolutionary algorithm}} \citep[see e.g.,][]{PopoviciEtAl_2012}. These \glspl{algorithm} co-evolve different species subject to interaction (\eg competition). In \gls{matsim}, individuals are represented by their plans, where a person represents a species. With the co-evolutionary algorithm, optimization is performed in terms of agents' plans , \ie across the whole daily plan of activities and travel. It achieves more than the standard traffic flow \glspl{equilibrium}, which ignores activities. Eventually, an equilibrium is reached, subject to constraints, where the agents cannot further improve their plans unilaterally. 
+As illustrated in Figure~\ref{fig:ea}, the \gls{matsim} equilibrium is searched for by a \emph{\index{co-evolutionary algorithm}} \citep[see, e.g.,][]{PopoviciEtAl_2012}. These \glspl{algorithm} co-evolve different species subject to interaction (\eg competition). In \gls{matsim}, individuals are represented by their plans, where a person represents a species. With the co-evolutionary algorithm, optimization is performed in terms of agents' plans , \ie across the whole daily plan of activities and travel. It achieves more than the standard traffic flow \glspl{equilibrium}, which ignores activities. Eventually, an equilibrium is reached, subject to constraints, where the agents cannot further improve their plans unilaterally. 
 
 %Strictly speaking, 
 Note that there is a difference between application of an evolutionary algorithm and a \emph{co}-evolutionary algorithm. An evolutionary algorithm would lead to a system optimum, as optimization is applied with a global (or population) fitness function. Instead, the co-evolutionary algorithm leads to a (stochastic) user \gls{equilibrium}, as optimization is performed in terms of \emph{individual} scoring functions and within an agent's set of plans. 

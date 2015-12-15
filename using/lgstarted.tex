@@ -37,14 +37,18 @@ If you prefer to use the more up-to-date---but less stable---\emph{nightly build
 \begin{itemize}\styleItemize
 \item the \gls{matsim} \gls{jar} file (usually tagged with the revision number \lstinline|MATSim_ryyyy.jar|), and
 \item the required external \glspl{library} (\lstinline|MATSim_libs.zip|). 
-Unzipping this collection of 3rd-party libraries, you should then get a directory \lstinline|libs|, with several \gls{jar} files inside. If the directory \lstinline|libs| is in the same directory as the \gls{matsim} \gls{jar} file, the libraries are found automatically and don't have to be added manually to the \lstinline|classpath|.
+Unzipping this collection of 3rd-party libraries, you should then get a directory \lstinline|libs|, with several \gls{jar} files inside. If the directory \lstinline|libs| is in the same directory as the \gls{matsim} \gls{jar} file, the libraries are found automatically and do not have to be added manually to the \lstinline|classpath|.
 \end{itemize}
 Continue with Section~\ref{sec:runexample}.
+
+A relatively new feature is that one can use \gls{matsim} as a \gls{maven} plugin; both release versions and snapshots are available.  See again \url{http://matsim.org/downloads} for more information.  For someone who has used \gls{maven} before, this is possibly the best option.
+%
+In this case, one may use the simple Java programming approach of Sec.~\ref{sec:writing-scripts-java} to get started.
 
 % ================================================================================================
 \subsection{Running MATSim}
 \label{sec:runexample}
-When this book was written, the nightly built \gls{matsim} \gls{jar} file was executed by double-clicking. A minimal \gls{gui}, as shown in Figure~\ref{fig:matsimgui}, opens and the \gls{matsimrun} can be configured and started. 
+When this book was written, the nightly built \gls{matsim} \gls{jar} file could be started by double-clicking. A minimal \gls{gui}, as shown in Figure~\ref{fig:matsimgui}, opens and the \gls{matsimrun} can be configured and started. 
 This feature will appear in the releases, starting with version~0.8.
 %
 % ----------
@@ -56,7 +60,7 @@ This feature will appear in the releases, starting with version~0.8.
 {}
 % ----------
 
-For the release~0.6, \gls{matsim} does not provide a \gls{gui}; thus, you must be able to handle and access a command line tool.
+For the release~0.7, \gls{matsim} does not provide a \gls{gui}; thus, you must be able to handle and access a command line tool.
 %\footnote{%
 %%
 %\parskip0.3\baselineskip
@@ -117,7 +121,7 @@ Such a command consists of multiple parts:
 %So was wie (2) müsste es m.E. sein, um eine didaktisch sinnvolle Einteilung zu haben. Aber auch hier, muss das Modules-Kapitel auseinandergerissen werden. Wir sollten wohl noch ein Using-Kapitel einfügen mit dem Titel "Configuring MATSim" o.ä., und da alles reinpacken, was momentan im Modules-Kapitel nur über Config angesprochen werden kann.
 %} \ah{Kaüitel eingefügt}
 
-All configuration parameters are simple pairs of a parameter \lstinline|name| and a parameter \lstinline|value|. The parameter are grouped into logical groups; one group has settings related to the \lstinline|Controler|, like the number of \glspl{iteration}, or another group has settings for the \gls{simulation}, \eg end time of the simulation. As shown in Chapter~\ref{ch:modules}, numerous \gls{matsim} modules can be added to \gls{matsim} and configured by specifying the respective configuration file section.
+All configuration parameters are simple pairs of a parameter \lstinline|name| and a parameter \lstinline|value|. The parameters are grouped into logical groups; one group has settings related to the \lstinline|Controler|, like the number of \glspl{iteration}, or another group has settings for the \gls{mobsim}, \eg end time of the 'gls{mobsim}. As shown in Chapter~\ref{ch:modules}, numerous \gls{matsim} modules can be added to \gls{matsim} and configured by specifying the respective configuration file section.
 
 The list of available parameters and valid parameter values may vary from release to release. Although we try to keep this stable,
 %due to
@@ -126,7 +130,7 @@ software changes, mainly new features, may cause settings to change. For a list 
 java -cp /path/to/matsim.jar org.matsim.run.CreateFullConfig fullConfig.xml
 \end{lstlisting}
 %
-This command will create a new \gls{configfile} \lstinline|fullConfig.xml|, containing all available parameters--along with their default values, making it easy to see what settings are available. To use and modify specific settings, lines with their corresponding parameters can be copied to the \gls{configfile}, specific to the \gls{scenario} to be simulated and the parameter values to be modified in that file. 
+This command will create a new \gls{configfile} \lstinline|fullConfig.xml|, containing all available parameters---along with their default values, making it easy to see what settings are available. To use and modify specific settings, lines with their corresponding parameters can be copied to the \gls{configfile}, specific to the \gls{scenario} to be simulated, and the parameter values can be modified in that file. 
 
 A fairly minimal \gls{configfile} contains the following information:
 \begin{xml}
@@ -231,7 +235,7 @@ could contain approximately the following information:
 \end{xml}
 For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (\cf Section~\ref{sec:settingUpMatsim}).
 
-Each element has an identifier \lstinline|id|. Nodes are described by an \lstinline|x| and a \lstinline|y| coordinate value. Links have more features; the \lstinline|from| and \lstinline|to| attribute reference nodes and describe network geometry. Additional attributes describe traffic-related link aspects:
+Each element has an identifier \lstinline|id|. Nodes are described by an \lstinline|x| and a \lstinline|y| coordinate value. Links have more features; the \lstinline|from| and \lstinline|to| attributes reference nodes and describe network geometry. Additional attributes describe traffic-related link aspects:
 %network:
 \begin{itemize}\styleItemize
     \item the \lstinline|length| of the link, typically in meters (see Section~\ref{sec:unitsconventions}).
@@ -241,7 +245,8 @@ Each element has an identifier \lstinline|id|. Nodes are described by an \lstinl
     \item the list of \lstinline|modes| allowed on the link. This is a comma-separated list, \eg \lstinline|modes="car, bike, taxi"|.
 \end{itemize}
 %Note that
-All links are uni-directional. If a road can be traveled in both directions, two links must be defined with alternating \lstinline|to| and \lstinline|from| attributes (see links with id~2 and 3 in the listing above). Then, the network can be seen as a directed graph. 
+All links are uni-directional. If a road can be traveled in both directions, two links must be defined with alternating \lstinline|to| and \lstinline|from| attributes (see links with id~2 and 3 in the listing above). 
+%% Then, the network can be seen as a directed graph. 
 
 % -----------------------------------------------------------------------
 \subsubsection{\lstinline|population.xml|}
@@ -249,7 +254,7 @@ All links are uni-directional. If a road can be traveled in both directions, two
 % ........................................................
 \paragraph{File Format}
 
- \gls{matsim} travel demand is described by the agents' day plans. The full set of agents is also normally defined as the population, hence the file name \lstinline|population.xml|. Alternatively, \lstinline|plans.xml| is also commonly used in \gls{matsim}, as the population file essentially contains a list of day plans.
+ \gls{matsim} travel demand is described by the agents' day plans. The full set of agents is also called the population, hence the file name \lstinline|population.xml|. Alternatively, \lstinline|plans.xml| is also commonly used in \gls{matsim}, as the population file essentially contains a list of day plans.
 
 The population contains the data in a hierarchical structure, as shown in the following example.  This example illustrates the data structure; minimal input files need less information, as illustrated later.
 %% <?xml version="1.0" encoding="utf-8"?> 
@@ -278,20 +283,25 @@ The population contains the data in a hierarchical structure, as shown in the fo
 \end{xml}
 For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (\cf Section~\ref{sec:settingUpMatsim}).
 
-The population contains a list of persons, each person contains a plan list and each plan contains a an activities and legs list.
+The population contains a list of persons, each person contains a list of plans, and each plan contains a list of activities and legs.
 
-Exactly one \gls{plan} per person is marked as selected. Each agent's selected plan is executed by the mobility simulation. During the \gls{replanning} stage, a different plan might be marked as selected. A \gls{plan} can contain a score as attribute. The score is calculated and stored in the plan after its execution by the mobility simulation during the scoring stage.
+Exactly one \gls{plan} per person is marked as selected. Each agent's selected plan is executed by the mobility simulation. During the \gls{replanning} stage, a different plan might become selected. A \gls{plan} can contain a score as attribute. The score is calculated and stored in the plan after its execution by the mobility simulation during the scoring stage.
 
-The list of activities and legs in each plan describe each agent's planned actions. Activities are assigned  a type and have---except for the last activity in a day plan---a defined end time. There are some exceptions, where activities have a duration instead of an end time. Such activities are often automatically generated by routing algorithms and are not described in this book. To describe the location where an activity takes place, the activity is either assigned a coordinate by giving it an \lstinline|x| and \lstinline|y| attribute value, or it has a link assigned, describing from which link the activity can be reached. Because the simulation requires a link attribute, \lstinline|Controler| calculates the nearest link for a given coordinate, for a missing attribute; only a \lstinline|x| and \lstinline|y| coordinate value is given for any activity.
+The list of activities and legs in each plan describe each agent's planned actions. Activities are assigned  a type and typically have---except for the last activity in a day plan---a defined end time. There are some exceptions where activities have a duration instead of an end time. Such activities are often automatically generated by routing algorithms and are not described in this book. To describe the location where an activity takes place, the activity is either assigned a coordinate by giving it an \lstinline|x| and \lstinline|y| attribute value, or it has a link assigned, describing from which link the activity can be reached. Because the simulation requires a link attribute, \lstinline|Controler| calculates the nearest link for a given coordinate when the link attribute is missing.
+%% , for a missing attribute; 
+%
+%% only a \lstinline|x| and \lstinline|y| coordinate value is 
+%% given for any activity.
+% not sure what this means. kai, dec'15
 
-A \gls{leg} describes how agents plan to travel from one location to the next; each \gls{leg} must have a transport mode assigned. Optionally, legs may have an attribute, \lstinline|trav_time|, describing expected travel time for the leg. For a leg to be simulated, it must contain a route. The format of a route depends on the mode of a leg. For car-legs, the route lists the links the agent has to traverse in the given order, while for transit-legs, information about stop locations and expected transit services are stored.
+A \gls{leg} describes how an agent plans to travel from one location to the next; each \gls{leg} must have a transport mode assigned. Optionally, legs may have an attribute, \lstinline|trav_time|, describing the expected travel time for the leg. For a leg to be simulated, it must contain a route. The format of a route depends on the mode of a leg. For car-legs, the route lists the links the agent has to traverse in the given order, while for transit-legs, information about stop locations and expected transit services are stored. \gls{matsim} automatically computes initial routes for initial plans that do not contain them.
 
-An agent starts a leg directly after the previous activity (or leg) has ended. Depending on the mode, the \gls{mobsim} might handle the agent differently. By default, car- and transit-legs are well-supported by the \gls{mobsim}. If the \gls{mobsim} encounters a mode it does not know, it defaults to \gls{teleportation}. In this case, an agent is removed from the simulated reality and re-inserted at its target location after the leg's expected travel time has passed.
+An agent starts a leg directly after the previous activity (or leg) has ended.  The handling of the agent in the \gls{mobsim} depends on the mode. By default, car- and transit-legs are well-supported by the \gls{mobsim}. If the \gls{mobsim} encounters a mode it does not know, it defaults to \gls{teleportation}. In this case, an agent is removed from the simulated reality and re-inserted at its target location after the leg's expected travel time has passed.
 
 % ........................................................
 \paragraph{A Minimal Population File}
 
-The population data format is one of the most central data structures in \gls{matsim} and might appear a bit overwhelming at first. Luckily, to get started, it is only necessary to know only a small subset.  A population file needs, approximately,  the following information:
+The population data format is one of the most central data structures in \gls{matsim} and might appear a bit overwhelming at first. Luckily, to get started, it is only necessary to know only a small subset.  A population file needs, approximately,  only the following information:
 %% This listing shows what a minimal population file could look like. 
 %% <?xml version="1.0" encoding="utf-8"?> 
 %% <!DOCTYPE population SYSTEM "http://www.matsim.org/files/dtd/population_v5.dtd"> 
@@ -313,7 +323,7 @@ The population data format is one of the most central data structures in \gls{ma
 \end{xml}
 For a working example, check the \lstinline{examples/equil} directory in the \gls{matsim} directory tree (\cf Section~\ref{sec:settingUpMatsim}).
 
-The following items can be simplified:
+The following items can be used for simplification:
 \begin{itemize}\styleItemize
 \item Each person needs exactly one plan.
 \item The plan does not have to be selected, or have a score.
@@ -328,7 +338,7 @@ When a simulation is started, \gls{matsim}'s \lstinline|Controler| will load suc
 \label{sec:outputdata}
 \gls{matsim} creates
 % significant
-output data, which can be used to analyze results, but also to monitor the current simulation setup's progress. Some of the files summarize a complete \gls{matsimrun}, while others are created for a specific \gls{iteration} only. The first files go directly to the output folder's top level, which can be specified in the \lstinline|controler| section of the \gls{configfile}. The other files are stored in iteration-specific folders \lstinline|ITERS/it.{iteration number}|, continuously created in the output folder. For some files (typically for  large ones, such as population), output frequency can be specified in the \gls{configfile}. They go to the respective iteration folder. The files summarizing the complete \gls{matsimrun} are built on the fly, \ie after every iteration, currently computed iteration values are stored, allowing continuous monitoring of the run. Some files are created by default (such as the score statistics files); others need to be triggered by a respective configuration file section (such as count data files).
+output data, which can be used to analyze results, but also to monitor the current simulation setup's progress. Some of the files summarize a complete \gls{matsimrun}, while others are created for a specific \gls{iteration} only. The first type of files goes directly to the output folder's top level, which can be specified in the \lstinline|controler| section of the \gls{configfile}. The other files are stored in iteration-specific folders \lstinline|ITERS/it.{iteration number}|, continuously created in the output folder. For some files (typically for  large ones, such as population), the output frequency can be specified in the \gls{configfile}. They then go only to the respective iteration folders. The files summarizing the complete \gls{matsimrun} are built on the fly, \ie after every iteration, currently computed iteration values are stored, allowing continuous monitoring of the run. Some files are created by default (such as the score statistics files); others need to be triggered by a respective configuration file section (such as count data files).
 
 %\kai{Sollten wir (1) den Unterschied zwischen ``main'' und ``ITERS'' directory beschreiben, und (2) darauf hinweisen, wo die folgenden Dateien jeweils sind?}
 %\ah{sollte jetzt erledigt sein}
@@ -337,19 +347,19 @@ The following output files are continuously built up to summarize the complete r
 \begin{description}\styleDescription
 
   \item[Log File:]
-During a \gls{matsimrun}, a log file is printed containing information you might need later for your analyses, or in case a run has crashed, for any reason. 
+During a \gls{matsimrun}, a log file is printed containing information you might need later for your analyses, or in case a run has crashed.
 
 \item[Warnings and Errors Log File:]
-Sometimes, \gls{matsim} identifies problems in the simulation or its configuration; it will then write warning and error messages to the log file. Because the log file contains so much information, these warnings can be overlooked. For this reason, a separate log file is generated in a run output directory, containing only warnings and error messages. It is important to check this file during/after a run for updates on any major problems.
+Sometimes, \gls{matsim} identifies problems in the simulation or its configuration; it will then write warning and error messages to the log file. Because the log file contains so much information, these warnings can be overlooked. For this reason, a separate log file is generated in the run output directory, containing only warnings and error messages. It is important to check this file during/after a run for possible problems.
 
 \item[Score Statistics:]
-Score statistics are available as picture (\lstinline|scorestats.png|), as well as a text file (\lstinline|scorestats.txt|). They show the average best, worst, executed and overall average of all an agent's plans for every iteration. An example score plot is shown in Figure~\ref{fig:scoreprogress}.
+Score statistics are available as picture (\lstinline|scorestats.png|), as well as a text file (\lstinline|scorestats.txt|). They show the average best, worst, executed and overall average of all agents' plans for every iteration. An example score plot is shown in Figure~\ref{fig:scoreprogress}.
 
 \item[Leg Travel Distance Statistics:]
 Leg travel distance statistics (files \lstinline|traveldistancestats.png| and \lstinline|traveldistancestats.txt|) are comparable to score statistics, but instead, they plot travel distance. 
 
 \item[Stopwatch:]
-The stopwatch file (\lstinline|stopwatch.txt|) contains the computer time (so-called wall clock time) of actions like replanning or execution of mobility simulation for every iteration. This data might be helpful for performance analyses (\eg how long does replanning take compared to the mobility simulation?).
+The stopwatch file (\lstinline|stopwatch.txt|) contains the computer time (so-called wall clock time) of actions like replanning or the execution of the \gls{mobsim} for every iteration. This data is helpful for computational performance analyses---\eg how long does replanning take compared to the mobility simulation?
 
 \end{description}
 
@@ -359,11 +369,14 @@ The stopwatch file (\lstinline|stopwatch.txt|) contains the computer time (so-ca
 The following output files are created for specific iterations:
 \begin{description}\styleDescription
 
-\item[Events:] Every action in the simulation is recorded as a so-called \gls{matsim} \gls{event}, be it an activity start or change of network link. Each \gls{event} hosts one or multiple attributes. By default, the time when the \gls{event} occurred is included. Additionally, information, like the ID of the agent triggering the event, or the link ID where the \gls{event} occurred, could be included. Also by default, the \gls{matsim} simulation module creates a so-called events file in every 10th iteration, containing every \gls{event}  created by the simulation. The events file is thus an important base for post-analyses, like the visualizers. Events are discussed in detail in Section~\ref{sec:events-extension-point}.
+\item[Events:] Every action in the simulation is recorded as a so-called \gls{matsim} \gls{event}, be it an activity start or change of network link. Each \gls{event} possesses one or multiple attributes. By default, the time when the \gls{event} occurred is included. Additionally, information like the ID of the agent triggering the event, or the link ID where the \gls{event} occurred, could be included. 
+%% Also by default, the \gls{matsim} simulation module creates a so-called events file in every 10th iteration, containing every \gls{event}  created by the simulation. 
+The 
+events file is an important base for post-analyses, like the visualizers. Events are discussed in detail in Section~\ref{sec:events-extension-point}.
 
 \item[Plans:] At configurable iterations, the current state of the population, with the agents' plans, is printed.
 %
-Final iteration's plans 
+The final iteration's plans 
 %and events % nicht per default. kai, jan'15
 are also generated on the top level of the output folder.
 
@@ -383,7 +396,7 @@ For each iteration, a \gls{trip} durations text file (\eg \lstinline|1.tripdurat
 
 % ===============================================================================================
 \subsection{An Example Scenario}
-The \gls{matsim} release is shipped with an example scenario named \lstinline|equil| in the folder \lstinline|examples/equil|, containing these files: \lstinline|config.xml|, \lstinline|network.xml|, \lstinline|plans100.xml|, and \lstinline|plans2000.xml.gz|, containing, respectively, 100 and 2000\,persons with their day plans, using car mode only. A tiny population containing only 2\,persons (\lstinline|plans2.xml|), one using public transport, the other using car mode, is also provided. An example for count data is also found in the folder (\lstinline|counts100.xml|). 
+The \gls{matsim} release is shipped with an example scenario named \lstinline|equil| in the folder \lstinline|examples/equil|, containing these files: \lstinline|config.xml|, \lstinline|network.xml|, \lstinline|plans100.xml|, and \lstinline|plans2000.xml.gz|, containing, respectively, 100 and 2000~persons with their day plans, using car mode only. A tiny population containing only 2\,persons (\lstinline|plans2.xml|), one using public transport, the other using car mode, is also provided. An example for count data is also found in the folder (\lstinline|counts100.xml|). 
 
 %% or trips with taxi mode is also provided (\lstinline|plans-w-taxi.xml|). 
 %% A tolls file can be used for road pricing scenarios not discussed here (\lstinline|toll.xml|).
@@ -391,9 +404,10 @@ The \gls{matsim} release is shipped with an example scenario named \lstinline|eq
 %\kai{Habe da neulich, als Resultat einer Diskussion, etwas ausgedünnt.  Müssen wir ggf.\ anpassen, aber m.E.\ stimmt es so nun.}
 %\ah{https://matsim.atlassian.net/browse/MATSIM-286}
 
-One file also exists, with a demand of 
+%% One file also exists, with a demand of 
 %exactly 
 % KISS.  kai, jan'15
+In addition, there is also a file with
 100~\emph{trips} (\lstinline|plans100trips.xml|), \ie demand going only from one location to another, using a \lstinline$dummy$ activity type at each end.  This is provided to show that \gls{matsim} can also be run as a fully trip-based approach,without considering any activities. Clearly, it loses some of its expressiveness, but the basic concepts, including route and even departure time adaptation, still work in exactly the same way.
 
 The scenario network is shown in Figure~\ref{fig:equil}.
@@ -407,12 +421,12 @@ The scenario network is shown in Figure~\ref{fig:equil}.
 {}
 % ----------
 
-The following lines explain the scenario by picking and discussing most important sections from the \gls{configfile} \lstinline|config.xml|.
+The following lines explain the scenario by picking and discussing the most important sections from the \gls{configfile} \lstinline|config.xml|.
 
 
-\paragraph{"strategy" Section of the \protect\gls{configfile}}
+\paragraph{"strategy" section of the \protect\gls{configfile}}
 
-As shown below, this scenario uses replanning. 10\,\% of the agents reroute their current route (module \lstinline|ReRoute|). The remaining 90\,\% select their highest score plan for re-execution in the current iteration (module \lstinline|BestScore|). Plans are deleted from the agent's memory if it is full, defined by \lstinline|maxAgentPlanMemorySize|. By default, the plan with the lowest score is removed, while this is configurable and currently being
+As shown in the \gls{configfile} excerpt below, this scenario uses replanning. 10\,\% of the agents reroute their current route (module \lstinline|ReRoute|). The remaining 90\,\% select their highest score plan for re-execution in the current iteration (module \lstinline|BestScore|). Plans are deleted from the agent's memory if it is full, defined by \lstinline|maxAgentPlanMemorySize|. By default, the plan with the lowest score is removed; this is configurable and currently being
 %intense % kein funding. kai, jan'15
 researched (see Section~\ref{sec:choicesets}).
 %
@@ -421,14 +435,15 @@ researched (see Section~\ref{sec:choicesets}).
    <param name="maxAgentPlanMemorySize" value="5" /> <!-- 0 means unlimited -->
 
    <parameterset type="strategysettings" >
-      <param name="strategyName" value="SelectExpBeta" />
-      <param name="weight" value="0.9" />
-   </parameterset>
-
-   <parameterset type="strategysettings" >
       <param name="strategyName" value="ReRoute" />
       <param name="weight" value="0.1" />
    </parameterset>
+
+   <parameterset type="strategysettings" >
+      <param name="strategyName" value="BestScore" />
+      <param name="weight" value="0.9" />
+   </parameterset>
+
 </module>
 \end{xml}
 
@@ -436,9 +451,9 @@ researched (see Section~\ref{sec:choicesets}).
 %% \kai{I think there is a better syntax for the above now (without the numbering); should we use that?}
 %% \ah{ersetzt}
 
-\paragraph{"planCalcScore" Section of the \protect\gls{configfile}}
+\paragraph{"planCalcScore" section of the \protect\gls{configfile}}
 
-The section \lstinline|planCalcScore| defines parameters used for scoring, explained in Chapter~\ref{ch:scoring}. As seen in the example, the two activity types \lstinline|h| (home) and \lstinline|w| (work), are specified.  All activity types contained in the population file (\cf Section~\ref{sec:lgstarted-population-file}) must be defined in the \lstinline{planCalcScore} section of the \gls{configfile}.
+The section \lstinline|planCalcScore| defines parameters used for scoring, explained in Chapter~\ref{ch:scoring}. As seen in the example, two activity types---\lstinline|h| (home) and \lstinline|w| (work)---are specified.  All activity types contained in the population file (\cf Section~\ref{sec:lgstarted-population-file}) must be defined in the \lstinline{planCalcScore} section of the \gls{configfile}.
 \begin{xml}
 <module name="planCalcScore" >
    <parameterset type="activityParams" >
@@ -452,7 +467,7 @@ The section \lstinline|planCalcScore| defines parameters used for scoring, expla
 </module>
 \end{xml}
 
-\paragraph{"controler" Section of the \protect\gls{configfile}}
+\paragraph{"controler" section of the \protect\gls{configfile}}
 
 The scenario is run for 10\,iterations, writes the output files to \lstinline|./output/equil| (Section~\ref{sec:outputdata}) and uses \gls{qsim} as the \gls{mobsim} (more on \glspl{mobsim} in Section~\ref{sec:trafficflowmodel}, \ref{sec:using-mobsims} and \ref{sec:extending-qsim}).
 \begin{xml}
@@ -468,14 +483,14 @@ The scenario is run for 10\,iterations, writes the output files to \lstinline|./
 
 \paragraph{Visualization}
 
-Simulation results can be comfortably analyzed, using one of the visualizers, \gls{via} (Chapter~\ref{ch:via}) or \gls{otfvis} (Chapter~\ref{ch:otfvis}).
+Simulation results can be visualized with \gls{via} (Chapter~\ref{ch:via}) or \gls{otfvis} (Chapter~\ref{ch:otfvis}).
 
 % ===============================================================================================
 \subsection{Units, Conventions, and Coordinate Systems}
 \label{sec:unitsconventions}
 % ----------------------------------------------------------------------------
 \subsubsection{Units}
-\gls{matsim} tries to make as few assumptions about actual units as possible, but it is sometimes necessary to estimate. In general, \gls{matsim} expects similar values (\eg all distances) to be in the same unit wherever they are used. In the following short overview, the most important (expected) units are listed.
+\gls{matsim} tries to make as few assumptions about actual units as possible, but it is sometimes necessary for certain estimates. In general, \gls{matsim} expects similar types of variables (\eg all distances) to be in the same unit wherever they are used. In the following short overview, the most important (expected) units are listed.
 
 % .......................................................
 \paragraph{Distance}

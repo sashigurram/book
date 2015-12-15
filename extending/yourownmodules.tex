@@ -81,6 +81,8 @@ The author of an extension can subclass the \lstinline|ConfigGroup| class to pro
 \lstinline|ReflectiveConfigGroup|, which you can use if you want to define the mapping of named parameters to accessors using \gls{java} annotations.  
 %% \kaitodo{See ... for an example.}
 
+See \url{matsim.org/javadoc} $\to$ main distribution $\to$ \lstinline{RunReflectiveConfigGroup} for an example.
+
 % =========================================================================================
 \subsection{ObjectAttributes and Customizable}
 \label{sec:objectAttributes-and-customizable}
@@ -92,8 +94,6 @@ where \lstinline{id} is the object's \gls{id}, \lstinline{attribName} is the nam
 
 Importantly, the package provides readers and writers for such attributes.  It is thus possible for additional code to, say, generate additional attributes by preprocessing, write them to file, and read them back for every run.  That approach is used, for example, by the Gauteng scenario (Chapter~\ref{ch:gauteng}) to pre-allocate e-tag ownership to persons.
 
-For additional information see the \lstinline{ObjectAttributes} class under \url{http://matsim.org/javadoc} $\to$ main distribution.
-
 Note that there is currently no simple way to similarly attach information to data types that do not have an \gls{id}.  This is, for example, the case with plans, activities, or legs, which are contained inside a data type with an \gls{id} (the person data type), but which do not possess an \gls{id} of their own and are therefore not addressable by \lstinline{ObjectAttributes}.  Some of these non-identifiable data types implement the \gls{java} interface \lstinline{Customizable}, to which additional material can be attached by a syntax of type
 \begin{lstlisting}
 plan.getCustomAttributes.put("myAttribName",myAttribValue) ;
@@ -101,12 +101,16 @@ plan.getCustomAttributes.put("myAttribName",myAttribValue) ;
 For additional information, see the \lstinline{Customizable} interface under \url{http://matsim.org/javadoc} $\to$ main distribution.
 Note that information contained in \lstinline{Customizable} is not considered standard information by \gls{matsim}.  It is not written to file when writing the corresponding container, it is in consequence not read from file, and it is undefined if it is copied when copying the data object (e.g.\ when cloning plans for the evolutionary algorithm).---This is the status quo; the \gls{matsim} team is thinking about better solutions.
 
+Please check the documentation of \lstinline{ObjectAttributes}  (see~\url{http://matsim.org/javadoc} $\to$ main distribution) for more details and pointers to examples.
+
 % =========================================================================================
 \subsection{Scenario Element}
 \label{sec:scenario-extension-point}
 The object-oriented in-memory database which holds the \lstinline|Person| objects with their plan memories is accessible via the \lstinline|Population| interface. The \lstinline|Network| interface gives access to the traffic network graph, consisting of links and nodes. There is a \lstinline|TransitSchedule| interface which represents the public transit schedule. Your own modeling tasks may need an additional data container like these. We call them scenario elements. The freight carrier population of the freight \gls{extension} described in Section~\ref{sec:carriers} is a typical example. 
 
 \lstinline|Scenario| is the interface which ties all scenario elements together. You can add your own named scenario element to the \lstinline|Scenario| at startup, for example in a \lstinline|StartupListener|. All standard scenario elements are populated from \gls{xml} files at startup, but your own scenario elements could just as well be interfaces to an external relational database.
+
+See \url{http://matsim.org/javadoc} $\to$ main distribution $\to$ \lstinline{RunScenarioElementExample} for an example.  Note, however, that in the meantime the injection framework may have become a better alternative.
 
 % =========================================================================================
 \subsection{ControlerListener: Handling Controler Events}
@@ -151,6 +155,9 @@ public class MyControlerListener implements StartupListener {
 %% \ah{Habe das noch ein wenig ergänzt, mit Hilfe von \url{http://www.matsim.org/node/602}. Please check.}
 %% \kaitodo{check}
 
+Please check the documentation of \lstinline{ControlerListener} (see~\url{http://matsim.org/javadoc} $\to$ main distribution) for more details and pointers to examples.
+
+
 
 % =========================================================================================
 \subsection{Mobsim Events}
@@ -190,12 +197,12 @@ The scoring of the executed plans makes use of events to find out how much time 
 at activities or for traveling. Some \gls{replanning} modules might make use of \glspl{event} as well: The router for example can use the information contained in events to figure out which links are jammed at certain times and route agents around that jam when creating new plans.
 
 % -----------------------------------------------------------------------------
-\subsubsection{Handling Mobsim Events}
+\paragraph*{Handling Mobsim Events}
 \gls{matsim} extensions can watch the \gls{mobsim} by interpreting the stream of \glspl{event}. This is done by implementing the \lstinline|EventHandler| interface and registering the implementation with the framework. The lifecycle of an \lstinline|EventHandler| can be chosen by the developer. Normally, an \lstinline|EventHandler| lives as long as the simulation run.
 It is notified before the beginning of each new iteration so that its state can be reset to listen to a new iteration. This pattern can be used to collect information over all iterations. But if the purpose of an \lstinline|EventHandler| is to make a calculation based on one single iteration, it may be more natural to create a new \lstinline|EventHandler| instance for each iteration, query it for its result and discard it after the iteration finishes. This can be done in a \lstinline|ControlerListener|.
 
 % -----------------------------------------------------------------------------
-\subsubsection{Producing Events}
+\paragraph*{Producing Events}
 One can extend the \gls{matsim} event model by extending the \lstinline|Event| class to define own event types. \Glspl{event} can be produced from all places in the code which are executed during the running \gls{mobsim}, and in particular from other \lstinline|EventHandler| instances. Assume for example you want to analyze left-turns. A good starting point would be to specify a \lstinline|LeftTurnEvent| class, and produce an instance of this class whenever a vehicle does a left-turn. You may do this from a class which is a \lstinline|LinkLeaveEventHandler| as well as a \lstinline|LinkEnterEventHandler|. 
 A \lstinline|LinkLeaveEvent| is produced every time a vehicle leaves a road segment, and a \lstinline|LinkEnterEvent| is produced when it enters the next road segment. Pairing each \lstinline|LinkLeaveEvent| with the next \lstinline|LinkEnterEvent| for the same vehicle gives a model for a vehicle crossing a node. At this point, your code would look at the road network model to determine if this was a left-turn, and if so, produce a \lstinline|LeftTurnEvent|.
     
@@ -206,13 +213,16 @@ Note that \lstinline|EventHandler| and \lstinline|MobsimListener| instances may 
 The \gls{framework} guarantees that 
 the methods of an \lstinline|EventHandler| instance are called sequentially, but two different instances may run on different threads of execution. Access to shared data must be synchronized externally. Whenever possible, different \lstinline|EventHandler| instances should only communicate through events.
 
+\paragraph*{Example} Please check the documentation of \lstinline{MobsimListener} (see~\url{http://matsim.org/javadoc} $\to$ main distribution) for more details and pointers to examples.
+
+
 % =========================================================================================
 \subsection{TripRouter}
 \label{sec:router-extension-point}
 A \lstinline{TripRouter} is a service object providing methods to generate \emph{trips} between locations, given a (main) mode, a departure time and a \lstinline{Person}. A trip is a sequence of plan elements representing a movement. It typically consists of a single \glspl{leg} (\lstinline{Leg} objects), or of a sequence of \glspl{leg} with ``\emph{stage activities}'' in between. For instance, public transport trips contain \lstinline{pt interaction} activities, representing changes of vehicles in public transport trips.
 
 % ----------------------------------------------------------------
-\subsubsection{Using the Router}
+\paragraph*{Using the Router}
 A \lstinline{TripRouter} instance provides a few methods to work with trips, namely
 \begin{itemize}\styleItemize
 	\item Compute a route for a given mode and \gls{od} pair, for a \lstinline{Person} with a specific departure time
@@ -223,23 +233,31 @@ A \lstinline{TripRouter} instance provides a few methods to work with trips, nam
 Please check the documentation of the \lstinline{TripRouter} class (see~\url{http://matsim.org/javadoc} $\to$ main distribution) for more details and pointers to examples.
 
 % ----------------------------------------------------------------
-\subsubsection{Configuring the Router}
+\paragraph*{Configuring the Router}
 The \lstinline{TripRouter} computes routes by means of \lstinline{RoutingModule} instances, one of which is associated with each mode. A \lstinline{RoutingModule} defines the way a trip is computed,
 and is able to identify the \emph{stage activities} it generates.
 
 The association between modes and \lstinline{RoutingModule} instances is configurable. You can even provide you own \lstinline{RoutingModule} implementations. Do this if your use-case requires custom routing logic, for instance if you want to implement your own complex travel mode.
 
-Please check the documentation of the \lstinline{TripRouter} class  (see~\url{http://matsim.org/javadoc} $\to$ main distribution) for more details and pointers to examples.
+\paragraph*{Example}
+Please check the documentation of \lstinline{TripRouter} (see~\url{http://matsim.org/javadoc} $\to$ main distribution) for more details and pointers to examples.
 
 % =========================================================================================
 \subsection{Mobsim}
 \label{sec:mobsim-extension-point}
+
+\paragraph*{Alternative \gls{mobsim} in \gls{java}}
 Besides adding \lstinline|MobsimListener| implementations to enrich the standard \gls{mobsim}, it is also possible to replace the entire \gls{mobsim} by a custom implementation. A \gls{mobsim} is basically
 a \lstinline|Runnable| which is supposed to take a \gls{scenario} and produce a stream of \glspl{event}. This allows you to use the co-evolutionary framework of \gls{matsim} while replacing the traffic model itself. 
 
+\paragraph*{Example for alternative \gls{mobsim} in \gls{java}} Please check the documentation of \lstinline{Mobsim} (see~\url{http://matsim.org/javadoc} $\to$ main distribution) for more details and pointers to examples.
+
+
+\paragraph*{Alternative \gls{mobsim} in another programming language}
 Your implementation need not be written in \gls{java}. The \gls{framework} includes a helper class to call an arbitrary executable which is then expected to write its \gls{event} stream into a file. 
 %
 This pattern has been used successfully many times, see, \eg Section~\ref{sec:deqsim}, or the \gls{cuda} implementation of the \gls{mobsim} by \citet{Strippgen_PhDThesis_2009}.  Note that we have found consistently that an external \gls{mobsim} does \emph{not} help with computing speed: Whatever is gained in the \gls{mobsim} itself is more than lost again by the necessary data transfer between \gls{matsim} and the external \gls{mobsim}.  As of now, we cannot yet say if newer data exchange techniques, such as Google Protocol Buffers, may change the situation.  Until then, the external interface should rather be seen as the option to inject a different, possibly more realistic, \gls{mobsim} into \gls{matsim}.
+
 
 % =========================================================================================
 \subsection{PlanStrategy}
@@ -269,6 +287,9 @@ The four most commonly used strategies shipped with \gls{matsim} are:
 Routes are computed based on the traffic conditions of the previous iteration, which are measured by means of an \lstinline|EventHandler|. Using the same pattern, your own \lstinline|PlanStrategy| can use any data which can be computed from the mobility simulation. The source code of the standard \lstinline|PlanStrategy| implementations can be used as a starting point for implementing custom behavior.
 
 Re-routing as a building block of many \gls{replanning} strategies is a complex operation by itself. It can even be recursive: For example, finding a public transport route may consist of selecting access and egress stations as sub-destination, finding a scheduled connection between them, and finding pedestrian routes between the activity locations and the stations. With the \lstinline|TripRouter| interface, the framework includes high-level support for assembling complex modes of transport from building blocks provided by other modules or the core. 
+
+Please check the documentation of \lstinline{PlanStrategy} (see~\url{http://matsim.org/javadoc} $\to$ main distribution) for more details and pointers to examples.
+
   
 % =========================================================================================
 \subsection{Scoring}
@@ -278,6 +299,8 @@ The parameters of the default \gls{matsim} scoring function (Chapter~\ref{ch:sco
 
 Keep in mind that \gls{scoring} and \gls{replanning} are not inherently coupled or automatically consistent with each other. Consider a scoring function which penalizes left-turns. This is straight-forward to program: You would iterate over every route an agent has taken. Looking at the \lstinline|Network|, you would calculate for each change of links if you consider it a left-turn, and if so, add a (negative) penalty to the score. However, this would not by itself lead to a solution where routes are distributed according to this scoring function. The reason is that the default \gls{replanning} only proposes fastest routes, in other words, least-cost paths with respect to travel time. By default, the plan memory of an agent will only ever contain routes which have in one iteration been a fastest route. The behavior of the router is, in this case, inconsistent with the utility formulation.
    
+Please check the documentation of \lstinline{ScoringFunction}  (see~\url{http://matsim.org/javadoc} $\to$ main distribution) for more details and pointers to examples.
+
 % ##################################################################################################################
 
 % Local Variables:
