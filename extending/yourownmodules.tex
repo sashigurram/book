@@ -1,7 +1,8 @@
 \chapter{How to Write Your Own Extensions and Possibly Contribute Them to MATSim}
 \label{ch:extensionpoints}
-\kaitodo[inline]{read chapter/section}
 % ##################################################################################################################
+%% \kaitodo[inline]{read chapter/section}
+
 \hfill \textbf{Author:} Michael Zilske
 
 \section*{Note}
@@ -43,7 +44,7 @@ The router, in contrast, is most importantly configured by replacing the definit
 \section{Extension Points}
 \label{sec:matsim-spi}
 This section describes what could be called the \gls{spi} of \gls{matsim}.
-Historically, the main entry-point for writing a \gls{matsim} \gls{extension} has been to literally extend (in the \gls{java} sense, i.e.\ to inherit from) the \lstinline|Controler| class. Essentially, one would override the methods calling the \gls{mobsim}, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. This is now discouraged. While this pattern worked when a each member of the team was working on extending the \gls{matsim} core by a different aspect, it fails when it comes to integrating those aspects to a single product: There is nothing one can do with a \lstinline|PublicTransportControler|, an \lstinline|EmissionsControler|, a \lstinline|RoadPricingControler| and an \lstinline|OTFVisControler|, if one wants to combine them to visualize the emissions of buses on toll roads.
+Historically, the main entry-point for writing a \gls{matsim} \gls{extension} has been to literally extend (in the \gls{java} sense, i.e.\ to inherit from) the \lstinline|Controler| class. Essentially, one would override the methods calling the \gls{mobsim}, the scoring, and/or the replanning, as explained in Section~\ref{sec:ownmodules-intro}. This is now discouraged. While this pattern worked when a each member of the team was working on extending the \gls{matsim} core by a different aspect, it fails when it comes to integrating those aspects to a single product: There is nothing one can do with a \lstinline|PublicTransportControler|, an \lstinline|EmissionsControler|, a \lstinline|RoadPricingControler| and an \lstinline|OTFVisControler|, if one wants to combine them to visualize the emissions of buses on toll roads.  Also see Sec.~\ref{sec:matsim-core-reorg}.
 
 % =========================================================================================
 \subsection{Config Group}
@@ -117,7 +118,11 @@ See \url{http://matsim.org/javadoc} $\to$ main distribution $\to$ \lstinline{Run
 \label{sec:controlerListener-extension-point}
 % \label{sec:controlerextension} \ah{double label working?}
 \lstinline|Controler| remains the main user-facing class of \gls{matsim}, but please do not subclass it. 
-Rather, use its setter methods to plug in your own code. 
+Rather, use its setter methods to plug in your own code.\footnote{%
+%
+Again, in the meantime the injection framework may have become a better alternative altogether.  The general structure, however, remains the same.
+%
+}
 
 \lstinline|ControlerListeners| are called at the transitions of the \gls{matsim} loop (Figure~\ref{fig:controlerevents}), where so-called \lstinline|ControlerEvent|s are fed to the listeners. 
 % ------------
