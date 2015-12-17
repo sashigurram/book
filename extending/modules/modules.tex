@@ -1,13 +1,14 @@
 \chapter{Available Functionality and How to Use It}
 \label{ch:modules}
-\kaitodo[inline]{read chapter/section}
 % ##################################################################################################################
 
 \hfill \textbf{Authors:} Andreas Horni, Kai Nagel
 
 \begin{center} \includegraphics[width=0.5\textwidth, angle=0]{extending/figures/modules.pdf} \end{center}
 
-\atend{re-read modules.tex just before going to print}
+%% \kaitodo[inline]{read chapter/section}
+
+%% \atend{re-read modules.tex just before going to print}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,7 +119,7 @@ where
 \item \lstinline$-Xmx2000m$ increases the \gls{java} heap space, so that most \gls{matsim} runs fit in
 \item \lstinline$MATSim.jar$ needs to be replaced by a relative or absolute path to the \gls{matsim} jar to be used
 \item \lstinline$contrib/contrib.jar$ needs to be replaced by a relative or absolute path to the \gls{contribution} jar to be used
-\item \lstinline$org.matsim.contrib.run.RunXxx$ needs to be replaced by full \gls{java} class name containing the desired main method (given by the \gls{contribution} documentation)
+\item \lstinline$org.matsim.contrib.run.RunXxx$ needs to be replaced by the full \gls{java} class name containing the desired main method (given by the \gls{contribution} documentation)
 \item \lstinline$config.xml$ needs to be replaced by a relative or absolute path to a \gls{configfile}, which may contain additional sections specific to the \gls{contribution}.
 \end{itemize}
 
@@ -156,7 +157,7 @@ Extension points, especially at \lstinline{(*)} and \lstinline{(**)}, are descri
 \subsubsection{Writing Your Own Extensions}
 \label{sec:writing-your-own-extensions}
 If the existing \glspl{extension} are not sufficient to plug your own study together, the next option is to write your own \gls{extension}. 
-Again, when writing an \gls{extension}, should use the extension points described in Chapter~\ref{ch:extensionpoints}, since this is the only way an \gls{extension} can later become a \gls{contribution}. 
+Again, when writing an \gls{extension}, one should use the extension points described in Chapter~\ref{ch:extensionpoints}, since this is the only way an \gls{extension} can later become a \gls{contribution}. 
 
 %\pararaph{Config Parameters:}
 %\gls{matsim} provides the possibility that the parameters of arbitrary and also external modules are added to the configuration file. 
@@ -294,9 +295,12 @@ In addition, the \gls{tu} Berlin team can continue to teach \gls{java} both as a
 
 % ##################################################################################################################
 \section{An Overview of Existing MATSim Functionality}
-Figure~\ref{fig:matsimmodules} shows where common \gls{matsim} modules are coupled with the \gls{matsim} loop. Some modules have a single connection point (shown around the loop, connected to the respective loop element), while others have multiple connection points (shown in the middle of the circle) and yet others work on a global range (shown on the left upper and lower corner).
+Figure~\ref{fig:matsimmodules} shows where common \gls{matsim} modules are coupled with the \gls{matsim} loop. Some modules have a single connection point (shown around the loop, connected to the respective loop element), while others have multiple connection points (shown in the middle of the circle) and yet others work on a global range (shown on the left upper and lower corners).
 
-Some modules were already presented in Chapter~\ref{ch:configuring}, while here it is shown how functionality can be extended further, using the \gls{configfile}, population and a network only. The technical details for module usage, in particular the parameter sets, are described at \matsimorg, especially \javadoc\ and \extensions.
+%% Some modules were already presented in Chapter~\ref{ch:configuring}, while here it is shown how functionality can be extended further, using the \gls{configfile}, population and a network only. 
+%(Can't say what the above sentence is supposed to mean. Maybe it got garbled.  At any rate, ch:configuring used config, pop, net only; here is about using more than that. kai, dec'15)
+The technical details for module usage, in particular the parameter 
+sets, are described at \matsimorg, especially \javadoc\ and \extensions.
 %% in \citep[][]{MATSim_Userguide_2015} \todokai{rm usrguide} and in the \gls{javadoc}.
 
 %% For the presentation of the available functionality, we chose to not use a single section per module but to group them according to common transport planning categories, in the example above this would be ``mode choice'' instead of the atomic categories, where we use terms ``functionality'' for the larger categories and ``module'' for the atomic components. %\kai{adapt table structure to revised chapter structure} \ah{erledigt}
@@ -583,10 +587,10 @@ For a working example, check the \lstinline{examples/equil} directory in the \gl
 
 It starts with a header containing general descriptive information about the counts, including a year to describe how current the data is. Next, for each link having real world counts data, hourly volumes can be specified. The network-link is referenced by the \lstinline|loc_id| attribute; in the example, it is link~2. The attribute \lstinline|cs_id| (counting station identifier) can be used to store an arbitrary description of the counting station. Most often, it is used to note the original real world 
 %"\Karen { I think you did mean 'world' there, right?}" 
-counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day and its value, are optional: That is, a value doesn't have to be given for every hour. If, for a counting station, data is only available for certain hours of the day (\eg only during peak hours), it is possible to omit the other hours from the \gls{xml} listing. Note that the first hour of the day, from 0:00\,am to 1:00\,am, is numbered as ``1'', and \emph{not} by ``0'' as is often the case in computer science.
+counting station to simplify future data comparison. The hourly volumes, specified by the hour of the day and its value, are optional: That is, a value does not have to be given for every hour. If, for a counting station, data is only available for certain hours of the day (\eg only during peak hours), it is possible to omit the other hours from the \gls{xml} listing. Note that the first hour of the day, from 0:00\,am to 1:00\,am, is numbered as ``1'', and \emph{not} by ``0'' as is often the case in computer science.
 
 \paragraph{Output}
-The counts module prints overview summaries for the whole network, but also analyzes for individual links, \ie a google maps-based visualization is available, showing each station with a its load curve (see the example in Figure~\ref{fig:countcomparison}) in a pop-up window at the geographic location shown.
+The counts module prints overview summaries for the whole network, but also analyzes for individual links. Also, a google maps-based visualization is available, showing each station with a its load curve (see the example in Figure~\ref{fig:countcomparison}) in a pop-up window.
 
 % ----------
 \createfigure%
@@ -599,14 +603,17 @@ The counts module prints overview summaries for the whole network, but also anal
 
 %Public transport passenger counts are described in Chapter~\ref{ch:pt}. \ah{check} \ah{nothing there}
 
-As shown by \citet[][]{BalmerEtAl_ResRep_bdktzrh_2009}, for the Zürich scenario link, volume comparisons have been successfully performed with data based on city level, cantonal level and national level \citep[][]{ASTRA_Webpage_2006}, where an average working day (Monday to Thursday, excluding public holidays) was built. Usually, it is helpful to exclude a substantial part of the outer range of the modeled study region to prevent boundary effects.
+\citet[][]{BalmerEtAl_ResRep_bdktzrh_2009} have performed link volume comparisons for the Zürich scenario, with data based on city level, cantonal level and national level \citep[][]{ASTRA_Webpage_2006}.
+%% , where an average working day (Monday to Thursday, excluding public holidays) was built. 
+Usually, it is helpful to exclude a substantial part of the outer range of the 
+modeled study region in order to remove boundary effects.
 
 % Code: \lstinline|org.matsim.counts|
 
 % ===================================================================================
 \subsection{Facilities}
 \label{sec:extending-facilities}
-Facilities are an optional element of \gls{matsim}; some \glspl{module}, such as the destination innovation module (Chapter~\ref{ch:destinationchoice}), do depend on it.
+Facilities are an optional element of \gls{matsim}; some \glspl{module}, such as the destination innovation module (Chapter~\ref{ch:destinationchoice}), depend on it.
 If \gls{matsim} \glspl{facility} are used, agents perform their activities in a specific \gls{facility} attached to a network link. 
 
 Facilities are included in the scenario by defining the \lstinline|facilities| \gls{configfile} section and providing a facilities file, approximately as follows.
@@ -626,12 +633,16 @@ Facilities are included in the scenario by defining the \lstinline|facilities| \
 In addition to activities that can be done in the facility, further location attributes, such as opening times, can be specified. 
 A working facilities example file can be found in the \gls{matsim} directory tree in the \lstinline{examples/siouxfalls-2014} directory.
 
-Facilities are mostly used in the \gls{matsim} Zürich group, in particular in the Zürich scenario, where they are derived from the Federal Enterprise Census~2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information and using NOGA-classification. Detailed technical description of facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008} %Meister_unpub_IVT_2007}. 
+Facilities are mostly used by the \gls{matsim} Zürich group, in particular in the Zürich scenario, where they are derived from the Federal Enterprise Census~2001 \citep[][]{SwissEnterpriseCensus_manual_2001} providing hectare level information.
+%% and using the so-called NOGA-classification. 
+% (if the reference to NOGA should remain in the text, the acronym would have to be resolved. kai, dec'15)
+Detailed technical description of  facilities generation is given by \citet[][]{Meister_TechRep_IVT_2008}. %Meister_unpub_IVT_2007}. 
 %
 %\kai{``Meister internal presentation'' keine sinnvolle Referenz?}
 Comparable data is available in most countries from official sources, such as censuses, and commercial sources, such as navigation network providers, yellow pages publishers or business directories, and last but not least google and \gls{osm} \citep[][]{OpenStreetMap_Webpage_2015}.
 
-Note that loading a facilities file into \gls{matsim} by itself does not mean they will be used; the functionality needs to be switched on by other means.  Currently, this is only possible by using some class with a \lstinline{main} method that can do that.
+Note that loading a facilities file into \gls{matsim} by itself does not mean they will be used; the functionality needs to be switched on by other means.  Currently, this is only possible by using some class with a \lstinline{main} method.
+ %% that can do that.
 
 % Code:\lstinline|org.matsim.core.facilities|
 
@@ -650,7 +661,7 @@ There used to be an additional ``useHouseholds'' config switch.  In release 0.8.
 %
 }
 
-Again, loading the households file does not mean that it is used anywhere in the code; such functionalities needs to be switched on separately.  Currently, no such functionality can be switched on from the \gls{configfile} alone.
+Again, loading the households file does not mean that it is used anywhere in the code; such functionality needs to be switched on separately.  Currently, no such functionality can be switched on from the \gls{configfile} alone.
 
 % \ah{households file listing?} \ah{maybe next revision}
 
@@ -879,7 +890,7 @@ For vehicle behavior of type \lstinline{exception} and type \lstinline{wait}, ve
 % ..............................
 \paragraph{PassingQ} 
 
-Once various vehicles have different maximum speeds, standard \gls{qsim}, even with multiple main modes, is no longer sufficient, since it uses \gls{fifo} as the queuing discipline, meaning that fast vehicles cannot pass slower vehicles. Here, the so-called \lstinline|Passing(Vehicle)Q| can be used instead.  It replaces the \gls{fifo} sorting criterion---where vehicles are sorted by the sequence in which they arrive on the link---by a sorting employing the so-called earliest link exit time, computed from link enter time and freespeed travel time.  Now, using the minimum of vehicle and link maximum speeds, the freespeed travel time can be differentiated between vehicles, allowing fast vehicles to obtain an earlier link exit time, even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \citet{AgarwalEtcMixedTraffic}.
+Once various vehicles have different maximum speeds, the standard \gls{qsim}, even with multiple main modes, is no longer sufficient, since it uses \gls{fifo} as the queuing discipline, meaning that fast vehicles cannot pass slower vehicles. Here, the so-called \lstinline|Passing(Vehicle)Q| can be used instead.  It replaces the \gls{fifo} sorting criterion---where vehicles are sorted by the sequence in which they arrive on the link---by a sorting employing the so-called earliest link exit time, computed from link enter time and freespeed travel time.  Now, using the minimum of vehicle and link maximum speeds, the freespeed travel time can be differentiated between vehicles, allowing fast vehicles to obtain an earlier link exit time, even if they enter later than slow vehicles.  Details and resulting fundamental diagrams are given by \citet{AgarwalEtcMixedTraffic}.
 
 This option can be enabled by using
 \begin{xml}

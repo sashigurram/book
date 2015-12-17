@@ -1,6 +1,5 @@
 \chapter{Within-Day Replanning}
 \label{ch:withinday}
-\kaitodo[inline]{read chapter/section}
 % ##################################################################################################################
 
 \hfill \textbf{Authors:} Christoph Dobler, Kai Nagel
@@ -8,6 +7,8 @@
 \begin{center} \includegraphics[width=0.6\textwidth, angle=0]{extending/figures/WithinDayReplanning/WithinDayMATSimLoop} \end{center}
 
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
+
+%% \kaitodo[inline]{read chapter/section}
 
 % ##################################################################################################################
 % NOTE: The standard information layout is non-standard, thus it uses the ``basic'' command.  kai, dec'14
@@ -72,7 +73,7 @@ As discussed earlier, traditional simulation approaches (used in default-\gls{ma
 \label{sec:IterativeSimulationApproaches}
 %The starting point of an iterative simulation approach, as it is used in agent-based traffic flow micro-simulations like DYNEMO \citep{Schwerdtfeger_VolmulerHamerslag_1984, NoekelSchmidt_NSE_2002}, MATSim \citep{Balmer_PhDThesis_2007, BalmerEtAl_HEUREKA_2008} or TRANSIMS \citep{SmithEtAl_NTRPAC_1995, NagelRickert_ParComp_2001},  is the generation of an initial plan for each agent (e.g., based on census and~/~or travel diary data). A plan contains an agent's intended schedule of activities and the trips that connect them. For each activity, its type (e.g., \emph{work}, \emph{leisure} or \emph{shopping}), its location and the expected start and end time are given. A transport mode and a route specify a trip. The iterative optimization process consists of three steps. First, a mobility simulation executes the plans which are then evaluated using a fitness function. Finally, agents must select plans to be executed in the next iteration. Each agent can keep several plans in its memory. Bad plans can be deleted and new plans created by cloning and adapting existing ones using information (e.g., travel times) from one or more previous iterations. The allowed adaption operations define the optimization search space (e.g., routes, location and start / end times of activities). This iterative optimization can be seen as a period-to-period replanning strategy. Since one day is a commonly used duration, it is often called day-to-day replanning strategy.
 
-An iterative day-to-day replanning approach is appropriate as long as the scenario describes a \emph{typical} situation or day. For such scenarios, it is feasible to assume that agents are familiar with typically occurring events like traffic jams during peak hours. Therefore, they try to avoid driving during those times, or use alternative routes with less traffic. However, if the scenario contains unexpected events that the agents cannot foresee (\eg accidents or heavy weather conditions), using an iterative approach is not an appropriate choice. First, user equilibrium will not be reached in such a scenario because agents do not have enough information to choose optimal routes and daily activity plans. Another problem is the optimization process itself. Even if an agent chooses its routes randomly due to a lack of information, it will eventually find a good route if it tries enough different routes.
+An iterative day-to-day replanning approach is appropriate as long as the scenario describes a \emph{typical} situation or day. For such scenarios, it is feasible to assume that agents are familiar with typically occurring events like traffic jams during peak hours. Therefore, they try to avoid driving during those times, or use alternative routes with less traffic. However, if the scenario contains unexpected events that the agents cannot foresee,\eg accidents or heavy weather conditions, using an iterative approach is not an appropriate choice. First, a user equilibrium will not be reached in such a scenario because agents do not have enough information to choose optimal routes and daily activity plans. Another problem is the optimization process itself. Even if an agent chooses its routes randomly due to a lack of information, it will eventually find a good route if it tries enough different routes.
 
 %---------------------------------------------------------------------
 \createfigure%
@@ -291,7 +292,7 @@ before time step
 \end{lstlisting}
 
 \textbf{Phase~2:} 
-\begin{lstlisting} 
+\begin{lstlisting}
 do sim step 
 \end{lstlisting}
  
@@ -410,11 +411,11 @@ For the reactive agent, perception works more directly through callback methods,
 
 As discussed, the approach described in Section~\ref{sec:impl-plan-based} assumes that the reactive agent still has followed (and generally follows) a plan. There may, however, be situations where this is inappropriate: for example, when the agent makes up the route as it goes, or when one wants to investigate models where each agent has its own perception and deliberation, rather than some external algorithm modifying its plan. As also mentioned earlier, there is no clear rule governing when and where an approach is better; it depends both on both project requirements and on the developer's personal preferences.
 %
-Here, with this in mind, we will look at \lstinline$MobsimAgent$s, which no longer have a pre-computed plan, but make decisions as they go. There is also a class of \lstinline$DynAgent$, which wrap around \lstinline$MobsimAgent$, making it easier to use and providing additional infrastructure (Section~\ref{sec:dynAgent}).
+Here, with this in mind, we will look at \lstinline$MobsimAgent$s that no longer have a pre-computed plan, but make decisions as they go. There is also a class \lstinline$DynAgent$, which wraps around \lstinline$MobsimAgent$, making it easier to use and providing additional infrastructure (Section~\ref{sec:dynAgent}).
 
 % ----------------------------------------------------------------------------
 \subsubsection{Agent Interface}
-The \lstinline$DriverAgent$ interface structurally resembles:
+The \lstinline$DriverAgent$ interface structurally looks as follows:
 \begin{itemize}\styleItemize
 \item \lstinline$Id chooseNextLinkId()$---agent is asked at intersections and needs to return how to proceed.
 %% \item \lstinline$Id<Link> getDestinationLinkId()$ -- agent is essentially asked if it wants to arrive on the current link.\footnote{%
@@ -488,7 +489,9 @@ For working code, see \url{http://matsim.org/javadoc} $\to$ main distribution $\
 
 \paragraph{Guidance}
 
-A guidance object might give advice to agents, which could also be defined as a decision-making entity. This could, in principle, also be fully incorporated into the agent. It could, for example, be designed as follows:
+A guidance object might give advice to agents.
+%% , which could also be defined as a decision-making entity. This could, in principle, also be fully incorporated into the agent. 
+It could, for example, be designed as follows:
 \begin{lstlisting}
 class MyGuidance {
    MyGuidance( MyObserver observer ) {
@@ -503,7 +506,7 @@ For working code, see \url{http://matsim.org/javadoc} $\to$ main distribution $\
 
 \paragraph{Agent}
 
-The agent needs access to guidance:
+The agent needs access to the guidance object:
 \begin{lstlisting}
 class MyAgent implements MobsimDriverAgent {
    MyGuidance guidance ;
@@ -550,16 +553,18 @@ The above ``script'' uses an anonymous class for the \lstinline$MobsimFactory$. 
 For working code, see \url{http://matsim.org/javadoc} $\to$ main distribution $\to$ \lstinline{RunOwnMobsimAgentUsingRouter} class and related.
 
 % ------------------------------------------------------------------
-\subsubsection{Using Framework Methods}
-\gls{matsim} uses a wide range of methods to plan the day of a simulated traveler. These can be passed into the guidance module, for example
-\begin{lstlisting}
-Controler ctrl = new Controler(...) ;
-...
-TripRouter router = ctrl.getTripRouterFactory().instantiateAndConfigureTripRouter() ;
-MyGuidance guidance = new MyGuidance( router ) ;
-...
-\end{lstlisting}
-The guidance object can still be passed to the agent as it was before; it can now compute and then return, at each intersection, to make the best turn toward a destination.
+%% \subsubsection{Using Framework Methods}
+%% \gls{matsim} uses a wide range of methods to plan the day of a simulated traveler. These could be passed into the guidance module, for example
+%% \begin{lstlisting}
+%% Controler ctrl = new Controler(...) ;
+%% ...
+%% TripRouter router = ctrl.getTripRouterFactory().instantiateAndConfigureTripRouter() ;
+%% MyGuidance guidance = new MyGuidance( router ) ;
+%% ...
+%% \end{lstlisting}
+%% The guidance object can still be passed to the agent as it was before; it can now compute and then return, at each intersection, to make the best turn toward a destination.
+
+% This has become somewhat obsolete with the injection framework. kai, dec'15
 
 %For working code, see \url{http://matsim.org/javadoc} $\to$ core $\to$ the \lstinline{RunOwnMobsimAgentWithPerception} class and related.
 %\ah{Satz auskommentiert, da er ja schon in "Basic Information"' ganz oben (Section~\ref{sec:withinDay-stdInfo}) vorkommt. OK?}
