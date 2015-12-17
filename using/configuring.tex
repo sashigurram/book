@@ -1,6 +1,5 @@
 \chapter{More About Configuring MATSim}
 \label{ch:configuring}
-\kaitodo[inline]{read chapter/section}
 % ##################################################################################################################
 
 \hfill \textbf{Author:} Andreas Horni, Kai Nagel
@@ -9,14 +8,16 @@
 
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
+%% \kaitodo[inline]{read chapter/section}
+
 % ##################################################################################################################
 This chapter describes configuration options that can be used together with the three basic elements: \gls{configfile}, population and network.
 %are exclusively done by the \gls{configfile}. \gls{matsim} configuring  requiring
 %% Aspects that require further input data are described in Chapter~\ref{ch:modules}. The technical details for module usage, in particular the parameter sets are described in \citep[][]{MATSim_Userguide_2015} and in the \gls{javadoc}.
 %
-Part~\ref{part:extending-matsim} discusses various options to extend \gls{matsim} beyond these three elements, sometimes using only additional files, or using additional \gls{jar} files beyond the \gls{matsim} core \gls{jar} file, or by writing so-called ``scripts in \gls{java}'', or by adding or replacing functionality.
+Part~\ref{part:extending-matsim} discusses various options to extend \gls{matsim} beyond these three elements, sometimes using only additional files, or using additional \gls{jar} files beyond the \gls{matsim} core \gls{jar} file, by writing so-called ``scripts in \gls{java}'', or by adding or replacing functionality.
 
-\gls{matsim} writes configuration files in several location; for example, in the logfile, in the iteration output directory, or the \lstinline{CreateFullConfig} functionality described in Section~\ref{sec:lgs-config}.  As explained in Section~\ref{sec:survival}, these files come with comments explaining configuration options.  This is often the best source for configuration options.  %\kai{Andreas, meinem Eindruck nach geht der user guide hier auch nicht weiter als das Buch -- und soll es derzeit auch gar nicht.  Unsere Javadoc sagt m.E.\ traditionell sehr wenig bis gar nichts über config.} \ah{ok}
+\gls{matsim} writes configuration files in several locations; for example, in the logfile, in the iteration output directory, or with the \lstinline{CreateFullConfig} functionality described in Section~\ref{sec:lgs-config}.  As explained in Section~\ref{sec:survival}, these files come with comments explaining configuration options.  This is often the best source for configuration options.  %\kai{Andreas, meinem Eindruck nach geht der user guide hier auch nicht weiter als das Buch -- und soll es derzeit auch gar nicht.  Unsere Javadoc sagt m.E.\ traditionell sehr wenig bis gar nichts über config.} \ah{ok}
 
 
 % ##################################################################################################################
@@ -35,7 +36,7 @@ specifies which network file will be used in the simulation (Section~\ref{sec:lg
 % ===================================================================================
 \subsection{Population}
 \label{sec:using-population}
-The \gls{configfile} section \lstinline|plans| allows population specifiction with its day plans (Section~\ref{sec:lgs-config} and \ref{sec:lgstarted-population-file}). Further configuration options, \eg specification of arbitrary agent attributes or subpopulations, are presented in Section~\ref{sec:extending-population}.
+The \gls{configfile} section \lstinline|plans| specifies which population file with its day plans will be used (Section~\ref{sec:lgs-config} and \ref{sec:lgstarted-population-file}). Further configuration options, \eg specification of arbitrary agent attributes or subpopulations, are presented in Section~\ref{sec:extending-population}.
 
 Further \gls{matsim} containers are described in Section~\ref{sec:extending-data-containers}.
 
@@ -45,7 +46,7 @@ Further \gls{matsim} containers are described in Section~\ref{sec:extending-data
 % ===================================================================================
 \subsection{Controler}
 \label{sec:using-controler}
-The controler is an indispensable module for running \gls{matsim}; its parameters are set in the \lstinline|controler| \gls{configfile} section. The \gls{matsimrun}'s output directory, its number of iterations and the plans and events ouput interval can be specified here. and the expected \gls{mobsim} can be defined (Section~\ref{sec:using-mobsims}). Importantly, the routing algorithm is defined here by using
+The controler is an indispensable module for running \gls{matsim}; its parameters are set in the \lstinline|controler| \gls{configfile} section. The \gls{matsimrun}'s output directory, its number of iterations and the plans and events ouput interval can be specified here. The expected \gls{mobsim} can be defined (Section~\ref{sec:using-mobsims}). The routing algorithm is defined here by using
 %
 \begin{xml}
 <module name="controler" >
@@ -56,7 +57,7 @@ The controler is an indispensable module for running \gls{matsim}; its parameter
 \end{xml}
 %
 %In Section~\ref{sec:extending-controler}, the
-Possibilities for extending the \lstinline|Controler| functionality is given in %Section~\ref{sec:extending-controler} and % da steht nichts mehr. kai, jan'15
+Possibilities for extending the \lstinline|Controler| functionality are given in %Section~\ref{sec:extending-controler} and % da steht nichts mehr. kai, jan'15
 Chapter~\ref{ch:extensionpoints}.
 
 % ===================================================================================
@@ -117,7 +118,7 @@ The number of threads for the parallel \gls{qsim} (\cf \cite{Dobler_PhDThesis_20
 % ...................................
 \paragraph{General Recommendations}
 
-Generally, computations using threads are not necessarily faster with more threads, which is also true for \gls{matsim}. Some experimentation is necesary for each combination of scenario and hardware.  Here are some recommendations:
+Generally, computations using threads are not necessarily faster with more threads, which is also true for \gls{matsim}. Some experimentation is necessary for each combination of scenario and hardware.  Here are some recommendations:
 \begin{itemize}\styleItemize
 
 \item For the ``global'' number of threads, a good starting point is the number of available cores.
@@ -126,7 +127,7 @@ Generally, computations using threads are not necessarily faster with more threa
 
 \item The most sensitive parameter is that for the \gls{qsim}.
   %
-  For somewhat older hardware (\eg Apple Macbook Pro from~2010), using all three remaining cores -  in addition to the parallel event handling - led to negligible performance gains and left the machine useless, even for normal office tasks.
+  For somewhat older hardware (\eg Apple Macbook Pro from~2010), using all three remaining cores---in addition to the parallel event handling---led to negligible performance gains but left the machine useless for interactive tasks such as normal office work.
   %
   For new hardware (\eg Apple Macbook Pro from~2014), using six of the available eight cores for the \gls{qsim} can make the \gls{mobsim} more than a factor of two faster and the machine can still be used for office tasks.
   %
@@ -134,8 +135,8 @@ Generally, computations using threads are not necessarily faster with more threa
   %
   No experiences with new servers are currently available. 
 %% \kai{or are there?  where?} \ah{Gemäss Patrick ist Sergio was am Basteln mit Desktop-Clustern.}
-  \item High Performance Computing Clusters are often available to researchers, allowing access to high quality machines with reduced management overhead. Typically, one pays for computation time, either directly, or by a loss of priority, with an amount proportional to the reserved resources, that is, the time the job took to finish, multiplied by the number of reserved cores. In this kind of situation, the number of cores used throughout the whole process should be stable, to avoid paying for unused resources. A recommendation in this case is thus to set the number of threads for the QSim to the best value $n$ (see above) and then set the ``global'' number of threads to this same $n$, and submit the job requesting $n$ cores.
-	  Also note that fewer threads are almost always better, in terms of throughput.
+  \item High Performance Computing Clusters are often available to researchers, allowing access to high quality machines with reduced management overhead. Typically, one pays for computation time, either directly, or by a loss of priority, with an amount proportional to the reserved resources, that is, the time the job took to finish, multiplied by the number of reserved cores. In this kind of situation, the number of cores used throughout the whole process should be stable, to avoid paying for unused resources. A recommendation in this case is thus to set the number of threads for the QSim to the best value (see above), say $n$, parallel events handling to $1$, the ``global'' number of threads to $n+1$, and submit the job requesting $n+1$ cores.
+	  Also note that fewer threads are almost always better in terms of throughput.
 	  In addition, for both calibration and ``what-if'' scenario exploration,
 	  one typically needs to run a large number of simulations with different parameters or
 	  input data.
@@ -156,7 +157,7 @@ In the \gls{configfile} section \lstinline|global|, the simulation's random seed
 % ##################################################################################################################
 \section{Mobility Simulations}
 \label{sec:using-mobsims}
-An overview of \gls{matsim} mobility simulations is given in \citet[][]{Dobler_TechRep_IVT_2011}. %See also \citet[][]{Rieser_unpub_IVT_2011}.
+An overview of \gls{matsim} mobility simulations is given by \citet[][]{Dobler_TechRep_IVT_2011}. %See also \citet[][]{Rieser_unpub_IVT_2011}.
 
 % ===================================================================================
 \subsection{QSim}
@@ -177,7 +178,9 @@ Importantly, the \lstinline{qsim} parameters
 <param name="flowCapacityFactor" value="..." />
 <param name="storageCapacityFactor" value="..." />
 \end{xml}
-need to be set accordingly when running sample scenarios. For example, for a 10\,\% sample, these factors need to be 0.1. The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows adaptation of these parameters with the command \lstinline|Tools...Create Sample Population|.
+need to be set accordingly when running sample scenarios. For example, for a 10\,\% sample, these factors need to be 0.1. 
+%% The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows adaptation of these parameters with the command \lstinline|Tools...Create Sample Population|.
+% bin immer noch der Meinung, dass das so nicht stimmt. kai, dec'15
 %
 %% \item
 %% The link dynamics, either \gls{fifo} or passing can be specified by the parameter 
@@ -186,8 +189,10 @@ need to be set accordingly when running sample scenarios. For example, for a 10\
 %% \end{xml}
 
 %\item
-Currently \gls{qsim} is implemented as a single-queue simulation queue (see Chapter~\ref{ch:kinematicwaves}). Back-propagating gaps as discussed in Section~\ref{sec:trafficflowmodel} are only available experimentally; 
-they will be added soon (see Section~\ref{sec:researchavenues-double-queue-mobsim}) and will then be configurable with the parameter
+Currently \gls{qsim} is implemented as a single-queue 
+%simulation queue 
+model (see Chapter~\ref{ch:kinematicwaves}). Back-propagating gaps as discussed in Section~\ref{sec:trafficflowmodel} are available experimentally
+(see Section~\ref{sec:researchavenues-double-queue-mobsim}) and configurable with the parameter
 \begin{xml}
 <param name="trafficDynamics" value="..." />
 \end{xml}
@@ -213,7 +218,7 @@ The default value of this parameter is set to 10, i.e.\ non-moving vehicles are 
 \gls{jdeqsim} \citep[][]{WaraichEtAl_STRC_2009} was used for project \emph{KTI Frequencies} \citep[][]{BalmerEtAl_ResRep_datapuls_2010}. It is is a \gls{java} reimplementation of \gls{deqsim} \citep[][]{WaraichEtAl_STRC_2009,%
 CharyparAxhausenEtAl2007Event-DrivenQueueBasedTraffic,%
 %CharyparEtAl_TRR_2007,%
-CharyparEtAl_TRB_2009} and provides parallel event handling, but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) are supported,but traffic lights, public transport and within-day replanning are not.
+CharyparEtAl_TRB_2009} and provides parallel event handling, but no parallel simulation \citep[][p.11]{BalmerEtAl_ResRep_datapuls_2010}. Back-propagating gaps (Section~\ref{sec:trafficflowmodel}) are supported, but traffic lights, public transport and within-day replanning are not.
 
 To run \gls{jdeqsim}, the parameter \lstinline|mobsim| of \lstinline|controler| \gls{configfile} section must be set to \lstinline|JDEQSim| and a \lstinline|jdeqsim| \gls{configfile} section must be provided. 
 
@@ -221,7 +226,9 @@ To run \gls{jdeqsim}, the parameter \lstinline|mobsim| of \lstinline|controler| 
 %##################################################################################################################
 \section{Scoring}
 \label{sec:using-scoring}
-The \gls{configfile} section \lstinline|planCalcScore| specifies the parameters used for scoring agents' plans (Section~\ref{sec:lgs-config}); parameters are explained in detail in Chapter~\ref{ch:scoring}.
+The \gls{configfile} section \lstinline|planCalcScore| specifies the parameters used for scoring agents' plans (Section~\ref{sec:lgs-config}); parameters are explained 
+%in detail 
+in Chapter~\ref{ch:scoring}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,7 +265,13 @@ All strategy modules are called by configuring the strategy module in the config
 </module>
 \end{xml}
 %
-Each module is given a weight determining the probability, by which the course of action represented by the module is taken. The strategy modules' weights are normalized, in case they do not sum to one. In this example, each agent changes his leg mode with probability~0.1and his plan timing with probability 0.2. A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. In the example, the agent chooses a plan from his set of plans according to a logit model with probability~0.8. 
+Each module is given a weight determining the probability, by which the course of action represented by the module is taken. The strategy modules' weights are normalized, in case they do not sum to one. In this example, each agent changes her leg mode with probability~0.1 and her plan timing with probability 0.2. 
+%% A strategy module is, in the code, always a combination of a plan selector and zero or more strategy module elements. 
+%% In the example, the agent chooses a plan from her set of 
+%% plans according to a logit model with probability~0.8. 
+% (somehow garbled. kai, dec'15)
+Otherwise, the agent chooses a plan from her set of 
+plans according to a logit model.
 
 By specifying the parameter \lstinline|subpopulation|, replanning strategies can be applied to distinct sub-populations: \eg
 \begin{xml}
@@ -269,7 +282,9 @@ By specifying the parameter \lstinline|subpopulation|, replanning strategies can
 </parameterset>
 \end{xml}
 
-In older versions of the \gls{configfile} you will find following deprecated configuration syntax using numbered strategy modules.
+In older versions of the \gls{configfile} you will find 
+%following 
+a deprecated configuration syntax using numbered strategy modules.
 %
 %% \begin{xml}
 %% <module name="strategy" >
@@ -297,7 +312,9 @@ In older versions of the \gls{configfile} you will find following deprecated con
 % brauchen wir m.E. nicht. kai, jan'15
 
 
-Please note that combining strategy modules that are \glspl{extension} (see Section~\ref{sec:levels-of-access}), like destination innovation together with public transport, is complicated. Combine them with care and contact the mailing list if you are unsure.
+Please note that combining strategy modules that are \glspl{extension} (see Section~\ref{sec:levels-of-access}), like destination innovation together with public transport, 
+%is complicated. 
+may not always work as expected.  Combine them with care and contact the mailing list if you are unsure.
 
 %Combining different modules is not straightforward in MATSim. This important topic urgently requires future analysis. Here, to begin, the combination of strategy modules with public transport is presented in Table \ref{tab:combination}.
 %
@@ -359,7 +376,9 @@ The module shifts activity end times randomly within a configurable range as des
 \subsubsection{Route Innovation}
 \label{sec:routechoice}
 
-Route innovation is applied by defining its parameters in the \gls{configfile} section \lstinline|planscalcroute|, by adding 
+Route innovation is applied by 
+%defining its parameters in the \gls{configfile} section \lstinline|planscalcroute|, by 
+adding 
 %
 \begin{xml}
 <param name="strategyName" value="ReRoute" />
@@ -420,10 +439,11 @@ If an agent ends up having more plans, \gls{matsim} will start removing plans, o
 Starting with release 0.8.x, the \gls{configfile} comments give possible options.
 
 This option is not yet well investigated, \cf Section~\ref{sec:choicesets}.
-
+%
 %In addition to the selectors for plan modification and execution, the plan remover will also be available for configuration in the near future. 
 Per default, the plan with the lowest score is removed if the agent's memory is full. 
-In line with the requirements of \eg simulated annealing approaches, the removal of candidates can be configured to be probabilistically dependent on the plan score. This reduces the probability of getting stuck with sub-optimal plans (dominant in earlier iterations).
+%% In line with the requirements of, \eg simulated annealing approaches, the removal of candidates can be configured to be probabilistically dependent on the plan score. This reduces the probability of getting stuck with sub-optimal plans (dominant in earlier iterations).
+% Haben wir das je untersucht? Ziehe vor, es wegzulassen. kai, dec'15
 %\ah{siehe Mail by M. Zilske, August 14 "[Matsim-devel] custom plan selector for removal")}
 
 %\kai{wo ist plans removal?} \ah{Steht momentan noch bei den Selectors, wie auch im Code \lstinline|org.matsim.core.replanning.selectors.WorstPlanForRemovalSelector|. Sehe da aber nur worst plan removal.}\kai{Andreas, ich Verstehe Deinen Kommentar nicht.  DefaultPlanStrategiesModule listet sie alle auf.  WorstPlanForRemovalSelctor ist eine Wahlmöglichkeit.  Ist es mit obigem Text vielleicht geklärt?}
@@ -449,9 +469,9 @@ Selectors work as follows:
 	%\ah{correct?}\kai{Ja das könnte man so sehen, zumal der default (inzwischen) meistens richtig ist und eine separate config group somit nicht zu ``clutter'' führen würde.}
 	}
 	being the scale parameter in discrete choice models, as shown for example in Equation~\ref{eq:ExpBetaPlanSelector}. We recommended keeping this parameter at its default value of 1.0.
-	\item \lstinline|ChangeExpBeta| changes to a different plan, with probability dependent on $e^{\Delta_{score}}$, where $\Delta_{score}$ is the score difference between the two plans.
+	\item \lstinline|ChangeExpBeta| changes to a different plan, with probability dependent on $e^{\Delta_{score}}$, where $\Delta_{score}$ is the score difference between the two plans.  This will also sample from an \gls{mnl} (see Sec.~\ref{sec:ag-based-assignment-selection}).
 	\item \lstinline|SelectRandom| performs random selection between the plans.
-	\item \lstinline|SelectPathSizeLogit| selects an existing plan according to the path size logit described by \citet[][]{FrejingerBierlaire_TransResB_2007}. It can be configured by the \lstinline|PathSizeLogitBeta| parameter from the scoring config group.\footnote{Also in the scoring config group for historical reasons.}
+	\item \lstinline|SelectPathSizeLogit| selects an existing plan according to the path size logit described by \citet[][]{FrejingerBierlaire_TransResB_2007}. It can be configured by the \lstinline|PathSizeLogitBeta| parameter from the scoring config group.\footnote{Also in the scoring config group for historical reasons.}  This selector has never been investigated systematically.
 \end{itemize}
 %
 Note that the \lstinline|BestScore| should be used with care; it tends to get stuck with sub-optimal plans. Plans badly rated due to a random fluctuation in one single iteration, \eg a rare traffic jam, will never be tested again. Thus, we recommend using this only in conjunction with \lstinline|SelectRandom|.
@@ -463,7 +483,8 @@ For theoretical (Section~\ref{sec:innovation}) reasons, it makes sense to eventu
 \begin{xml}
 <param name="fractionOfIterationsToDisableInnovation" value="..." />
 \end{xml}
-The default is 0.8, i.e.\ innovation is switched off after 80\% of the iterations.  It makes sense to use this together with score \gls{msa} (Section~\ref{sec:score-msa}).
+%% The default is 0.8, i.e.\ innovation is switched off after 80\% of the iterations.  
+It makes sense to use this together with \gls{msa} averaging of the scores (Section~\ref{sec:score-msa}).
 
 
 %##################################################################################################################
@@ -566,7 +587,7 @@ It is possible to register a separate departure handler for each mode; see Secti
 
 The previous Section~\ref{sec:using-qsim-multimodal} has described how the \gls{qsim} handles various modes when they are requested by the plans.
 %
-Correspondingly, it now needs to be considered how non-car plans -- or more specifically non-car routes inside non-car legs -- are generated.
+Correspondingly, it now needs to be considered how non-car plans---or more specifically non-car routes inside non-car legs---are generated.
 %% Clearly, the user can write her, or his, own router - which can either be a full-blown network router (\cf Section~\ref{sec:router-extension-point}), or a heuristic that offers plausible travel times and travel distances.  It is, however, much easier to use the preconfigured options, as follows.
 
 %------------------------------------------------------------
@@ -599,7 +620,7 @@ Check \url{https://matsim.atlassian.net/browse/MATSIM-330} for developments.
 %
 }
 
-Note that, per the network file \gls{dtd}, ``car'' is the default mode of each link, as long as long as the link's mode field is not explicitly filled. 
+Note that, per the network file \gls{dtd}, ``car'' is the default mode of each link as long as long as the link's mode field is not explicitly filled. 
  %% This also means that a link that does not fill the mode field is not one that accepts any mode.  It rather is a car link that wi
 
 
@@ -612,7 +633,7 @@ Note that, per the network file \gls{dtd}, ``car'' is the default mode of each l
 \label{sec:teleportation-routing}
 
 % ..............................
-\paragraph{... With Teleported Mode Free Speed Factor}
+\paragraph{... with Teleported Mode Free Speed Factor}
 A config entry such as
 \begin{xml}
 <module name="planscalcroute" >
@@ -630,7 +651,7 @@ means that if the router encounters a leg with mode pt, it generates a ``telepor
 This models public transit assuming it travels along roughly the same routes as a car trip, but takes twice as long \citep[\cf][]{Reinhold2006Konzeptzurintegrierten}.
 
 % ..............................
-\paragraph{... With Teleported Mode Speed}  Setting, in the above, something like
+\paragraph{... with Teleported Mode Speed}  Setting, in the above, something like
 \begin{xml}
    <param name="teleportedModeFreespeedFactor" value="null" />
    <param name="teleportedModeSpeed" value="4.167" />
@@ -689,7 +710,7 @@ The routing module, for example, needs travel time estimations for all network l
 % ===================================================================================
 \subsection{Link Stats}
 \label{sec:linkStats}
-The \lstinline|linkStats| \gls{configfile} section can specify the output interval of individual links' simulation statistics. It is configurable, if the simulated volumes are written per iteration or averaged over multiple iterations. As one of their many functions, link stats are used for comparison with count values, as introduced in Section~\ref{sec:extending-counts}. 
+The \lstinline|linkStats| \gls{configfile} section can specify the output interval of individual links' simulation statistics. It is configurable if the simulated volumes are written per iteration or averaged over multiple iterations. As one of their many functions, link stats are used for comparison with count values, as introduced in Section~\ref{sec:extending-counts}. 
 
 % ##################################################################################################################
 \ifthenelse{\boolean{printBibPerChapter}}{\bibpc}{}
