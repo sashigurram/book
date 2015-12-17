@@ -1,5 +1,4 @@
 \chapter{Let's Get Started}
-\kaitodo[inline]{read chapter/section}
 \label{ch:lgstarted}
 % ##################################################################################################################
 \hfill \textbf{Authors:} Marcel Rieser, Andreas Horni, Kai Nagel
@@ -7,6 +6,8 @@
 \begin{center} \includegraphics[width=0.7\textwidth, angle=0]{using/figures/config.png} \end{center}
 
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
+
+%% \kaitodo[inline]{read chapter/section}
 
 % ##################################################################################################################
 This chapter explains how to set up and run \gls{matsim} and describes the requirements for building a basic \gls{scenario}.  Updated information may be available from \url{http://matsim.org}, in particular from \url{http://matsim.org/docs}.
@@ -29,10 +30,15 @@ Getting the source code into different computing environments and extending \gls
 
 To run \gls{matsim} you must install the \gls{javase} that complies with the appropriate \gls{matsim} version. At this time, this is \gls{javase}~7.
 
+\paragraph{Download of the release}
 You also need the official \emph{\gls{matsim} release,} a zip file (usually designated with the version number \lstinline|matsim-yy.yy.yy.zip|), that includes everything required to run it. It can be downloaded following the ``release'' link under \url{http://matsim.org/downloads}.
 %on the \gls{matsim} web page. 
 Unzipping results in the \textbf{\gls{matsim} directory tree}. Continue with Section~\ref{sec:runexample}.
 
+\paragraph{The \gls{matsim} directory tree on the web}
+If you want to look at the development version, or look at things without downloading and installing a zip file: On \gls{github}, the root of the \textbf{\gls{matsim} directory tree} (i.e.\ excluding so-called contribs and playgrounds) is at \url{https://github.com/matsim-org/matsim/tree/master/matsim}.
+
+\paragraph{Download of nightly builds}
 If you prefer to use the more up-to-date---but less stable---\emph{nightly builds,} you should download, via the same \gls{url} \url{http://matsim.org/downloads},
 \begin{itemize}\styleItemize
 \item the \gls{matsim} \gls{jar} file (usually tagged with the revision number \lstinline|MATSim_ryyyy.jar|), and
@@ -41,7 +47,8 @@ Unzipping this collection of 3rd-party libraries, you should then get a director
 \end{itemize}
 Continue with Section~\ref{sec:runexample}.
 
-A relatively new feature is that one can use \gls{matsim} as a \gls{maven} plugin; both release versions and snapshots are available.  See again \url{http://matsim.org/downloads} for more information.  For someone who has used \gls{maven} before, this is possibly the best option.
+\paragraph{Maven}
+A relatively new feature is that one can use \gls{matsim} as an \gls{maven} plugin; both release versions and snapshots are available.  See again \url{http://matsim.org/downloads} for more information.  For someone who has used \gls{maven} before, this is probably the best option.
 %
 In this case, one may use the simple Java programming approach of Sec.~\ref{sec:writing-scripts-java} to get started.
 
@@ -490,17 +497,25 @@ Simulation results can be visualized with \gls{via} (Chapter~\ref{ch:via}) or \g
 \label{sec:unitsconventions}
 % ----------------------------------------------------------------------------
 \subsubsection{Units}
-\gls{matsim} tries to make as few assumptions about actual units as possible, but it is sometimes necessary for certain estimates. In general, \gls{matsim} expects similar types of variables (\eg all distances) to be in the same unit wherever they are used. In the following short overview, the most important (expected) units are listed.
+\gls{matsim} tries to make few assumptions about actual units, but it is sometimes necessary for certain estimates. In general, \gls{matsim} expects similar types of variables (\eg all distances) to be in the same unit wherever they are used. In the following short overview, the most important (expected) units are listed.
 
 % .......................................................
 \paragraph{Distance}
 
-Distance units are most often used in links' length. They should be specified in the same unit the coordinate system uses, allowing \gls{matsim} to use simple triangulation, \eg with the nodes' coordinates, to calculate beeline distances. As most projected coordinate systems (see Section~\ref{sec:coordinatesystems}) use meters as unit of distance, this is the most commonly used distance unit in \gls{matsim}. 
+Distance units are for example used in links' length. They should be specified in the same unit the coordinate system uses, allowing \gls{matsim} to 
+%use simple triangulation, \eg with the nodes' coordinates, to 
+%I am fairly sure that triangulation is something else. kai, dec'15
+calculate beeline distances. As 
+%most projected coordinate systems 
+the much used \gls{utm} projected coordinate systems (see Section~\ref{sec:coordinatesystems}) use meters as unit of distance, this is the most commonly used distance unit in \gls{matsim}. 
 
 % .......................................................
 \paragraph{Time}
 
- \gls{matsim} supports an hour:minute:second notation in several places, but internally,it uses seconds as the default time unit. This implies, for example, that link speeds must be specified in distance per second, typically meters per second. One notable exception to this rule are scoring parameters, where \gls{matsim} expects values per hour; most behavioral parameters, like value of time, are typically estimated per minute or hour, and corresponding values for seconds are very small and thus error prone. 
+ \gls{matsim} supports an hour:minute:second notation in several places, but internally, it uses seconds as the default time unit. This implies, for example, that link speeds must be specified in distance per second, typically meters per second. One notable exception to this rule are scoring parameters, where \gls{matsim} expects values per hour.
+%% ; most behavioral parameters, like value of time, are typically estimated per minute or hour, and corresponding values for seconds are very small and thus error prone. 
+%
+% I don't think that this was ever the argument, and I don't think it is a good one (changing units without advertising it is also error prone). kai, dec'15
 
 % .......................................................
 \paragraph{Money}
@@ -509,7 +524,11 @@ Money is unit-free. Units are implicitly given by the marginal utility of money 
 
 % ----------------------------------------------------------------------------
 \subsubsection{Conventions}
-\gls{matsim} uses identifiers, short \lstinline|Id|s, intensely. These identifiers can be arbitrary strings, with the following exceptions: IDs should contain no spaces (incl. tabs, new lines, etc) or commas, because those characters are typically used for separating different IDs from each other on \lstinline|Id| lists. 
+\gls{matsim} uses 
+%identifiers, short \lstinline|Id|s, 
+\glspl{id} intensely. These identifiers can be arbitrary strings, with the following exceptions: \glspl{id} should contain no whitespace characters (incl.\ tabs, new lines, etc.) or commas, semicolons, etc., because those characters are typically used for separating different \glspl{id} from each other on 
+%\lstinline|Id| 
+\glspl{id} lists. 
 
 % ----------------------------------------------------------------------------
 \subsubsection{Coordinate Systems}
@@ -547,17 +566,29 @@ As an alternative, \gls{matsim} can also parse the description of a coordinate s
 \subsubsection{Population and Activity Schedules}
 Demand estimation is 
 %the main 
-an important component of \gls{matsim}. That means that---in theory---only demand components that  really do \emph{not} change, from one simulated average working day to the next, should to be provided to \gls{matsim} 
+an important component of \gls{matsim}. That means that---in theory---only demand components that  
+%really 
+do \emph{not} change, from one simulated average working day to the next, 
+%should 
+need to be provided to \gls{matsim}.
 %during the
-Examples are: population and its residential and working locations. In practice, however, \gls{matsim} is not yet prepared to endogenously model complete travel demand. Sequence and preferred activities duration, for example, must be provided as input. As a result, all travel demand choices not covered by the \gls{matsim} loop have to be endogenously estimated. 
+Examples are: population and its residential and working locations. In practice, however, \gls{matsim} is not yet prepared to endogenously model complete travel demand. Sequence and preferred durations of activities, for example, must be provided as input. As a result, all travel demand choices not covered by the \gls{matsim} loop have to be %endogenously 
+exogenously estimated. 
 
-For population generation, two possibilities exist: the comfortable way is to translate a full population census and the slightly more demanding way is to generate a synthetic population \citep[e.g.,][]{GuoBhat_TRR_2007}, based on sample or structure surveys. For \gls{matsim}, both methods have been implemented based on \citet[][]{BfS_VZ_2000} and \citet[][]{Mueller_unpub_STRC_2011}.
+For population generation, two possibilities exist: the comfortable way is to translate a full population census and the slightly more demanding way is to generate a synthetic population \citep[e.g.,][]{GuoBhat_TRR_2007}, based on sample or structure surveys. For \gls{matsim}, both methods have been 
+%implemented 
+used, based on, e.g., \citet[][]{BfS_VZ_2000} and \citet[][]{Mueller_unpub_STRC_2011}.
 
 Travel demand is usually derived from surveys: for Switzerland, from the 
 %\gls{microcensus}
-microcensus \citep[][]{BfS-MZ2005_manual_2006}. Newer data sources, such as \gls{gps} or smartphone travel diaries, might be an interesting future possibility.
+microcensus \citep[][]{BfS-MZ2005_manual_2006}. Newer data sources, such as \gls{gps} or smartphone travel diaries, 
+%might be an interesting future possibility.
+are currently investigated \citep[\eg][]{ZilskeNagelPhoneTracesAndCadyts}.
 
-A critical topic in demand and population generation is workplace assignment, as commuting traffic is still a major issue, particularly during peak hours. Switzerland's full census work location was surveyed at municipality level. Such comfortable data bases are rare, however; commuter matrix estimation or workplace choice models should be urgently researched.
+A critical topic in demand and population generation is workplace assignment, as commuting traffic is still a major issue, particularly during peak hours. Switzerland's full census work location was surveyed at municipality level. Such comfortable data bases are rare, however.
+%% ; commuter matrix estimation or workplace choice models should be urgently researched.
+%
+% reducing normative statements.  These are, I think, ``research directions''. kai, dec'15
 
 Having generated the residential population of the study area, additional demand components might be necessary: for example, cross-border and freight traffic. As these components often cannot be endogenously modeled, \gls{matsim} offers the feature to handle different subpopulations differently (Section~\ref{sec:strategymodules}). One can specify that border-crossing agents, for example, are not allowed to make destination choices within the study area, or that freight agents are not allowed to change their delivery activity to a leisure activity.
 
@@ -594,7 +625,7 @@ Having generated the residential population of the study area, additional demand
 }%
 {}
 %
-In simulation practice, two different network types are used: planning networks and navigation networks (compare Swiss examples in Figure~\ref{fig:planningnetwork} and Figure~\ref{fig:navigationnetwork} for the Zürich region). The former are leaner and serve as initial explorative simulation runs, while the latter are used for policy runs, usually offering far more details, such as bike and even pedestrian links. Data are available from official sources like federal offices, free sources, such as \gls{osm}, and commercial sources, including navigation network providers.
+In simulation practice, two different network types are used: planning networks and navigation networks (compare Swiss examples in Figure~\ref{fig:planningnetwork} and Figure~\ref{fig:navigationnetwork} for the Zürich region). The former are leaner and often serve as initial explorative simulation runs, while the latter are often used for policy runs, usually offering far more details, such as bike and even pedestrian links. Data are available from official sources like federal offices, free sources, such as \gls{osm}, and commercial sources, including navigation network providers.
 %
 
 \subsection{Example scenario input data}
@@ -793,7 +824,7 @@ There are many options and possibilities available with \gls{matsim}, and findin
 
 \item \emph{Always start and test with a small example.}
 
-\item \emph{Always test large scenarios with one percent runs first (\eg a randomly drawn a 10\,\% or a 1\,\% subsample of your initial demand).} The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to create sample populations with the command \lstinline|Tools...Create Sample Population|.
+\item \emph{Always test large scenarios with one percent runs first (\eg a randomly drawn subsample of your initial demand).} The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to create sample populations with the command \lstinline|Tools...Create Sample Population|.
 
 As described in Section~\ref{sec:using-mobsims}, this requires adaptation of parameters, in particular the \gls{mobsim}'s \lstinline|flowCapacityFactor| and \lstinline|storageCapacityFactor| factors. As shown in part~II of the book, in Section~\ref{sec:extending-counts}, sample scenarios also require parameter adaption for count data comparisons. %The \gls{matsim} \gls{gui} (Figure~\ref{fig:matsimgui}) allows to adapt all parameters at once with the command \lstinline|Tools...Create Sample Population|. %\ah{thx Marcel! :)}
 
@@ -805,7 +836,7 @@ As described in Section~\ref{sec:using-mobsims}, this requires adaptation of par
 
 \item \emph{If your set-up does not work any more, \emph{immediately} go back to a working version and proceed from there in small steps.}
 
-\item \emph{Check \lstinline{logfileWarningors.log}.}
+\item \emph{Check \lstinline{logfileWarningErrors.log}.}
 
 \item \emph{Check the comments that are attached to the \gls{configfile} options.}
 
