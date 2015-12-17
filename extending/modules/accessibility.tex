@@ -1,6 +1,5 @@
 \chapter{Accessibility}
 \label{ch:accessibility}
-\kaitodo[inline]{read chapter/section}
 % ##################################################################################################################
 
 \hfill \textbf{Author:} Dominik Ziemke
@@ -9,7 +8,9 @@
 
 \editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
 
-\createStandardInformation{accessibility}{\lstinline{RunAccessibilityExample} class}{accessibility}{\citet{NicolaiNagelHiResAccessibilityMethod}}
+%% \kaitodo[inline]{read chapter/section}
+
+\createStandardInformation{accessibility}{\lstinline{RunAccessibilityExample} class}{accessibility}{\citet{NicolaiNagelHiResAccessibilityMethod,JoubertZiemkeNagel2015AccessibilityNMBM}}
 
 % ##################################################################################################################
 %\mnote{wider context}
@@ -33,11 +34,10 @@ Improvement in accessibility is often defined as a central goal of proposed tran
 schemes \citep{GeursEtAl2012AccessibilityTransportIntroduction} and 
 accessibility is usually a precisely-defined, quantitative measure. While 
 \citet{Batty2009AccessibilityUnifiedTheory} traces the origins of the accessibility concept back to 
-location theory and regional economic planning in the 1920s (when transport planning began in North America)
-\citep{GeursEtAl2012AccessibilityTransportIntroduction}, 
+location theory and regional economic planning in the 1920s \citep[when transport planning began in North America;][]{GeursEtAl2012AccessibilityTransportIntroduction}, 
 Hansen, with his widely-cited paper \citep{Hansen1959HowAccessibilityShapesLandUse}, is generally credited 
 with the first real definition of accessibility, defining it  
-as \emph{the potential of opportunities for interaction} 
+as \emph{the potential of opportunities for interaction}.
 %also said so e.g. in Gulhan p.130
 In more detail, \citet{MorrisEtAl1979AccessibilityIndicators} define accessibility as ``the ease with 
 which activities may be reached from a given location using a particular transportation system''.
@@ -197,7 +197,7 @@ infrastructure planning.
 % transport component
 % As such, this definition of an accessibility measure has its focus on the \textbf{trasnport component} of accessibility 
 % as introduced above.
-In this approach, travel times are calculated to an \emph{next} airport, \emph{next} hospital and
+In this approach, travel times are calculated to a \emph{next} airport, \emph{next} hospital and
  \emph{next} autobahn access; thus, the implicit assumption is that citizens' needs are fulfilled by
 one (\ie the \emph{next}, or closest in terms of travel times) type of facility.
 
@@ -231,7 +231,8 @@ a given location, corresponds to
 taking into account the \imp{land-use component} of accessibility defined above.
 
 %\mnote{potential accessibility}
-Hansen's early study \citep{Hansen1959HowAccessibilityShapesLandUse} 
+%Hansen's early study 
+\citet{Hansen1959HowAccessibilityShapesLandUse} 
 considers the whole scope of potential activity facilities, where an accessibility 
 measure \emph{potential accessibility} is defined. Such measures of potential accessibility are 
 specified as the (weighted) sum over the 
@@ -248,12 +249,13 @@ accessibilities of several specific activity facilities (\eg shopping, leisure e
 %that typically decreases with increasing distance, and $g(.)$ is an arbitrary, but typically monotonically increasing, 
 %function. 
 where $j$ are all possible destinations (opportunities), $a_j$ describes opportunity attractiveness, 
-$j$, $c_{\ell j}$ denotes the generalized traveling cost between origin $\ell$ and destination $j$,
+$c_{\ell j}$ denotes the generalized traveling cost between origin $\ell$ and destination $j$,
 $f(c)$ is an impedance function which (typically) decreases with increasing distance and $g(.)$ denotes
 an arbitrary, but usually monotonically increasing function. 
 %That is, the accessibility at $i$ is computed from a weighted sum over all possible destinations, where the weight is 
 %the product of the destination's attractiveness and the ease to get there.
-Weight is the product of the destination's attractiveness and the ease of getting there. As seen in its 
+The weight of each opportunity $j$ is thus the product of the destination's attractiveness, $a_j$, and the ease of getting there, $f(c_{\ell j})$.
+As seen in its 
 functional form, this type of accessibility measure is related to gravity models used in trip generation models, explaining 
 why this measure is sometimes also referred to as a ``gravity type'' accessibility indicator 
 \citep{MorrisEtAl1979AccessibilityIndicators}. The (quantitative) accessibility measure used in the \gls{matsim} 
@@ -273,8 +275,8 @@ accessibility extension is expressed in this mathematical form and may thus be s
 %des Potenzials vorgenommen.
 
 %\mnote{ingoing vs. outgoing accessibility}
-It is important to note that the above-defined measure quantifies how accessible a given location is \emph{to} certain
-services $\ell$. This kind of accessibility is \emph{outgoing accessibility},
+It is important to note that the above-defined measure quantifies how accessible a given location $\ell$ is \emph{to} certain
+services $j$. This kind of accessibility is \emph{outgoing accessibility},
 while a measure of \emph{ingoing accessibility} quantifies how accessible a given
 destination location $j$ is \emph{from} other locations. \citet{NicolaiNagelHiResAccessibilityMethod} 
 discuss circumstances under which these measures are interchangeable.
@@ -288,8 +290,11 @@ As mentioned above, accessibility computations are often based on travel times
 \citep{BBSRErreichbarkeitsmodell, BuettnerEtAl2010Erreichbarkeitsatlas}, which serve as an impedance measure.
 Ways of calculating these travel times can, however, vary significantly. 
 The simplest way to calculate a travel time between two locations is to measure the Euclidean distance 
-(beeline distance) between these two locations and then, by averaging speed, approximate the 
-travel time between them. According to \citet{Geurs2004AccessibilityReview}, this is the usual 
+(beeline distance) between these two locations and multiply with some average speed.
+%% then, by averaging speed, approximate the 
+%% travel time between them. 
+According to \citet{Geurs2004AccessibilityReview}, this is the 
+usual 
 approach in location-, person-, and utility-based accessibility approaches, where the focus 
 is not specifically on the transport system.
 
@@ -304,7 +309,7 @@ is not specifically on the transport system.
 
 To strengthen the \imp{transport component} of accessibility (as introduced above) and 
 make accessibility measure sensitive to transport infrastructure changes, a better representation of the travel 
-impedance between origins and destinations is required. The most common approach is be travel time calculation
+impedance between origins and destinations is required. The most common approach is  travel time calculation
 using shortest-path algorithms on a real-world transport infrastructure network representation.
 Many accessibility computations are embedded into \gls{gis} software, offering procedures for network-based 
 computations 
@@ -320,7 +325,7 @@ The accessibility extension in \gls{matsim} also offers this type of accessibili
 accessibility controler listener, \eg the \lstinline{GridBasedAccessibilityControlerListenerV3} must be added to 
 the \gls{matsim} controler. An example is given in \lstinline{RunAccessibilityExample} (see
 \url{http://matsim.org/javadoc} $\to$ accessibility $\to$ \lstinline{RunAccessibilityExample} for details). As input, a 
-network file and facilities file are required (for more information on networks and facilities, refer to 
+network file and a facilities file are required (for more information on networks and facilities, refer to 
 Section~\ref{sec:using-network} and Section~\ref{sec:extending-facilities} of this book).
 This procedure is more disaggregate than many common approaches to accessibility computations, where single 
 facilities are seldom considered; there, structural data like zone sizes, number of jobs, or total sales area are used to 
@@ -345,14 +350,17 @@ are exceeded.
 By considering demand-supply interaction effects in addition to just the
 supply side, the scope of the accessibility calculation can be significantly increased.
 Gauging these effects on \emph{facility capacities} can be addressed by specifying facility
-capacities in the according value in the \lstinline{facilities} input file. The corresponding code adaption for
-observing these capacities in the \gls{matsim} accessibility extension is currently underway. Observation of
-\emph{network capacities} and their effects on agents' behavior, by contrast, is one of the core features
+capacities in the according value in the \lstinline{facilities} input file. 
+%% The corresponding code adaption for
+%% observing these capacities in the \gls{matsim} accessibility extension is currently underway. 
+Observation of
+\emph{network capacities} and their effects on agents' behavior
+%, by contrast, 
+is one of the core features
 of the \gls{matsim} transport simulation. This is also one major argument for the integration of an accessibility
-computation with the dynamic transport simulation system \gls{matsim}. While other accessibility tools, (the
+computation with the dynamic transport simulation system \gls{matsim}. While other accessibility tools---the
 majority based on \gls{gis} systems
-\citep{BBSRErreichbarkeitsmodell, CurtisEtAl2013AccessibilityPolicyInnovation, BuettnerEtAl2010Erreichbarkeitsatlas, LiuZhu2004AccessibilityAnalyst, GulhanEtAl2014PotentialAccessibilityMeasureDenizli})
-can calculate travel times on a routed network, they do not calculate accessibilities dependent on transport infrastructure usage
+\citep{BBSRErreichbarkeitsmodell, CurtisEtAl2013AccessibilityPolicyInnovation, BuettnerEtAl2010Erreichbarkeitsatlas, LiuZhu2004AccessibilityAnalyst, GulhanEtAl2014PotentialAccessibilityMeasureDenizli}---can calculate travel times on a routed network, they do not calculate accessibilities dependent on transport infrastructure usage
 level. This property, is, however, essential when making accessibility measures sensitive to
 transport demand management policies, \ie transport system changes that do not alter the transport
 infrastructure and are thus not captured by models considering only the supply side.
@@ -443,15 +451,14 @@ as the expected maximum utility \citep[e.g.,][]{BenAkivaLerman_1985, DejongEtc20
 perceived at origin location $\ell$, is $U_{\ell k} = V_{base} + V_{\ell k} + \epsilon_{\ell k}$,
 where $V_{base}$ is a base utility for performing a given activity without considering its location,
 $V_{\ell k}$ is the systematic or observed disutility of traveling to from origin $\ell$ to destination $k$,
-and $\epsilon_{\ell k}$ is a random term which absorbs the randomness of disutility of traveling, as well as
+and $\epsilon_{\ell k}$ is a random term which absorbs the randomness of the disutility of traveling, as well as
 fluctuations in utility around $V_{base}$. Under the usual assumption that the $\epsilon_{\ell k}$ are
 independent and identically (iid) Gumbel-distributed random variables, the expectation value of $U_{\ell k}$ becomes
 \begin{equation}
 	%E(U_i) = E(\max_k U_{ik}) = \ln \sum_k e^{V_{ik}} + Const \equiv A_i + Const \ .
 	E(U_\ell) = E(\max_k U_{\ell k}) = \ln \sum_k e^{V_{\ell k}} + Const \equiv A_\ell + Const \ .
 \end{equation}
-$Const$ does not need to be considered, as it is invariant for all locations. $A_\ell$ may, therefore, also
-take negative values.
+$Const$ does not need to be considered, as it is invariant for all locations. As a consequence of dropping the positive $Const$, $A_\ell$ may take negative values.
 
 \citet{GeursEtAl2012AccessibilityBenefitsNetherlands}, for instance, use the \gls{logsum} measure of user benefits 
 as an alternative to the travel time savings method (\ie rule-of-half measure) in a case study 
@@ -476,17 +483,26 @@ Therefore, accessibility computation in \gls{matsim} can also
 be conducted independent  from any zoning system and, instead, be based on a raster with arbitrary granularity,
 \ie adjustable grid size. Depending on the calculation planned (zone-based or grid-based), a 
 \lstinline{ZoneBasedAccessibilityControlerListenerV3}, or a 
-\lstinline{GridBasedAccessibilityControlerListenerV3}, respectively, need to be added to the \gls{matsim} controler 
-(See \url{http://matsim.org/javadoc} $\to$ accessibility $\to$ \lstinline{RunAccessibilityExample} for an example
-using the \lstinline{GridBasedAccessibilityControlerListenerV3}. More detail about the interpretation
-of cell- and zone-based accessibility measures is given in \citet{NicolaiNagelHiResAccessibilityMethod}).
+\lstinline{GridBasedAccessibilityControlerListenerV3}, respectively, need to be added to the \gls{matsim} controler.
+%
+%% See \url{http://matsim.org/javadoc} $\to$ accessibility $\to$ \lstinline{RunAccessibilityExample} for an example
+%% using the \lstinline{GridBasedAccessibilityControlerListenerV3}. 
+% steht under basic info am Anfang. kai, dec'15
+%
 Unlike the \gls{matsim} accessibility extension, most other accessibility assessment tools
 rely on the zone-based approach 
 \citep{CurtisEtAl2013AccessibilityPolicyInnovation, LiuZhu2004AccessibilityAnalyst, BuettnerEtAl2010Erreichbarkeitsatlas}.
 %This is mostly due to a better availability of data at the level of spatial resoultion of a particular zoning system.
-Since good quality structural data is only available at certain administrative zone levels, 
-\eg municipalities, it is not feasible to conduct these accessibility assessment approaches at a finer 
-spatial resolution.
+%
+%% Since good quality structural data is only available at certain administrative zone levels, 
+%% \eg municipalities, it is not feasible to conduct these accessibility assessment approaches at a finer 
+%% spatial resolution.
+% verstehe ich nicht. kai, dec'15
+%
+More detail about the 
+interpretation
+of cell- and zone-based accessibility measures is given by \citet{NicolaiNagelHiResAccessibilityMethod}.
+%
 
 Running a grid-based calculation, especially if a high spatial resolution is selected, avoids several issues
 that could arise (like``self-potential'') if accessibility computations are based on zones
@@ -500,7 +516,7 @@ The \gls{matsim} accessibility calculation does not require typical zone-based s
 calculation can be conducted on the basis of so-called \gls{vgi} like \gls{osm}, which contains
 activity facilities data on a coordinate-based level. Hence, no reference to any zoning
 system is necessary when using these data. Furthermore, data from \gls{osm} is publicly and freely available; 
-amount of these data are steadily increasing and quality improving. In particular, \gls{osm} seems to have 
+the amount of these data are steadily increasing and quality is improving. In particular, \gls{osm} seems to have 
 established itself as a uniform and globally-accessible standard for crowd-sourced and other geo-data, 
 which makes the \gls{matsim} accessibility assessment highly portable.
 
@@ -605,7 +621,7 @@ of 1\,000\,meters.
 %zusammenzufassen
 
 %\mnote{calculation procedure}
-To calculate the accessibility $A_\ell$ of a given origin location $ell$ to opportunity locations $k$, both
+To calculate the accessibility $A_\ell$ of a given origin location $\ell$ to opportunity locations $k$, both
 the origin location $\ell$, and opportunity locations $k$, are assigned to a road network. If the option to
 integrate the accessibility computation with the transport simulation, as described in Section~\ref{sec:integrated},
 is chosen, a congested network with time-dependent travel times (as they have been simulated in \gls{matsim})
@@ -621,7 +637,7 @@ is calculated, as stated in Equation~(\ref{eq:accessibility:logsum}) \citep{Nico
 A crucial question is how to choose the point, \ie the coordinate, where the accessibility computation is
 anchored. Most quantitative accessibility tools use geographical centroids of given zones. This is also
 true when the zone-based \gls{matsim} accessibility computation is selected. Alternative ways to select
-a centroid \citep[\eg land-use-based centroids][]{BuettnerEtAl2010Erreichbarkeitsatlas} are discussed as
+a centroid \citep[\eg land-use-based centroids;][]{BuettnerEtAl2010Erreichbarkeitsatlas} are discussed as
 well. If the grid-based \gls{matsim} accessibility computation is selected, the question of choosing
 a representative point for a spatial zone becomes less relevant, as cells are usually not selected to
 be as large.
@@ -640,7 +656,7 @@ of travel to overcome the gap between locations and the road network. Therefore,
 calculated by running the least cost path tree computation on the network has to be supplemented by the
 disutility to access the network from the origin $\ell$ (network access) and the disutility to access the
 destination $k$ from the network (network egress). For origin locations $\ell$, shortest distance to the
-network is given either by the Euclidean distance to the nearest node,or the orthogonal distance to the
+network is given either by the Euclidean distance to the nearest node, or the orthogonal distance to the
 nearest link on the network.
 %If the mapping of location $i$ is to a link, as in case (ii), $V_{ik}$ further includes the travel disutility to 
 %overcome the distance to the nearest node. The travel costs on the link are calculated by dividing the distance to 
@@ -724,30 +740,30 @@ where $k \in j$ denotes all opportunities $k$ attached to node $j$,
 %
 = e^{ V_{\ell j}} \sum_{k \in j} e^{ V_{jk}} 
 %
-=: e^{ V_{\ell j}} \cdot Opp_j
+=: e^{ V_{\ell j}} \cdot Opp_j \ .
 \end{equation} 
-it is sufficient to compute $Opp_j$ once for every network node $j$, and compute accessibilities as
+It is thus sufficient to compute $Opp_j$ once for every network node $j$, and compute accessibilities as
 \begin{equation}
 A_\ell = ln \sum_k e^{ V_{\ell k}}
 %
-= ln \sum_j e^{ V_{ij}} \cdot Opp_j \ .
+= ln \left[ \sum_j e^{ V_{ij}} \cdot Opp_j \right] \ .
 \end{equation}
 
-Therefore, the loop performing the calculation does not have to run all opportunities $k$, 
-just the network nodes $j$.
+Therefore, the loop performing the calculation does not have to run over all opportunities $k$, 
+just over all network nodes $j$.
 
 Similarly, for each origin location $\ell$, the nearest road network node is identified.
-Locations $\ell$, which share the same nearest node, have the same travel disutility for a given network
+Locations $\ell$ that share the same nearest node have different travel disutilities to reach that node, but from then on have the same travel disutility to any other network
 node $j$. Exactly like the destinations, the least cost path tree is executed
-only once and calculated disutilities on the network are reused for all origins $\ell$, 
-mapped on the same nearest network node. Therefore, only the calculation of the network access disutility 
+only once and calculated disutilities on the network are reused for all origins $\ell$ 
+that are mapped on the same nearest network node. Therefore, only the calculation of the network access disutility 
 needs to be performed individually for each origin $\ell$.
 \citet{NicolaiNagelHiResAccessibilityMethod} show that, due to this run time optimization, computation
 time increases sub-linearly with resolution. At the same time, they find that no significant further
 insights can be gained by increasing the resolution beyond a grid resolution of 100\,meters.
 
-The application example \lstinline{RunAccessibilityExample}, (see \url{http://matsim.org/javadoc} $\to$ 
-accessibility $\to$ \lstinline{RunAccessibilityExample}), performs multiple accessibility computation for
+The application example \lstinline{RunAccessibilityExample} (see \url{http://matsim.org/javadoc} $\to$ 
+accessibility) performs multiple accessibility computations for
 different types of activity facilities (\eg accessibility of workplaces or accessibility of leisure
 facilities) by adding multiple instances of \lstinline{GridBasedAccessibilityControlerListenerV3}
 to the \gls{matsim} controler. Other ways of performing distinct accessibility assessments for parts of
