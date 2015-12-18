@@ -19,8 +19,58 @@
 %%\openup-2pt
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage[sf,bf]{titlesec}
-%%\usepackage[compact,sf,bf]{titlesec}
+%%\usepackage[sf,bf]{titlesec}
+\usepackage[compact,sf,bf]{titlesec}
+
+% def of subpart begin
+% !! DOES NOT WORK !!
+%%\usepackage{tocloft}
+\usepackage{lipsum}
+\usepackage{fmtcount}
+\newcommand\subpartname{Subpart}
+\titleclass{\subpart}{top}[\part]
+\newcounter{subpart}
+\renewcommand\thesubpart{\Numberstring{subpart}}
+
+\makeatletter
+\titleformat%
+{\subpart}[display]%
+{\normalsize\Huge\filcenter}% font
+{\scshape\subpartname~\thesubpart}% number, name
+{1em}%
+{}
+%{{\bfseries#1}\iftitlemeasuring{\def\ttl@endlongest{\clearpage}}{}}
+
+\titlespacing*{\subpart}{0pt}{0em}{\pagetotal}
+
+\makeatother
+
+\newcommand\subpartautorefname{\subpartname}
+\newcommand\subpartbreak{\cleardoublepage\mbox{}\vfil}
+
+\assignpagestyle{\subpart}{plain}
+
+\makeatletter
+\def\toclevel@subpart{0}
+\newcommand*\l@subpart[2]{%
+  \ifnum \c@tocdepth >-2\relax
+    \addpenalty{-\@highpenalty}%
+    \addvspace{1em \@plus\p@}%
+    \setlength\@tempdima{3.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      {\leavevmode
+       \large\bfseries\subpartname~#1\hfil\hb@xt@\@pnumwidth{\hss #2}}\par
+       \nobreak
+         \global\@nobreaktrue
+         \everypar{\global\@nobreakfalse\everypar{}}%
+    \endgroup
+  \fi}
+\makeatother
+% def of subpart end
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% providing if-then-else command:
@@ -133,6 +183,7 @@
 \usepackage{hyperref}
 %% line breaks for URL's
 \usepackage{url}
+\hypersetup{bookmarksdepth=3}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% line spacing
 \usepackage{setspace}
