@@ -1,0 +1,45 @@
+% ##################################################################################################################
+\chapter{Matrix based pt router}
+\label{sec:matrix-based-pt-router}
+
+\hfill \textbf{Author:} Kai Nagel
+
+%\ah{why not createStandardInfo?}\kai{As of now, createStandardInfo generates a ``section'' heading.  Cannot be used at subsection level.}
+
+%% \subsection{Basic Information}
+
+\createStandardInformationBasic{%
+%
+\entryStd{matrixbasedptrouter}%
+%
+}{%
+%
+\invokeStd{matrixbasedptrouter}{\lstinline|RunMatrixBasedPTRouterExample| class}%
+%
+}{%
+%
+\configStd{matrixBasedPtRouter}%
+%
+}{%
+%
+Section~3.1 of \citet{NicolaiNagelSustaincityHandbookMATSim4UrbanSim}; \citet{RoederNagel2013SketchPlanningBrussels}
+%
+}
+
+The matrix based \gls{pt} router reads a list of \gls{pt} stops, and constructs ``teleported'' \gls{pt} routes using the stops nearest to origin and destination.  That is, each resulting trip will approximately look as follows:
+\begin{xml}
+<act type="previous" ... />
+<!-- begin trip -->
+<leg mode="walk" ... />
+<act type="ptInteraction" ... />
+<leg mode="pt" ... />
+<act type="ptInteraction" ... />
+<leg mode="walk" ... />
+<!-- end trip -->
+<act type="next" ... />  
+\end{xml}
+
+The attributes of the walk and the \gls{pt} legs will be computed from the coordinates of the locations in the same way as teleportation routing (see Section~\ref{sec:teleportation-routing}), and then taken at face value in the \gls{mobsim} (see Section~\ref{sec:teleportation-qsim}).
+
+Travel times and travel distances between \gls{pt} stops can alternatively be given by corresponding matrices.  This is particularly useful if a \gls{pt} assignment exists and such information can be extracted from that.  This was used by \citet{RoederNagel2013SketchPlanningBrussels} and by \citet{ZoelligRenner_PhDThesis_2014}.
+
