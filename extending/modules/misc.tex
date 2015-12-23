@@ -1,72 +1,11 @@
-\chapter{Miscellaneous Extensions in Short}
-\label{ch:misccontribs}
+%% \chapter*{Miscellaneous Extensions in Short}
+%% \label{ch:misccontribs}
 % ##################################################################################################################
 
 \hfill \textbf{Author:} Kai Nagel
 
 %% \kaitodo[inline]{read chapter/section}
 
-% ##################################################################################################################
-\section{Analysis}
-\label{sec:contrib-analysis}
-
-%% \subsection{Basic Information}
-
-% Hallo Andreas, ich mag keine Überschriften, bei denen es nur ein X.X.1 gibt, aber kein X.X.2.  Also machen wir entweder "Basic Information" _und" "Summary" pro kurzem Eintrag, oder beides nicht.  Ich tendiere zu "beides nicht".  kai, may'15
-
-\createStandardInformationBasic{%
-%
-\entryStd{analysis}
-%
-}{%
-%
-No standard invocation. See \url{http://matsim.org/javadoc} $\to$ analysis $\to$ \lstinline|RunKNEventsAnalyzer| class for intuition.
-%
-}{%
-%
-\configNonstd
-%
-}{%
-%
-\pubNone
-%
-}
-
-%% \lstinline{org.matsim.contribs.analysis.*}
-
-This \gls{contribution} collects various analysis tools for \gls{matsim} output.  
-
-One important reason for having this in a \gls{contribution} rather than in a playground is the \gls{maven} layout of the repository: \Glspl{contribution} can use material from other \glspl{contribution}, but not from the playgrounds. 
-In consequence, analysis tools that are needed in a \gls{contribution} need to be in a \gls{contribution} themselves. 
-The analysis \gls{contribution} is a possible place where to put them.
-
-% ##################################################################################################################
-\section{freightChainsFromTravelDiaries}
-\label{sec:freightChainsFromTravelDiaries}
-
-%% \subsection{Basic Information}
-
-\createStandardInformationBasic{%
-%
-\entryStd{freightChainsFromTravelDiaries}%
-%
-}{%
-%
-Currently not possible.
-%
-}{%
-%
-\configNonstd
-%
-}{%
-%
-\cite{Schneider2011PhD}
-%
-}
-
-Sebastian Schneider has done a Ph.D.\ dissertation about generating freight vehicle chains by essentially re-sampling the information contained in the German survey \gls{kid} \citep{SteinmeyerWagner2005KiD}.  
-Since the \gls{kid} is essentially an activity-based travel diary, the method should also be applicable to other situations.
-Since Sebastian has left science for the time being, he allowed us to take his code and integrate it into the repository, under the \gls{gpl}. For the time being, it will just ``sit'' here until someone attempts to make it work.
 
 %##################################################################################################################
 %\section{gtfs2matsimtransitschedule}
@@ -76,147 +15,11 @@ Since Sebastian has left science for the time being, he allowed us to take his c
 
 %\ah{wird in in Section~\ref{sec:SemiTool} abgehandelt}
 
-% ##################################################################################################################
-\section{Matrix based pt router}
-\label{sec:matrix-based-pt-router}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\ah{why not createStandardInfo?}\kai{As of now, createStandardInfo generates a ``section'' heading.  Cannot be used at subsection level.}
 
-%% \subsection{Basic Information}
 
-\createStandardInformationBasic{%
-%
-\entryStd{matrixbasedptrouter}%
-%
-}{%
-%
-\invokeStd{matrixbasedptrouter}{\lstinline|RunMatrixBasedPTRouterExample| class}%
-%
-}{%
-%
-\configStd{matrixBasedPtRouter}%
-%
-}{%
-%
-Section~3.1 of \citet{NicolaiNagelSustaincityHandbookMATSim4UrbanSim}; \citet{RoederNagel2013SketchPlanningBrussels}
-%
-}
-
-The matrix based \gls{pt} router reads a list of \gls{pt} stops, and constructs ``teleported'' \gls{pt} routes using the stops nearest to origin and destination.  That is, each resulting trip will approximately look as follows:
-\begin{xml}
-<act type="previous" ... />
-<!-- begin trip -->
-<leg mode="walk" ... />
-<act type="ptInteraction" ... />
-<leg mode="pt" ... />
-<act type="ptInteraction" ... />
-<leg mode="walk" ... />
-<!-- end trip -->
-<act type="next" ... />  
-\end{xml}
-
-The attributes of the walk and the \gls{pt} legs will be computed from the coordinates of the locations in the same way as teleportation routing (see Section~\ref{sec:teleportation-routing}), and then taken at face value in the \gls{mobsim} (see Section~\ref{sec:teleportation-qsim}).
-
-Travel times and travel distances between \gls{pt} stops can alternatively be given by corresponding matrices.  This is particularly useful if a \gls{pt} assignment exists and such information can be extracted from that.  This was used by \citet{RoederNagel2013SketchPlanningBrussels} and by \citet{ZoelligRenner_PhDThesis_2014}.
-
-% ##################################################################################################################
-\section{MATSim4UrbanSim}
-\label{sec:matsim4urbansim}
-
-\editdone{This text has undergone the professional edit. Please no grammatical changes anymore! They are most-probably wrong.}
-
-%% \subsection{Basic Information}
-%% \label{sec:matsim4urbansim-stdInfo}
-
-%% \subsection{Basic Information}
-
-\createStandardInformationBasic{%
-%
-\entryStd{matsim4urbansim}%
-%
-}{%
-%
-The module is invoked from a live UrbanSim implementation.
-%
-}{%
-%
-In the UrbanSim config file.
-%
-}{%
-\citet[][]{Nicolai2011Couplinganurbansimulationmodelwithatravelmodel}; \citet{NicolaiNagelHiResAccessibilityMethod}; \citet{NicolaiNagelSustaincityHandbookMATSim4UrbanSim}
-%
-}
-
-% ##################################################################################################################
-%% \subsection{Summary}
-``MATSim4UrbanSim'' is an adapter package for using \gls{matsim} as a travel model plug-in to \gls{urbansim}, a well-known land use simulation \citep[e.g.][see \url{http://www.urbansim.org}]{WaddellEtc2003UrbanSim}.
-\gls{urbansim} has, for example, submodels for residential location choice, commercial location choice, or development and building construction, thus creating synthetic  potential urban or regional development scenarios under various conditions and constraints. 
-Traffic infrastructure plays a significant role in such developments; for example, very accessible areas are more attractive as residences and for commercial activities. 
-Since accessibility is reduced by congestion, and congestion can only be realistically modeled through a sophisticated model of demand and supply interaction, \gls{urbansim} does not have its own travel model, but delegates that task to external models, such as \gls{matsim}.
-
-To use MATSim4UrbanSim, one first needs to have a running \gls{urbansim} installation. 
-From there, one can add \gls{matsim} to that installation; see %Section~\ref{sec:matsim4urbansim-stdInfo} 
-the documentation mentioned above for more information. 
-Basic \gls{matsim} parameters are configured from the \gls{urbansim} configuration file by adding an appropriate section; again, see 
-%Section~\ref{sec:matsim4urbansim-stdInfo} 
-the documentation mentioned above for more information. 
-It is possible to add a standard \gls{matsim} \gls{configfile} allowing use of the extended \gls{matsim} features, including those added after the adapter package was designed.
-
-The module was applied by \citet{CabritaEtcSustaincityHandbookBrusselsChapter} and by \citet[][]{ZoelligRenner_PhDThesis_2014}.
-%% , but it has not been maintained since 2013 and it is unclear how much of it currently works.
-
-% ##################################################################################################################
-\section{NetworkEditor}
-\label{sec:contrib-networkEditor}
-
-%% \subsection{Basic Information}
-
-\createStandardInformationBasic{%
-%
-\entryStd{networkEditor}%
-%
-}{%
-%
-\invokeStd{networkEditor}{\lstinline|RunNetworkEditor| class}%
-%
-}{%
-%
-none
-%
-}{%
-%
-none
-%
-}
-
-This is, beyond the two network editors described in Chapter~\ref{ch:networkeditor}, a third network editor. 
-It is older than the other two and has not been systematically maintained, but it still seems to be working and so it is still there.
-
-% ##################################################################################################################
-\section{Socnetgen}
-\label{sec:contrib-socnetgen}
-
-%% \subsection{Basic Information}
-
-\createStandardInformationBasic{%
-%
-\entryStd{socnetgen}%
-%
-}{%
-%
-\invokeStd{socnetgen}{\lstinline|RunErgmSimulator| class}%
-%
-}{%
-%
-none
-%
-}{%
-%
-\citet{Illenberger2012PhD}
-%
-}
-
-This package contains algorithms to generate social networks that may be used on top of the \gls{matsim} population.  It pre-dates the work by Dubernet presented in Chapter~\ref{ch:jointtrips}.  The approach in \lstinline{socnetgen} is much more lightweight than that of Chapter~\ref{ch:jointtrips}, but it also does nothing beyond just generating the social network according to given statistical criteria.
 
 % ##################################################################################################################
 

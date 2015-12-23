@@ -26,8 +26,6 @@
 
 \def\index#1{#1}
 
-\setcounter{tocdepth}{3}
-
 \makeatletter
 \presetkeys{todonotes}{inline}{}
 \makeatother
@@ -40,6 +38,23 @@
 
 \addcontentsline{toc}{chapter}{TODOs}
 \listoftodos[TODOs] \cleardoublepage
+
+% --------------------------------------
+\setcounter{tocdepth}{1}
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Table of Contents}
+\markboth{Table of Contents}{Table of Contents}
+{\parskip0pt %hack to get toc condensed; please replace by cleaner 
+% syntax if you know it.  kai, oct'14
+
+\glsunsetall % no gls expansions in toc
+{\openup-1pt
+\tableofcontents \cleardoublepage
+}
+\glsresetall % -------------------------
+
+}
 
 % --------------------------------------
 
@@ -62,28 +77,41 @@
 \label{part:extending-matsim}
 \input{extending/modules/modules} \cleardoublepage
 
-\subpart{Extensions to the traffic flow simulation}
+\subpart{Input data preparation}
 
+
+\input{extending/modules/dataContainers} \cleardoublepage
+\input{extending/modules/initialdemand} \cleardoublepage
+\input{extending/modules/networkeditor} \cleardoublepage
+\input{extending/modules/networkEditorFirst} \cleardoublepage
+
+\subpart{Road traffic}
+
+\input{extending/modules/qsim} \cleardoublepage
 \input{extending/modules/signalslanes} \cleardoublepage
 \input{extending/modules/parking} \cleardoublepage
+\input{extending/modules/elvehicles} \cleardoublepage
+\input{extending/modules/roadpricing} \cleardoublepage
 
 \subpart{Other modes besides individual car}
 
 \input{extending/modules/pt} \cleardoublepage
+\input{extending/modules/matrixBasedPtRouter} \cleardoublepage
 \input{extending/modules/multimodalsim} \cleardoublepage
-\input{extending/modules/elvehicles} \cleardoublepage
 \input{extending/modules/carsharing} \cleardoublepage
 \input{extending/modules/taxis} \cleardoublepage
 
 \subpart{Commercial traffic}
 
-\input{extending/modules/freight}
+\input{extending/modules/freight} \cleardoublepage
 \input{extending/modules/wagonsim} \cleardoublepage
+\include{extending/modules/freightChains} \cleardoublepage
 
 \subpart{Additional choice dimensions}
 
 \input{extending/modules/destinationchoice} \cleardoublepage
 \input{extending/modules/jointtrips} \cleardoublepage
+\input{extending/modules/socnetgen} \cleardoublepage
 
 \subpart{Within-day replanning}
 
@@ -102,20 +130,15 @@
 \subpart{Analysis}
 
 \input{extending/modules/accessibility} \cleardoublepage
-\input{extending/modules/business_analytics} \cleardoublepage
 \input{extending/modules/emissions} \cleardoublepage
-
-
-\subpart{Input data preparation}
-
-\input{extending/modules/networkeditor} \cleardoublepage
+\input{extending/modules/business_analytics} \cleardoublepage
+\input{extending/modules/analysis} \cleardoublepage
 
 \subpart{Other Modules}
 
-\input{extending/modules/roadpricing} \cleardoublepage
 \input{extending/modules/psim} \cleardoublepage
 \input{extending/modules/evacuation} \cleardoublepage
-\input{extending/modules/misc}\cleardoublepage
+\input{extending/modules/matsim4urbansim} \cleardoublepage
 \input{extending/modules/abandoned} \cleardoublepage
 
 \subpart{Own modules}
