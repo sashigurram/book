@@ -5,12 +5,12 @@
 \chapter{QSim}
 \label{sec:extending-qsim}
 
-\subsubsection{Vehicle Types and Vehicles}
+\section{Vehicle Types and Vehicles}
 \label{sec:vehicles-in-qsim}
 
 For a variety of reasons---\eg vehicle-specific emissions calculations (Chapter~\ref{ch:emissions}), or vehicle-specific maximum speeds (see below)---it may become necessary to assign different vehicle types to different persons, modes, or trips.
 %
-The (arguably) most ``honest'' approach to vehicles, in terms of micro-simulation, is to generate a synthetic vehicle fleet.  Each leg would then have to know which vehicle it wants to use.  This is indeed possible with the planned vehicle \gls{id} that \Gls{matsim} route objects can store.  This functionality is switched on by first loading an additional vehicles file (see Sec.~\ref{sec:extending-vehicles}) and then configuring the \gls{qsim} as
+The (arguably) most ``honest'' approach to vehicles, in terms of micro-simulation, is to generate a synthetic vehicle fleet.  Each leg would then have to know which vehicle it wants to use.  This is indeed possible with the planned vehicle \gls{id} that \Gls{matsim} route objects can store.  This functionality is switched on by first loading an additional vehicles file (see Section~\ref{sec:extending-vehicles}) and then configuring the \gls{qsim} as
 \begin{xml}
 <module name="qsim">
    <param name="usePersonIdForMissingVehicleId" value="false" />
@@ -46,10 +46,11 @@ This generates a default vehicle (typically a medium-sized 4-seater) every time 
 
 At the moment, alternative approaches to vehicle generation need to be programmed as script-in-\gls{java}.  
 %% As an alternative, one can use \lstinline|VehicleUtils| for specifying mode vehicles according to the example syntax in 
-See, e.g., 
+See, \eg
 \lstinline{RunMobsimWithMultipleModeVehiclesExample} under \url{http://matsim.org/javadoc} $\to$ main distribution
  %% (see also Section~\ref{sec:using-qsim-multimodal}). 
-for a reference to a script that generates mode-specific typical vehicles for each mode, and Section~\ref{sec:extending-qsim} for a general explanation of scripts-in-\gls{java}.
+for a reference to a script that generates mode-specific typical vehicles for each mode.
+%, and Chapter~\ref{sec:extending-qsim} for a general explanation of scripts-in-\gls{java}.\ah{This is a circular ref!}
 Simulation experiments 
 %for \gls{qsim}'s relatively new \gls{multimodal} feature, applying multiple mode vehicles, 
 using this feature have been performed for the Patna scenario as reported in Chapter~\ref{ch:patna}.
@@ -64,7 +65,7 @@ Vehicles need to be available where they are needed.  It is, for example, imposs
    ...
 </module>
 \end{xml}
-This means that if a necessary vehicle is not available at the location where it is needed by the traveler, the \gls{qsim} throws an exception and aborts.  The idea here is that such synthetic travelers should have within-day replanning strategies (see Section~\ref{ch:withinday}) to cope with unexpectedly unavailable vehicles; any attempt to use an unavailable vehicle points to an error in the driver's behavioral logic.
+This means that if a necessary vehicle is not available at the location where it is needed by the traveler, the \gls{qsim} throws an exception and aborts.  The idea here is that such synthetic travelers should have within-day replanning strategies (see Chapter~\ref{ch:withinday}) to cope with unexpectedly unavailable vehicles; any attempt to use an unavailable vehicle points to an error in the driver's behavioral logic.
 
 In many standard situations, the above behavior will be too strict.  For example, a vehicle may be shared between family members, but one member will be late in returning a vehicle.  For such situations, 
 \begin{xml}
