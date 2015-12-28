@@ -108,6 +108,12 @@ The approach yielded promising results, with a reduction in the number of \gls{q
 
 However, as explained in Section~\ref{sec:matsim-in-java}, at some point fast conceptual progress and reducing maintenance effort became more important than the fastest possible computational performance, especially since the 4~GByte memory limitation became obsolete with the advent of the 64-bit memory architectures.  In consequence, \gls{matsim} moved to \gls{java}, with this gave up the \gls{mpi} approach to parallel computing, and initially concentrated on single-threaded computational performance.  
 
+An attempt to use the \gls{cuda} for the C language \citep{StrippgenNagel2009CUDA,StrippgenNagel2009CUDA2,Strippgen2009Diss} ran into the same problems as the earlier parallel \gls{deqsim} also written in C/C++ \citep{CharyparAxhausenEtAl2007event-drivenparallelqueue-based}: The time necessary to transmit the necessary information back and forth between the \gls{java}-based \gls{matsim} and the C/C++-based external package ate up all the performance gains.  In consequence, the \gls{deqsim} was re-implemented as the so-called \gls{jdeqsim} in \gls{java} (see Section~\ref{sec:using-jdeqsim}).   Before parallelizing the \gls{jdeqsim}, however, it was decided to first accelerate the processing of the events since that was identified as the main bottleneck.  Section~\ref{sec:using-paralleleventhandling} describes how to use parallel events handling.  The parallel version of the \gls{jdeqsim} never made it into the production process.
+
+At the same time, the standard \gls{qsim} was improved by other people, for example by switching off links without activity.  Dobler \kai{ref??} made the \gls{qsim} multi-threaded.  He reported \kai{ref??} no performance gains with small scenarios, but significant performance gains with large scenarios.  That is, multi-threading did not help with quick turn-around during experimentation, but with overall computing times for large scenarios on large shared-memory computers.  More recent hardware seems to have improved the situation \kai{do I have a ref for this?} so that it was eventually decided to remove the single-threaded variant of the \gls{qsim} and concentrate development on the multi-threaded variant only.  
+
+\kai{google protocol buffers.  gregor?}
+
 
 % Local Variables:
 % mode: latex
