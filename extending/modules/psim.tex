@@ -97,22 +97,57 @@ The approach yielded promising results, with a reduction in the number of \gls{q
 
 % ##################################################################################################################
 
-\chapter{Other Aspects}
+\chapter{Other Experiences with Computational Performance Improvements}
 \label{ch:high-performance-computing}
 
 \hfill \textbf{Author:} Kai Nagel, Andreas Horni
 
 \ah{Könntest Du durch folgenden Text bitte durchsehen und (1) citations ergängen, (2) Referenzen innerhalb des Buches ergänzen?  Danke.}
 
-\gls{matsim} has always had the simulation of large regions at its core, and as such was always interested in fast computational performance.  The team had, when it started with the \gls{java}-based \gls{matsim} (cf.~\ref{sec:matsim-in-java}), considerable experience in parallel computing \citep{NagelSchleicher1994Microscopictrafficmodeling,RickertNagel1999hpcn99,NagelRickert2001parallel,CetinBurriNagel2003queue} as well as with more general message-based approaches \citep{GloorNagel2005ped-att04-birkh}.
+\gls{matsim} has always had the simulation of large regions at its core, and as such was always interested in fast computational performance.  The team had, when it started with the \gls{java}-based \gls{matsim} (cf.~\ref{sec:matsim-in-java}), considerable experience in parallel computing \citep{NagelSchleicher1994Microscopictrafficmodeling,RickertNagel1999hpcn99,NagelRickert2001parallel,CetinBurriNagel2003queue} as well as with more general message-based approaches \citep{GloorNagel2005ped-att04-birkh} that resemble today's Protocol Buffers \citep{ProtocolBuffersWww}.
+%
+Howver, the move to \gls{java} (see Section~\ref{sec:matsim-in-java}), a decision for faster conceptual progress and reduced maintenance effort, also had the consequence that the \gls{mpi} approach to parallel computing could no longer be used and was thus given up.  See Section~\ref{sec:matsim-in-java} for details.
 
-However, as explained in Section~\ref{sec:matsim-in-java}, at some point fast conceptual progress and reducing maintenance effort became more important than the fastest possible computational performance, especially since the 4~GByte memory limitation became obsolete with the advent of the 64-bit memory architectures.  In consequence, \gls{matsim} moved to \gls{java}, with this gave up the \gls{mpi} approach to parallel computing, and initially concentrated on single-threaded computational performance.  
 
-An attempt to use the \gls{cuda} for the C language \citep{StrippgenNagel2009CUDA,StrippgenNagel2009CUDA2,Strippgen2009Diss} ran into the same problems as the earlier parallel \gls{deqsim} also written in C/C++ \citep{CharyparAxhausenEtAl2007event-drivenparallelqueue-based}: The time necessary to transmit the necessary information back and forth between the \gls{java}-based \gls{matsim} and the C/C++-based external package ate up all the performance gains.  In consequence, the \gls{deqsim} was re-implemented as the so-called \gls{jdeqsim} in \gls{java} (see Section~\ref{sec:using-jdeqsim}).   Before parallelizing the \gls{jdeqsim}, however, it was decided to first accelerate the processing of the events since that was identified as the main bottleneck.  Section~\ref{sec:using-paralleleventhandling} describes how to use parallel events handling.  The parallel version of the \gls{jdeqsim} never made it into the production process.
+%% %
+%% However, as explained in Section~\ref{sec:matsim-in-java}, the move to \gls{java} was a decision for faster conceptual progress and reduced maintenance effort,
+%% % at the expense of the fastest possible computational performance, 
+%% %% especially since the 4~GByte memory limitation was removed with the advent of the 64-bit memory architectures.  %% In consequence, \gls{matsim} moved to \gls{java}, with this 
+%% %% gave up the \gls{mpi} approach to parallel computing, and initially concentrated on single-threaded computational performance.  
+%% %
+%% However, one consequence of the move to Java was that the \gls{mpi} approach to parallel computing could no longer be used and was thus given up.  
 
-At the same time, the standard \gls{qsim} was improved by other people, for example by switching off links without activity.  Dobler \kai{ref??} made the \gls{qsim} multi-threaded.  He reported \kai{ref??} no performance gains with small scenarios, but significant performance gains with large scenarios.  That is, multi-threading did not help with quick turn-around during experimentation, but with overall computing times for large scenarios on large shared-memory computers.  More recent hardware seems to have improved the situation \kai{do I have a ref for this?} so that it was eventually decided to remove the single-threaded variant of the \gls{qsim} and concentrate development on the multi-threaded variant only.  
+The behavioral modules of \gls{matsim}, such as route (Section \ref{sec:routechoice}) or location (Section~\ref{ch:destinationchoice}) innovation, are conceptually straightforward to parallelize by multi-threading, and that was implemented in \gls{matsim} from early on \citep[][see Section~\ref{sec:using-parallel-computing} how to use this]{BalmerEtc2008matsim-arch-perf-MAS-TT}.  The remaining challenge then is to parallelize the \gls{mobsim}, in which the parallel threads need to interact closely.  For example, assume that we compute 24~hours of traffic in 120~seconds of computing time (cf.~Table~\ref{tab:threaded-computing-times}).  With the 1~second time steps used in the \gls{qsim} this means 720~update rounds per second, and thus 720~inter-thread interactions per second.
+
+An attempt to use the \gls{cuda} for the C language \citep{StrippgenNagel2009CUDA,StrippgenNagel2009CUDA2,Strippgen2009Diss} ran into the same problems as the earlier parallel \gls{deqsim} also written in C/C++ \citep{CharyparAxhausenEtAl2007event-drivenparallelqueue-based}: The time necessary to transmit the necessary information back and forth between the \gls{java}-based \gls{matsim} and the C/C++-based external package used up all the performance gains.  In consequence, the \gls{deqsim} was re-implemented as the so-called \gls{jdeqsim} in \gls{java} \citep[][also see Section~\ref{sec:using-jdeqsim}]{WaraichEtAl_HelbichEtAl_2015}.  Before parallelizing the \gls{jdeqsim}, however, it was decided to first accelerate the processing of the events since that was identified as the main bottleneck.  Section~\ref{sec:using-paralleleventhandling} describes how to use parallel events handling.  The parallel version of the \gls{jdeqsim} \citep[][]{WaraichEtAl_HelbichEtAl_2015} never made it into the \gls{matsim} main repository.
+
+\begin{table}
+  \caption{\ah{convert to ivt format} Computing times of the \gls{mobsim} for the Gauteng scenario (see Chapter~\ref{ch:gauteng}) with 523\,000~links for different computers, different population sizes, and different numbers of threads.  ``laptop 2010'' refers to a high end Mac Pro laptop from 2010, ``laptop 2014'' refers to a high end Mac Pro laptop from 2014. ``(X)'' means that the laptop was no longer useful for secondary tasks. We can see a speed increase close to a factor of nearly four from 2010 to 2014, and then in 2014 an additional factor of two with multi-threading.  These results were shown at several seminars, but never published elsewhere.}
+  \label{tab:threaded-computing-times}
+\centering
+  \begin{tabular}{|r|r||r|r|r|r|}
+    \hline
+Computer & population size & 1 thread & 4 threads & 6 threads & 8 threads \\
+\hline
+\hline
+laptop 2010 & 1\% $=$ 23\,500 & 432 sec & (X) & (X) & (X) \\
+\hline
+laptop 2014 & 1\% $=$ 23\,500 & 110 sec & & 57 sec & 55 sec \\
+\hline
+laptop 2014 & 10\% $=$ 235\,000 & & & 200 sec & \\
+\hline
+  \end{tabular}
+\end{table}
+  
+At the same time, the standard \gls{qsim} was improved by other people, for example by keeping track of active links and not doing any computation on links without activity.  Ch.~Dobler made the \gls{qsim} multi-threaded.  He reported \citep[][Chapter~5]{Dobler_PhDThesis_2013} close-to-linear speed-ups with large scenarios, but only small if any performance gains with small scenarios.  That is, multi-threading helped greatly with overall computing times for large scenarios on large shared-memory computers, but little with with quick turn-around during experimentation.  More recent hardware seems to have improved the situation also for small scenarios (Table~\ref{tab:threaded-computing-times}) so that it was eventually decided to remove the single-threaded variant of the \gls{qsim} and concentrate development on the multi-threaded variant only.  
 
 \kai{google protocol buffers.  gregor?}
+
+The PSim (Chapter~\ref{ch:psim}) addresses the problem from a different angle: Rather than accelerating the \gls{qsim} itself, it attempts to make use of the fact that (1)~adding or removing a small number of synthetic travellers does not change congestion patterns very much and thus alternative plans can be evaluated in parallel, and (2)~the congestion patterns generated by the \gls{mobsim} do not vary that much from one iteration to the next so that the \gls{mobsim} does not have to be re-run every time after some synthetic travellers have moved to different alternatives.
+
+\cite{MaerkiEtAl_Transportation_2014} and \cite{Dobler_PhDThesis_2013} point out that the number of iterations to reach equilibrium can be reduced when the synthetic travellers perform within-day re-routing -- this points into the same direction as \cite{LuEtcBenAkiva2015SimMobility} who claim that equilibrium iterations will not be necessary at all with well-calibrated behavioral models and a realistic starting point.
+
+Overall, 
 
 
 % Local Variables:
