@@ -1,5 +1,7 @@
 s/url =/OPTurl =/
-s/note =/OPTnote =/
+#s/note =/OPTnote =/
+s#\\url.http://www\.vsp\.tu-berlin\.de/publications.##
+s/, see$//
 s/, Virginia, USA//
 s/, UK//
 s/, Germany, Decemter 2010//
