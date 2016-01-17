@@ -17,6 +17,6 @@ s/month =/OPTmonth =/
 s/, TX, USA//
 s/edition =/OPTedition= /
 s/isbn =/OPTisbn =/
-s/howpublished =/OPThowpublished =/
+# s/howpublished =/OPThowpublished =/
 s/, Germany//
 s/, Switzerland//

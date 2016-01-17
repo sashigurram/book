@@ -16,5 +16,8 @@ quick:
 clean:
 	cd ../.. ; ${MAKE} clean
 
+veryclean:
+	cd ../.. ; ${MAKE} veryclean
+
 localbib:
 	cd ../.. ; ${MAKE} localbib

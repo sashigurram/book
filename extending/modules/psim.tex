@@ -102,9 +102,11 @@ The approach yielded promising results, with a reduction in the number of \gls{q
 
 \hfill \textbf{Author:} Kai Nagel
 
-\ah{Könntest Du durch folgenden Text bitte durchsehen und (1) citations ergänzen, (2) Referenzen innerhalb des Buches ergänzen?  Danke.}
+%% \ah{Könntest Du durch folgenden Text bitte durchsehen und (1) citations ergänzen, (2) Referenzen innerhalb des Buches ergänzen?  Danke.}
 
-\gls{matsim} has always had the simulation of large regions as its goal, and as such was always interested in fast \ah{high?} computational performance.  The team had, when it started with the \gls{java}-based \gls{matsim} (cf.~\ref{sec:matsim-in-java}), considerable experience in parallel computing \citep{NagelSchleicher1994Microscopictrafficmodeling,RickertNagel1999hpcn99,NagelRickert2001parallel,CetinBurriNagel2003queue} as well as with more general message-based approaches \citep{GloorNagel2005ped-att04-birkh} that resemble today's Protocol Buffers 
+\gls{matsim} has always had the simulation of large regions as its goal, and as such was always interested in 
+%fast \ah{high?} 
+high computational performance.  The team had, when it started with the \gls{java}-based \gls{matsim} (cf.~\ref{sec:matsim-in-java}), considerable experience in parallel computing \citep{NagelSchleicher1994Microscopictrafficmodeling,RickertNagel1999hpcn99,NagelRickert2001parallel,CetinBurriNagel2003queue} as well as with more general message-based approaches \citep{GloorNagel2005ped-att04-birkh} that resemble today's Protocol Buffers 
 %\citep{ProtocolBuffersWww}.
 % \ah{Das wurde mit dem IVT-latex-System zu einer seltsamen Ref zusammengebaut: ``web page 2015 accessed 2015''. Hab es darum mal provisorisch nach IVT (added_bis) rübergenommen und angepasst.}
 \citep[][]{ProtocolBuffers_Webpage_2015}.
@@ -127,7 +129,7 @@ An attempt to use the \gls{cuda} for the C~language \citep{StrippgenNagel2009CUD
 %---------------------------------------------------------------------
 \createtable%
 {Computing times of the \gls{mobsim} for the Gauteng scenario}%
-{Computing times of the \gls{mobsim} for the Gauteng scenario (see Chapter~\ref{ch:gauteng}) with 523\,000~links for different computers, different population sizes, and different numbers of threads.  ``laptop 2010'' refers to a high end Mac Pro laptop from 2010, ``laptop 2014'' refers to a high end Mac Pro laptop from 2014. ``(X)'' means that the laptop was no longer useful for secondary tasks. We can see a speed increase close to a factor of nearly four from 2010 to 2014, and then in 2014 an additional factor of two with multi-threading.  These results were shown at several seminars, but never published elsewhere}%
+{Computing times of the \gls{mobsim} for the Gauteng scenario (see Chapter~\ref{ch:gauteng}) with 523\,000~links for different computers, different population sizes, and different numbers of threads.  ``laptop 2010'' refers to a high end Mac Pro laptop from 2010, ``laptop 2014'' refers to a high end Mac Pro laptop from 2014. We can see a speed increase close to a factor of four from 2010 to 2014, and then in 2014 an additional factor of two with multi-threading.  These results were shown at several seminars, but never published elsewhere}%
 {\label{tab:threaded-computing-times}}%
 {%
   \begin{tabular}{|r|r||r|r|r|r|}
@@ -142,6 +144,8 @@ laptop 2014 & 1\% $=$ 23\,500 & 110 sec & & 57 sec & 55 sec \\
 laptop 2014 & 10\% $=$ 235\,000 & & & 200 sec & \\
 \hline
   \end{tabular}
+\\
+{\footnotesize ``(X)'' means that the laptop was no longer useful for secondary tasks. \hfill}
 }%
 {}
 %---------------------------------------------------------------------
@@ -154,11 +158,17 @@ The \gls{psim} (Chapter~\ref{ch:psim}) addresses the problem from a different an
 
 \cite{MaerkiEtAl_Transportation_2014} and \cite{Dobler_PhDThesis_2013} point out that the number of iterations to reach equilibrium can be reduced when the synthetic travelers perform within-day re-routing -- this points into the same direction as \cite{LuEtcBenAkiva2015SimMobility} who claim that equilibrium iterations will not be necessary at all with well-calibrated behavioral models and a realistic starting point.
 
-\ah{Irgendwas gab es doch da noch mit compressed routes von Marcel(?) Müssten noch im Repo sein. Gehört das auch hierhin?}
+\gls{matsim} needs, at least for large scenarios, a large amount of \gls{ram}.  One could say that within the usual space-time tradeoff in computation,\footnote{%
+%
+See \url{https://en.wikipedia.org/wiki/Space-time_tradeoff}.
+%
+} in most situations \gls{matsim} rather consumes more memory in order to reduce the computation time.  Memory-saving compressed routes are available as an option in the \lstinline{<plans>} section of the \gls{configfile}.  \gls{matsim} can be seen as an object-oriented database in \gls{ram}; attempts to provide a backing by a relational database were not successful when they were tried \citep[][; also see Section~\ref{sec:history-ethz-phase}]{RaneyNagel2004agdb,RaneyNagel2006traf-framework}.
 
-\ah{Könnte/müsste man zu Beginn mit 2-3 Sätzen nochmals an den bei uns omnipräsenten Space-Time-Trade-Off erinnern? Oder zu trivial?
-Dobler hatte immer mal wieder an einem DB-based-Ansatz rumgehirnt. Wäre evtl. als Extrempunkt in diesem Trade-off erwähnenswert. 
-}
+%% \ah{Irgendwas gab es doch da noch mit compressed routes von Marcel(?) Müssten noch im Repo sein. Gehört das auch hierhin?}
+
+%% \ah{Könnte/müsste man zu Beginn mit 2-3 Sätzen nochmals an den bei uns omnipräsenten Space-Time-Trade-Off erinnern? Oder zu trivial?
+%% Dobler hatte immer mal wieder an einem DB-based-Ansatz rumgehirnt. Wäre evtl. als Extrempunkt in diesem Trade-off erwähnenswert. 
+%% }
 
 To summarize: (1)~The behavioral parts of \gls{matsim} parallize easily; the main challenge is the \gls{mobsim}.  (2)~The main challenge with parallelizing the \gls{mobsim} is not so much the pure performance improvement, but to achieve this in a way that it remains integrated with the \gls{matsim} main development, and at little or no additional maintenance effort. 
 
