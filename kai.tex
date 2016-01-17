@@ -1,5 +1,8 @@
 \input preamble
 
+%% \setkeys{Gin}{draft}
+\PassOptionsToPackage{draft}{graphicx}
+
 \geometry{a5paper,ignorehead,ignorefoot,top=1mm,bottom=2mm,left=2mm,right=2mm}
 %% \geometry{a4paper,ignorehead,ignorefoot,top=1mm,bottom=2mm,left=2cm,right=2cm}
 
@@ -47,11 +50,28 @@
 \input{frontmatter/intro} \cleardoublepage
 
 % --------------------------------------
+\setcounter{tocdepth}{0}
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Condensed Table of Contents}
+\markboth{Table of Contents}{Condensed Table of Contents}
+{\parskip0pt %hack to get toc condensed; please replace by cleaner 
+% syntax if you know it.  kai, oct'14
+
+\glsunsetall % no gls expansions in toc
+{\openup-5pt
+\tableofcontents \cleardoublepage
+}
+\glsresetall % -------------------------
+
+}
+
+% --------------------------------------
 \setcounter{tocdepth}{1}
 
 \phantomsection
-\addcontentsline{toc}{chapter}{Table of Contents}
-\markboth{Table of Contents}{Table of Contents}
+\addcontentsline{toc}{chapter}{Expanded Table of Contents}
+\markboth{Table of Contents}{Expanded Table of Contents}
 {\parskip0pt %hack to get toc condensed; please replace by cleaner 
 % syntax if you know it.  kai, oct'14
 
@@ -81,7 +101,6 @@
 
 % -----------------------
 \part{Extending MATSim} \cleardoublepage
-
 \label{part:extending-matsim}
 
 \input{extending/modules/modules} \cleardoublepage
@@ -93,9 +112,12 @@
 \input{extending/modules/networkeditor} \cleardoublepage
 \input{extending/modules/networkEditorFirst} \cleardoublepage
 
-\subpart{Individual Car Traffic}
+\subpart{Mobsim}
 
 \input{extending/modules/qsim} \cleardoublepage
+
+\subpart{Individual Car Traffic}
+
 \input{extending/modules/signalslanes} \cleardoublepage
 \input{extending/modules/parking} \cleardoublepage
 \input{extending/modules/elvehicles} \cleardoublepage
@@ -157,6 +179,10 @@
 
 \input{extending/development_process} \cleardoublepage
 \input{extending/yourownmodules} \cleardoublepage
+
+
+% inserted to accelerate turn-around; pls comment out when I forget doing that. kai, dec'15
+%% \end{document}
 
 % -----------------------
 \part{Understanding MATSim} \cleardoublepage

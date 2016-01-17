@@ -23,11 +23,12 @@
 % ##################################################################################################################
 \section{Introduction}
 
-\gls{cadyts}\footnote{\url{http://people.kth.se/~gunnarfl/cadyts.html}}
---licensed under \gls{gplv3}--calibrates disaggregate travel demand models 
+\gls{cadyts}\footnote{\url{http://people.kth.se/~gunnarfl/cadyts.html}}---licensed under \gls{gplv3}---calibrates disaggregate travel demand models 
 of \gls{dta} simulators from traffic counts and vehicle re-identification data. 
 \gls{cadyts} is broadly compatible with \gls{dta} microsimulators,
-into which it can be hooked through sparse interfaces.
+into which it can be hooked through 
+%sparse 
+parsimonious interfaces.
 
 As explained formally in Chapter~\ref{ch:abta} and~\ref{ch:montecarlo},
 \gls{dta} \corr{targets}{aims at} consistency between a \corr{travel demand
@@ -87,7 +88,7 @@ Intuitively, if the \corr{simulation}{simulated} value $q_a(k)$ is smaller than
 the real measurement $y_a(k)$, then a score increase, and thus a \corr{choice
 increase probability}{choice probability increase}, results.
 \corr{}{The variance} $\sigma^2_a(k)$ denotes \corr{}{the} level of trust in
-that specific measurement --\ a large \corr{variance}{} $\sigma^2_a(k)$ implies
+that specific measurement---a large \corr{variance}{} $\sigma^2_a(k)$ implies
 \corr{}{a} low trust level, taking effect through a large denominator in the
 corresponding score correction addend.
 
@@ -114,6 +115,7 @@ measurement type, which has been observed on a specific link.
 \item Iterations: The calibration is run jointly with the simulation until (calibrated) 
 stationary conditions are reached.
 	\begin{enumerate}[label=\emph{\alph*})]
+
 	\item Demand simulation: The calibration needs an access point in the simulation 
 	to affect the plan choice. There are various ways to realize this, depending on the  
 	simulator.	
@@ -123,14 +125,33 @@ stationary conditions are reached.
 	%\ah{m.E. geschieht genau das in \lstinline|org.matsim.contrib.cadyts.general.CadytsPlanChanger.selectPlan(...)|}\kai{Ja.  Noch einfacher in CadytsScoring.}
 	Before a \gls{matsim} agent chooses a plan, \corr{he or she}{it} asks the
 	calibration through the \gls{cadyts} function
-	\lstinline|double calcLinearPlanEffect(Plan plan)| for all of its plans' score offsets.
+%	\lstinline|
+\begin{lstlisting}
+double calcLinearPlanEffect(cadyts.demand.Plan<L> plan)
+\end{lstlisting}
+for all of this plans' score offsets.
     The agent then chooses a plan based on accordingly modified scores.
+
+All selected plans of an iteration are registered to \gls{cadyts} by 
+%\lstinline{
+\begin{lstlisting}
+void addToDemand(cadyts.demand.Plan<L> plan) .
+\end{lstlisting}
+
+Since \gls{cadyts} has its own plans format, \gls{matsim} plans need to be converted to that format beforehand.
+
+
+
 	\item Supply simulation: The calibration must observe simulated network conditions 
   to evaluate their deviation from real traffic counts.
-	For this, the \gls{cadyts} function \lstinline|void afterNetworkLoading(SimResults simResults)| 
-	is called once after each network loading. It passes a container object to the calibration
+	For this, the \gls{cadyts} function %\lstinline|
+\begin{lstlisting}
+void afterNetworkLoading(SimResults<L> simResults)
+\end{lstlisting}
+is called once after each network loading. It passes a container object to the calibration
 	\corr{, providing}{that provides} information about \corr{}{the} most recent
 	network loading results, particularly on simulated flows at measurement locations.
+
 	\end{enumerate}
 \end{enumerate}
 
