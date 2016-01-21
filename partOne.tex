@@ -1,0 +1,115 @@
+\input preamble
+
+\geometry{a5paper,ignorehead,ignorefoot,top=1mm,bottom=2mm,left=2mm,right=2mm}
+\geometry{a4paper,ignorehead,ignorefoot,top=1mm,bottom=2mm,left=2cm,right=2cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fancyhead[R]{\slshape \footnotesize \nouppercase{\rightmark}}%
+\fancyhead[L]{\slshape \footnotesize \nouppercase{\leftmark}}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\titleformat{\part}[display]{\color{blue}\LARGE\sf}{Part~\thepart}{.5em}{}
+\titleformat*{\chapter}{\color{blue}\LARGE\sf}
+\titleformat*{\section}{\color{blue}\Large\sf}
+\titleformat*{\subsection}{\color{blue}\large\sf}
+\titleformat*{\subsubsection}{\color{blue}\sf}
+\titleformat*{\paragraph}{\color{blue}\small\sf}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%\hypersetup{colorlinks=true}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newboolean{printBibPerChapter} %
+\setboolean{printBibPerChapter}{false} % get this from compile command: \url{http://tex.stackexchange.com/questions/1492/passing-parameters-to-a-document}
+
+\def\index#1{#1}
+
+\makeatletter
+\presetkeys{todonotes}{inline}{}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\singlespacing
+
+% --------------------------------------
+\setcounter{tocdepth}{1}
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Table of Contents}
+\markboth{Table of Contents}{Table of Contents}
+{
+
+\glsunsetall % no gls expansions in toc
+{\openup-1pt\parskip0pt %hack to get toc condensed; please replace by cleaner 
+% syntax if you know it.  kai, oct'14
+\tableofcontents \cleardoublepage
+}
+\glsresetall 
+
+}
+% --------------------------------------
+
+% ======================================
+% book body
+
+% -----------------------
+\part{Using MATSim} \cleardoublepage
+\label{part:using-matsim}
+
+\input{using/introducing} \cleardoublepage
+\input{using/lgstarted} \cleardoublepage
+\input{using/scoring} \cleardoublepage
+\input{using/configuring} \cleardoublepage
+
+% ======================================
+% book backmatter
+%%\addtocontents{toc}{\bigskip}
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Acronyms}
+\markboth{Acronyms}{}
+\printglossary[type=\acronymtype] \cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Glossary}
+\markboth{Glossary}{Glossary}
+\printglossary \cleardoublepage
+
+%%\phantomsection
+%%\addcontentsline{toc}{chapter}{Symbols \& Typographic Conventions}
+%%\input{backmatter/symbolsTypography}
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\bibname}
+
+%%\gls{vsp} working papers (VSP WP) are available from \url{http://www.vsp.tu-berlin.de/publications}.
+
+%%\gls{ivt} working papers are available from \url{http://www.ivt.ethz.ch/vpl/publications/reports}.
+
+%%Swiss Transport Research Conference (STRC) papers are available from \url{http://www.strc.ch}.
+
+\include{bibtodos}
+
+%%\bibliographystyle{0/template_ivt-eng}
+\bibliographystyle{0/template_ivt-eng-with-notes}
+%%\bibliographystyle{0/vsp}
+\bibliography{0/tub,0/added_bibs,0/ivt_bibs,0/ref-gunnar,0/michalm_matsim_book,0/laemmel}
+\cleardoublepage
+
+%%\phantomsection
+%%\addcontentsline{toc}{chapter}{Index}
+%%\printindex \cleardoublepage
+
+\end{document}
+
+% Local Variables:
+% mode: latex
+% mode: reftex
+% mode: visual-line
+% comment-padding: 1
+% fill-column: 9999
+% End: 

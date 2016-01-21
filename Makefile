@@ -29,15 +29,24 @@ kai: kai.aux
 kai.aux: localbib
 	pdflatex kai
 
-#	pdflatex -interaction=nonstopmode kai
-
-
 kaibib: kai.aux
 	makeglossaries kai
 	makeindex kai
 	bibtex -min-crossrefs=999 kai
 	pdflatex kai
 	pdflatex kai
+
+partOne: partOne.aux
+
+partOne.aux: localbib
+	pdflatex partOne
+
+partOnebib: partOne.aux
+	makeglossaries partOne
+	makeindex partOne
+	bibtex -min-crossrefs=999 partOne
+	pdflatex partOne
+	pdflatex partOne
 
 gregor:
 	pdflatex gregor
