@@ -38,7 +38,7 @@ kaibib: kai.aux
 
 partOne: partOne.aux
 
-partOne.aux: localbib
+partOne.aux:
 	pdflatex partOne
 
 partOnebib: partOne.aux
