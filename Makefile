@@ -1,4 +1,4 @@
-.PHONY: pdf newpdf clean quick veryclean kai kai.aux
+.PHONY: pdf newpdf clean quick veryclean kai kai.aux partOne partOne.aux
 
 NAME=main
 
@@ -38,7 +38,7 @@ kaibib: kai.aux
 
 partOne: partOne.aux
 
-partOne.aux:
+partOne.aux: partOne.tex
 	pdflatex partOne
 
 partOnebib: partOne.aux
